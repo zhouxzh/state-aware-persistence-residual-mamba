@@ -1,7 +1,6 @@
 import argparse
 import torch
 from experiments.exp_long_term_forecasting import Exp_Long_Term_Forecast
-from experiments.exp_long_term_forecasting_partial import Exp_Long_Term_Forecast_Partial
 import random
 import numpy as np
 
@@ -67,6 +66,7 @@ if __name__ == '__main__':
     parser.add_argument('--loss', type=str, default='MSE', help='loss function')
     parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
     parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
+    parser.add_argument('--tensorboard_dir', type=str, default='./tensorboard/', help='tensorboard log directory')
 
     # GPU
     parser.add_argument('--use_gpu', type=bool, default=True, help='use gpu')
@@ -75,20 +75,15 @@ if __name__ == '__main__':
     parser.add_argument('--devices', type=str, default='0,1,2,3', help='device ids of multile gpus')
 
     # iTransformer
-    parser.add_argument('--exp_name', type=str, required=False, default='MTSF',
-                        help='experiemnt name, options:[MTSF, partial_train]')
-    parser.add_argument('--channel_independence', type=bool, default=False, help='whether to use channel_independence mechanism')
-    parser.add_argument('--inverse', action='store_true', help='inverse output data', default=False)
+    parser.add_argument('--inverse', dest='inverse', action='store_true', help='inverse output data', default=True)
+    parser.add_argument('--no-inverse', dest='inverse', action='store_false',
+                        help='keep output data in scaled space')
     parser.add_argument('--class_strategy', type=str, default='projection', help='projection/average/cls_token')
-    parser.add_argument('--target_root_path', type=str, default='./data/electricity/', help='root path of the data file')
-    parser.add_argument('--target_data_path', type=str, default='electricity.csv', help='data file')
-    parser.add_argument('--efficient_training', type=bool, default=False, help='whether to use efficient_training (exp_name should be partial train)') # See Figure 8 of our paper for the detail
     parser.add_argument('--use_norm', type=int, default=True, help='use norm and denorm')
-    parser.add_argument('--partial_start_index', type=int, default=0, help='the start index of variates for partial training, '
-                                                                           'you can select [partial_start_index, min(enc_in + partial_start_index, N)]')
     parser.add_argument('--d_state', type=int, default=32, help='parameter of Mamba Block')
 
     args = parser.parse_args()
+    args.channel_independence = False
     args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
 
     if args.use_gpu and args.use_multi_gpu:
@@ -100,10 +95,7 @@ if __name__ == '__main__':
     print('Args in experiment:')
     print(args)
 
-    if args.exp_name == 'partial_train': # See Figure 8 of our paper, for the detail
-        Exp = Exp_Long_Term_Forecast_Partial
-    else: # MTSF: multivariate time series forecasting
-        Exp = Exp_Long_Term_Forecast
+    Exp = Exp_Long_Term_Forecast
     import torch.multiprocessing
 
     torch.multiprocessing.set_sharing_strategy('file_system')

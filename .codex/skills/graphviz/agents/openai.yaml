@@ -1,0 +1,4 @@
+interface:
+  display_name: "Graphviz DOT"
+  short_description: "Create and validate DOT diagrams"
+  default_prompt: "Use $graphviz to create or revise DOT diagrams, validate syntax, and render figures when Graphviz tools are available."

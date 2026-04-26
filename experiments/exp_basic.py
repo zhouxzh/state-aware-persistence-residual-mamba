@@ -9,6 +9,7 @@ from model import Transformer, Informer, Reformer, Flowformer, Flashformer, \
 class Exp_Basic(object):
     def __init__(self, args):
         self.args = args
+        self.writer = None
         self.model_dict = {
             'iTransformer': iTransformer,
             'iInformer': iInformer,
@@ -65,3 +66,18 @@ class Exp_Basic(object):
 
     def test(self):
         pass
+
+    def _get_writer(self, setting):
+        if self.writer is not None:
+            return self.writer
+        try:
+            from torch.utils.tensorboard import SummaryWriter
+        except ImportError:
+            print('TensorBoard is not available in the current environment.')
+            self.writer = None
+            return None
+
+        log_dir = os.path.join(self.args.tensorboard_dir, setting)
+        os.makedirs(log_dir, exist_ok=True)
+        self.writer = SummaryWriter(log_dir=log_dir)
+        return self.writer

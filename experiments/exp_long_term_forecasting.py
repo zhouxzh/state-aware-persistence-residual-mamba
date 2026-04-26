@@ -10,6 +10,7 @@ from torch import optim
 import os
 import time
 import warnings
+import json
 import numpy as np
 
 warnings.filterwarnings('ignore')
@@ -86,6 +87,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         train_data, train_loader = self._get_data(flag='train')
         vali_data, vali_loader = self._get_data(flag='val')
         test_data, test_loader = self._get_data(flag='test')
+        writer = self._get_writer(setting)
 
         path = os.path.join(self.args.checkpoints, setting)
         if not os.path.exists(path):
@@ -149,18 +151,11 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     loss = criterion(outputs, batch_y)
                     train_loss.append(loss.item())
 
+                if writer is not None:
+                    global_step = epoch * train_steps + i
+                    writer.add_scalar('train/loss_step', loss.item(), global_step)
+
                 if (i + 1) % 100 == 0:
-                    print("\titers: {0}, epoch: {1} | loss: {2:.7f}".format(i + 1, epoch + 1, loss.item()))
-                    speed = (time.time() - time_now) / iter_count
-                    # print(speed)
-                    # allocated_memory = torch.cuda.memory_allocated() / (1024 * 1024 * 1024)
-                    # cached_memory = torch.cuda.memory_cached() / (1024 * 1024 * 1024)
-                    # total = allocated_memory + cached_memory
-                    # print('allocated_memory:', allocated_memory)
-                    # print('cached_memory:', cached_memory)
-                    # print('total:', total)
-                    left_time = speed * ((self.args.train_epochs - epoch) * train_steps - i)
-                    print('\tspeed: {:.4f}s/iter; left time: {:.4f}s'.format(speed, left_time))
                     iter_count = 0
                     time_now = time.time()
 
@@ -172,13 +167,15 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     loss.backward()
                     model_optim.step()
 
-            print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
+            epoch_time_sec = time.time() - epoch_time
             train_loss = np.average(train_loss)
             vali_loss = self.vali(vali_data, vali_loader, criterion)
-            test_loss = self.vali(test_data, test_loader, criterion)
-
-            print("Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} Test Loss: {4:.7f}".format(
-                epoch + 1, train_steps, train_loss, vali_loss, test_loss))
+            current_lr = model_optim.param_groups[0]['lr']
+            if writer is not None:
+                writer.add_scalar('train/loss_epoch', train_loss, epoch + 1)
+                writer.add_scalar('val/loss', vali_loss, epoch + 1)
+                writer.add_scalar('train/learning_rate', current_lr, epoch + 1)
+                writer.add_scalar('train/epoch_time_sec', epoch_time_sec, epoch + 1)
             early_stopping(vali_loss, self.model, path)
             if early_stopping.early_stop:
                 print("Early stopping")
@@ -249,8 +246,10 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                 f_dim = -1 if self.args.features == 'MS' else 0
                 outputs = outputs[:, -self.args.pred_len:, f_dim:]
                 batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
-                outputs = outputs.detach().cpu().numpy()
-                batch_y = batch_y.detach().cpu().numpy()
+                outputs_scaled = outputs.detach().cpu().numpy()
+                batch_y_scaled = batch_y.detach().cpu().numpy()
+                outputs = outputs_scaled
+                batch_y = batch_y_scaled
                 if test_data.scale and self.args.inverse:
                     shape = outputs.shape
                     outputs = test_data.inverse_transform(outputs.squeeze(0)).reshape(shape)
@@ -283,7 +282,14 @@ class Exp_Long_Term_Forecast(Exp_Basic):
             os.makedirs(folder_path)
 
         mae, mse, rmse, mape, mspe = metric(preds, trues)
-        print('mse:{}, mae:{}'.format(mse, mae))
+        writer = self._get_writer(setting)
+        if writer is not None:
+            writer.add_scalar('test/mse', mse, 0)
+            writer.add_scalar('test/mae', mae, 0)
+            writer.add_scalar('test/rmse', rmse, 0)
+            writer.add_scalar('test/mape', mape, 0)
+            writer.add_scalar('test/mspe', mspe, 0)
+            writer.flush()
         f = open("result_long_term_forecast.txt", 'a')
         f.write(setting + "  \n")
         f.write('mse:{}, mae:{}'.format(mse, mae))
@@ -294,6 +300,18 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe]))
         np.save(folder_path + 'pred.npy', preds)
         np.save(folder_path + 'true.npy', trues)
+        with open(folder_path + 'meta.json', 'w') as f:
+            json.dump(
+                {
+                    'inverse': bool(self.args.inverse),
+                    'scale': bool(getattr(test_data, 'scale', False)),
+                    'features': self.args.features,
+                    'target': self.args.target,
+                    'freq': self.args.freq,
+                },
+                f,
+                indent=2,
+            )
 
         return
     def get_input(self, setting):

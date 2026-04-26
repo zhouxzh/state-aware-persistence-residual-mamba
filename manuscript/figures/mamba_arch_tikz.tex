@@ -1,0 +1,109 @@
+\begin{minipage}[t]{0.46\linewidth}
+\centering
+\textbf{A. Block outline}\\[0.4em]
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.54cm and 0.42cm,
+    >=Latex,
+    arr/.style={->, draw=#1, line width=0.6pt},
+    arr/.default={mambaLine},
+    block/.style={
+        draw=mambaLine,
+        rounded corners=2pt,
+        fill=white,
+        align=center,
+        font=\scriptsize,
+        inner xsep=4pt,
+        inner ysep=3pt,
+        minimum height=0.58cm,
+        text width=2.10cm
+    },
+    data/.style={block, fill=mambaBlue!18},
+    ssm/.style={block, fill=mambaGreen!14, draw=mambaGreen!70!black},
+    gate/.style={block, fill=mambaPurple!12, draw=mambaPurple!75!black},
+    op/.style={block, fill=mambaGray!9}
+]
+\definecolor{mambaBlue}{HTML}{EAF4FF}
+\definecolor{mambaGreen}{HTML}{DFF2E1}
+\definecolor{mambaPurple}{HTML}{EFE8FF}
+\definecolor{mambaGray}{HTML}{F4F6F8}
+\definecolor{mambaLine}{HTML}{40556B}
+
+\node[data] (input) {Input sequence\\$\mathbf{x}_t$};
+\node[op, below=of input] (proj) {Input projection\\expand and split};
+\node[ssm, below left=0.55cm and 0.18cm of proj] (ssmstream) {SSM stream\\conv $\rightarrow$ SiLU $\rightarrow$ scan};
+\node[gate, below right=0.55cm and 0.18cm of proj] (gatestream) {Gate stream\\$\mathbf{z}_t=\operatorname{SiLU}(W_z\mathbf{x}_t)$};
+\node[op, below=1.08cm of proj] (fusion) {Elementwise fusion\\$\mathbf{o}_t=\mathbf{y}_t\odot\mathbf{z}_t$};
+\node[op, below=of fusion] (outproj) {Output projection};
+\node[data, below=of outproj] (output) {Block output};
+
+\draw[arr] (input) -- (proj);
+\draw[arr] (proj) -- (ssmstream);
+\draw[arr] (proj) -- (gatestream);
+\draw[arr=mambaGreen!70!black] (ssmstream) |- (fusion);
+\draw[arr=mambaPurple!75!black] (gatestream) |- (fusion);
+\draw[arr] (fusion) -- (outproj);
+\draw[arr] (outproj) -- (output);
+\end{tikzpicture}%
+}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.50\linewidth}
+\centering
+\textbf{B. Selective SSM component}\\[0.4em]
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.48cm and 0.30cm,
+    >=Latex,
+    arr/.style={->, draw=#1, line width=0.6pt},
+    arr/.default={mambaLine},
+    block/.style={
+        draw=mambaLine,
+        rounded corners=2pt,
+        fill=white,
+        align=center,
+        font=\scriptsize,
+        inner xsep=4pt,
+        inner ysep=3pt,
+        minimum height=0.58cm,
+        text width=2.10cm
+    },
+    param/.style={block, fill=mambaGold!18, draw=mambaGold!80!black, text width=1.55cm},
+    state/.style={block, fill=mambaGold!16, draw=mambaGold!80!black, text width=1.72cm},
+    ssm/.style={block, fill=mambaGreen!14, draw=mambaGreen!70!black, text width=2.95cm},
+    gate/.style={block, fill=mambaPurple!12, draw=mambaPurple!75!black, text width=1.45cm},
+    data/.style={block, fill=mambaBlue!18, text width=2.35cm}
+]
+\definecolor{mambaBlue}{HTML}{EAF4FF}
+\definecolor{mambaGreen}{HTML}{DFF2E1}
+\definecolor{mambaPurple}{HTML}{EFE8FF}
+\definecolor{mambaGold}{HTML}{FFF3C9}
+\definecolor{mambaLine}{HTML}{40556B}
+
+\node[data] (features) {SSM-stream features};
+\node[block, below=of features] (heads) {Input-dependent\\parameter heads};
+\node[param, below left=0.56cm and 0.30cm of heads] (delta) {Step size\\$\Delta_t$};
+\node[param, below=0.56cm of heads] (bmap) {Input map\\$\mathbf{B}_t$};
+\node[param, below right=0.56cm and 0.30cm of heads] (cout) {Readout\\$\mathbf{C}_t$};
+\node[ssm, below=0.60cm of bmap] (disc) {Discretization\\$\bar{\mathbf{A}}_t=\exp(\Delta_t\mathbf{A})$\\$\bar{\mathbf{B}}_t=f(\Delta_t,\mathbf{A},\mathbf{B}_t)$};
+\node[state, below left=0.55cm and 0.36cm of disc] (prev) {Previous state\\$\mathbf{h}_{t-1}$};
+\node[ssm, below=0.55cm of disc] (update) {Selective state update\\$\mathbf{h}_t=\bar{\mathbf{A}}_t\mathbf{h}_{t-1}+\bar{\mathbf{B}}_t\mathbf{x}_t$};
+\node[ssm, below=of update] (readout) {State readout\\$\mathbf{y}_t=\mathbf{C}_t\mathbf{h}_t$};
+\node[gate, right=0.56cm of readout] (gate) {Gate\\$\mathbf{z}_t$};
+\node[data, below=of readout] (modout) {Modulated output\\$\mathbf{o}_t=\mathbf{y}_t\odot\mathbf{z}_t$};
+
+\draw[arr] (features) -- (heads);
+\draw[arr] (heads) -- (delta);
+\draw[arr] (heads) -- (bmap);
+\draw[arr] (heads) -- (cout);
+\draw[arr=mambaGold!80!black] (delta) -- (disc);
+\draw[arr=mambaGold!80!black] (bmap) -- (disc);
+\draw[arr=mambaGreen!70!black] (disc) -- (update);
+\draw[arr=mambaGold!80!black] (prev) -- (update);
+\draw[arr=mambaGreen!70!black] (update) -- (readout);
+\draw[arr=mambaGold!80!black] (cout) |- (readout);
+\draw[arr=mambaGreen!70!black] (readout) -- (modout);
+\draw[arr=mambaPurple!75!black] (gate) |- (modout);
+\end{tikzpicture}%
+}
+\end{minipage}

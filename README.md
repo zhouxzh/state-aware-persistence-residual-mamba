@@ -551,6 +551,41 @@ Locking rule:
 Use the strongest setting that completes S_Mamba runs for pred_len 7, 90, and 360 without memory failure or unstable loss.
 ```
 
+Calibration result:
+
+```text
+Locked default setting: A
+```
+
+Setting A is selected because it is strongest on long-horizon MSE and the 360-day stress case, which matter most for nonstationary forecasting. Setting B is a useful short-horizon or efficiency alternative, but should not be mixed into the main baseline table unless the full baseline table is explicitly labeled as setting B.
+
+Calibration summary:
+
+| Horizon | Best MSE | Best MAE |
+| --- | --- | --- |
+| 1 | B | B |
+| 7 | B | B |
+| 30 | B | B |
+| 60 | B | B |
+| 90 | A | B |
+| 120 | A | B |
+| 180 | A | B |
+| 360 | A | A |
+
+Aggregate result:
+
+| Setting | Avg MSE | Avg MAE | Long-horizon Avg MSE | Long-horizon Avg MAE |
+| --- | ---: | ---: | ---: | ---: |
+| A | 0.3769 | 0.3816 | 1.0182 | 0.7063 |
+| B | 0.3864 | 0.3750 | 1.0585 | 0.7142 |
+| C | 0.4597 | 0.4156 | 1.1815 | 0.7479 |
+
+Parsed calibration results are saved locally at:
+
+```text
+results/gld_calibration_summary.csv
+```
+
 After the setting is locked, do not tune each baseline separately in the first pass. The first pass should be a controlled comparison, not a per-model leaderboard.
 
 #### Shared Baseline Settings
@@ -606,10 +641,38 @@ Save GLD baseline results to:
 results/gld_baselines.csv
 ```
 
+Baseline runner:
+
+```bash
+bash scripts/gld_baseline/run_gld_baselines.sh
+```
+
+Run only one baseline model:
+
+```bash
+bash scripts/gld_baseline/run_gld_baselines.sh S_Mamba
+bash scripts/gld_baseline/run_gld_baselines.sh Transformer
+```
+
+Collect completed metrics into the baseline CSV:
+
+```bash
+conda run -n mamba python scripts/gld_baseline/collect_gld_baselines.py
+```
+
+Current CSV status:
+
+```text
+results/gld_baselines.csv exists.
+8 / 72 rows are complete, seeded from setting-A S_Mamba calibration runs.
+Remaining S_Mamba horizons: 3, 5, 14, 270.
+All non-S_Mamba baseline rows are still pending.
+```
+
 Recommended columns:
 
 ```text
-dataset,target,model,horizon,term,setting_id,seq_len,label_len,pred_len,d_model,d_ff,e_layers,d_layers,batch_size,train_epochs,patience,seed,mse,mae,best_val_loss,train_time_sec,param_count,gpu_memory_mb,status,notes
+dataset,target,model,horizon,term,setting_id,seq_len,label_len,pred_len,d_model,d_ff,e_layers,d_layers,batch_size,train_epochs,patience,seed,mse,mae,rmse,mape,mspe,best_val_loss,train_time_sec,param_count,gpu_memory_mb,status,notes,run
 ```
 
 Use `term` values:

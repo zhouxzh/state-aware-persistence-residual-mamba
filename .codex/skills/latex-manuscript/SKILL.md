@@ -11,7 +11,8 @@ Use this skill for publication-facing LaTeX work. It is for scientific writing, 
 ## Workflow
 1. Identify the manuscript entry file.
    Prefer `manuscript/main.tex`.
-   If there is a `Makefile`, use it instead of inventing a custom build command.
+   Ensure `manuscript/Makefile` exists. If it is missing, create it from `templates/Makefile` in this skill.
+   Use the Makefile instead of inventing a custom build command.
 
 2. Read before editing.
    Check:
@@ -67,6 +68,8 @@ When adding or revising figures:
   - what the figure shows
   - what claim it supports
   - why it matters
+- when a figure is specified in Graphviz DOT, use the repo Graphviz skill at `.codex/skills/graphviz/SKILL.md` for DOT syntax and place the source under `manuscript/figures/*.dot`; the Makefile template converts DOT sources to PDF before compiling the manuscript
+- when a figure needs mathematical notation inside nodes, use the repo TikZ skill at `.codex/skills/tikz/SKILL.md` and place the source under `manuscript/figures/*.tex`
 
 Good figure explanation pattern:
 - observation from the figure
@@ -84,8 +87,21 @@ Before finalizing a manuscript edit, check:
 Preferred build path for repos like this one:
 - manuscript entry: `manuscript/main.tex`
 - figures: `manuscript/figures/`
+- Makefile template: `.codex/skills/latex-manuscript/templates/Makefile`
 - build command: `make -C manuscript pdf`
 - output: `manuscript/main.pdf`
+
+The Makefile should provide:
+- `make pdf`: build `main.pdf`
+- `make watch`: rebuild continuously with `latexmk`
+- `make clean`: remove auxiliary LaTeX files
+- `make distclean`: remove auxiliary files and `main.pdf`
+
+The build should convert `figures/*.dot` sources to PDF using `dot`, `fdp`, or `neato` before LaTeX compilation.
+The LaTeX build should prefer `latexmk`, fall back to two `pdflatex` passes, and fail with a clear message when neither compiler is installed.
+
+For DOT authoring rules, refer to `.codex/skills/graphviz/SKILL.md`.
+For LaTeX-native mathematical diagrams, refer to `.codex/skills/tikz/SKILL.md`.
 
 ## Typical Uses
 - Rewrite the abstract to match completed experiments.

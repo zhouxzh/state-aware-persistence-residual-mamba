@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "architecture": {
+      "source": "markdown-viewer/skills",
+      "sourceType": "github",
+      "computedHash": "add5f37477735ade3275336c8959d5b4ae788dbcdb71582a38770b89c147c2d1"
+    },
+    "data-analytics": {
+      "source": "markdown-viewer/skills",
+      "sourceType": "github",
+      "computedHash": "effd16c1e5f8916e4d1e729c3b287f282cedc682afc7804d59c75e745ada2ba6"
+    },
+    "graphviz": {
+      "source": "markdown-viewer/skills",
+      "sourceType": "github",
+      "computedHash": "d1604f4121b365f403a3742a95d0845b049c12de22a2d40d24e8db52dacf89b8"
+    },
+    "network": {
+      "source": "markdown-viewer/skills",
+      "sourceType": "github",
+      "computedHash": "da0e492ee0d077cd25c2941e7146ebf9a2c86eb644cf9b1506b5c8c960045483"
+    }
+  }
+}

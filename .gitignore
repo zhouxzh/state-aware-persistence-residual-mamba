@@ -218,4 +218,8 @@ __marimo__/
 .streamlit/secrets.toml
 
 results/
+
+# Model checkpoints
+**/checkpoint.pth
 test_results/
+checkpoints/
