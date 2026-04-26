@@ -5,8 +5,6 @@ from layers.Transformer_EncDec import Encoder, EncoderLayer
 from layers.SelfAttention_Family import FullAttention, AttentionLayer
 from layers.Embed import DataEmbedding_inverted
 import numpy as np
-
-from mamba_ssm import Mamba
 class Model(nn.Module):
     """
     Paper link: https://arxiv.org/abs/2310.06625
@@ -73,4 +71,7 @@ class Model(nn.Module):
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
         dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
-        return dec_out[:, -self.pred_len:, :]  # [B, L, D]
+        dec_out = dec_out[:, -self.pred_len:, :]  # [B, L, D]
+        if self.output_attention:
+            return dec_out, None
+        return dec_out

@@ -5,8 +5,6 @@ from layers.Transformer_EncDec import Decoder, DecoderLayer, Encoder, EncoderLay
 from layers.SelfAttention_Family import FullAttention, AttentionLayer
 from layers.Embed import DataEmbedding
 import numpy as np
-
-from mamba_ssm import Mamba
 class Model(nn.Module):
     """
     Vanilla Transformer
@@ -70,21 +68,17 @@ class Model(nn.Module):
             norm_layer=torch.nn.LayerNorm(configs.d_model),
             projection=nn.Linear(configs.d_model, configs.c_out, bias=True)
         )
-        self.mamba = Mamba(
-            d_model=configs.d_model,  # Model dimension d_model
-            d_state=16,  # SSM state expansion factor
-            d_conv=2,  # Local convolution width
-            expand=1,  # Block expansion factor)
-        )
     def forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
         # Embedding
         enc_out = self.enc_embedding(x_enc, x_mark_enc)
         enc_out, attns = self.encoder(enc_out, attn_mask=None)
-        enc_out = self.mamba(enc_out)
         dec_out = self.dec_embedding(x_dec, x_mark_dec)
         dec_out = self.decoder(dec_out, enc_out, x_mask=None, cross_mask=None)
-        return dec_out
+        return dec_out, attns
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
-        dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
-        return dec_out[:, -self.pred_len:, :]  # [B, L, D]
+        dec_out, attns = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
+        dec_out = dec_out[:, -self.pred_len:, :]  # [B, L, D]
+        if self.output_attention:
+            return dec_out, attns
+        return dec_out

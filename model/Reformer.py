@@ -5,7 +5,6 @@ from layers.Transformer_EncDec import Encoder, EncoderLayer
 from layers.SelfAttention_Family import ReformerLayer
 from layers.Embed import DataEmbedding
 
-from mamba_ssm import Mamba
 class Model(nn.Module):
     """
     Reformer with O(LlogL) complexity
@@ -20,6 +19,7 @@ class Model(nn.Module):
         super(Model, self).__init__()
         self.pred_len = configs.pred_len
         self.seq_len = configs.seq_len
+        self.output_attention = configs.output_attention
 
         if configs.channel_independence:
             self.enc_in = 1
@@ -49,12 +49,6 @@ class Model(nn.Module):
 
         self.projection = nn.Linear(
             configs.d_model, configs.c_out, bias=True)
-        self.mamba =Mamba(
-            d_model=configs.d_model,  # Model dimension d_model
-            d_state=16,  # SSM state expansion factor
-            d_conv=2,  # Local convolution width
-            expand=1,  # Block expansion factor)
-        )
     def long_forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
         # add placeholder
         x_enc = torch.cat([x_enc, x_dec[:, -self.pred_len:, :]], dim=1)
@@ -63,13 +57,15 @@ class Model(nn.Module):
                 [x_mark_enc, x_mark_dec[:, -self.pred_len:, :]], dim=1)
 
         enc_out = self.enc_embedding(x_enc, x_mark_enc)  # [B,T,C]
-        enc_out = self.mamba(enc_out)
         enc_out, attns = self.encoder(enc_out, attn_mask=None)
         dec_out = self.projection(enc_out)
 
-        return dec_out  # [B, L, D]
+        return dec_out, attns  # [B, L, D]
 
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
-        dec_out = self.long_forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
-        return dec_out[:, -self.pred_len:, :]  # [B, L, D]
+        dec_out, attns = self.long_forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
+        dec_out = dec_out[:, -self.pred_len:, :]  # [B, L, D]
+        if self.output_attention:
+            return dec_out, attns
+        return dec_out

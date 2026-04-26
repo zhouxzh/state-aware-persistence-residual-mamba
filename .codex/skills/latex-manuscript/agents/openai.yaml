@@ -1,0 +1,4 @@
+interface:
+  display_name: "LaTeX Manuscript"
+  short_description: "Draft and revise LaTeX manuscripts"
+  default_prompt: "Use $latex-manuscript to revise the manuscript and rebuild the PDF."
