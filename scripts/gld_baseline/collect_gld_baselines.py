@@ -17,7 +17,19 @@ if str(REPO_ROOT) not in sys.path:
 SETTING_ID = "A"
 DATASET = "GLD"
 TARGET = "close"
-MODELS = ["S_Mamba", "Transformer", "Informer", "Reformer", "Autoformer", "iTransformer"]
+MODELS = [
+    "S_Mamba",
+    "Transformer",
+    "Informer",
+    "Reformer",
+    "Autoformer",
+    "iTransformer",
+    "Nonstationary_Transformer",
+    "DLinear",
+    "NLinear",
+    "PatchTST",
+    "TimesNet",
+]
 HORIZONS = [1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360]
 SETTING = {
     "seq_len": 360,
@@ -90,6 +102,7 @@ def parameter_count(model_name):
         seq_len=SETTING["seq_len"],
         label_len=SETTING["label_len"],
         pred_len=1,
+        task_name="long_term_forecast",
         enc_in=1,
         dec_in=1,
         c_out=1,
@@ -99,6 +112,11 @@ def parameter_count(model_name):
         d_layers=SETTING["d_layers"],
         d_ff=SETTING["d_ff"],
         moving_avg=25,
+        individual=False,
+        top_k=5,
+        num_kernels=6,
+        patch_len=16,
+        stride=8,
         factor=1,
         distil=True,
         dropout=0.1,
@@ -110,6 +128,8 @@ def parameter_count(model_name):
         class_strategy="projection",
         use_norm=True,
         d_state=16,
+        p_hidden_dims=[128, 128],
+        p_hidden_layers=2,
     )
     module = importlib.import_module(f"model.{model_name}")
     model = module.Model(args)

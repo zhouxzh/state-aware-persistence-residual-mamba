@@ -15,6 +15,15 @@ Completed:
 - Added adaptive normalization: `layers/NonStationaryNorm.py`.
 - Added decomposition utilities: `layers/SeriesDecomp.py`.
 - Added shift-aware gate: `layers/NonStationaryGate.py`.
+- Completed the full GLD baseline sweep with 72 / 72 finished runs.
+- Collected the finished baseline table in `results/gld_baselines.csv`.
+- Implemented and registered `model/NS_Mamba.py`.
+- Added GLD NS_Mamba ablation scripts under `scripts/gld_ns_mamba/`.
+- Completed the NS_Mamba diagnostic sweep with 16 / 48 ablation rows finished.
+- Identified `NS_Mamba-D` as the strongest diagnostic variant.
+- Added source-style GLD optimized sweep scripts for imported models.
+- Completed the optimized GLD sweep for `Nonstationary_Transformer`, `TimesNet`, `PatchTST`, `DLinear`, and `NLinear`.
+- Identified `PatchTST` as the strongest imported model overall under the completed optimized sweep.
 - Cleaned model baselines:
   - removed Mamba from `model/Transformer.py`
   - removed Mamba from `model/Reformer.py`
@@ -24,13 +33,294 @@ Completed:
 - Added repo-local skills:
   - `.codex/skills/nonstationary-mamba`
   - `.codex/skills/latex-manuscript`
+  - `.codex/skills/graphviz`
+  - `.codex/skills/tikz`
 
 Next immediate task:
 
 ```text
-Calculate baseline results on GLD close before implementing NS_Mamba.
-Evaluate short-, middle-, and long-horizon forecasts from 1 day to 360 days.
+Run the full 12-horizon GLD sweep for NS_Mamba-D.
 ```
+
+## GLD Baseline Results
+
+Completed baseline table:
+
+```text
+results/gld_baselines.csv
+72 / 72 rows complete
+6 models x 12 horizons
+```
+
+Generate the LaTeX include used by the manuscript with:
+
+```bash
+python scripts/manuscript/generate_gld_results_tex.py
+```
+
+This writes:
+
+```text
+manuscript/generated/gld_baseline_results.tex
+```
+
+Key findings:
+
+- `S_Mamba` is the best MSE baseline at horizons `1, 3, 5, 7, 14, 30, 60, 90`.
+- `iTransformer` is the best MSE baseline at horizons `120, 180, 270, 360`.
+- `Autoformer` is a stable third-place baseline at every horizon.
+- `Transformer`, `Informer`, and `Reformer` are much weaker on GLD under the locked shared setting.
+
+Best model by horizon, measured with MSE:
+
+| Horizon | Best model | MSE | Runner-up | MSE |
+| --- | --- | ---: | --- | ---: |
+| 1 | `S_Mamba` | 19.80 | `iTransformer` | 21.02 |
+| 3 | `S_Mamba` | 28.06 | `iTransformer` | 29.70 |
+| 5 | `S_Mamba` | 33.13 | `iTransformer` | 37.50 |
+| 7 | `S_Mamba` | 41.91 | `iTransformer` | 46.88 |
+| 14 | `S_Mamba` | 66.70 | `iTransformer` | 73.03 |
+| 30 | `S_Mamba` | 123.61 | `iTransformer` | 131.06 |
+| 60 | `S_Mamba` | 218.91 | `iTransformer` | 221.78 |
+| 90 | `S_Mamba` | 278.28 | `iTransformer` | 285.44 |
+| 120 | `iTransformer` | 395.81 | `S_Mamba` | 412.55 |
+| 180 | `iTransformer` | 713.54 | `S_Mamba` | 723.90 |
+| 270 | `iTransformer` | 1085.45 | `S_Mamba` | 1089.31 |
+| 360 | `iTransformer` | 1556.41 | `S_Mamba` | 1558.31 |
+
+Average MSE by horizon group:
+
+| Model | Short | Middle | Long | Overall |
+| --- | ---: | ---: | ---: | ---: |
+| `S_Mamba` | 30.72 | 220.01 | 1123.84 | 382.87 |
+| `iTransformer` | 33.78 | 221.42 | 1118.47 | 383.14 |
+| `Autoformer` | 1304.48 | 1429.51 | 1930.68 | 1513.13 |
+| `Transformer` | 4777.44 | 4461.04 | 5619.80 | 4856.20 |
+| `Informer` | 6284.64 | 5719.34 | 5343.07 | 5813.71 |
+| `Reformer` | 4660.86 | 6015.56 | 7203.21 | 5860.91 |
+
+Practical interpretation:
+
+- `S_Mamba` is the stronger reference baseline for short and middle horizons.
+- `iTransformer` is the stronger reference baseline for long-horizon MSE starting at 120 days.
+- The two models are nearly tied overall: average MSE differs by `0.27`, and the 360-day MSE gap is only about `0.12%`.
+- The first `NS_Mamba` comparison should therefore target both `S_Mamba` and `iTransformer`, not only one of them.
+
+## NS_Mamba Diagnostic Results
+
+Current ablation table:
+
+```text
+results/gld_ns_mamba_ablation.csv
+16 / 48 rows complete
+4 NS_Mamba variants x 4 diagnostic horizons
+```
+
+Completed diagnostic horizons:
+
+```text
+30, 120, 180, 360 days
+```
+
+Diagnostic variants:
+
+| Variant | Adaptive Norm | Decomposition | Shift Gate |
+| --- | ---: | ---: | ---: |
+| `NS_Mamba-A` | yes | no | no |
+| `NS_Mamba-D` | no | yes | no |
+| `NS_Mamba-AD` | yes | yes | no |
+| `NS_Mamba-ADG` | yes | yes | yes |
+
+Long-horizon diagnostic MSE average over `120, 180, 360`:
+
+| Model | Long Avg. MSE | Long Avg. MAE |
+| --- | ---: | ---: |
+| `NS_Mamba-D` | 781.30 | 19.54 |
+| `iTransformer` | 888.59 | 20.68 |
+| `S_Mamba` | 898.25 | 20.84 |
+| `NS_Mamba-AD` | 990.99 | 22.34 |
+| `NS_Mamba-A` | 1061.22 | 22.97 |
+| `NS_Mamba-ADG` | 1080.01 | 23.16 |
+
+`NS_Mamba-D` improves diagnostic long-horizon MSE by:
+
+```text
+13.02% vs S_Mamba
+12.07% vs iTransformer
+```
+
+It also improves diagnostic long-horizon MAE by:
+
+```text
+6.22% vs S_Mamba
+5.50% vs iTransformer
+```
+
+Horizon-level MSE comparison against the best baseline at each diagnostic horizon:
+
+| Horizon | Best baseline MSE | `NS_Mamba-D` MSE | Improvement |
+| ---: | ---: | ---: | ---: |
+| 30 | 123.61 | 93.31 | 24.51% |
+| 120 | 395.81 | 333.03 | 15.86% |
+| 180 | 713.54 | 586.47 | 17.81% |
+| 360 | 1556.41 | 1424.41 | 8.48% |
+
+Interpretation:
+
+- The decomposition-only variant is the strongest current architecture.
+- Adaptive normalization does not help in the first diagnostic sweep.
+- Shift-aware fusion also does not help in the first diagnostic sweep.
+- Promote `NS_Mamba-D` to the full 12-horizon GLD run before changing the architecture again.
+
+Next commands:
+
+```bash
+bash scripts/gld_ns_mamba/run_ns_mamba_ablation.sh full NS_Mamba-D
+python scripts/gld_ns_mamba/collect_ns_mamba_results.py
+python scripts/gld_ns_mamba/analyze_ns_mamba_results.py
+```
+
+## Source-Optimized Imported Model Results
+
+Current optimized sweep status:
+
+```text
+results/gld_source_optimized_all.csv
+results/gld_source_optimized_best.csv
+540 / 756 rows complete
+```
+
+This sweep uses the model-specific GLD hyperparameter style from:
+
+```text
+nonstationary_transformer/scripts/GLD.sh
+```
+
+So it should be interpreted separately from the locked shared-setting baseline table.
+
+Completed models:
+
+| Model | Completed optimized rows | Coverage |
+| --- | ---: | --- |
+| `PatchTST` | 108 | complete through 360 days |
+| `DLinear` | 108 | complete through 360 days |
+| `NLinear` | 108 | complete through 360 days |
+| `TimesNet` | 108 | complete through 360 days |
+| `Nonstationary_Transformer` | 108 | complete through 360 days |
+| `Autoformer` | 0 | source-style sweep pending |
+| `Transformer` | 0 | source-style sweep pending |
+
+Best optimized imported model by horizon:
+
+| Horizon | Winner | Best seq_len | MSE | MAE |
+| ---: | --- | ---: | ---: | ---: |
+| 1 | `NLinear` | 320 | 6.57 | 1.70 |
+| 3 | `NLinear` | 320 | 12.43 | 2.36 |
+| 5 | `NLinear` | 384 | 17.66 | 2.85 |
+| 7 | `NLinear` | 192 | 23.35 | 3.30 |
+| 14 | `NLinear` | 192 | 42.82 | 4.55 |
+| 30 | `TimesNet` | 256 | 88.29 | 6.89 |
+| 60 | `PatchTST` | 320 | 177.96 | 9.76 |
+| 90 | `TimesNet` | 320 | 176.51 | 10.23 |
+| 120 | `PatchTST` | 256 | 234.57 | 11.61 |
+| 180 | `PatchTST` | 320 | 450.61 | 15.86 |
+| 270 | `PatchTST` | 128 | 791.40 | 20.23 |
+| 360 | `PatchTST` | 128 | 1110.96 | 23.36 |
+
+Average MSE across the full 12-horizon imported sweep:
+
+| Model | Short | Middle | Long | Overall |
+| --- | ---: | ---: | ---: | ---: |
+| `PatchTST` | 15.45 | 151.88 | 784.32 | 264.51 |
+| `NLinear` | 15.00 | 177.81 | 869.93 | 296.57 |
+| `TimesNet` | 15.99 | 152.44 | 957.84 | 308.31 |
+| `Nonstationary_Transformer` | 18.40 | 223.81 | 1126.32 | 380.97 |
+| `DLinear` | 39.67 | 381.58 | 1971.50 | 665.09 |
+
+Interpretation:
+
+- `NLinear` is the best imported model on the short horizons `1, 3, 5, 7, 14`.
+- `PatchTST` is the best imported model overall and the best long-horizon imported model at `60, 120, 180, 270, 360`.
+- `TimesNet` is strongest at `30` and `90` days.
+- `Nonstationary_Transformer` and `DLinear` are not competitive with the best imported model once the full optimized sweep is complete.
+
+Best lookback patterns:
+
+- `NLinear` prefers very large windows: `192` to `384`.
+- `PatchTST` prefers `16` on short horizons, then `256` to `320` at middle horizons, and `128` at `270` and `360`.
+- `TimesNet` prefers `16` on short horizons and much larger windows at middle and long horizons.
+- `Nonstationary_Transformer` still prefers mostly `16`, which appears too short for strong long-horizon GLD performance.
+
+Compared with the best locked-setting baseline per horizon:
+
+- optimized `NLinear` is much stronger at short horizons
+- optimized `PatchTST` is much stronger at middle and long horizons
+- optimized `TimesNet` is also consistently stronger than the locked-setting baseline
+- optimized `DLinear` is weaker than the best locked-setting baseline at every horizon
+
+Representative improvements:
+
+- `NLinear` at `1d`: `6.57` vs `19.80` (`+66.83%` MSE improvement)
+- `PatchTST` at `120d`: `234.57` vs `395.81` (`+40.73%`)
+- `PatchTST` at `360d`: `1110.96` vs `1556.41` (`+28.62%`)
+- `TimesNet` at `90d`: `176.51` vs `278.28` (`+36.57%`)
+
+Current conclusion:
+
+- the locked shared-setting baseline is still useful for controlled comparison
+- GLD is highly sensitive to model-specific tuning
+- among the completed imported models, `PatchTST` is strongest overall
+- `NLinear` is the strongest short-horizon imported baseline
+- `PatchTST` is the strongest medium- and long-horizon imported baseline
+
+## NS_Mamba vs All Completed Models
+
+The fairest direct cross-model comparison for `NS_Mamba` uses the only horizons where `NS_Mamba` has completed results so far:
+
+```text
+30, 120, 180, 360 days
+```
+
+This comparison includes:
+
+- shared locked-setting baselines
+- all four `NS_Mamba` diagnostic variants
+- tuned imported baselines from the completed source-optimized sweep
+
+Long-horizon average over `120, 180, 360` by RMSE:
+
+| Model | Track | Long Avg. RMSE | Long Avg. MAE |
+| --- | --- | ---: | ---: |
+| `PatchTST` | Opt | 23.29 | 16.94 |
+| `NLinear` | Opt | 25.31 | 18.08 |
+| `TimesNet` | Opt | 25.92 | 18.90 |
+| `NS_Mamba-D` | NS-Diag | 26.74 | 19.54 |
+| `iTransformer` | Shared | 28.69 | 20.68 |
+| `S_Mamba` | Shared | 28.90 | 20.84 |
+| `Nonstationary_Transformer` | Opt | 29.00 | 19.99 |
+| `NS_Mamba-AD` | NS-Diag | 30.13 | 22.34 |
+| `NS_Mamba-ADG` | NS-Diag | 31.10 | 23.16 |
+| `NS_Mamba-A` | NS-Diag | 31.16 | 22.97 |
+| `DLinear` | Opt | 37.97 | 27.13 |
+| `Autoformer` | Shared | 42.79 | 29.01 |
+| `Transformer` | Shared | 72.14 | 59.64 |
+| `Informer` | Shared | 73.11 | 56.60 |
+| `Reformer` | Shared | 83.51 | 67.99 |
+
+`NS_Mamba-D` rank by RMSE among all completed models:
+
+- `30d`: 5th
+- `120d`: 4th
+- `180d`: 3rd
+- `360d`: 4th
+- long-horizon average `120/180/360`: 4th overall
+
+Interpretation:
+
+- `NS_Mamba-D` is the strongest `NS_Mamba` variant and the strongest Mamba-based result currently available in this repo on the overlapping horizons.
+- `NS_Mamba-D` beats every shared locked-setting baseline and every other `NS_Mamba` diagnostic variant.
+- `NS_Mamba-D` does not yet beat the tuned imported leaders `PatchTST`, `NLinear`, and `TimesNet`.
+- So the next meaningful target is no longer just `S_Mamba` or `iTransformer`; it is the tuned imported frontier led by `PatchTST`.
 
 ## Environment
 
@@ -345,15 +635,15 @@ All registered models passed CUDA forward checks with output_attention=False and
 
 ### Step 3: Add `NS_Mamba`
 
-Status: next.
+Status: done.
 
-Create:
+Created:
 
 ```text
 model/NS_Mamba.py
 ```
 
-Register in:
+Registered in:
 
 ```text
 experiments/exp_basic.py
@@ -376,42 +666,45 @@ Expected output:
 [B, pred_len, N]
 ```
 
-First version:
+Available CLI flags:
 
 ```text
-S_Mamba structure + AdaptiveRevIN
+--use_adaptive_norm
+--use_decomp
+--use_shift_gate
+--ns_adaptive_scale
+--ns_recent_ratio
 ```
 
 ### Step 4: Add Decomposition
 
-Status: pending.
+Status: done.
 
-Add decomposition to `NS_Mamba` after the adaptive-normalization version works.
+Decomposition is implemented in `NS_Mamba-D`, `NS_Mamba-AD`, and `NS_Mamba-ADG`.
 
-Suggested flags:
+Best diagnostic variant:
 
 ```text
---use_decomp 1
---moving_avg 25
+NS_Mamba-D
 ```
 
 ### Step 5: Add Shift Gate
 
-Status: pending.
+Status: diagnostic complete.
 
-Add shift-aware hidden gating or branch fusion after decomposition is stable.
+Shift-aware branch fusion is implemented in `NS_Mamba-ADG`, but it did not improve the first GLD diagnostic sweep.
 
-Suggested flag:
+Next action:
 
 ```text
---use_shift_gate 1
+Run the full 12-horizon GLD sweep for NS_Mamba-D before redesigning the gate.
 ```
 
 ## Experiment Plan
 
 ### GLD Baseline Plan
 
-First calculate baseline results on GLD because it is the local target dataset for this project. Do this before implementing `NS_Mamba`; otherwise there is no reliable reference point for whether the new nonstationary idea helps.
+The GLD baseline stage is complete and now provides the reference point for `NS_Mamba`.
 
 GLD target:
 
@@ -421,12 +714,12 @@ close
 
 #### Baseline Goals
 
-The GLD baseline stage should answer:
+The completed GLD baseline stage answers:
 
-1. Which existing model is strongest on GLD?
-2. How does `S_Mamba` behave as horizon increases from 1 day to 360 days?
-3. Which horizons show the largest nonstationary forecasting difficulty?
-4. Which baseline should `NS_Mamba` be compared against first?
+1. `S_Mamba` is strongest from 1 to 90 days, while `iTransformer` is strongest from 120 to 360 days on MSE.
+2. `S_Mamba` degrades smoothly as horizon increases and remains competitive even at 270 and 360 days.
+3. The hardest GLD horizons are the long-horizon settings from 180 to 360 days.
+4. `NS_Mamba` should be compared first against both `S_Mamba` and `iTransformer`.
 
 #### Model Set
 
@@ -664,9 +957,9 @@ Current CSV status:
 
 ```text
 results/gld_baselines.csv exists.
-8 / 72 rows are complete, seeded from setting-A S_Mamba calibration runs.
-Remaining S_Mamba horizons: 3, 5, 14, 270.
-All non-S_Mamba baseline rows are still pending.
+72 / 72 rows are complete.
+S_Mamba wins MSE at horizons 1-90.
+iTransformer wins MSE at horizons 120-360.
 ```
 
 Recommended columns:
@@ -695,7 +988,11 @@ The baseline stage is complete when:
 - the strongest baseline per horizon is identifiable
 - there is a short written summary of which horizons are hardest
 
-Only after this should `NS_Mamba-A` be implemented and compared.
+Baseline stage status: complete.
+
+NS_Mamba diagnostic stage status: complete for horizons `30, 120, 180, 360`.
+
+`NS_Mamba-D` is now the full 12-horizon implementation target.
 
 #### Command Template
 
@@ -771,10 +1068,10 @@ Benchmark metrics:
 | `NS_Mamba-AD` | Yes | Yes | No |
 | `NS_Mamba-ADG` | Yes | Yes | Yes |
 
-Most important comparison:
+Most important comparison after the diagnostic sweep:
 
 ```text
-S_Mamba vs NS_Mamba-ADG
+S_Mamba vs iTransformer vs NS_Mamba-D
 ```
 
 ### Dataset Priority
@@ -801,7 +1098,7 @@ Traffic and ECL are useful for large multivariate forecasting.
 
 ### Milestone 1
 
-Status: in progress.
+Status: complete.
 
 Done:
 
@@ -812,84 +1109,95 @@ AdaptiveRevIN layer implemented.
 SeriesDecomp layer implemented.
 NonStationaryGate layer implemented.
 Baseline model cleanup completed.
-```
-
-Remaining:
-
-```text
-Run full GLD baseline evaluation before implementing NS_Mamba.
-Evaluate horizons: 1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360 days.
-Save results to results/gld_baselines.csv.
+Full GLD baseline evaluation completed.
+72 / 72 baseline rows collected in results/gld_baselines.csv.
+S_Mamba and iTransformer identified as the two reference baselines.
+NS_Mamba implemented and registered.
+Diagnostic NS_Mamba ablation completed for horizons 30, 120, 180, and 360.
+NS_Mamba-D identified as the strongest diagnostic variant.
 ```
 
 ### Milestone 2
 
-Implement the first `NS_Mamba` version:
+Status: complete.
+
+Implemented the `NS_Mamba` ablation family:
 
 ```text
-S_Mamba structure + AdaptiveRevIN
+NS_Mamba-A
+NS_Mamba-D
+NS_Mamba-AD
+NS_Mamba-ADG
 ```
 
-Run the same GLD horizon suite:
+Diagnostic horizons:
 
 ```text
-1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360 days
+30, 120, 180, 360 days
 ```
 
-Compare:
+Best diagnostic result:
 
 ```text
-S_Mamba vs NS_Mamba-A
+NS_Mamba-D
 ```
 
 Save results to:
 
 ```text
-results/gld_ns_mamba_a.csv
+results/gld_ns_mamba_ablation.csv
 ```
 
 ### Milestone 3
 
-Run the first real comparison:
+Status: next.
+
+Run the promoted full GLD comparison:
 
 ```text
-S_Mamba vs NS_Mamba-A
+S_Mamba vs iTransformer vs NS_Mamba-D
 ```
 
-Datasets:
+Horizons:
 
-- Exchange
-- Weather
+```text
+1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360 days
+```
 
-Prediction lengths:
+Success target:
 
-- Exchange and Weather: 96, 192, 336, 720
+```text
+Reduce long-horizon average MSE versus both S_Mamba and iTransformer.
+```
 
 ### Milestone 4
 
-Add decomposition:
+Run the first external-dataset comparison:
 
 ```text
-AdaptiveRevIN + trend/seasonal decomposition + Mamba
+S_Mamba vs iTransformer vs NS_Mamba-D
 ```
 
 Run on:
 
 - Exchange
 - Weather
-- ETTm1
-- ETTm2
+
+Prediction lengths:
+
+- 96
+- 192
+- 336
+- 720
 
 ### Milestone 5
 
-Add shift-aware fusion gate and run the full ablation:
+Revisit the failed diagnostic additions only if decomposition alone is confirmed on the full GLD sweep:
 
 ```text
-S_Mamba
-NS_Mamba-A
-NS_Mamba-D
-NS_Mamba-AD
-NS_Mamba-ADG
+AdaptiveRevIN tuning
+Shift-aware fusion redesign
+Moving-average window tuning
 ```
 
 ## GLD Smoke Test

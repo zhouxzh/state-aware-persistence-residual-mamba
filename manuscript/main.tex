@@ -6,6 +6,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{longtable}
 \usepackage{tikz}
 \usepackage{hyperref}
 \usepackage{xcolor}
@@ -18,7 +19,7 @@
     urlcolor=blue
 }
 
-\title{Nonstationarity-Aware Mamba for Financial Time Series Forecasting}
+\title{Nonstationarity-Aware Mamba for Time Series Forecasting}
 \author{Draft Manuscript}
 \date{\today}
 
@@ -27,19 +28,20 @@
 \maketitle
 
 \begin{abstract}
-Financial time series forecasting is difficult because the data-generating process can change across time.
+Nonstationary time series forecasting is difficult because the data-generating process can change across time.
 Changes in level, volatility, trend, and temporal regime can make a model trained on past windows unreliable for future horizons.
 This manuscript studies nonstationarity-aware forecasting with Mamba-based sequence models, using daily GLD close-price prediction as the initial testbed.
-The proposed model, NS-Mamba, extends an S\_Mamba backbone with adaptive normalization, series decomposition, and distribution-shift-aware fusion.
+The proposed model family, NS-Mamba, extends an S\_Mamba backbone with adaptive normalization, series decomposition, and distribution-shift-aware fusion.
 Before evaluating the proposed architecture, we define a controlled baseline protocol across 12 horizons from 1 to 360 days and lock a shared configuration through S\_Mamba calibration.
-This draft provides the full manuscript structure, problem formulation, model design, and experiment protocol.
-Final quantitative claims will be added only after the full GLD baseline table and NS-Mamba ablations are complete.
+The completed GLD baseline results show that S\_Mamba is the strongest model from 1 to 90 days on RMSE, while iTransformer is strongest from 120 to 360 days.
+The first NS-Mamba diagnostic ablation shows that the decomposition-only variant improves long-horizon RMSE over both S\_Mamba and iTransformer, but the full 12-horizon NS-Mamba evaluation remains pending.
+The completed source-optimized imported-model sweep further shows that PatchTST is the strongest imported baseline overall when its own hyperparameters are tuned rather than forced into the shared setting.
 \end{abstract}
 
 \section{Introduction}
 
 Time series forecasting models are often evaluated under the assumption that past and future windows are drawn from similar distributions.
-This assumption is weak for financial data.
+This assumption is weak for nonstationary real-world data.
 Gold-related exchange-traded products such as GLD can experience abrupt level shifts, volatility changes, macroeconomic regime changes, and long periods of trend persistence or reversal.
 These effects are not just noise; they change the forecasting problem itself.
 
@@ -58,8 +60,8 @@ The intended contributions are:
 \begin{itemize}
     \item a controlled GLD forecasting protocol covering horizons from 1 to 360 days;
     \item a clean comparison between Transformer-style, decomposition-based, inverted, and Mamba-based forecasting models;
-    \item a nonstationarity-aware Mamba architecture combining adaptive normalization, decomposition, and shift-aware fusion;
-    \item an ablation plan that isolates the contribution of each proposed module.
+    \item a nonstationarity-aware Mamba architecture family combining adaptive normalization, decomposition, and shift-aware fusion;
+    \item a diagnostic ablation showing that decomposition is the strongest first modification on GLD long-horizon forecasting.
 \end{itemize}
 
 \section{Related Work}
@@ -307,9 +309,10 @@ NS-Mamba preserves this mechanism and adds explicit nonstationary conditioning b
 \subsection{Branch Design}
 
 NS-Mamba-A contains the adaptive normalization block and one S\_Mamba forecasting pathway.
-NS-Mamba-B adds decomposition and evaluates whether branch-specific modeling improves middle- and long-horizon forecasts.
-NS-Mamba-C adds shift-aware fusion.
-The branch encoders can be implemented with shared or component-specific parameters; the manuscript will report the final implementation choice once the model is fixed in code.
+NS-Mamba-D uses trend-seasonal-residual decomposition with standard S\_Mamba normalization.
+NS-Mamba-AD combines adaptive normalization and decomposition.
+NS-Mamba-ADG adds shift-aware branch fusion on top of the adaptive decomposition pathway.
+The current implementation uses component-specific branch encoders for the decomposition variants.
 
 \subsection{Forecast Head and Loss}
 
@@ -382,42 +385,37 @@ If a model cannot run under this setting, the failure will be recorded rather th
 
 \subsection{Metrics and Logging}
 
-The primary metrics are MSE and MAE.
-RMSE, MAPE, and MSPE are also saved when available.
+The primary manuscript metrics are RMSE and MAE.
+MSE, MAPE, and MSPE are also saved when available.
 Training, validation, and test metrics are logged to TensorBoard.
 Final arrays are saved as \texttt{pred.npy}, \texttt{true.npy}, and \texttt{metrics.npy}, with run metadata stored in \texttt{meta.json}.
+The completed GLD baseline sweep contains 72 finished runs, corresponding to 6 models across 12 horizons.
 
 \section{Results}
 
-The full result table is not complete yet.
-This section will report GLD baseline and NS-Mamba results after all runs finish under the locked configuration.
-The planned table format is:
-\begin{center}
-\begin{tabular}{lrrrr}
-\toprule
-Model & Horizon & MSE & MAE & Status \\
-\midrule
-S\_Mamba & 1 & pending & pending & pending \\
-S\_Mamba & 360 & pending & pending & pending \\
-Transformer & 1 & pending & pending & pending \\
-Transformer & 360 & pending & pending & pending \\
-\bottomrule
-\end{tabular}
-\end{center}
+\input{generated/gld_baseline_results}
 
-The final version of this section should include:
-\begin{itemize}
-    \item one full table across all 12 horizons and all baseline models;
-    \item a short-horizon summary for 1, 3, 5, and 7 days;
-    \item a middle-horizon summary for 14, 30, 60, 90, and 120 days;
-    \item a long-horizon summary for 180, 270, and 360 days;
-    \item an error-curve visualization comparing representative horizons.
-\end{itemize}
+\input{generated/gld_ns_mamba_diagnostic_results}
+
+\input{generated/gld_ns_mamba_vs_all}
+
+\input{generated/gld_source_optimized_partial_results}
+
+\input{generated/gld_complete_metrics_table}
+
+There are several plausible reasons why Autoformer, Transformer, Informer, and Reformer are much weaker than S\_Mamba and iTransformer on this GLD task.
+First, the two strongest models use an inverted embedding scheme that maps the full historical window into variable tokens before forecasting, while the four weaker baselines use the standard time-step sequence embedding with encoder-decoder style generation.
+For a single-target task with a long lookback window, the inverted formulation appears to be better aligned with direct horizon projection than the standard decoder-based setup.
+Second, S\_Mamba and iTransformer both apply per-window mean and variance normalization with final de-normalization, which is likely important for GLD because the price level and volatility change substantially across time.
+Transformer, Informer, and Reformer in this repository do not apply the same reversible normalization path, and Autoformer applies decomposition but not the same explicit nonstationary normalization.
+Third, the baseline comparison deliberately uses one shared setting selected around S\_Mamba, so the result should be interpreted as a controlled comparison under one configuration rather than as a per-model hyperparameter optimum.
+Even with that caveat, the size and consistency of the gap suggest that architecture-data mismatch, not only tuning, is a major factor.
+The completed source-optimized imported sweep reinforces this point from the opposite direction: once model-specific hyperparameters are allowed, PatchTST, NLinear, and TimesNet all become much stronger than their locked-setting counterparts, which means GLD is unusually sensitive to lookback and model-scale choices.
 
 \section{Ablation Study}
 
-The ablation study will isolate the contribution of each NS-Mamba component.
-The planned comparison is:
+The ablation study isolates the contribution of each NS-Mamba component.
+The current diagnostic comparison is:
 \begin{center}
 \begin{tabular}{lccc}
 \toprule
@@ -425,23 +423,23 @@ Model & Adaptive Norm & Decomposition & Shift Gate \\
 \midrule
 S\_Mamba & No & No & No \\
 NS-Mamba-A & Yes & No & No \\
-NS-Mamba-B & Yes & Yes & No \\
-NS-Mamba-C & Yes & Yes & Yes \\
+NS-Mamba-D & No & Yes & No \\
+NS-Mamba-AD & Yes & Yes & No \\
+NS-Mamba-ADG & Yes & Yes & Yes \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The ablation should be interpreted by horizon group.
-Adaptive normalization is expected to matter when level and scale shifts dominate.
-Decomposition is expected to matter more at middle and long horizons.
-Shift-aware fusion is expected to help when the input window shows strong recent-vs-full-window distribution changes.
-These are hypotheses for the experiment, not completed findings.
+The diagnostic result supports the decomposition hypothesis but does not support the adaptive-normalization or shift-gating additions in their current form.
+NS-Mamba-D is the only variant that improves over both S\_Mamba and iTransformer on the diagnostic long-horizon average, and it is also the strongest Mamba-based result currently available in this repository on the overlapping comparison horizons.
+The full 12-horizon run is still required before making a final claim about the model family.
 
 \section{Discussion and Limitations}
 
-This manuscript is currently a draft before final experiments.
-The main limitation is that the proposed NS-Mamba variants have not yet been evaluated against the complete GLD baseline table.
-The results section therefore avoids performance claims.
+This manuscript is currently a draft after the baseline stage and the first NS-Mamba diagnostic stage.
+The main limitation is no longer baseline coverage; that part is complete.
+The main remaining limitation is that the best diagnostic variant, NS-Mamba-D, has not yet been evaluated across all 12 GLD horizons.
+The source-optimized imported baseline sweep is complete for PatchTST, NLinear, TimesNet, Non-stationary Transformer, and DLinear, but the optional source-style Autoformer and Transformer sweeps are still pending.
 
 The second limitation is dataset scope.
 GLD provides a useful nonstationary financial testbed, but one dataset is not enough to establish general forecasting superiority.
@@ -452,15 +450,23 @@ Financial time series evaluation can change substantially with different histori
 The final manuscript should report the exact date range, train-validation-test boundaries, random seeds, and whether validation or test windows use lookback context from earlier splits.
 
 Finally, the architecture may add complexity.
-The ablation study is necessary to determine whether each module improves forecasting enough to justify its additional parameters and implementation cost.
+The first diagnostic ablation suggests that not every nonstationary module is useful in this setting.
+Adaptive normalization and shift-aware fusion underperform the simpler decomposition-only branch, so future changes should be justified by improved metrics rather than by architectural novelty alone.
+The completed baseline table also raises the bar for improvement: NS-Mamba-D now needs to preserve its long-horizon advantage while remaining competitive with S\_Mamba at short and middle horizons.
+The completed optimized imported sweep raises the bar further, because NLinear is strongest at the short horizons and PatchTST is strongest overall under the imported-model tuning regime.
+The baseline analysis also suggests where the improvement must come from.
+If NS-Mamba only adds complexity without preserving the inverted-token and reversible-normalization advantages already present in the two strongest shared-setting baselines, it is unlikely to close the gap to the stronger tuned imported baselines for the right reason.
+The proposed model therefore needs to build on the strengths of S\_Mamba while explicitly targeting the long-horizon regime where iTransformer is strongest under the shared setting and PatchTST is strongest under the tuned imported setting.
 
 \section{Conclusion}
 
-This manuscript presents a structured plan for nonstationarity-aware Mamba forecasting.
-The proposed NS-Mamba architecture combines adaptive normalization, decomposition, and shift-aware fusion around an S\_Mamba backbone.
-The experimental design first locks a shared GLD baseline configuration, then compares clean baselines and NS-Mamba variants across horizons from 1 to 360 days.
-At the current stage, the manuscript is suitable as a research draft and implementation guide.
-It will become submission-ready only after the baseline table, NS-Mamba results, ablations, and discussion are completed with traceable quantitative evidence.
+This manuscript presents a structured path for nonstationarity-aware Mamba forecasting.
+The completed GLD baseline study shows that S\_Mamba is the strongest short- and middle-horizon baseline, while iTransformer is the strongest long-horizon RMSE baseline under the shared locked setting.
+The completed source-optimized imported sweep further shows that NLinear is strongest at short horizons and PatchTST is strongest overall among the tuned imported baselines.
+The proposed NS-Mamba architecture family combines adaptive normalization, decomposition, and shift-aware fusion around an S\_Mamba backbone.
+The first diagnostic ablation identifies the decomposition-only variant, NS-Mamba-D, as the strongest candidate, reducing diagnostic long-horizon RMSE by 7.48\% versus S\_Mamba and 6.80\% versus iTransformer.
+The next step is to evaluate NS-Mamba-D across the full 12-horizon GLD suite.
+The manuscript will become submission-ready after the proposed-model results, ablations, and broader benchmark evaluation are completed with traceable quantitative evidence.
 
 \begin{thebibliography}{9}
 

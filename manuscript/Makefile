@@ -2,12 +2,13 @@ TEX := main.tex
 PDF := main.pdf
 DOT_SOURCES := $(wildcard figures/*.dot)
 DOT_FIGURES := $(DOT_SOURCES:.dot=.pdf)
+GENERATED_TEX := $(wildcard generated/*.tex)
 
 .PHONY: pdf clean distclean watch help
 
 pdf: $(PDF)
 
-$(PDF): $(TEX) $(DOT_FIGURES)
+$(PDF): $(TEX) $(DOT_FIGURES) $(GENERATED_TEX)
 	@if command -v latexmk >/dev/null 2>&1; then \
 		latexmk -pdf -interaction=nonstopmode -halt-on-error $(TEX); \
 	elif command -v pdflatex >/dev/null 2>&1; then \

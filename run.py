@@ -16,7 +16,9 @@ if __name__ == '__main__':
     parser.add_argument('--is_training', type=int, required=True, default=1, help='status')
     parser.add_argument('--model_id', type=str, required=True, default='test', help='model id')
     parser.add_argument('--model', type=str, required=True, default='S_Mamba',
-                        help='model name, options: [iTransformer, iInformer, iReformer, iFlowformer, iFlashformer,S_Mamba ]')
+                        help='model name, options include: S_Mamba, NS_Mamba, Nonstationary_Transformer, DLinear, NLinear, PatchTST, TimesNet, iTransformer, Transformer, Informer, Reformer, Autoformer')
+    parser.add_argument('--task_name', type=str, default='long_term_forecast',
+                        help='task name for imported TSLib-style models')
 
     # data loader
     parser.add_argument('--data', type=str, required=True, default='custom', help='dataset type')
@@ -44,6 +46,12 @@ if __name__ == '__main__':
     parser.add_argument('--d_layers', type=int, default=1, help='num of decoder layers')
     parser.add_argument('--d_ff', type=int, default=2048, help='dimension of fcn')
     parser.add_argument('--moving_avg', type=int, default=25, help='window size of moving average')
+    parser.add_argument('--individual', action='store_true', default=False,
+                        help='use individual linear layers per variable for DLinear/NLinear')
+    parser.add_argument('--top_k', type=int, default=5, help='top periods for TimesNet')
+    parser.add_argument('--num_kernels', type=int, default=6, help='number of Inception kernels for TimesNet')
+    parser.add_argument('--patch_len', type=int, default=16, help='patch length for PatchTST')
+    parser.add_argument('--stride', type=int, default=8, help='patch stride for PatchTST')
     parser.add_argument('--factor', type=int, default=1, help='attn factor')
     parser.add_argument('--distil', action='store_false',
                         help='whether to use distilling in encoder, using this argument means not using distilling',
@@ -81,6 +89,20 @@ if __name__ == '__main__':
     parser.add_argument('--class_strategy', type=str, default='projection', help='projection/average/cls_token')
     parser.add_argument('--use_norm', type=int, default=True, help='use norm and denorm')
     parser.add_argument('--d_state', type=int, default=32, help='parameter of Mamba Block')
+    parser.add_argument('--p_hidden_dims', type=int, nargs='+', default=[128, 128],
+                        help='hidden layer dimensions for Nonstationary Transformer projectors')
+    parser.add_argument('--p_hidden_layers', type=int, default=2,
+                        help='number of hidden layers for Nonstationary Transformer projectors')
+    parser.add_argument('--use_adaptive_norm', type=int, default=1,
+                        help='use AdaptiveRevIN in NS_Mamba')
+    parser.add_argument('--use_decomp', type=int, default=0,
+                        help='use trend/seasonal/residual decomposition in NS_Mamba')
+    parser.add_argument('--use_shift_gate', type=int, default=0,
+                        help='use distribution-shift-aware gating in NS_Mamba')
+    parser.add_argument('--ns_adaptive_scale', type=float, default=0.1,
+                        help='adaptive affine scale for NS_Mamba AdaptiveRevIN')
+    parser.add_argument('--ns_recent_ratio', type=float, default=0.25,
+                        help='recent-window ratio for NS_Mamba shift statistics')
 
     args = parser.parse_args()
     args.channel_independence = False

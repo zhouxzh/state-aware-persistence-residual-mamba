@@ -7,6 +7,7 @@ set -euo pipefail
 #   bash scripts/gld_baseline/run_gld_baselines.sh
 #   bash scripts/gld_baseline/run_gld_baselines.sh S_Mamba
 #   bash scripts/gld_baseline/run_gld_baselines.sh Transformer
+#   bash scripts/gld_baseline/run_gld_baselines.sh PatchTST
 #
 # Locked setting A:
 #   seq_len=360, label_len=180, d_model=64, d_ff=128, e_layers=2
@@ -18,7 +19,19 @@ DATA_ROOT="./data/GLD/"
 DATA_PATH="GLD.csv"
 TARGET="close"
 HORIZONS=(1 3 5 7 14 30 60 90 120 180 270 360)
-CORE_MODELS=(S_Mamba Transformer Informer Reformer Autoformer iTransformer)
+CORE_MODELS=(
+  S_Mamba
+  Transformer
+  Informer
+  Reformer
+  Autoformer
+  iTransformer
+  Nonstationary_Transformer
+  DLinear
+  NLinear
+  PatchTST
+  TimesNet
+)
 SELECTED_MODEL="${1:-ALL}"
 LOG_ROOT="./logs/gld_baseline"
 
@@ -51,6 +64,11 @@ run_model() {
       --d_ff 128 \
       --e_layers 2 \
       --d_layers 1 \
+      --moving_avg 25 \
+      --top_k 5 \
+      --num_kernels 6 \
+      --patch_len 16 \
+      --stride 8 \
       --batch_size 16 \
       --learning_rate 0.0001 \
       --train_epochs 10 \

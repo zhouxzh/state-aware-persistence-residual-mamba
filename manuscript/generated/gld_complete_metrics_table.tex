@@ -1,0 +1,173 @@
+\subsection{Complete RMSE and MAE Record}
+
+Table~\ref{tab:gld-complete-metrics} lists every completed GLD result currently available in the repository.
+It combines the locked shared-setting baselines, the NS-Mamba diagnostic ablations, and the best completed source-optimized imported baselines.
+Only completed results are shown. The current table includes the finished source-optimized imported results for Non-stationary Transformer, TimesNet, PatchTST, DLinear, and NLinear.
+
+{\small
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\begin{longtable}{llrrrr}
+\caption{Current completed GLD RMSE and MAE results across all experiment tracks. For source-optimized imported baselines, the reported sequence length is the best completed \texttt{seq\_len} for that horizon.}\label{tab:gld-complete-metrics}\\
+\toprule
+Track & Model & Horizon & Seq. Len & RMSE & MAE \\
+\midrule
+\endfirsthead
+\caption[]{Current completed GLD RMSE and MAE results across all experiment tracks (continued).}\\
+\toprule
+Track & Model & Horizon & Seq. Len & RMSE & MAE \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Shared & Autoformer & 1 & 360 & 32.94 & 21.44 \\
+Shared & Autoformer & 3 & 360 & 36.21 & 23.87 \\
+Shared & Autoformer & 5 & 360 & 36.79 & 24.40 \\
+Shared & Autoformer & 7 & 360 & 38.32 & 26.17 \\
+Shared & Autoformer & 14 & 360 & 32.35 & 22.86 \\
+Shared & Autoformer & 30 & 360 & 37.96 & 26.09 \\
+Shared & Autoformer & 60 & 360 & 38.85 & 26.83 \\
+Shared & Autoformer & 90 & 360 & 38.32 & 26.29 \\
+Shared & Autoformer & 120 & 360 & 41.02 & 28.16 \\
+Shared & Autoformer & 180 & 360 & 42.99 & 29.21 \\
+Shared & Autoformer & 270 & 360 & 44.47 & 29.91 \\
+Shared & Autoformer & 360 & 360 & 44.35 & 29.65 \\
+Shared & Informer & 1 & 360 & 79.69 & 53.61 \\
+Shared & Informer & 3 & 360 & 78.52 & 51.75 \\
+Shared & Informer & 5 & 360 & 78.75 & 53.52 \\
+Shared & Informer & 7 & 360 & 80.14 & 54.52 \\
+Shared & Informer & 14 & 360 & 77.84 & 51.90 \\
+Shared & Informer & 30 & 360 & 77.45 & 52.95 \\
+Shared & Informer & 60 & 360 & 75.53 & 52.46 \\
+Shared & Informer & 90 & 360 & 74.84 & 55.13 \\
+Shared & Informer & 120 & 360 & 72.34 & 53.84 \\
+Shared & Informer & 180 & 360 & 68.18 & 51.65 \\
+Shared & Informer & 270 & 360 & 71.91 & 57.90 \\
+Shared & Informer & 360 & 360 & 78.79 & 64.32 \\
+Shared & Reformer & 1 & 360 & 67.14 & 42.00 \\
+Shared & Reformer & 3 & 360 & 68.85 & 43.30 \\
+Shared & Reformer & 5 & 360 & 68.09 & 44.19 \\
+Shared & Reformer & 7 & 360 & 68.99 & 46.30 \\
+Shared & Reformer & 14 & 360 & 72.38 & 51.38 \\
+Shared & Reformer & 30 & 360 & 73.82 & 53.52 \\
+Shared & Reformer & 60 & 360 & 78.83 & 59.19 \\
+Shared & Reformer & 90 & 360 & 81.00 & 62.40 \\
+Shared & Reformer & 120 & 360 & 81.33 & 63.16 \\
+Shared & Reformer & 180 & 360 & 85.29 & 69.42 \\
+Shared & Reformer & 270 & 360 & 85.40 & 71.71 \\
+Shared & Reformer & 360 & 360 & 83.92 & 71.39 \\
+Shared & S\_Mamba & 1 & 360 & 4.45 & 3.22 \\
+Shared & S\_Mamba & 3 & 360 & 5.30 & 3.81 \\
+Shared & S\_Mamba & 5 & 360 & 5.76 & 4.14 \\
+Shared & S\_Mamba & 7 & 360 & 6.47 & 4.62 \\
+Shared & S\_Mamba & 14 & 360 & 8.17 & 5.86 \\
+Shared & S\_Mamba & 30 & 360 & 11.12 & 8.09 \\
+Shared & S\_Mamba & 60 & 360 & 14.80 & 10.91 \\
+Shared & S\_Mamba & 90 & 360 & 16.68 & 12.73 \\
+Shared & S\_Mamba & 120 & 360 & 20.31 & 15.28 \\
+Shared & S\_Mamba & 180 & 360 & 26.91 & 19.76 \\
+Shared & S\_Mamba & 270 & 360 & 33.00 & 23.42 \\
+Shared & S\_Mamba & 360 & 360 & 39.48 & 27.48 \\
+Shared & Transformer & 1 & 360 & 67.80 & 41.90 \\
+Shared & Transformer & 3 & 360 & 70.43 & 45.08 \\
+Shared & Transformer & 5 & 360 & 68.87 & 44.19 \\
+Shared & Transformer & 7 & 360 & 69.35 & 44.63 \\
+Shared & Transformer & 14 & 360 & 68.66 & 44.63 \\
+Shared & Transformer & 30 & 360 & 66.85 & 44.89 \\
+Shared & Transformer & 60 & 360 & 66.01 & 46.74 \\
+Shared & Transformer & 90 & 360 & 66.32 & 50.12 \\
+Shared & Transformer & 120 & 360 & 66.08 & 53.08 \\
+Shared & Transformer & 180 & 360 & 69.12 & 57.69 \\
+Shared & Transformer & 270 & 360 & 74.06 & 62.18 \\
+Shared & Transformer & 360 & 360 & 81.22 & 68.14 \\
+Shared & iTransformer & 1 & 360 & 4.59 & 3.32 \\
+Shared & iTransformer & 3 & 360 & 5.45 & 3.91 \\
+Shared & iTransformer & 5 & 360 & 6.12 & 4.35 \\
+Shared & iTransformer & 7 & 360 & 6.85 & 4.86 \\
+Shared & iTransformer & 14 & 360 & 8.55 & 6.14 \\
+Shared & iTransformer & 30 & 360 & 11.45 & 8.23 \\
+Shared & iTransformer & 60 & 360 & 14.89 & 10.77 \\
+Shared & iTransformer & 90 & 360 & 16.89 & 12.69 \\
+Shared & iTransformer & 120 & 360 & 19.89 & 14.87 \\
+Shared & iTransformer & 180 & 360 & 26.71 & 19.54 \\
+Shared & iTransformer & 270 & 360 & 32.95 & 23.53 \\
+Shared & iTransformer & 360 & 360 & 39.45 & 27.63 \\
+NS-Diag & NS-Mamba-A & 30 & 360 & 11.16 & 8.10 \\
+NS-Diag & NS-Mamba-A & 120 & 360 & 21.16 & 15.96 \\
+NS-Diag & NS-Mamba-A & 180 & 360 & 28.40 & 21.09 \\
+NS-Diag & NS-Mamba-A & 360 & 360 & 43.93 & 31.87 \\
+NS-Diag & NS-Mamba-AD & 30 & 360 & 10.46 & 7.59 \\
+NS-Diag & NS-Mamba-AD & 120 & 360 & 20.50 & 15.62 \\
+NS-Diag & NS-Mamba-AD & 180 & 360 & 27.49 & 20.57 \\
+NS-Diag & NS-Mamba-AD & 360 & 360 & 42.39 & 30.82 \\
+NS-Diag & NS-Mamba-ADG & 30 & 360 & 10.64 & 7.66 \\
+NS-Diag & NS-Mamba-ADG & 120 & 360 & 20.19 & 15.47 \\
+NS-Diag & NS-Mamba-ADG & 180 & 360 & 27.60 & 20.80 \\
+NS-Diag & NS-Mamba-ADG & 360 & 360 & 45.50 & 33.21 \\
+NS-Diag & NS-Mamba-D & 30 & 360 & 9.66 & 7.18 \\
+NS-Diag & NS-Mamba-D & 120 & 360 & 18.25 & 13.85 \\
+NS-Diag & NS-Mamba-D & 180 & 360 & 24.22 & 18.00 \\
+NS-Diag & NS-Mamba-D & 360 & 360 & 37.74 & 26.78 \\
+Opt & DLinear & 1 & 16 & 4.89 & 3.43 \\
+Opt & DLinear & 3 & 16 & 5.93 & 4.41 \\
+Opt & DLinear & 5 & 16 & 6.31 & 4.39 \\
+Opt & DLinear & 7 & 16 & 7.74 & 5.67 \\
+Opt & DLinear & 14 & 16 & 9.21 & 6.56 \\
+Opt & DLinear & 30 & 16 & 12.93 & 8.76 \\
+Opt & DLinear & 60 & 192 & 18.36 & 12.84 \\
+Opt & DLinear & 90 & 32 & 23.68 & 16.61 \\
+Opt & DLinear & 120 & 192 & 27.53 & 19.77 \\
+Opt & DLinear & 180 & 320 & 35.23 & 25.53 \\
+Opt & DLinear & 270 & 192 & 45.37 & 32.78 \\
+Opt & DLinear & 360 & 256 & 51.14 & 36.08 \\
+Opt & NLinear & 1 & 320 & 2.56 & 1.70 \\
+Opt & NLinear & 3 & 320 & 3.53 & 2.36 \\
+Opt & NLinear & 5 & 384 & 4.20 & 2.85 \\
+Opt & NLinear & 7 & 192 & 4.83 & 3.30 \\
+Opt & NLinear & 14 & 192 & 6.54 & 4.55 \\
+Opt & NLinear & 30 & 384 & 9.45 & 6.45 \\
+Opt & NLinear & 60 & 384 & 13.78 & 9.33 \\
+Opt & NLinear & 90 & 384 & 16.12 & 11.24 \\
+Opt & NLinear & 120 & 320 & 17.53 & 12.97 \\
+Opt & NLinear & 180 & 384 & 24.09 & 17.20 \\
+Opt & NLinear & 270 & 320 & 29.19 & 20.56 \\
+Opt & NLinear & 360 & 320 & 34.31 & 24.08 \\
+Opt & Non-stationary Transformer & 1 & 16 & 2.64 & 1.79 \\
+Opt & Non-stationary Transformer & 3 & 16 & 4.04 & 2.69 \\
+Opt & Non-stationary Transformer & 5 & 16 & 4.68 & 3.17 \\
+Opt & Non-stationary Transformer & 7 & 16 & 5.33 & 3.61 \\
+Opt & Non-stationary Transformer & 14 & 64 & 6.77 & 4.75 \\
+Opt & Non-stationary Transformer & 30 & 16 & 9.63 & 6.55 \\
+Opt & Non-stationary Transformer & 60 & 16 & 14.74 & 9.70 \\
+Opt & Non-stationary Transformer & 90 & 64 & 18.63 & 12.52 \\
+Opt & Non-stationary Transformer & 120 & 16 & 20.40 & 14.43 \\
+Opt & Non-stationary Transformer & 180 & 16 & 26.76 & 18.74 \\
+Opt & Non-stationary Transformer & 270 & 16 & 32.79 & 22.58 \\
+Opt & Non-stationary Transformer & 360 & 16 & 39.85 & 26.81 \\
+Opt & PatchTST & 1 & 16 & 2.58 & 1.73 \\
+Opt & PatchTST & 3 & 16 & 3.55 & 2.40 \\
+Opt & PatchTST & 5 & 16 & 4.28 & 2.92 \\
+Opt & PatchTST & 7 & 16 & 4.91 & 3.34 \\
+Opt & PatchTST & 14 & 16 & 6.75 & 4.59 \\
+Opt & PatchTST & 30 & 320 & 9.65 & 6.75 \\
+Opt & PatchTST & 60 & 320 & 13.34 & 9.76 \\
+Opt & PatchTST & 90 & 256 & 14.43 & 10.66 \\
+Opt & PatchTST & 120 & 256 & 15.32 & 11.61 \\
+Opt & PatchTST & 180 & 320 & 21.23 & 15.86 \\
+Opt & PatchTST & 270 & 128 & 28.13 & 20.23 \\
+Opt & PatchTST & 360 & 128 & 33.33 & 23.36 \\
+Opt & TimesNet & 1 & 16 & 2.67 & 1.80 \\
+Opt & TimesNet & 3 & 16 & 3.64 & 2.46 \\
+Opt & TimesNet & 5 & 16 & 4.35 & 2.97 \\
+Opt & TimesNet & 7 & 16 & 4.97 & 3.38 \\
+Opt & TimesNet & 14 & 16 & 6.77 & 4.64 \\
+Opt & TimesNet & 30 & 256 & 9.40 & 6.89 \\
+Opt & TimesNet & 60 & 384 & 13.60 & 10.22 \\
+Opt & TimesNet & 90 & 320 & 13.29 & 10.23 \\
+Opt & TimesNet & 120 & 256 & 16.33 & 12.57 \\
+Opt & TimesNet & 180 & 192 & 24.81 & 18.58 \\
+Opt & TimesNet & 270 & 256 & 30.28 & 22.27 \\
+Opt & TimesNet & 360 & 96 & 36.63 & 25.55 \\
+\end{longtable}
+}
+

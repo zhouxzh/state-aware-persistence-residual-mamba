@@ -8,12 +8,12 @@
 \citation{reformer}
 \citation{autoformer}
 \citation{itransformer}
-\citation{mamba}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Long-Horizon Time Series Forecasting}{2}{subsection.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Transformer-Based Time Series Forecasting}{2}{subsection.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Inverted Forecasting Architectures}{2}{subsection.2.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.4}State Space Models and Mamba}{2}{subsection.2.4}\protected@file@percent }
+\citation{mamba}
 \citation{smamba}
 \citation{bimamba}
 \citation{mambats}
@@ -42,9 +42,33 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Shared Configuration}{7}{subsection.6.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Metrics and Logging}{7}{subsection.6.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {7}Results}{7}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Ablation Study}{8}{section.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9}Discussion and Limitations}{8}{section.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {10}Conclusion}{8}{section.10}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Best and second-best GLD baseline models by horizon, measured with RMSE.}}{8}{table.1}\protected@file@percent }
+\newlabel{tab:gld-horizon-winners}{{1}{8}{Best and second-best GLD baseline models by horizon, measured with RMSE}{table.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--120 days, long = 180--360 days.}}{8}{table.2}\protected@file@percent }
+\newlabel{tab:gld-term-avg}{{2}{8}{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--120 days, long = 180--360 days}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}NS-Mamba Diagnostic Ablation}{8}{subsection.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Diagnostic GLD RMSE results for NS-Mamba variants. The long average is computed over 120, 180, and 360 days.}}{9}{table.3}\protected@file@percent }
+\newlabel{tab:ns-mamba-diagnostic}{{3}{9}{Diagnostic GLD RMSE results for NS-Mamba variants. The long average is computed over 120, 180, and 360 days}{table.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Direct RMSE and MAE comparison of NS-Mamba-D against all completed GLD models on the overlapping horizons 30, 120, 180, and 360 days. Long Avg. is computed over 120, 180, and 360 days.}}{9}{table.4}\protected@file@percent }
+\newlabel{tab:ns-mamba-vs-all}{{4}{9}{Direct RMSE and MAE comparison of NS-Mamba-D against all completed GLD models on the overlapping horizons 30, 120, 180, and 360 days. Long Avg. is computed over 120, 180, and 360 days}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}NS-Mamba-D vs All Completed Models}{9}{subsection.7.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Completed source-optimized GLD coverage for the imported models. Autoformer and Transformer source-style sweeps are still pending.}}{10}{table.5}\protected@file@percent }
+\newlabel{tab:gld-source-optimized-partial}{{5}{10}{Completed source-optimized GLD coverage for the imported models. Autoformer and Transformer source-style sweeps are still pending}{table.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Best completed source-optimized imported results by horizon, measured with RMSE and paired with MAE.}}{10}{table.6}\protected@file@percent }
+\newlabel{tab:gld-source-optimized-best}{{6}{10}{Best completed source-optimized imported results by horizon, measured with RMSE and paired with MAE}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Source-Optimized Imported Baselines}{10}{subsection.7.3}\protected@file@percent }
+\gdef \LT@i {\LT@entry 
+    {4}{48.80565pt}\LT@entry 
+    {4}{134.44472pt}\LT@entry 
+    {1}{46.19453pt}\LT@entry 
+    {1}{50.75008pt}\LT@entry 
+    {1}{40.88896pt}\LT@entry 
+    {1}{35.47229pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Complete RMSE and MAE Record}{11}{subsection.7.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{Current completed GLD RMSE and MAE results across all experiment tracks. For source-optimized imported baselines, the reported sequence length is the best completed \texttt  {seq\_len} for that horizon.}}{11}{table.7}\protected@file@percent }
+\newlabel{tab:gld-complete-metrics}{{7}{11}{Current completed GLD RMSE and MAE results across all experiment tracks. For source-optimized imported baselines, the reported sequence length is the best completed \texttt {seq\_len} for that horizon}{table.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Ablation Study}{14}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Discussion and Limitations}{15}{section.9}\protected@file@percent }
 \bibcite{mamba}{1}
 \bibcite{smamba}{2}
 \bibcite{bimamba}{3}
@@ -56,5 +80,6 @@
 \bibcite{itransformer}{9}
 \bibcite{informer}{10}
 \bibcite{autoformer}{11}
+\@writefile{toc}{\contentsline {section}{\numberline {10}Conclusion}{16}{section.10}\protected@file@percent }
 \bibcite{reformer}{12}
-\gdef \@abspage@last{9}
+\gdef \@abspage@last{17}
