@@ -3,8 +3,8 @@ import torch
 from model import Transformer, Informer, Reformer, Flowformer, Flashformer, \
     iTransformer, iInformer, iReformer, iFlowformer, iFlashformer, S_Mamba, \
     Flashformer_M, Flowformer_M, Autoformer, Autoformer_M, Transformer_M, \
-    Informer_M, Reformer_M, NS_Mamba, Nonstationary_Transformer, DLinear, \
-    NLinear, PatchTST, TimesNet
+    Informer_M, Reformer_M, NS_Mamba, MS_Mamba, PMS_Mamba, Nonstationary_Transformer, \
+    DLinear, NLinear, PatchTST, TimesNet
 
 
 class Exp_Basic(object):
@@ -38,6 +38,8 @@ class Exp_Basic(object):
 
             'S_Mamba': S_Mamba,
             'NS_Mamba': NS_Mamba,
+            'MS_Mamba': MS_Mamba,
+            'PMS_Mamba': PMS_Mamba,
             'Nonstationary_Transformer': Nonstationary_Transformer,
             'DLinear': DLinear,
             'NLinear': NLinear,

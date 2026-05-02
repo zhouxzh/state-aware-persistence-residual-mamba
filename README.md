@@ -21,6 +21,11 @@ Completed:
 - Added GLD NS_Mamba ablation scripts under `scripts/gld_ns_mamba/`.
 - Completed the NS_Mamba diagnostic sweep with 16 / 48 ablation rows finished.
 - Identified `NS_Mamba-D` as the strongest diagnostic variant.
+- Implemented and registered `model/MS_Mamba.py` for multi-scale Mamba forecasting.
+- Added GLD MS_Mamba ablation and collection scripts under `scripts/gld_ns_mamba/`.
+- Verified `MS_Mamba-MDG` with a one-epoch GLD smoke run.
+- Completed Mamba-family HPO with 266 finished runs and 25 RMSE-selected best rows.
+- Identified optimized `MS_Mamba-MD` as the strongest current Mamba-family model.
 - Added source-style GLD optimized sweep scripts for imported models.
 - Completed the optimized GLD sweep for `Nonstationary_Transformer`, `TimesNet`, `PatchTST`, `DLinear`, and `NLinear`.
 - Identified `PatchTST` as the strongest imported model overall under the completed optimized sweep.
@@ -39,7 +44,7 @@ Completed:
 Next immediate task:
 
 ```text
-Run the full 12-horizon GLD sweep for NS_Mamba-D.
+Run the full 12-horizon HPO evaluation for the promoted `MS_Mamba-MD` configuration.
 ```
 
 ## GLD Baseline Results
@@ -275,7 +280,7 @@ Current conclusion:
 
 ## NS_Mamba vs All Completed Models
 
-The fairest direct cross-model comparison for `NS_Mamba` uses the only horizons where `NS_Mamba` has completed results so far:
+This section is the pre-HPO direct cross-model comparison for `NS_Mamba`. It uses the only horizons where the original `NS_Mamba` diagnostic variants have completed results:
 
 ```text
 30, 120, 180, 360 days
@@ -317,10 +322,74 @@ Long-horizon average over `120, 180, 360` by RMSE:
 
 Interpretation:
 
-- `NS_Mamba-D` is the strongest `NS_Mamba` variant and the strongest Mamba-based result currently available in this repo on the overlapping horizons.
+- `NS_Mamba-D` is the strongest original `NS_Mamba` diagnostic variant.
 - `NS_Mamba-D` beats every shared locked-setting baseline and every other `NS_Mamba` diagnostic variant.
 - `NS_Mamba-D` does not yet beat the tuned imported leaders `PatchTST`, `NLinear`, and `TimesNet`.
-- So the next meaningful target is no longer just `S_Mamba` or `iTransformer`; it is the tuned imported frontier led by `PatchTST`.
+- After Mamba-family HPO, the stronger Mamba result is optimized `MS_Mamba-MD`, summarized in the next section.
+
+## Mamba HPO Results
+
+Current HPO tables:
+
+```text
+results/gld_mamba_hpo_all.csv
+results/gld_mamba_hpo_best.csv
+266 completed runs
+25 best rows selected by RMSE
+```
+
+The HPO search includes:
+
+- `S_Mamba`
+- `NS_Mamba-D`
+- `MS_Mamba-MD`
+- `MS_Mamba-MDG`
+- `MS_Mamba-MDS`
+- `PMS_Mamba-PD`
+
+The direct long-horizon comparison currently uses the completed diagnostic long horizons:
+
+```text
+120, 180, 360 days
+```
+
+Long-horizon average by RMSE:
+
+| Model | Track | Long Avg. RMSE | Long Avg. MAE |
+| --- | --- | ---: | ---: |
+| `PatchTST` | Opt | 23.29 | 16.94 |
+| `MS_Mamba-MD` | Mamba-HPO | 24.45 | 17.97 |
+| `NS_Mamba-D` | Mamba-HPO | 24.83 | 18.25 |
+| `MS_Mamba-MDG` | Mamba-HPO | 25.00 | 18.28 |
+| `NLinear` | Opt | 25.31 | 18.08 |
+| `S_Mamba` | Mamba-HPO | 25.40 | 18.60 |
+| `MS_Mamba-MDS` | Mamba-HPO | 25.78 | 18.40 |
+| `TimesNet` | Opt | 25.92 | 18.90 |
+| `PMS_Mamba-PD` | Mamba-HPO | 25.93 | 18.62 |
+
+Best Mamba-HPO row by diagnostic horizon:
+
+| Horizon | Best Mamba | RMSE | MAE | seq_len | Config |
+| ---: | --- | ---: | ---: | ---: | --- |
+| 30 | `MS_Mamba-MDG` | 9.02 | 6.61 | 256 | `MSG25S124` |
+| 120 | `MS_Mamba-MD` | 16.32 | 12.77 | 320 | `MSD49S124` |
+| 180 | `MS_Mamba-MD` | 21.47 | 16.20 | 360 | `MSD49S124` |
+| 360 | `MS_Mamba-MD` | 35.55 | 24.95 | 360 | `MSD49S124` |
+
+Interpretation:
+
+- HPO improves `MS_Mamba-MD` long RMSE from `25.29` to `24.45`.
+- Optimized `MS_Mamba-MD` is now stronger than optimized `NLinear` and `TimesNet` on the `120/180/360` average.
+- Optimized `PatchTST` remains the best long-horizon model, with a remaining `4.96%` RMSE gap versus optimized `MS_Mamba-MD`.
+- The promoted Mamba configuration is `MS_Mamba-MD` with `moving_avg=49`, `ms_scales=1 2 4`, `d_model=64`, `d_ff=128`, and `d_state=16`.
+
+Next commands:
+
+```bash
+bash scripts/gld_ns_mamba/run_gld_mamba_hpo.sh full MS_Mamba-MD
+python scripts/gld_ns_mamba/collect_gld_mamba_hpo.py
+python scripts/gld_ns_mamba/analyze_gld_mamba_hpo.py
+```
 
 ## Environment
 
@@ -433,6 +502,8 @@ These models use `DataEmbedding_inverted`, treating variables and time features 
 | Model name | File | Main idea | Notes |
 | --- | --- | --- | --- |
 | `S_Mamba` | `model/S_Mamba.py` | Inverted embedding plus bidirectional Mamba encoder | Main baseline for this project |
+| `NS_Mamba` | `model/NS_Mamba.py` | Nonstationarity-aware Mamba ablations | Best diagnostic variant so far is `NS_Mamba-D` |
+| `MS_Mamba` | `model/MS_Mamba.py` | Multi-scale Mamba branches over downsampled windows | Designed to target the PatchTST/TimesNet long-horizon gap |
 
 `S_Mamba` path:
 
@@ -444,6 +515,54 @@ Input [B, L, N]
   -> projection to pred_len
   -> optional de-normalization
   -> forecast [B, pred_len, N]
+```
+
+`MS_Mamba` path:
+
+```text
+Input [B, L, N]
+  -> optional mean/std normalization
+  -> optional trend/seasonal/residual component tokens
+  -> temporal downsampling at scales such as 1, 2, 4
+  -> independent bidirectional Mamba encoder per scale
+  -> scale-level forecast fusion by gate, learned weights, or mean
+  -> optional de-normalization
+  -> forecast [B, pred_len, N]
+```
+
+Useful GLD commands:
+
+```bash
+bash scripts/gld_ns_mamba/run_ms_mamba_ablation.sh smoke MS_Mamba-MDG
+bash scripts/gld_ns_mamba/run_ms_mamba_ablation.sh diagnostic
+python scripts/gld_ns_mamba/collect_ms_mamba_results.py
+```
+
+Mamba hyperparameter optimization by RMSE:
+
+```bash
+bash scripts/gld_ns_mamba/run_gld_mamba_hpo.sh smoke S_Mamba
+bash scripts/gld_ns_mamba/run_gld_mamba_hpo.sh diagnostic MS_Mamba-MD
+bash scripts/gld_ns_mamba/run_gld_mamba_hpo.sh diagnostic ALL
+python scripts/gld_ns_mamba/collect_gld_mamba_hpo.py
+python scripts/gld_ns_mamba/analyze_gld_mamba_hpo.py
+```
+
+The HPO runner supports:
+
+```text
+SEARCH_SPACE=focused  # default
+SEARCH_SPACE=wide
+HORIZONS="120 180 270 360"
+SEQ_LENS="128 192 256 320 384"
+FORCE=1
+```
+
+It writes:
+
+```text
+results/gld_mamba_hpo_all.csv
+results/gld_mamba_hpo_best.csv
 ```
 
 ## Model Behavior

@@ -1,0 +1,177 @@
+\section{Problem Formulation and Method}
+
+Let
+\begin{equation}
+    \mathbf{X}_{t-L+1:t} \in \mathbb{R}^{L \times C}
+\end{equation}
+denote an input window of length $L$ with $C$ variables.
+The goal is to predict
+\begin{equation}
+    \mathbf{Y}_{t+1:t+H} \in \mathbb{R}^{H \times C_o},
+\end{equation}
+where $H$ is the forecast horizon and $C_o$ is the output dimension.
+For the GLD study, $C=C_o=1$ and the target is the daily \texttt{close} column.
+
+The evaluated horizon set is:
+\begin{equation}
+    H \in \{1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360\}.
+\end{equation}
+These horizons cover short-term, middle-term, and long-term forecasting behavior.
+
+Nonstationarity means that the joint distribution of input and output windows changes with time.
+Let $\mathcal{D}_t$ denote the local joint distribution around time $t$.
+The nonstationary setting can be written as:
+\begin{equation}
+    \mathcal{D}_t(\mathbf{X}_{t-L+1:t}, \mathbf{Y}_{t+1:t+H})
+    \neq
+    \mathcal{D}_{t+\tau}(\mathbf{X}_{t+\tau-L+1:t+\tau}, \mathbf{Y}_{t+\tau+1:t+\tau+H}).
+\end{equation}
+This mismatch means that minimizing empirical training risk does not necessarily minimize future test risk.
+In GLD forecasting, common sources of mismatch include changing price level, volatility expansion or contraction, trend reversal, and regime-specific temporal dependence.
+
+The proposed approach is based on three assumptions.
+First, local level and scale variation should be normalized before sequence modeling.
+Second, trend-like and residual-like movements should not always be forced into the same representation.
+Third, the model should receive explicit shift statistics so that it can change its fusion behavior under different regimes.
+
+\subsection{State Space Models and Mamba}
+
+State space models provide an alternative to attention for sequence modeling.
+The continuous-time form of a linear state space model is:
+\begin{equation}
+    \mathbf{h}'(t)
+    =
+    \mathbf{A}\mathbf{h}(t)
+    +
+    \mathbf{B}\mathbf{x}(t),
+    \qquad
+    \mathbf{y}(t)
+    =
+    \mathbf{C}\mathbf{h}(t),
+\end{equation}
+where $\mathbf{h}(t)$ is the latent state, $\mathbf{x}(t)$ is the input, and $\mathbf{y}(t)$ is the output.
+After discretization with step size $\Delta$, the recurrence can be written as:
+\begin{equation}
+    \mathbf{h}_t
+    =
+    \bar{\mathbf{A}}\mathbf{h}_{t-1}
+    +
+    \bar{\mathbf{B}}\mathbf{x}_t,
+    \qquad
+    \mathbf{y}_t
+    =
+    \mathbf{C}\mathbf{h}_t,
+\end{equation}
+with
+\begin{equation}
+    \bar{\mathbf{A}} = \exp(\Delta \mathbf{A}),
+    \qquad
+    \bar{\mathbf{B}}
+    =
+    (\Delta\mathbf{A})^{-1}
+    \left(\exp(\Delta\mathbf{A})-\mathbf{I}\right)
+    \Delta\mathbf{B}.
+\end{equation}
+Classical structured state space models use fixed transition parameters after training.
+Mamba introduces selective state spaces, where $\Delta_t$, $\mathbf{B}_t$, and $\mathbf{C}_t$ depend on the current input token \cite{mamba}.
+The input-dependent recurrence is:
+\begin{equation}
+    \mathbf{h}_t
+    =
+    \bar{\mathbf{A}}_t\mathbf{h}_{t-1}
+    +
+    \bar{\mathbf{B}}_t\mathbf{x}_t,
+    \qquad
+    \mathbf{y}_t
+    =
+    \mathbf{C}_t\mathbf{h}_t,
+\end{equation}
+where $\bar{\mathbf{A}}_t$ and $\bar{\mathbf{B}}_t$ are computed from the input-dependent step size and input projection.
+This selectivity is useful for forecasting because the model can adapt what information is retained across time.
+Figure~\ref{fig:mamba-arch} summarizes the Mamba block used as the conceptual backbone in this manuscript.
+
+\begin{figure}[t]
+    \centering
+    \input{arch/mamba_arch_tikz}
+    \caption{Mamba block architecture drawn with native TikZ so mathematical notation is rendered by LaTeX. Panel A shows the high-level block outline: input projection, SSM stream, gating stream, fusion, and output projection. Panel B expands the key selective state-space component, where input-dependent parameters generate the discretized update, readout, and gated output.}
+    \label{fig:mamba-arch}
+\end{figure}
+
+\subsection{Nonstationarity and Normalization}
+
+Distribution shift is a central issue in time series forecasting.
+RevIN uses reversible instance normalization to reduce distribution shift between training and testing windows while restoring the original scale for prediction \cite{revin}.
+Non-stationary Transformers introduce mechanisms to handle stationarity and nonstationarity within Transformer forecasting \cite{nonstationary-transformer}.
+The central question in this manuscript is whether a Mamba backbone can benefit from the same general idea when nonstationary structure is made explicit before sequence modeling and during feature fusion.
+
+NS-Mamba is designed as a modular extension of S\_Mamba.
+The base model provides the sequence backbone, while the new modules expose nonstationary structure.
+
+Given an input window $\mathbf{X}$, the model computes:
+\begin{equation}
+    \hat{\mathbf{Y}}
+    =
+    \operatorname{DeNorm}
+    \left(
+    F_{\theta}
+    \left(
+    \operatorname{Decomp}
+    \left(
+    \operatorname{AdaptiveNorm}(\mathbf{X})
+    \right),
+    \phi(\mathbf{X})
+    \right)
+    \right),
+\end{equation}
+where $F_{\theta}$ is the Mamba forecasting network and $\phi(\mathbf{X})$ is a vector of distribution-shift statistics.
+
+\subsection{Adaptive Normalization}
+
+The first module normalizes the input window and learns adaptive affine parameters from window statistics.
+The normalized input is:
+\begin{equation}
+    \tilde{\mathbf{X}}
+    =
+    \gamma(\phi(\mathbf{X}))
+    \odot
+    \frac{\mathbf{X}-\mu(\mathbf{X})}{\sigma(\mathbf{X})+\epsilon}
+    +
+    \beta(\phi(\mathbf{X})).
+\end{equation}
+Here $\mu(\mathbf{X})$ and $\sigma(\mathbf{X})$ are local window statistics, while $\gamma(\cdot)$ and $\beta(\cdot)$ are learned functions.
+This module generalizes fixed reversible normalization by allowing the normalized representation to depend on distribution-shift features.
+
+\subsection{Series Decomposition}
+
+The second module decomposes the normalized window into trend, seasonal, and residual components:
+\begin{equation}
+    \tilde{\mathbf{X}}
+    =
+    \tilde{\mathbf{X}}^{\mathrm{trend}}
+    +
+    \tilde{\mathbf{X}}^{\mathrm{seasonal}}
+    +
+    \tilde{\mathbf{X}}^{\mathrm{residual}}.
+\end{equation}
+The initial implementation uses moving-average decomposition.
+The purpose is not to assert a perfect additive data-generating process, but to provide an architectural bias that separates slow and fast temporal variation.
+
+\subsection{Shift-Aware Fusion}
+
+The third module uses the shift statistics $\phi(\mathbf{X})$ to control the fusion of hidden representations.
+For branch outputs $\mathbf{z}_k$, the fusion weights are:
+\begin{equation}
+    \boldsymbol{\alpha}
+    =
+    \operatorname{softmax}
+    \left(
+    \mathbf{W}_{\alpha}\phi(\mathbf{X})+\mathbf{b}_{\alpha}
+    \right),
+\end{equation}
+and the fused representation is:
+\begin{equation}
+    \mathbf{z}
+    =
+    \sum_k \alpha_k \mathbf{z}_k.
+\end{equation}
+This design allows the model to emphasize trend, seasonal, or residual branches differently when the input window exhibits different shift patterns.

@@ -1,14 +1,25 @@
 TEX := main.tex
 PDF := main.pdf
+PYTHON ?= python
+ARCH_TEX := $(wildcard arch/*.tex)
 DOT_SOURCES := $(wildcard figures/*.dot)
 DOT_FIGURES := $(DOT_SOURCES:.dot=.pdf)
-GENERATED_TEX := $(wildcard generated/*.tex)
+SECTION_TEX := $(wildcard sections/*.tex)
+RESULT_SECTION_TEX := \
+	sections/results_baselines.tex \
+	sections/results_ns_mamba_diagnostic.tex \
+	sections/results_ns_mamba_vs_all.tex \
+	sections/results_source_optimized.tex \
+	sections/results_mamba_hpo.tex \
+	sections/results_overview_figure.tex
+FIGURE_DATA := figures/gld_baselines.csv figures/gld_source_optimized_best.csv figures/gld_mamba_hpo_best.csv
+FIGURE_OUTPUTS := figures/gld_result_overview.pdf figures/gld_result_overview.png
 
 .PHONY: pdf clean distclean watch help
 
 pdf: $(PDF)
 
-$(PDF): $(TEX) $(DOT_FIGURES) $(GENERATED_TEX)
+$(PDF): $(TEX) $(ARCH_TEX) $(DOT_FIGURES) $(SECTION_TEX) $(RESULT_SECTION_TEX) $(FIGURE_OUTPUTS)
 	@if command -v latexmk >/dev/null 2>&1; then \
 		latexmk -pdf -interaction=nonstopmode -halt-on-error $(TEX); \
 	elif command -v pdflatex >/dev/null 2>&1; then \
@@ -31,6 +42,27 @@ figures/%.pdf: figures/%.dot
 		exit 127; \
 	fi
 
+sections/results_baselines.tex: scripts/generate_gld_baseline_results.py data/gld_baselines.csv
+	$(PYTHON) $<
+
+sections/results_ns_mamba_diagnostic.tex: scripts/generate_gld_ns_mamba_diagnostic_results.py data/gld_ns_mamba_ablation.csv
+	$(PYTHON) $<
+
+sections/results_ns_mamba_vs_all.tex: scripts/generate_gld_ns_mamba_vs_all.py data/gld_baselines.csv data/gld_ns_mamba_ablation.csv data/gld_source_optimized_best.csv
+	$(PYTHON) $<
+
+sections/results_source_optimized.tex: scripts/generate_gld_source_optimized_partial_results.py data/gld_source_optimized_all.csv data/gld_source_optimized_best.csv data/gld_baselines.csv
+	$(PYTHON) $<
+
+sections/results_mamba_hpo.tex: scripts/generate_gld_mamba_hpo_results.py data/gld_mamba_hpo_best.csv data/gld_source_optimized_best.csv
+	$(PYTHON) $<
+
+sections/results_overview_figure.tex: scripts/generate_gld_complete_metrics_figure_tex.py $(FIGURE_OUTPUTS)
+	$(PYTHON) $<
+
+$(FIGURE_OUTPUTS): figures/generate_gld_result_overview.py $(FIGURE_DATA)
+	$(PYTHON) figures/generate_gld_result_overview.py
+
 watch:
 	@if command -v latexmk >/dev/null 2>&1; then \
 		latexmk -pdf -pvc -interaction=nonstopmode -halt-on-error $(TEX); \
@@ -45,9 +77,10 @@ clean:
 	else \
 		rm -f *.aux *.bbl *.blg *.fdb_latexmk *.fls *.log *.out *.toc *.synctex.gz; \
 	fi
+	rm -rf figures/__pycache__ scripts/__pycache__
 
 distclean: clean
-	rm -f $(PDF) $(DOT_FIGURES)
+	rm -f $(PDF) $(DOT_FIGURES) $(FIGURE_OUTPUTS) $(RESULT_SECTION_TEX)
 
 help:
 	@echo "Targets:"

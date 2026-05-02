@@ -1,0 +1,23 @@
+\section{Results}
+
+\input{sections/results_baselines}
+
+\input{sections/results_ns_mamba_diagnostic}
+
+\input{sections/results_ns_mamba_vs_all}
+
+\input{sections/results_source_optimized}
+
+\input{sections/results_mamba_hpo}
+
+\input{sections/results_overview_figure}
+
+There are several plausible reasons why Autoformer, Transformer, Informer, and Reformer are much weaker than S\_Mamba and iTransformer on this GLD task.
+First, the two strongest models use an inverted embedding scheme that maps the full historical window into variable tokens before forecasting, while the four weaker baselines use the standard time-step sequence embedding with encoder-decoder style generation.
+For a single-target task with a long lookback window, the inverted formulation appears to be better aligned with direct horizon projection than the standard decoder-based setup.
+Second, S\_Mamba and iTransformer both apply per-window mean and variance normalization with final de-normalization, which is likely important for GLD because the price level and volatility change substantially across time.
+Transformer, Informer, and Reformer in this repository do not apply the same reversible normalization path, and Autoformer applies decomposition but not the same explicit nonstationary normalization.
+Third, the baseline comparison deliberately uses one shared setting selected around S\_Mamba, so the result should be interpreted as a controlled comparison under one configuration rather than as a per-model hyperparameter optimum.
+Even with that caveat, the size and consistency of the gap suggest that architecture-data mismatch, not only tuning, is a major factor.
+The completed source-optimized imported sweep reinforces this point from the opposite direction: once model-specific hyperparameters are allowed, PatchTST, NLinear, and TimesNet all become much stronger than their locked-setting counterparts, which means GLD is unusually sensitive to lookback and model-scale choices.
+The same conclusion holds for the Mamba family: after Mamba-specific hyperparameter optimization, the best MS-Mamba variant moves ahead of optimized NLinear and TimesNet on the completed long-horizon diagnostic average, although it still trails optimized PatchTST.

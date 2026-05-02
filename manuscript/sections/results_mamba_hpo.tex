@@ -1,0 +1,48 @@
+\subsection{Mamba Hyperparameter Optimization}
+
+The Mamba-family hyperparameter optimization completed 266 price-scale runs and selected 25 best rows by RMSE.
+The search covers S\_Mamba, NS-Mamba-D, MS-Mamba variants, and PMS-Mamba-PD over diagnostic horizons.
+Because the promoted Mamba search has not yet run all 12 horizons, the direct long-horizon comparison below uses the completed diagnostic long horizons 120, 180, and 360 days.
+
+\begin{table}[t]
+\centering
+\caption{Long-horizon comparison after Mamba hyperparameter optimization. Values are averaged over 120, 180, and 360 days.}
+\label{tab:gld-mamba-hpo-long}
+\begin{tabular}{llrr}
+\toprule
+Track & Model & Avg. RMSE & Avg. MAE \\
+\midrule
+Opt & PatchTST & 23.29 & 16.94 \\
+Mamba-HPO & MS-Mamba-MD & 24.45 & 17.97 \\
+Mamba-HPO & NS-Mamba-D & 24.83 & 18.25 \\
+Mamba-HPO & MS-Mamba-MDG & 25.00 & 18.28 \\
+Opt & NLinear & 25.31 & 18.08 \\
+Mamba-HPO & S\_Mamba & 25.40 & 18.60 \\
+Mamba-HPO & MS-Mamba-MDS & 25.78 & 18.40 \\
+Opt & TimesNet & 25.92 & 18.90 \\
+Mamba-HPO & PMS-Mamba-PD & 25.93 & 18.62 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Best Mamba-HPO configuration by completed diagnostic horizon.}
+\label{tab:gld-mamba-hpo-horizon}
+\begin{tabular}{lrrrrlll}
+\toprule
+Model & Horizon & Seq. Len & RMSE & MAE & Config & Moving Avg. & Scales \\
+\midrule
+MS-Mamba-MDG & 30 & 256 & 9.02 & 6.61 & MSG25S124 & 25 & 1-2-4 \\
+MS-Mamba-MD & 120 & 320 & 16.32 & 12.77 & MSD49S124 & 49 & 1-2-4 \\
+MS-Mamba-MD & 180 & 360 & 21.47 & 16.20 & MSD49S124 & 49 & 1-2-4 \\
+MS-Mamba-MD & 360 & 360 & 35.55 & 24.95 & MSD49S124 & 49 & 1-2-4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+After tuning, MS-Mamba-MD is the strongest Mamba-family model, with average RMSE 24.45 and average MAE 17.97 over the completed long diagnostic horizons.
+This changes the cross-model ranking: the best optimized Mamba model is now stronger than optimized NLinear and TimesNet on the 120/180/360-day average.
+However, optimized PatchTST remains the strongest model in this comparison, with average RMSE 23.29; the remaining relative RMSE gap for the best Mamba model is 4.96\%.
+The residual gap to PatchTST is concentrated at 120 days (16.32 vs. 15.32), 180 days (21.47 vs. 21.23), 360 days (35.55 vs. 33.33).
+

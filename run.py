@@ -16,7 +16,7 @@ if __name__ == '__main__':
     parser.add_argument('--is_training', type=int, required=True, default=1, help='status')
     parser.add_argument('--model_id', type=str, required=True, default='test', help='model id')
     parser.add_argument('--model', type=str, required=True, default='S_Mamba',
-                        help='model name, options include: S_Mamba, NS_Mamba, Nonstationary_Transformer, DLinear, NLinear, PatchTST, TimesNet, iTransformer, Transformer, Informer, Reformer, Autoformer')
+                        help='model name, options include: S_Mamba, NS_Mamba, MS_Mamba, PMS_Mamba, Nonstationary_Transformer, DLinear, NLinear, PatchTST, TimesNet, iTransformer, Transformer, Informer, Reformer, Autoformer')
     parser.add_argument('--task_name', type=str, default='long_term_forecast',
                         help='task name for imported TSLib-style models')
 
@@ -103,6 +103,14 @@ if __name__ == '__main__':
                         help='adaptive affine scale for NS_Mamba AdaptiveRevIN')
     parser.add_argument('--ns_recent_ratio', type=float, default=0.25,
                         help='recent-window ratio for NS_Mamba shift statistics')
+    parser.add_argument('--ms_scales', type=int, nargs='+', default=[1, 2, 4],
+                        help='temporal downsampling scales for MS_Mamba')
+    parser.add_argument('--ms_fusion', type=str, default='gate',
+                        help='scale fusion for MS_Mamba: gate, learned, or mean')
+    parser.add_argument('--ms_use_decomp', type=int, default=1,
+                        help='use trend/seasonal/residual component tokens in MS_Mamba')
+    parser.add_argument('--ms_use_linear_skip', type=int, default=0,
+                        help='blend an NLinear-style last-value skip forecast into MS_Mamba')
 
     args = parser.parse_args()
     args.channel_independence = False

@@ -1,0 +1,12 @@
+\begin{abstract}
+Nonstationary time series forecasting is difficult because the data-generating process can change across time.
+Changes in level, volatility, trend, and temporal regime can make a model trained on past windows unreliable for future horizons.
+This manuscript studies nonstationarity-aware forecasting with Mamba-based sequence models, using daily GLD close-price prediction as the initial testbed.
+The proposed model families extend an S\_Mamba backbone with adaptive normalization, series decomposition, distribution-shift-aware fusion, and multi-scale Mamba branches.
+Before evaluating the proposed architecture, we define a controlled baseline protocol across 12 horizons from 1 to 360 days and lock a shared configuration through S\_Mamba calibration.
+The completed GLD baseline results show that S\_Mamba is the strongest model from 1 to 90 days on RMSE, while iTransformer is strongest from 120 to 360 days.
+The first NS-Mamba diagnostic ablation shows that the decomposition-only variant improves long-horizon RMSE over both S\_Mamba and iTransformer.
+After Mamba-specific hyperparameter optimization, MS-Mamba-MD becomes the strongest Mamba-family model and outperforms optimized NLinear and TimesNet on the completed long-horizon diagnostic average.
+The completed source-optimized imported-model sweep further shows that PatchTST is the strongest imported baseline overall when its own hyperparameters are tuned rather than forced into the shared setting.
+PatchTST remains the strongest overall long-horizon model in the current evidence, so the manuscript treats MS-Mamba-MD as the promoted Mamba candidate rather than as a final state-of-the-art claim.
+\end{abstract}

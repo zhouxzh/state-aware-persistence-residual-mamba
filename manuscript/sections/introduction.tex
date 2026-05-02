@@ -1,0 +1,25 @@
+\section{Introduction}
+
+Time series forecasting models are often evaluated under the assumption that past and future windows are drawn from similar distributions.
+This assumption is weak for nonstationary real-world data.
+Gold-related exchange-traded products such as GLD can experience abrupt level shifts, volatility changes, macroeconomic regime changes, and long periods of trend persistence or reversal.
+These effects are not just noise; they change the forecasting problem itself.
+
+Recent deep forecasting models use attention, decomposition, and state-space mechanisms to model long temporal context.
+Mamba is especially attractive because it provides linear-time sequence modeling through selective state spaces \cite{mamba}.
+In a forecasting setting, however, using Mamba alone does not guarantee robustness to nonstationarity.
+The model may still entangle level, scale, trend, and residual dynamics in one hidden representation.
+This motivates an architecture that keeps the efficient Mamba backbone while explicitly exposing nonstationary structure to the network.
+
+This work begins with a strict experimental principle.
+Before introducing NS-Mamba, all suitable baselines are evaluated under a shared configuration selected by S\_Mamba calibration.
+This prevents model-specific tuning from becoming a hidden source of performance differences.
+The same horizon suite and output scale are then used for clean baselines, Mamba variants, and the proposed NS-Mamba models.
+
+The intended contributions are:
+\begin{itemize}
+    \item a controlled GLD forecasting protocol covering horizons from 1 to 360 days;
+    \item a clean comparison between Transformer-style, decomposition-based, inverted, and Mamba-based forecasting models;
+    \item a nonstationarity-aware Mamba architecture family combining adaptive normalization, decomposition, and shift-aware fusion;
+    \item a diagnostic ablation showing that decomposition is the strongest first modification on GLD long-horizon forecasting.
+\end{itemize}

@@ -1,0 +1,59 @@
+\section{Experimental Setup}
+
+\subsection{Dataset}
+
+The initial dataset is GLD daily data stored at \texttt{data/GLD/GLD.csv}.
+The target column is \texttt{close}.
+The first experimental phase uses single-target forecasting.
+Future extensions may add more financial or macroeconomic variables, but those are outside the current baseline protocol.
+
+\subsection{Data Splits}
+
+The repository uses the standard custom-data split from the forecasting codebase.
+The validation and test windows use historical lookback context from the previous split to construct the input sequence.
+This is a common forecasting implementation detail, but it should be reported clearly because the input context for validation and test includes observations before the split boundary.
+
+\subsection{Baseline Models}
+
+The core baseline set is:
+\begin{itemize}
+    \item S\_Mamba;
+    \item Transformer;
+    \item Informer;
+    \item Reformer;
+    \item Autoformer;
+    \item iTransformer.
+\end{itemize}
+Optional Mamba-augmented variants will be reported separately if they are included.
+The clean baselines should not be tuned independently after the shared setting is locked.
+
+\subsection{Shared Configuration}
+
+S\_Mamba calibration selected Setting A as the locked baseline configuration:
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Parameter & Value \\
+\midrule
+Lookback length & 360 \\
+Label length & 180 \\
+Prediction length & horizon-specific \\
+Model dimension & 64 \\
+Feed-forward dimension & 128 \\
+Encoder layers & 2 \\
+Batch size & 16 \\
+Target & \texttt{close} \\
+Output scale & original price scale \\
+\bottomrule
+\end{tabular}
+\end{center}
+All suitable models will use this configuration.
+If a model cannot run under this setting, the failure will be recorded rather than changing only that model's hyperparameters.
+
+\subsection{Metrics and Logging}
+
+The primary manuscript metrics are RMSE and MAE.
+MSE, MAPE, and MSPE are also saved when available.
+Training, validation, and test metrics are logged to TensorBoard.
+Final arrays are saved as \texttt{pred.npy}, \texttt{true.npy}, and \texttt{metrics.npy}, with run metadata stored in \texttt{meta.json}.
+The completed GLD baseline sweep contains 72 finished runs, corresponding to 6 models across 12 horizons.

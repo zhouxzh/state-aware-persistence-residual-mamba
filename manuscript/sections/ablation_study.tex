@@ -1,0 +1,23 @@
+\section{Ablation Study}
+
+The ablation study isolates the contribution of each NS-Mamba component.
+The current diagnostic comparison is:
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Model & Adaptive Norm & Decomposition & Shift Gate \\
+\midrule
+S\_Mamba & No & No & No \\
+NS-Mamba-A & Yes & No & No \\
+NS-Mamba-D & No & Yes & No \\
+NS-Mamba-AD & Yes & Yes & No \\
+NS-Mamba-ADG & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The first diagnostic result supports the decomposition hypothesis but does not support the adaptive-normalization or shift-gating additions in their current form.
+NS-Mamba-D improves over both S\_Mamba and iTransformer on the diagnostic long-horizon average.
+After Mamba-specific hyperparameter optimization, however, the strongest Mamba-family result is MS-Mamba-MD rather than NS-Mamba-D.
+This suggests that decomposition remains useful, but multi-scale temporal resolution and lookback selection are at least as important as the original nonstationary gating idea for this GLD task.
+The full 12-horizon Mamba-HPO run is still required before making a final claim about the optimized Mamba family.

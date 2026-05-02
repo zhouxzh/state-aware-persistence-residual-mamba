@@ -149,7 +149,7 @@ def build_tex(rows):
         r"It beats every shared locked-setting baseline and every other NS-Mamba diagnostic variant, but it trails the tuned imported PatchTST, NLinear, and TimesNet baselines."
     )
     lines.append(
-        r"This means the decomposition-only NS-Mamba variant is the strongest Mamba-based result currently available in this repository, but it is not yet the strongest model overall on GLD once tuned imported baselines are included."
+        r"This comparison predates the later Mamba-family hyperparameter optimization; after that search, optimized MS-Mamba-MD becomes the strongest Mamba-family result."
     )
     return "\n".join(lines) + "\n"
 
