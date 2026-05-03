@@ -1,9 +1,8 @@
 import os
 import torch
-from model import Transformer, Informer, Reformer, Flowformer, Flashformer, \
-    iTransformer, iInformer, iReformer, iFlowformer, iFlashformer, S_Mamba, \
-    Flashformer_M, Flowformer_M, Autoformer, Autoformer_M, Transformer_M, \
-    Informer_M, Reformer_M, NS_Mamba, MS_Mamba, PMS_Mamba, Nonstationary_Transformer, \
+from model import Transformer, Informer, Reformer, \
+    iTransformer, S_Mamba, Autoformer, \
+    NS_Mamba, MS_Mamba, PMS_Mamba, Nonstationary_Transformer, \
     DLinear, NLinear, PatchTST, TimesNet
 
 
@@ -13,28 +12,14 @@ class Exp_Basic(object):
         self.writer = None
         self.model_dict = {
             'iTransformer': iTransformer,
-            'iInformer': iInformer,
-            'iReformer': iReformer,
-            'iFlowformer': iFlowformer,
-            'iFlashformer': iFlashformer,
 
             'Transformer': Transformer,
-            'Transformer_M': Transformer_M,
 
             'Informer': Informer,
-            'Informer_M': Informer_M,
 
             'Reformer': Reformer,
-            'Reformer_M': Reformer_M,
-
-            'Flowformer': Flowformer,
-            'Flashformer_M': Flashformer_M,
-
-            'Flashformer': Flashformer,
-            'Flowformer_M': Flowformer_M,
 
             'Autoformer': Autoformer,
-            'Autoformer_M': Autoformer_M,
 
             'S_Mamba': S_Mamba,
             'NS_Mamba': NS_Mamba,

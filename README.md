@@ -464,36 +464,17 @@ These are non-Mamba baseline models after cleanup.
 | Model name | File | Main idea | Notes |
 | --- | --- | --- | --- |
 | `Autoformer` | `model/Autoformer.py` | AutoCorrelation with decomposition | Encoder-decoder baseline |
-| `Flashformer` | `model/Flashformer.py` | Flash attention encoder, Transformer decoder | Clean attention baseline |
-| `Flowformer` | `model/Flowformer.py` | Flow attention encoder, Transformer decoder | Clean attention baseline |
 | `Informer` | `model/Informer.py` | ProbSparse attention | Clean attention baseline |
 | `Reformer` | `model/Reformer.py` | Reformer LSH attention | Mamba removed from this baseline |
 | `Transformer` | `model/Transformer.py` | Full attention Transformer | Mamba removed from this baseline |
 
-### Mamba Encoder Variants
-
-These models use Mamba inside or after the encoder while keeping the original decoder style.
-
-| Model name | File | Main idea | Notes |
-| --- | --- | --- | --- |
-| `Autoformer_M` | `model/Autoformer_M.py` | Autoformer decoder with Mamba encoder layers | Uses `configs.d_state` |
-| `Flashformer_M` | `model/Flashformer_M.py` | Flashformer-style decoder with Mamba encoder layers | Uses `configs.d_state` |
-| `Flowformer_M` | `model/Flowformer_M.py` | Flowformer-style decoder with Mamba encoder layers | Uses `configs.d_state` |
-| `Informer_M` | `model/Informer_M.py` | Informer encoder followed by residual Mamba | Uses `configs.d_state` |
-| `Reformer_M` | `model/Reformer_M.py` | Reformer encoder with residual Mamba before attention | Uses `configs.d_state` |
-| `Transformer_M` | `model/Transformer_M.py` | Transformer encoder followed by residual Mamba | Uses `configs.d_state` |
-
 ### Inverted Variable-Token Models
 
-These models use `DataEmbedding_inverted`, treating variables and time features as tokens.
+This active inverted baseline uses `DataEmbedding_inverted`, treating variables and time features as tokens.
 
 | Model name | File | Main idea | Notes |
 | --- | --- | --- | --- |
 | `iTransformer` | `model/iTransformer.py` | Inverted full-attention Transformer | Supports `--use_norm` |
-| `iInformer` | `model/iInformer.py` | Inverted ProbSparse attention | Always applies mean/std normalization |
-| `iReformer` | `model/iReformer.py` | Inverted Reformer attention | Always applies mean/std normalization |
-| `iFlowformer` | `model/iFlowformer.py` | Inverted Flow attention | Always applies mean/std normalization |
-| `iFlashformer` | `model/iFlashformer.py` | Inverted Flash attention | Always applies mean/std normalization |
 
 ### Main Mamba Baseline
 
@@ -848,14 +829,6 @@ Core baseline models:
 - `Reformer`
 - `Autoformer`
 - `iTransformer`
-
-Optional Mamba-encoder comparisons:
-
-- `Transformer_M`
-- `Informer_M`
-- `Reformer_M`
-
-Run the core models first. Add optional `_M` variants only after the core baseline table is complete.
 
 #### Horizon Suite
 
