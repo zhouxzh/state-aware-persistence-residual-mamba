@@ -1,5 +1,7 @@
 \section{Problem Formulation and Method}
 
+\subsection{Forecasting Task}
+
 Let
 \begin{equation}
     \mathbf{X}_{t-L+1:t} \in \mathbb{R}^{L \times C}
@@ -11,33 +13,27 @@ The goal is to predict
 \end{equation}
 where $H$ is the forecast horizon and $C_o$ is the output dimension.
 For the GLD study, $C=C_o=1$ and the target is the daily \texttt{close} column.
-
-The evaluated horizon set is:
+The evaluated horizon set is
 \begin{equation}
     H \in \{1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360\}.
 \end{equation}
 These horizons cover short-term, middle-term, and long-term forecasting behavior.
 
-Nonstationarity means that the joint distribution of input and output windows changes with time.
+This manuscript treats nonstationarity as a time-varying relationship between input and output windows.
 Let $\mathcal{D}_t$ denote the local joint distribution around time $t$.
-The nonstationary setting can be written as:
+The nonstationary setting can be written as
 \begin{equation}
     \mathcal{D}_t(\mathbf{X}_{t-L+1:t}, \mathbf{Y}_{t+1:t+H})
     \neq
     \mathcal{D}_{t+\tau}(\mathbf{X}_{t+\tau-L+1:t+\tau}, \mathbf{Y}_{t+\tau+1:t+\tau+H}).
 \end{equation}
-This mismatch means that minimizing empirical training risk does not necessarily minimize future test risk.
-In GLD forecasting, common sources of mismatch include changing price level, volatility expansion or contraction, trend reversal, and regime-specific temporal dependence.
+Operationally, the proposed models target window-level changes in location, scale, endpoint drift, range, and first-difference volatility.
+These statistics do not exhaust all possible forms of nonstationarity, but they correspond to the shifts explicitly exposed to the adaptive normalization and gating modules.
 
-The proposed approach is based on three assumptions.
-First, local level and scale variation should be normalized before sequence modeling.
-Second, trend-like and residual-like movements should not always be forced into the same representation.
-Third, the model should receive explicit shift statistics so that it can change its fusion behavior under different regimes.
-
-\subsection{State Space Models and Mamba}
+\subsection{Mamba Backbone}
 
 State space models provide an alternative to attention for sequence modeling.
-The continuous-time form of a linear state space model is:
+The continuous-time form of a linear state space model is
 \begin{equation}
     \mathbf{h}'(t)
     =
@@ -50,7 +46,7 @@ The continuous-time form of a linear state space model is:
     \mathbf{C}\mathbf{h}(t),
 \end{equation}
 where $\mathbf{h}(t)$ is the latent state, $\mathbf{x}(t)$ is the input, and $\mathbf{y}(t)$ is the output.
-After discretization with step size $\Delta$, the recurrence can be written as:
+After discretization, the recurrence can be written abstractly as
 \begin{equation}
     \mathbf{h}_t
     =
@@ -60,21 +56,10 @@ After discretization with step size $\Delta$, the recurrence can be written as:
     \qquad
     \mathbf{y}_t
     =
-    \mathbf{C}\mathbf{h}_t,
+    \mathbf{C}\mathbf{h}_t.
 \end{equation}
-with
-\begin{equation}
-    \bar{\mathbf{A}} = \exp(\Delta \mathbf{A}),
-    \qquad
-    \bar{\mathbf{B}}
-    =
-    (\Delta\mathbf{A})^{-1}
-    \left(\exp(\Delta\mathbf{A})-\mathbf{I}\right)
-    \Delta\mathbf{B}.
-\end{equation}
-Classical structured state space models use fixed transition parameters after training.
-Mamba introduces selective state spaces, where $\Delta_t$, $\mathbf{B}_t$, and $\mathbf{C}_t$ depend on the current input token \cite{mamba}.
-The input-dependent recurrence is:
+Mamba introduces selective state spaces in which the discretization and readout parameters depend on the current input token \cite{mamba}.
+The input-dependent update is summarized as
 \begin{equation}
     \mathbf{h}_t
     =
@@ -84,94 +69,425 @@ The input-dependent recurrence is:
     \qquad
     \mathbf{y}_t
     =
-    \mathbf{C}_t\mathbf{h}_t,
+    \mathbf{C}_t\mathbf{h}_t.
 \end{equation}
-where $\bar{\mathbf{A}}_t$ and $\bar{\mathbf{B}}_t$ are computed from the input-dependent step size and input projection.
-This selectivity is useful for forecasting because the model can adapt what information is retained across time.
-Figure~\ref{fig:mamba-arch} summarizes the Mamba block used as the conceptual backbone in this manuscript.
+This selectivity is useful for forecasting because the model can adapt what information is retained across tokens.
+Figure~\ref{fig:mamba-arch} summarizes the Mamba block used as the conceptual sequence-modeling backbone.
 
 \begin{figure}[t]
     \centering
     \input{arch/mamba_arch_tikz}
-    \caption{Mamba block architecture drawn with native TikZ so mathematical notation is rendered by LaTeX. Panel A shows the high-level block outline: input projection, SSM stream, gating stream, fusion, and output projection. Panel B expands the key selective state-space component, where input-dependent parameters generate the discretized update, readout, and gated output.}
+    \caption{Mamba block used as the sequence-modeling backbone. Panel A shows the high-level block structure with projection, selective state-space processing, gating, fusion, and output projection. Panel B expands the selective state-space component, where input-dependent parameters control the recurrent update and readout.}
     \label{fig:mamba-arch}
 \end{figure}
 
-\subsection{Nonstationarity and Normalization}
+\subsection{S-Mamba Forecasting Encoder}
 
-Distribution shift is a central issue in time series forecasting.
-RevIN uses reversible instance normalization to reduce distribution shift between training and testing windows while restoring the original scale for prediction \cite{revin}.
-Non-stationary Transformers introduce mechanisms to handle stationarity and nonstationarity within Transformer forecasting \cite{nonstationary-transformer}.
-The central question in this manuscript is whether a Mamba backbone can benefit from the same general idea when nonstationary structure is made explicit before sequence modeling and during feature fusion.
-
-NS-Mamba is designed as a modular extension of S\_Mamba.
-The base model provides the sequence backbone, while the new modules expose nonstationary structure.
-
-Given an input window $\mathbf{X}$, the model computes:
+Plain Mamba is a sequence block rather than a complete forecasting model.
+Given a token sequence $\mathbf{U}\in\mathbb{R}^{B\times T\times d}$, a Mamba block produces another sequence
 \begin{equation}
-    \hat{\mathbf{Y}}
+    \mathbf{V}=\mathcal{M}(\mathbf{U})\in\mathbb{R}^{B\times T\times d},
+\end{equation}
+with the same token axis $T$.
+For generic sequence modeling, the token axis is usually time.
+S-Mamba changes this setup for forecasting by using reversible window normalization and inverted variable tokens.
+
+For an input window $\mathbf{X}\in\mathbb{R}^{B\times L\times C}$, S-Mamba first applies reversible normalization:
+\begin{equation}
+    \mu_{b,c}
     =
-    \operatorname{DeNorm}
+    \frac{1}{L}\sum_{t=1}^{L}X_{b,t,c},
+    \qquad
+    \sigma_{b,c}
+    =
+    \sqrt{
+        \frac{1}{L}\sum_{t=1}^{L}(X_{b,t,c}-\mu_{b,c})^2 + \epsilon
+    },
+\end{equation}
+\begin{equation}
+    Z_{b,t,c}
+    =
+    \frac{X_{b,t,c}-\mu_{b,c}}{\sigma_{b,c}}.
+\end{equation}
+Each variable history is then embedded as one token:
+\begin{equation}
+    \mathbf{e}_{b,c}
+    =
+    W_{\mathrm{emb}}\mathbf{z}_{b,:,c}+ \mathbf{b}_{\mathrm{emb}},
+    \qquad
+    \mathbf{E}\in\mathbb{R}^{B\times C\times d_{\mathrm{model}}},
+\end{equation}
+where $\mathbf{z}_{b,:,c}\in\mathbb{R}^{L}$ is the normalized history of variable $c$.
+Thus, S-Mamba scans along variable tokens whose features are full lookback histories, rather than scanning directly along time tokens.
+
+Each encoder layer is bidirectional.
+Let $\mathbf{E}^{(\ell-1)}$ be the input to layer $\ell$.
+The forward and backward Mamba branches are
+\begin{equation}
+    \overrightarrow{\mathbf{H}}^{(\ell)}
+    =
+    \mathcal{M}_{f}^{(\ell)}(\mathbf{E}^{(\ell-1)}),
+    \qquad
+    \overleftarrow{\mathbf{H}}^{(\ell)}
+    =
+    \operatorname{rev}
     \left(
-    F_{\theta}
+    \mathcal{M}_{b}^{(\ell)}
     \left(
-    \operatorname{Decomp}
-    \left(
-    \operatorname{AdaptiveNorm}(\mathbf{X})
-    \right),
-    \phi(\mathbf{X})
+    \operatorname{rev}(\mathbf{E}^{(\ell-1)})
     \right)
     \right),
 \end{equation}
-where $F_{\theta}$ is the Mamba forecasting network and $\phi(\mathbf{X})$ is a vector of distribution-shift statistics.
+and the two directions are added:
+\begin{equation}
+    \mathbf{U}^{(\ell)}
+    =
+    \overrightarrow{\mathbf{H}}^{(\ell)}
+    +
+    \overleftarrow{\mathbf{H}}^{(\ell)}.
+\end{equation}
+The implemented layer then applies residual connections, layer normalization, and a feed-forward network:
+\begin{equation}
+    \tilde{\mathbf{E}}^{(\ell)}
+    =
+    \operatorname{LN}_{1}
+    \left(
+    \mathbf{E}^{(\ell-1)}+\mathbf{U}^{(\ell)}
+    \right),
+\end{equation}
+\begin{equation}
+    \mathbf{E}^{(\ell)}
+    =
+    \operatorname{LN}_{2}
+    \left(
+    \tilde{\mathbf{E}}^{(\ell)}+
+    \operatorname{FFN}
+    \left(
+    \tilde{\mathbf{E}}^{(\ell)}
+    \right)
+    \right).
+\end{equation}
+After the final encoder layer, each variable token is projected to the horizon:
+\begin{equation}
+    \mathbf{P}_{b,c,:}
+    =
+    W_{\mathrm{out}}\mathbf{E}^{(L_e)}_{b,c,:}
+    + \mathbf{b}_{\mathrm{out}},
+    \qquad
+    \mathbf{P}\in\mathbb{R}^{B\times C\times H}.
+\end{equation}
+The forecast is permuted back to the time-major layout and de-normalized:
+\begin{equation}
+    \hat{Y}_{b,h,c}
+    =
+    \sigma_{b,c} P_{b,c,h} + \mu_{b,c}.
+\end{equation}
+
+Figure~\ref{fig:s-mamba-encoder} summarizes the S-Mamba forecasting encoder.
+
+\begin{figure}[t]
+    \centering
+    \input{arch/s_mamba_encoder_tikz}
+    \caption{S-Mamba forecasting encoder: reversible normalization, inverted variable-token embedding, bidirectional Mamba encoding, horizon projection, and de-normalization back to the original price scale.}
+    \label{fig:s-mamba-encoder}
+\end{figure}
+
+\subsection{Nonstationarity Statistics}
+
+The NS-Mamba variants expose window statistics to two different modules.
+Adaptive normalization uses raw window statistics to generate affine parameters, while shift-aware gates use standardized statistics to produce fusion weights.
+Both are computed from the raw input window before normalization.
+
+For adaptive normalization, the implementation constructs a ten-dimensional statistic vector for each sample and variable:
+\begin{equation}
+    \psi_{b,c}
+    =
+    [
+    \mu_{b,c},
+    \sigma_{b,c},
+    X_{b,1,c},
+    X_{b,L,c},
+    \mu^{r}_{b,c},
+    \sigma^{r}_{b,c},
+    X_{b,L,c}-X_{b,1,c},
+    \min_t X_{b,t,c},
+    \max_t X_{b,t,c},
+    \nu_{b,c}
+    ],
+\end{equation}
+where $\mu_{b,c}$ and $\sigma_{b,c}$ are full-window mean and standard deviation, $\mu^{r}_{b,c}$ and $\sigma^{r}_{b,c}$ are computed on the most recent segment of the window, and $\nu_{b,c}$ is the standard deviation of first differences.
+The recent segment length is controlled by the hyperparameter \texttt{ns\_recent\_ratio}, with default value 0.25.
+
+For shift-aware fusion, the implementation uses an eight-dimensional standardized feature vector:
+\begin{equation}
+    \phi_{b,c}
+    =
+    [
+    \delta_{\mu},
+    \delta_{\sigma},
+    s,
+    \bar{\nu},
+    \delta_{\nu},
+    r,
+    z_L,
+    z_1
+    ]_{b,c}.
+\end{equation}
+Let $\sigma_{b,c}^{+}=\sigma_{b,c}+\epsilon$.
+The entries are
+\begin{align}
+    \delta_{\mu}
+    &=
+    \frac{\mu^{r}_{b,c}-\mu_{b,c}}{\sigma_{b,c}^{+}},
+    &
+    \delta_{\sigma}
+    &=
+    \log
+    \frac{\sigma^{r}_{b,c}+\epsilon}{\sigma_{b,c}^{+}},
+    \\
+    s
+    &=
+    \frac{X_{b,L,c}-X_{b,1,c}}{\sigma_{b,c}^{+}},
+    &
+    \bar{\nu}
+    &=
+    \frac{\nu_{b,c}}{\sigma_{b,c}^{+}},
+    \\
+    \delta_{\nu}
+    &=
+    \log
+    \frac{\nu^{r}_{b,c}+\epsilon}{\nu_{b,c}+\epsilon},
+    &
+    r
+    &=
+    \frac{\max_t X_{b,t,c}-\min_t X_{b,t,c}}{\sigma_{b,c}^{+}},
+    \\
+    z_L
+    &=
+    \frac{X_{b,L,c}-\mu_{b,c}}{\sigma_{b,c}^{+}},
+    &
+    z_1
+    &=
+    \frac{X_{b,1,c}-\mu_{b,c}}{\sigma_{b,c}^{+}}.
+\end{align}
+Here $\nu^{r}_{b,c}$ is the recent-segment standard deviation of first differences.
+The fusion gates project $\phi_{b,c}$ into the hidden dimension and combine it with the hidden representation when one is available.
+When the number of statistic tokens does not match the number of target tokens, the statistic context is averaged over variables and broadcast to the required token count.
 
 \subsection{Adaptive Normalization}
 
-The first module normalizes the input window and learns adaptive affine parameters from window statistics.
-The normalized input is:
+Adaptive normalization replaces fixed reversible normalization with a learned affine transformation conditioned on $\psi_{b,c}$.
+For each variable token, an MLP maps $\psi_{b,c}$ to raw affine parameters, and the bounded transformation is
 \begin{equation}
-    \tilde{\mathbf{X}}
+    \gamma_{b,c}
     =
-    \gamma(\phi(\mathbf{X}))
-    \odot
-    \frac{\mathbf{X}-\mu(\mathbf{X})}{\sigma(\mathbf{X})+\epsilon}
-    +
-    \beta(\phi(\mathbf{X})).
+    1 + a \tanh(g_{\gamma}(\psi_{b,c})),
+    \qquad
+    \beta_{b,c}
+    =
+    a \tanh(g_{\beta}(\psi_{b,c})),
 \end{equation}
-Here $\mu(\mathbf{X})$ and $\sigma(\mathbf{X})$ are local window statistics, while $\gamma(\cdot)$ and $\beta(\cdot)$ are learned functions.
-This module generalizes fixed reversible normalization by allowing the normalized representation to depend on distribution-shift features.
+where $a$ is the adaptive-scale hyperparameter.
+The normalized input is
+\begin{equation}
+    \tilde{X}_{b,t,c}
+    =
+    \gamma_{b,c}
+    \frac{X_{b,t,c}-\mu_{b,c}}{\sigma_{b,c}+\epsilon}
+    +
+    \beta_{b,c}.
+\end{equation}
+The same cached $\gamma_{b,c}$, $\beta_{b,c}$, $\mu_{b,c}$, and $\sigma_{b,c}$ are used to invert the transformation at the output:
+\begin{equation}
+    \hat{Y}_{b,h,c}
+    =
+    \left(
+    \frac{\tilde{Y}_{b,h,c}-\beta_{b,c}}{\gamma_{b,c}}
+    \right)
+    (\sigma_{b,c}+\epsilon)
+    +
+    \mu_{b,c}.
+\end{equation}
 
 \subsection{Series Decomposition}
 
-The second module decomposes the normalized window into trend, seasonal, and residual components:
-\begin{equation}
-    \tilde{\mathbf{X}}
-    =
-    \tilde{\mathbf{X}}^{\mathrm{trend}}
-    +
-    \tilde{\mathbf{X}}^{\mathrm{seasonal}}
-    +
-    \tilde{\mathbf{X}}^{\mathrm{residual}}.
-\end{equation}
-The initial implementation uses moving-average decomposition.
-The purpose is not to assert a perfect additive data-generating process, but to provide an architectural bias that separates slow and fast temporal variation.
+The decomposition module separates the normalized window into low-frequency, medium-frequency, and residual components using moving averages.
+Let $\operatorname{MA}_{m}(\cdot)$ denote a centered moving average with boundary replication and window size $m$.
+The implementation computes
+\begin{align}
+    \mathbf{Z}^{\mathrm{tr}}
+    &=
+    \operatorname{MA}_{m}(\mathbf{Z}),
+    \\
+    \mathbf{R}^{0}
+    &=
+    \mathbf{Z}-\mathbf{Z}^{\mathrm{tr}},
+    \\
+    \mathbf{Z}^{\mathrm{mf}}
+    &=
+    \operatorname{MA}_{m}(\mathbf{R}^{0}),
+    \\
+    \mathbf{Z}^{\mathrm{re}}
+    &=
+    \mathbf{R}^{0}-\mathbf{Z}^{\mathrm{mf}}.
+\end{align}
+The superscripts denote low-frequency trend-like, medium-frequency, and residual components.
+This decomposition is an architectural bias rather than a claim that GLD prices are generated by a perfect additive seasonal process.
 
 \subsection{Shift-Aware Fusion}
 
-The third module uses the shift statistics $\phi(\mathbf{X})$ to control the fusion of hidden representations.
-For branch outputs $\mathbf{z}_k$, the fusion weights are:
+Shift-aware gates use $\phi_{b,c}$ to control either branch fusion or hidden-state interpolation.
+For decomposition branches with horizon-level outputs $\mathbf{U}_q\in\mathbb{R}^{B\times C\times H}$, where $q\in\{\mathrm{tr},\mathrm{mf},\mathrm{re}\}$, the branch gate computes
 \begin{equation}
-    \boldsymbol{\alpha}
+    \boldsymbol{\alpha}_{b,c,:,h}
     =
-    \operatorname{softmax}
+    \operatorname{softmax}_{q}
     \left(
-    \mathbf{W}_{\alpha}\phi(\mathbf{X})+\mathbf{b}_{\alpha}
+    g_{\alpha}(\phi_{b,c})
     \right),
 \end{equation}
-and the fused representation is:
+and fuses the branch outputs as
 \begin{equation}
-    \mathbf{z}
+    \mathbf{U}_{b,c,h}
     =
-    \sum_k \alpha_k \mathbf{z}_k.
+    \sum_q \alpha_{b,c,q,h}\mathbf{U}_{q,b,c,h}.
 \end{equation}
-This design allows the model to emphasize trend, seasonal, or residual branches differently when the input window exhibits different shift patterns.
+The same gate class is also used for scale fusion in the multi-scale models, where the softmax dimension ranges over temporal scales rather than decomposition components.
+When no decomposition branch is present, a sigmoid gate can interpolate between the encoded hidden state and the input embedding before horizon projection:
+\begin{equation}
+    \tilde{\mathbf{E}}
+    =
+    \mathbf{G}\odot \mathbf{E}_{\mathrm{enc}}
+    +
+    (1-\mathbf{G})\odot \mathbf{E}_{\mathrm{in}}.
+\end{equation}
+
+\subsection{Variant Definitions}
+
+The Mamba-family variant names encode which modules are active.
+\textbf{A} denotes adaptive normalization, \textbf{D} denotes decomposition, and \textbf{G} denotes shift-aware gated fusion.
+\textbf{M} denotes multi-scale temporal branches, \textbf{S} denotes an NLinear-style residual skip, and \textbf{P} denotes patch-temporal Mamba branches.
+All variants produce forecasts with shape $\mathbb{R}^{B \times H \times C}$ and use reversible output scaling when normalization is enabled.
+
+Let $\mathcal{N}(\cdot)$ denote standard reversible normalization and $\mathcal{F}_{\theta}(\cdot)$ denote one inverted S-Mamba forecasting branch.
+The S-Mamba baseline is
+\begin{equation}
+    \hat{\mathbf{Y}}_{\mathrm{S}}
+    =
+    \mathcal{N}^{-1}
+    \left(
+    \mathcal{F}_{\theta}(\mathcal{N}(\mathbf{X}))
+    \right).
+\end{equation}
+NS-Mamba-A replaces $\mathcal{N}$ with adaptive normalization.
+NS-Mamba-D applies standard reversible normalization, decomposes the normalized signal, and sums three independently encoded component forecasts:
+\begin{equation}
+    \hat{\mathbf{Y}}_{\mathrm{D}}
+    =
+    \mathcal{N}^{-1}
+    \left(
+    \sum_{q \in \{\mathrm{tr},\mathrm{mf},\mathrm{re}\}}
+    \mathcal{F}_{\theta_q}(\mathbf{Z}^{q})
+    \right).
+\end{equation}
+NS-Mamba-AD combines adaptive normalization with decomposition, and NS-Mamba-ADG adds the shift-aware branch gate.
+
+The MS-Mamba family adds temporal scale branches.
+Let $\mathcal{P}_{s}(\cdot)$ be average-pooling downsampling by scale $s$, and let $\mathcal{S}$ be a set of scales such as $\{1,2,4\}$.
+For a decomposition-enabled multi-scale model, each scale produces
+\begin{equation}
+    \mathbf{U}_{s}
+    =
+    \sum_{q \in \{\mathrm{tr},\mathrm{mf},\mathrm{re}\}}
+    \mathcal{F}_{\theta_{s,q}}
+    \left(
+    \mathcal{P}_{s}(\mathbf{Z}^{q})
+    \right).
+\end{equation}
+MS-Mamba-MD uses mean scale fusion:
+\begin{equation}
+    \hat{\mathbf{Y}}_{\mathrm{MD}}
+    =
+    \mathcal{N}^{-1}
+    \left(
+    \frac{1}{|\mathcal{S}|}
+    \sum_{s \in \mathcal{S}}
+    \mathbf{U}_{s}
+    \right),
+\end{equation}
+while MS-Mamba-MDG replaces the mean with a shift-aware softmax over scales.
+MS-Mamba-M and MS-Mamba-MG are the corresponding multi-scale variants without decomposition.
+
+MS-Mamba-MDS adds a last-value residual linear skip:
+\begin{equation}
+    \mathbf{U}_{\mathrm{skip}}
+    =
+    \mathbf{x}_{L}
+    +
+    \mathbf{W}_{\mathrm{skip}}
+    (\mathbf{Z}-\mathbf{x}_{L}),
+    \qquad
+    \hat{\mathbf{Y}}_{\mathrm{MDS}}
+    =
+    \mathcal{N}^{-1}
+    \left(
+    \lambda \mathbf{U}_{\mathrm{MD}}
+    +
+    (1-\lambda)\mathbf{U}_{\mathrm{skip}}
+    \right),
+\end{equation}
+where $\lambda=\sigma(\rho)$ is learned.
+PMS-Mamba replaces inverted variable-token branches with patch-temporal Mamba branches.
+For patch length $p$ and stride $r$, a scale branch forms patch tokens
+\begin{equation}
+    \mathbf{e}_{j}^{(s)}
+    =
+    \mathbf{W}_{p}
+    \operatorname{vec}
+    \left(
+    \mathcal{P}_{s}(\mathbf{Z})_{j:j+p-1}
+    \right),
+\end{equation}
+then applies Mamba over the patch index $j$.
+PMS-Mamba-PD is the patch-temporal counterpart of MS-Mamba-MD.
+
+\begin{table}[t]
+\centering
+\caption{Meaning of the Mamba-family variant names used in this manuscript.}
+\label{tab:mamba-variant-meaning}
+{\small
+\begin{tabular}{p{0.19\linewidth}p{0.27\linewidth}p{0.16\linewidth}p{0.26\linewidth}}
+\toprule
+Variant & Active modules & Fusion & Purpose \\
+\midrule
+NS-Mamba-A & Adaptive norm & Single path & Test learned normalization \\
+NS-Mamba-D & Decomposition & Sum & Test component separation \\
+NS-Mamba-AD & Adaptive norm + decomposition & Sum & Combine A and D \\
+NS-Mamba-ADG & Adaptive norm + decomposition & Shift gate & Test gated component fusion \\
+MS-Mamba-M & Multi-scale & Mean & Test temporal scales alone \\
+MS-Mamba-MG & Multi-scale & Shift gate & Test gated scale fusion \\
+MS-Mamba-MD & Multi-scale + decomposition & Mean & Promoted Mamba model \\
+MS-Mamba-MDG & Multi-scale + decomposition & Shift gate & Test gated multi-scale decomposition \\
+MS-Mamba-MDS & Multi-scale + decomposition + skip & Mean + skip & Test NLinear-style residual path \\
+PMS-Mamba-PD & Patch Mamba + decomposition & Mean & Test patch Mamba \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\subsection{Forecast Head and Loss}
+
+The forecast head projects the final hidden representation to $H$ future values.
+The training objective is mean squared error over the forecast horizon:
+\begin{equation}
+    \mathcal{L}
+    =
+    \frac{1}{BHC_o}
+    \sum_{b=1}^{B}
+    \sum_{h=1}^{H}
+    \sum_{c=1}^{C_o}
+    \left(
+    \hat{Y}_{b,h,c} - Y_{b,h,c}
+    \right)^2.
+\end{equation}
+Inverse transformation is enabled by default in the reported GLD runs, so saved predictions, targets, and metrics are reported on the original GLD price scale unless a run uses \texttt{--no-inverse}.

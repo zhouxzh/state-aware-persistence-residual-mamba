@@ -97,12 +97,12 @@ Average MSE by horizon group:
 
 | Model | Short | Middle | Long | Overall |
 | --- | ---: | ---: | ---: | ---: |
-| `S_Mamba` | 30.72 | 220.01 | 1123.84 | 382.87 |
-| `iTransformer` | 33.78 | 221.42 | 1118.47 | 383.14 |
-| `Autoformer` | 1304.48 | 1429.51 | 1930.68 | 1513.13 |
-| `Transformer` | 4777.44 | 4461.04 | 5619.80 | 4856.20 |
-| `Informer` | 6284.64 | 5719.34 | 5343.07 | 5813.71 |
-| `Reformer` | 4660.86 | 6015.56 | 7203.21 | 5860.91 |
+| `S_Mamba` | 30.72 | 171.87 | 946.01 | 382.87 |
+| `iTransformer` | 33.78 | 177.83 | 937.80 | 383.14 |
+| `Autoformer` | 1304.48 | 1366.13 | 1868.77 | 1513.13 |
+| `Transformer` | 4777.44 | 4484.62 | 5306.52 | 4856.20 |
+| `Informer` | 6284.64 | 5841.00 | 5315.49 | 5813.71 |
+| `Reformer` | 4660.86 | 5865.86 | 7056.00 | 5860.91 |
 
 Practical interpretation:
 
@@ -236,30 +236,32 @@ Average MSE across the full 12-horizon imported sweep:
 
 | Model | Short | Middle | Long | Overall |
 | --- | ---: | ---: | ---: | ---: |
-| `PatchTST` | 15.45 | 151.88 | 784.32 | 264.51 |
-| `NLinear` | 15.00 | 177.81 | 869.93 | 296.57 |
-| `TimesNet` | 15.99 | 152.44 | 957.84 | 308.31 |
-| `Nonstationary_Transformer` | 18.40 | 223.81 | 1126.32 | 380.97 |
-| `DLinear` | 39.67 | 381.58 | 1971.50 | 665.09 |
+| `PatchTST` | 15.45 | 131.21 | 646.89 | 264.51 |
+| `NLinear` | 15.00 | 145.47 | 729.23 | 296.57 |
+| `TimesNet` | 15.99 | 123.92 | 785.02 | 308.31 |
+| `Nonstationary_Transformer` | 18.40 | 175.74 | 948.77 | 380.97 |
+| `DLinear` | 39.67 | 287.47 | 1668.13 | 665.09 |
 
 Interpretation:
 
-- `NLinear` is the best imported model on the short horizons `1, 3, 5, 7, 14`.
-- `PatchTST` is the best imported model overall and the best long-horizon imported model at `60, 120, 180, 270, 360`.
+- `NLinear` is the best imported model on the short horizons `1, 3, 5, 7`.
+- `TimesNet` is the strongest imported model by average middle-horizon MSE on `14, 30, 60, 90`.
+- `PatchTST` is the best imported model overall and the best long-horizon imported model at `120, 180, 270, 360`.
 - `TimesNet` is strongest at `30` and `90` days.
 - `Nonstationary_Transformer` and `DLinear` are not competitive with the best imported model once the full optimized sweep is complete.
 
 Best lookback patterns:
 
 - `NLinear` prefers very large windows: `192` to `384`.
-- `PatchTST` prefers `16` on short horizons, then `256` to `320` at middle horizons, and `128` at `270` and `360`.
+- `PatchTST` prefers `16` on short horizons, `256` to `320` from `30` to `180`, and `128` at `270` and `360`.
 - `TimesNet` prefers `16` on short horizons and much larger windows at middle and long horizons.
 - `Nonstationary_Transformer` still prefers mostly `16`, which appears too short for strong long-horizon GLD performance.
 
 Compared with the best locked-setting baseline per horizon:
 
 - optimized `NLinear` is much stronger at short horizons
-- optimized `PatchTST` is much stronger at middle and long horizons
+- optimized `TimesNet` is strongest on the middle block overall, with `PatchTST` close behind
+- optimized `PatchTST` is much stronger at long horizons
 - optimized `TimesNet` is also consistently stronger than the locked-setting baseline
 - optimized `DLinear` is weaker than the best locked-setting baseline at every horizon
 
@@ -276,7 +278,8 @@ Current conclusion:
 - GLD is highly sensitive to model-specific tuning
 - among the completed imported models, `PatchTST` is strongest overall
 - `NLinear` is the strongest short-horizon imported baseline
-- `PatchTST` is the strongest medium- and long-horizon imported baseline
+- `TimesNet` is the strongest middle-horizon imported baseline by average MSE
+- `PatchTST` is the strongest long-horizon imported baseline
 
 ## NS_Mamba vs All Completed Models
 
@@ -334,8 +337,8 @@ Current HPO tables:
 ```text
 results/gld_mamba_hpo_all.csv
 results/gld_mamba_hpo_best.csv
-266 completed runs
-25 best rows selected by RMSE
+458 completed runs
+33 best rows selected by RMSE
 ```
 
 The HPO search includes:
@@ -347,27 +350,22 @@ The HPO search includes:
 - `MS_Mamba-MDS`
 - `PMS_Mamba-PD`
 
-The direct long-horizon comparison currently uses the completed diagnostic long horizons:
+The direct long-horizon comparison now uses the completed full long horizons:
 
 ```text
-120, 180, 360 days
+120, 180, 270, 360 days
 ```
 
 Long-horizon average by RMSE:
 
 | Model | Track | Long Avg. RMSE | Long Avg. MAE |
 | --- | --- | ---: | ---: |
-| `PatchTST` | Opt | 23.29 | 16.94 |
-| `MS_Mamba-MD` | Mamba-HPO | 24.45 | 17.97 |
-| `NS_Mamba-D` | Mamba-HPO | 24.83 | 18.25 |
-| `MS_Mamba-MDG` | Mamba-HPO | 25.00 | 18.28 |
-| `NLinear` | Opt | 25.31 | 18.08 |
-| `S_Mamba` | Mamba-HPO | 25.40 | 18.60 |
-| `MS_Mamba-MDS` | Mamba-HPO | 25.78 | 18.40 |
-| `TimesNet` | Opt | 25.92 | 18.90 |
-| `PMS_Mamba-PD` | Mamba-HPO | 25.93 | 18.62 |
+| `PatchTST` | Opt | 24.50 | 17.77 |
+| `MS_Mamba-MD` | Mamba-HPO | 25.43 | 18.64 |
+| `NLinear` | Opt | 26.28 | 18.70 |
+| `TimesNet` | Opt | 27.01 | 19.74 |
 
-Best Mamba-HPO row by diagnostic horizon:
+Best Mamba-HPO row by completed diagnostic horizon:
 
 | Horizon | Best Mamba | RMSE | MAE | seq_len | Config |
 | ---: | --- | ---: | ---: | ---: | --- |
@@ -378,9 +376,9 @@ Best Mamba-HPO row by diagnostic horizon:
 
 Interpretation:
 
-- HPO improves `MS_Mamba-MD` long RMSE from `25.29` to `24.45`.
-- Optimized `MS_Mamba-MD` is now stronger than optimized `NLinear` and `TimesNet` on the `120/180/360` average.
-- Optimized `PatchTST` remains the best long-horizon model, with a remaining `4.96%` RMSE gap versus optimized `MS_Mamba-MD`.
+- HPO confirms `MS_Mamba-MD` as the strongest current Mamba-family model.
+- On the completed full long-horizon average `120/180/270/360`, optimized `MS_Mamba-MD` beats optimized `NLinear` and `TimesNet`.
+- Optimized `PatchTST` remains the best long-horizon model, with a remaining `3.78%` RMSE gap versus optimized `MS_Mamba-MD`.
 - The promoted Mamba configuration is `MS_Mamba-MD` with `moving_avg=49`, `ms_scales=1 2 4`, `d_model=64`, `d_ff=128`, and `d_state=16`.
 
 Next commands:
@@ -866,8 +864,10 @@ GLD horizons must cover short, middle, and long terms from 1 day to 360 days.
 | Range | Horizons |
 | --- | --- |
 | Short term | 1, 3, 5, 7 days |
-| Middle term | 14, 30, 60, 90, 120 days |
-| Long term | 180, 270, 360 days |
+| Middle term | 14, 30, 60, 90 days |
+| Long term | 120, 180, 270, 360 days |
+
+This balanced `4/4/4` split is the default grouping for grouped summaries and overall horizon-balanced metrics.
 
 Use `pred_len` equal to the horizon in days.
 

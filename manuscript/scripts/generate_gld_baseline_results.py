@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 MANUSCRIPT_ROOT = Path(__file__).resolve().parents[1]
-CSV_PATH = MANUSCRIPT_ROOT / "data" / "gld_baselines.csv"
+CSV_PATH = MANUSCRIPT_ROOT / "data" / "gld_rmse_optimized_best.csv"
 OUT_DIR = MANUSCRIPT_ROOT / "sections"
 OUT_PATH = OUT_DIR / "results_baselines.tex"
 
@@ -26,6 +26,13 @@ def load_rows():
 
 def latex_escape(text):
     return text.replace("_", r"\_")
+
+
+def display_model(text):
+    mapping = {
+        "S_Mamba": "S-Mamba",
+    }
+    return mapping.get(text, latex_escape(text))
 
 
 def avg(values):
@@ -79,13 +86,13 @@ def build_summary(rows, horizon_winners, term_avgs, overall_avgs):
 
     lines = []
     lines.append(
-        "The GLD baseline evaluation is complete under the locked shared setting."
+        "The RMSE-optimized baseline sweep is complete for the six directly comparable backbone models."
     )
     lines.append(
-        "All 72 runs finished successfully, corresponding to 6 core models evaluated across 12 horizons."
+        "The summarized best-row table contains 72 complete best-per-model/per-horizon rows, corresponding to 6 models across 12 horizons."
     )
     lines.append(
-        r"The machine-readable result table for this submission package is stored in \texttt{data/gld\_baselines.csv}."
+        r"The machine-readable best-row summary is bundled in \texttt{manuscript/data/gld\_rmse\_optimized\_best.csv}."
     )
     lines.append("")
     lines.append(r"\begin{table}[t]")
@@ -101,8 +108,8 @@ def build_summary(rows, horizon_winners, term_avgs, overall_avgs):
     lines.append(r"\midrule")
     for horizon, best, runner_up in horizon_winners:
         lines.append(
-            f"{horizon} & {latex_escape(best['model'])} & {best['rmse']:.2f} & "
-            f"{latex_escape(runner_up['model'])} & {runner_up['rmse']:.2f} \\\\"
+            f"{horizon} & {display_model(best['model'])} & {best['rmse']:.2f} & "
+            f"{display_model(runner_up['model'])} & {runner_up['rmse']:.2f} \\\\"
         )
     lines.append(r"\bottomrule")
     lines.append(r"\end{tabular}")
@@ -111,7 +118,7 @@ def build_summary(rows, horizon_winners, term_avgs, overall_avgs):
     lines.append(r"\begin{table}[t]")
     lines.append(r"\centering")
     lines.append(
-        r"\caption{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--120 days, long = 180--360 days.}"
+        r"\caption{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days.}"
     )
     lines.append(r"\label{tab:gld-term-avg}")
     lines.append(r"\small")
@@ -123,7 +130,7 @@ def build_summary(rows, horizon_winners, term_avgs, overall_avgs):
     lines.append(r"\midrule")
     for model in CORE_MODELS:
         lines.append(
-            f"{latex_escape(model)} & {term_avgs[model]['short']:.2f} & "
+            f"{display_model(model)} & {term_avgs[model]['short']:.2f} & "
             f"{term_avgs[model]['middle']:.2f} & {term_avgs[model]['long']:.2f} & "
             f"{overall_avgs[model]:.2f} \\\\"
         )
@@ -131,33 +138,33 @@ def build_summary(rows, horizon_winners, term_avgs, overall_avgs):
     lines.append(r"\end{tabular}")
     lines.append(r"\end{table}")
     lines.append("")
-    lines.append("The main pattern is a two-model regime.")
+    lines.append("Within the optimized baseline sweep, iTransformer and S-Mamba remain the two strongest directly comparable models.")
     lines.append(
-        f"S\\_Mamba is the strongest RMSE baseline for {winner_counts['S_Mamba']} horizons, covering every horizon from 1 to 90 days, while iTransformer is strongest for the remaining {winner_counts['iTransformer']} horizons from 120 to 360 days."
+        f"iTransformer is the strongest optimized baseline for {winner_counts['iTransformer']} horizons, covering 3, 5, 7, 30, 60, 90, 120, 180, 270, and 360 days, while S-Mamba is strongest at 1 and 14 days."
     )
     lines.append(
-        f"The handover is narrow rather than abrupt: at 120 days the RMSE gap is about {h120_gap:.2f}\\% in favor of iTransformer, while at 360 days the gap is only about {h360_gap:.2f}\\%."
+        f"The optimized long-horizon gap is material rather than negligible: at 120 days the RMSE gap is about {h120_gap:.2f}\\% in favor of iTransformer, while at 360 days the gap is about {h360_gap:.2f}\\%."
     )
     lines.append(
-        "This means the long-horizon comparison between the two models is highly competitive rather than dominated by one side."
+        "Under model-specific lookback optimization, iTransformer is clearly the stronger middle- and long-horizon baseline among the six directly comparable backbone models."
     )
     lines.append("")
     lines.append(
-        "Autoformer is a stable third-place baseline across all 12 horizons."
+        "Autoformer becomes a clear third-place baseline overall under the same optimized sweep."
     )
     lines.append(
-        f"However, its overall average RMSE of {autoformer_avg_rmse:.2f} is far above the two leading models, whose overall average RMSE values are {s_mamba_avg_rmse:.2f} for S\\_Mamba and {itransformer_avg_rmse:.2f} for iTransformer."
+        f"However, its overall average RMSE of {autoformer_avg_rmse:.2f} remains above the two leaders, whose overall average RMSE values are {s_mamba_avg_rmse:.2f} for S-Mamba and {itransformer_avg_rmse:.2f} for iTransformer."
     )
     lines.append(
-        "The plain attention baselines are substantially weaker on GLD under the locked shared setting, with overall average RMSE above 69 for Transformer and above 76 for Informer and Reformer."
+        "The plain attention baselines remain substantially weaker on GLD even after lookback optimization, with overall average RMSE above 58 for Transformer and above 60 for Informer and Reformer."
     )
     lines.append("")
     lines.append("The MAE pattern is similar.")
     lines.append(
-        f"S\\_Mamba and iTransformer remain nearly tied overall, and S\\_Mamba holds a slightly lower average MAE, {s_mamba_avg_mae:.2f} versus {itransformer_avg_mae:.2f}."
+        f"S-Mamba and iTransformer remain close overall on MAE as well, with averages {s_mamba_avg_mae:.2f} and {itransformer_avg_mae:.2f}, respectively."
     )
     lines.append(
-        "These baseline results identify S\\_Mamba and iTransformer as the two reference models that NS-Mamba must improve upon."
+        "These optimized baseline results establish iTransformer as the strongest directly comparable baseline and S-Mamba as the strongest Mamba-style baseline prior to the broader Mamba-family search."
     )
     return "\n".join(lines) + "\n"
 

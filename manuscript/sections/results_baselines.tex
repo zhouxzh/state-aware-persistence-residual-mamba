@@ -1,6 +1,6 @@
-The GLD baseline evaluation is complete under the locked shared setting.
-All 72 runs finished successfully, corresponding to 6 core models evaluated across 12 horizons.
-The machine-readable result table for this submission package is stored in \texttt{data/gld\_baselines.csv}.
+The RMSE-optimized baseline sweep is complete for the six directly comparable backbone models.
+The summarized best-row table contains 72 complete best-per-model/per-horizon rows, corresponding to 6 models across 12 horizons.
+The machine-readable best-row summary is bundled in \texttt{manuscript/data/gld\_rmse\_optimized\_best.csv}.
 
 \begin{table}[t]
 \centering
@@ -11,50 +11,50 @@ The machine-readable result table for this submission package is stored in \text
 \toprule
 Horizon & Best model & RMSE & Runner-up & RMSE \\
 \midrule
-1 & S\_Mamba & 4.45 & iTransformer & 4.59 \\
-3 & S\_Mamba & 5.30 & iTransformer & 5.45 \\
-5 & S\_Mamba & 5.76 & iTransformer & 6.12 \\
-7 & S\_Mamba & 6.47 & iTransformer & 6.85 \\
-14 & S\_Mamba & 8.17 & iTransformer & 8.55 \\
-30 & S\_Mamba & 11.12 & iTransformer & 11.45 \\
-60 & S\_Mamba & 14.80 & iTransformer & 14.89 \\
-90 & S\_Mamba & 16.68 & iTransformer & 16.89 \\
-120 & iTransformer & 19.89 & S\_Mamba & 20.31 \\
-180 & iTransformer & 26.71 & S\_Mamba & 26.91 \\
-270 & iTransformer & 32.95 & S\_Mamba & 33.00 \\
-360 & iTransformer & 39.45 & S\_Mamba & 39.48 \\
+1 & S-Mamba & 2.58 & iTransformer & 2.58 \\
+3 & iTransformer & 3.58 & S-Mamba & 3.62 \\
+5 & iTransformer & 4.29 & S-Mamba & 4.34 \\
+7 & iTransformer & 4.96 & S-Mamba & 4.98 \\
+14 & S-Mamba & 6.86 & iTransformer & 6.90 \\
+30 & iTransformer & 9.76 & S-Mamba & 9.94 \\
+60 & iTransformer & 13.12 & S-Mamba & 14.38 \\
+90 & iTransformer & 14.56 & S-Mamba & 16.58 \\
+120 & iTransformer & 16.56 & S-Mamba & 19.24 \\
+180 & iTransformer & 23.29 & S-Mamba & 25.91 \\
+270 & iTransformer & 29.12 & S-Mamba & 32.24 \\
+360 & iTransformer & 36.46 & S-Mamba & 39.04 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[t]
 \centering
-\caption{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--120 days, long = 180--360 days.}
+\caption{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days.}
 \label{tab:gld-term-avg}
 \small
 \begin{tabular}{lrrrr}
 \toprule
 Model & Short Avg. RMSE & Middle Avg. RMSE & Long Avg. RMSE & Overall Avg. RMSE \\
 \midrule
-S\_Mamba & 5.49 & 14.21 & 33.13 & 16.04 \\
-iTransformer & 5.75 & 14.34 & 33.04 & 16.15 \\
-Autoformer & 36.06 & 37.70 & 43.93 & 38.71 \\
-Transformer & 69.11 & 66.78 & 74.80 & 69.56 \\
-Informer & 79.27 & 75.60 & 72.96 & 76.17 \\
-Reformer & 68.27 & 77.47 & 84.87 & 76.25 \\
+S-Mamba & 3.88 & 11.94 & 29.11 & 14.98 \\
+iTransformer & 3.85 & 11.09 & 26.36 & 13.77 \\
+Autoformer & 4.94 & 13.30 & 30.08 & 16.11 \\
+Transformer & 55.24 & 57.73 & 61.48 & 58.15 \\
+Informer & 57.62 & 65.73 & 64.01 & 62.45 \\
+Reformer & 51.05 & 58.21 & 72.18 & 60.48 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The main pattern is a two-model regime.
-S\_Mamba is the strongest RMSE baseline for 8 horizons, covering every horizon from 1 to 90 days, while iTransformer is strongest for the remaining 4 horizons from 120 to 360 days.
-The handover is narrow rather than abrupt: at 120 days the RMSE gap is about 2.05\% in favor of iTransformer, while at 360 days the gap is only about 0.06\%.
-This means the long-horizon comparison between the two models is highly competitive rather than dominated by one side.
+Within the optimized baseline sweep, iTransformer and S-Mamba remain the two strongest directly comparable models.
+iTransformer is the strongest optimized baseline for 10 horizons, covering 3, 5, 7, 30, 60, 90, 120, 180, 270, and 360 days, while S-Mamba is strongest at 1 and 14 days.
+The optimized long-horizon gap is material rather than negligible: at 120 days the RMSE gap is about 13.90\% in favor of iTransformer, while at 360 days the gap is about 6.62\%.
+Under model-specific lookback optimization, iTransformer is clearly the stronger middle- and long-horizon baseline among the six directly comparable backbone models.
 
-Autoformer is a stable third-place baseline across all 12 horizons.
-However, its overall average RMSE of 38.71 is far above the two leading models, whose overall average RMSE values are 16.04 for S\_Mamba and 16.15 for iTransformer.
-The plain attention baselines are substantially weaker on GLD under the locked shared setting, with overall average RMSE above 69 for Transformer and above 76 for Informer and Reformer.
+Autoformer becomes a clear third-place baseline overall under the same optimized sweep.
+However, its overall average RMSE of 16.11 remains above the two leaders, whose overall average RMSE values are 14.98 for S-Mamba and 13.77 for iTransformer.
+The plain attention baselines remain substantially weaker on GLD even after lookback optimization, with overall average RMSE above 58 for Transformer and above 60 for Informer and Reformer.
 
 The MAE pattern is similar.
-S\_Mamba and iTransformer remain nearly tied overall, and S\_Mamba holds a slightly lower average MAE, 11.61 versus 11.65.
-These baseline results identify S\_Mamba and iTransformer as the two reference models that NS-Mamba must improve upon.
+S-Mamba and iTransformer remain close overall on MAE as well, with averages 10.62 and 10.00, respectively.
+These optimized baseline results establish iTransformer as the strongest directly comparable baseline and S-Mamba as the strongest Mamba-style baseline prior to the broader Mamba-family search.

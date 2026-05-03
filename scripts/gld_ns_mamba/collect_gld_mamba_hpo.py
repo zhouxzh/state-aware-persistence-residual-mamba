@@ -42,7 +42,7 @@ RUN_RE = re.compile(
 def term_for_horizon(horizon):
     if horizon <= 7:
         return "short"
-    if horizon <= 120:
+    if horizon <= 90:
         return "middle"
     return "long"
 
@@ -108,6 +108,7 @@ def parse_result_dir(path):
 def load_metrics(metrics_path):
     metrics = np.load(metrics_path)
     mae, mse, rmse, mape, mspe = [float(x) for x in metrics[:5]]
+    rmsse = float(metrics[5]) if metrics.shape[0] > 5 else ""
 
     meta_path = metrics_path.parent / "meta.json"
     inverse = None
@@ -122,6 +123,7 @@ def load_metrics(metrics_path):
             "rmse": "",
             "mape": "",
             "mspe": "",
+            "rmsse": "",
             "metric_scale": "scaled",
             "status": "legacy_scaled",
             "notes": "inverse=False; not comparable to price-scale results",
@@ -133,6 +135,7 @@ def load_metrics(metrics_path):
             "rmse": "",
             "mape": "",
             "mspe": "",
+            "rmsse": "",
             "metric_scale": "unknown",
             "status": "legacy_unknown",
             "notes": "missing meta.json",
@@ -144,6 +147,7 @@ def load_metrics(metrics_path):
         "rmse": rmse,
         "mape": mape,
         "mspe": mspe,
+        "rmsse": rmsse,
         "metric_scale": "price",
         "status": "complete",
         "notes": "",
@@ -216,6 +220,7 @@ def write_csv(path, rows):
         "rmse",
         "mape",
         "mspe",
+        "rmsse",
         "metric_scale",
         "status",
         "run",

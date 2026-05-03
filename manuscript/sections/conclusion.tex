@@ -1,11 +1,10 @@
 \section{Conclusion}
 
 This manuscript presents a structured path for nonstationarity-aware Mamba forecasting.
-The completed GLD baseline study shows that S\_Mamba is the strongest short- and middle-horizon baseline, while iTransformer is the strongest long-horizon RMSE baseline under the shared locked setting.
+The completed optimized GLD baseline sweep shows that iTransformer is the strongest overall directly comparable backbone model, while S-Mamba remains the strongest Mamba-style baseline before broader Mamba-family tuning.
 The completed source-optimized imported sweep further shows that NLinear is strongest at short horizons and PatchTST is strongest overall among the tuned imported baselines.
-The proposed NS-Mamba and MS-Mamba architecture families combine decomposition, multi-scale temporal modeling, and Mamba-based sequence processing around an S\_Mamba backbone.
-The first diagnostic ablation identifies the decomposition-only variant, NS-Mamba-D, as a strong candidate, reducing diagnostic long-horizon RMSE by 7.48\% versus S\_Mamba and 6.80\% versus iTransformer.
-After Mamba-specific hyperparameter optimization, MS-Mamba-MD becomes the strongest Mamba-family model, reaching 24.45 average RMSE over the 120/180/360-day diagnostic horizons.
-This optimized Mamba result is stronger than optimized NLinear and TimesNet on the same long-horizon average, but optimized PatchTST remains best with average RMSE 23.29.
-The next step is to evaluate the HPO-selected MS-Mamba-MD configuration across the full 12-horizon GLD suite.
-The manuscript will become submission-ready after the proposed-model results, ablations, and broader benchmark evaluation are completed with traceable quantitative evidence.
+The proposed NS-Mamba and MS-Mamba architecture families combine decomposition, multi-scale temporal modeling, and Mamba-based sequence processing around an S-Mamba backbone.
+After Mamba-specific hyperparameter optimization, MS-Mamba-MD becomes the strongest completed Mamba-family model.
+On the promoted four-horizon summary over 120, 180, 270, and 360 days, it reaches average RMSE 25.43 and average MAE 18.64.
+This optimized Mamba result is stronger than optimized NLinear and TimesNet on the same four-horizon average, but optimized PatchTST remains best with average RMSE 24.50.
+The next step is to complete the broader optimized benchmark evaluation with traceable quantitative evidence beyond GLD and beyond the currently uneven cross-variant coverage.

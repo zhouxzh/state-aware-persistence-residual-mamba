@@ -1,8 +1,9 @@
 \section{Discussion and Limitations}
 
-This manuscript is currently a draft after the baseline stage, the first NS-Mamba diagnostic stage, and a Mamba-family hyperparameter optimization stage.
-The main limitation is no longer baseline coverage; that part is complete.
-The main remaining limitation is that the best optimized Mamba variant, MS-Mamba-MD, has not yet been evaluated across all 12 GLD horizons under the HPO-selected settings.
+This manuscript is currently a draft after the optimized baseline sweep, the completed imported-model sweeps for five non-Mamba models, and a partial Mamba-family hyperparameter search.
+The main limitation is no longer whether strong optimized baselines exist; that part is complete.
+The main remaining limitation is no longer horizon coverage for the promoted model, because MS-Mamba-MD now has completed HPO-selected rows across all 12 GLD horizons.
+The remaining limitation is that the other Mamba-family variants still cover only the diagnostic subset, so the full cross-variant comparison is still uneven.
 The source-optimized imported baseline sweep is complete for PatchTST, NLinear, TimesNet, Non-stationary Transformer, and DLinear, but the optional source-style Autoformer and Transformer sweeps are still pending.
 
 The second limitation is dataset scope.
@@ -14,10 +15,9 @@ Financial time series evaluation can change substantially with different histori
 The final manuscript should report the exact date range, train-validation-test boundaries, random seeds, and whether validation or test windows use lookback context from earlier splits.
 
 Finally, the architecture may add complexity.
-The first diagnostic ablation suggests that not every nonstationary module is useful in this setting.
-Adaptive normalization and shift-aware fusion underperform the simpler decomposition-only branch, so future changes should be justified by improved metrics rather than by architectural novelty alone.
-The completed baseline table also raises the bar for improvement: the optimized Mamba model now needs to preserve its long-horizon advantage while remaining competitive at short and middle horizons.
+The current Mamba-HPO results suggest that the best-performing Mamba variants depend not only on nonstationary modules but also on lookback selection, moving-average window, and multi-scale structure, so future changes should be justified by improved metrics rather than by architectural novelty alone.
+The optimized baseline table also raises the bar for improvement: the optimized Mamba model now needs to preserve its long-horizon advantage while remaining competitive at short and middle horizons.
 The completed optimized imported sweep raises the bar further, because NLinear is strongest at the short horizons and PatchTST is strongest overall under the imported-model tuning regime.
 The baseline analysis also suggests where the improvement must come from.
-If NS-Mamba only adds complexity without preserving the inverted-token and reversible-normalization advantages already present in the two strongest shared-setting baselines, it is unlikely to close the gap to the stronger tuned imported baselines for the right reason.
-The proposed model therefore needs to build on the strengths of S\_Mamba while explicitly targeting the long-horizon regime where iTransformer is strongest under the shared setting and PatchTST remains strongest under the tuned imported setting.
+If NS-Mamba only adds complexity without preserving the inverted-token and reversible-normalization advantages already present in the strongest optimized baseline models, it is unlikely to close the gap to the stronger tuned imported baselines for the right reason.
+The proposed model therefore needs to build on the strengths of S-Mamba while explicitly targeting the long-horizon regime where PatchTST remains strongest under optimized evaluation.

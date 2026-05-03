@@ -7,8 +7,8 @@ from pathlib import Path
 MANUSCRIPT_ROOT = Path(__file__).resolve().parents[1]
 ALL_CSV = MANUSCRIPT_ROOT / "data" / "gld_source_optimized_all.csv"
 BEST_CSV = MANUSCRIPT_ROOT / "data" / "gld_source_optimized_best.csv"
-BASELINE_CSV = MANUSCRIPT_ROOT / "data" / "gld_baselines.csv"
-OUT_PATH = MANUSCRIPT_ROOT / "sections" / "results_source_optimized.tex"
+BASELINE_CSV = MANUSCRIPT_ROOT / "data" / "gld_rmse_optimized_best.csv"
+OUT_PATH = MANUSCRIPT_ROOT / "sections" / "appendix" / "results_source_optimized.tex"
 
 MODELS = ["PatchTST", "NLinear", "TimesNet", "Nonstationary_Transformer", "DLinear"]
 HORIZONS = [1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360]
@@ -70,22 +70,22 @@ def build_tex():
         by_model[row["model"]].append(row)
 
     lines = []
-    lines.append(r"\subsection{Source-Optimized Imported Baselines}")
+    lines.append(r"\subsection{Currently Completed Source-Optimized Imported Runs}")
     lines.append("")
     lines.append(
-        r"We also ran a separate source-style optimized sweep for imported comparison models using the hyperparameter ranges from the moved \texttt{nonstationary\_transformer/scripts/GLD.sh} workflow."
+        r"We also ran a separate imported-model sweep with model-specific hyperparameter settings and a sequence-length search."
     )
     lines.append(
-        r"This sweep is intentionally different from the locked shared-setting baseline table because it uses model-specific hyperparameters and a sequence-length sweep."
+        r"This track should be interpreted as a current completed imported-model reference set rather than a finalized global benchmark."
     )
     lines.append(
-        r"At the current stage, the optimized sweep is complete for the five imported models Non-stationary Transformer, TimesNet, PatchTST, DLinear, and NLinear."
+        r"At present, the imported source-style sweep is complete for five models: Non-stationary Transformer, TimesNet, PatchTST, DLinear, and NLinear."
     )
     lines.append("")
     lines.append(r"\begin{table}[t]")
     lines.append(r"\centering")
     lines.append(
-        r"\caption{Completed source-optimized GLD coverage for the imported models. Autoformer and Transformer source-style sweeps are still pending.}"
+        r"\caption{Completed source-optimized GLD coverage for the currently finished imported-model sweeps. Autoformer and Transformer source-style sweeps are still pending.}"
     )
     lines.append(r"\label{tab:gld-source-optimized-partial}")
     lines.append(r"\small")
@@ -105,7 +105,7 @@ def build_tex():
     lines.append(r"\begin{table}[t]")
     lines.append(r"\centering")
     lines.append(
-        r"\caption{Best completed source-optimized imported results by horizon, measured with RMSE and paired with MAE.}"
+        r"\caption{Best currently completed source-optimized imported results by horizon, measured with RMSE and paired with MAE.}"
     )
     lines.append(r"\label{tab:gld-source-optimized-best}")
     lines.append(r"\small")
@@ -122,10 +122,8 @@ def build_tex():
     lines.append(r"\end{table}")
     lines.append("")
 
-    lines.append("The completed optimized imported sweep changes the comparison picture substantially.")
-    lines.append("NLinear is the strongest imported model on the short horizons from 1 to 14 days.")
-    lines.append("TimesNet is strongest at 30 and 90 days.")
-    lines.append("PatchTST is strongest from 60 days onward except for 90 days, and it is the best imported model overall under the completed optimized sweep.")
+    lines.append("Within the currently completed imported runs, NLinear is strongest from 1 to 14 days, TimesNet is strongest at 30 and 90 days, and PatchTST is strongest from 60 days onward except at 90 days.")
+    lines.append("Among the completed imported models, PatchTST is therefore the strongest long-horizon reference model.")
     lines.append("")
     lines.append("The best lookback pattern also depends strongly on the model.")
     lines.append("NLinear prefers very large windows from 192 to 384.")
@@ -139,7 +137,7 @@ def build_tex():
     patch_120 = next(row for row in winners if row["horizon"] == 120)
     patch_360 = next(row for row in winners if row["horizon"] == 360)
     lines.append(
-        "Compared with the best locked-setting baseline at each completed horizon, the optimized imported baselines are substantially stronger except for DLinear."
+        "Compared with the best optimized directly comparable baseline at each completed horizon, the imported optimized baselines are substantially stronger except for DLinear."
     )
     lines.append(
         f"For example, optimized NLinear reduces RMSE by {(baseline_best[1]['rmse'] - nlinear_1['rmse']) / baseline_best[1]['rmse'] * 100:.2f}\\% at 1 day, "
@@ -148,7 +146,7 @@ def build_tex():
         f"and optimized PatchTST reduces RMSE by {(baseline_best[360]['rmse'] - patch_360['rmse']) / baseline_best[360]['rmse'] * 100:.2f}\\% at 360 days."
     )
     lines.append(
-        "DLinear is weaker than the best locked-setting baseline at every horizon, while Non-stationary Transformer is competitive at short horizons but no longer competitive with the strongest imported models once the full optimized sweep is complete."
+        "DLinear is weaker than the best optimized directly comparable baseline at every horizon, while Non-stationary Transformer is competitive at short horizons but not with the strongest completed imported models at long horizons."
     )
     lines.append("")
     return "\n".join(lines)

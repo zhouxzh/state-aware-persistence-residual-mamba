@@ -2,88 +2,132 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{mamba}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \citation{informer}
-\citation{reformer}
 \citation{autoformer}
+\citation{tft}
+\citation{tsf-survey}
+\citation{nbeats}
+\citation{nhits}
+\citation{dlinear}
+\citation{patchtst}
+\citation{timesnet}
+\citation{finance-dl-survey}
+\citation{informer}
+\citation{autoformer}
+\citation{fedformer}
 \citation{itransformer}
+\citation{patchtst}
+\citation{revin}
+\citation{nonstationary-transformer}
+\citation{mamba}
 \citation{smamba}
 \citation{bimamba}
 \citation{mambats}
 \citation{timemachine}
 \citation{tsmamba}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\citation{m4}
+\citation{tsf-survey}
+\citation{tft}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Long-Horizon Time Series Forecasting}{2}{subsection.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Transformer-Based Time Series Forecasting}{2}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Inverted Forecasting Architectures}{2}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Mamba-Based Time Series Forecasting}{2}{subsection.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Problem Formulation and Method}{3}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}State Space Models and Mamba}{3}{subsection.3.1}\protected@file@percent }
-\citation{mamba}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Forecasting Benchmarks and Long-Horizon Evaluation}{2}{subsection.2.1}\protected@file@percent }
+\citation{nbeats}
+\citation{nhits}
+\citation{informer}
+\citation{reformer}
+\citation{autoformer}
+\citation{fedformer}
+\citation{tft}
+\citation{dlinear}
+\citation{patchtst}
+\citation{timesnet}
+\citation{finance-dl-survey}
 \citation{revin}
 \citation{nonstationary-transformer}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Mamba block architecture drawn with native TikZ so mathematical notation is rendered by LaTeX. Panel A shows the high-level block outline: input projection, SSM stream, gating stream, fusion, and output projection. Panel B expands the key selective state-space component, where input-dependent parameters generate the discretized update, readout, and gated output.}}{4}{figure.1}\protected@file@percent }
-\newlabel{fig:mamba-arch}{{1}{4}{Mamba block architecture drawn with native TikZ so mathematical notation is rendered by LaTeX. Panel A shows the high-level block outline: input projection, SSM stream, gating stream, fusion, and output projection. Panel B expands the key selective state-space component, where input-dependent parameters generate the discretized update, readout, and gated output}{figure.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Nonstationarity and Normalization}{4}{subsection.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Adaptive Normalization}{5}{subsection.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Series Decomposition}{5}{subsection.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Shift-Aware Fusion}{5}{subsection.3.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Neural Network Architecture}{5}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Input and Tensor Shapes}{5}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}S\_Mamba Encoder}{6}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Variant Definitions}{6}{subsection.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Adaptive-normalization variants.}{6}{section*.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Decomposition variants.}{6}{section*.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Shift-gated variants.}{7}{section*.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Multi-scale variants.}{7}{section*.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Linear-skip and patch variants.}{7}{section*.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Forecast Head and Loss}{7}{subsection.4.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Meaning of the Mamba-family variant names used in this manuscript.}}{8}{table.1}\protected@file@percent }
-\newlabel{tab:mamba-variant-meaning}{{1}{8}{Meaning of the Mamba-family variant names used in this manuscript}{table.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Experimental Setup}{8}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Dataset}{8}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Data Splits}{8}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Baseline Models}{8}{subsection.5.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Best and second-best GLD baseline models by horizon, measured with RMSE.}}{9}{table.2}\protected@file@percent }
-\newlabel{tab:gld-horizon-winners}{{2}{9}{Best and second-best GLD baseline models by horizon, measured with RMSE}{table.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Shared Configuration}{9}{subsection.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Metrics and Logging}{9}{subsection.5.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Results}{9}{section.6}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--120 days, long = 180--360 days.}}{10}{table.3}\protected@file@percent }
-\newlabel{tab:gld-term-avg}{{3}{10}{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--120 days, long = 180--360 days}{table.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Diagnostic GLD RMSE results for NS-Mamba variants. The long average is computed over 120, 180, and 360 days.}}{10}{table.4}\protected@file@percent }
-\newlabel{tab:ns-mamba-diagnostic}{{4}{10}{Diagnostic GLD RMSE results for NS-Mamba variants. The long average is computed over 120, 180, and 360 days}{table.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}NS-Mamba Diagnostic Ablation}{10}{subsection.6.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Direct RMSE and MAE comparison of NS-Mamba-D against all completed GLD models on the overlapping horizons 30, 120, 180, and 360 days. Long Avg. is computed over 120, 180, and 360 days.}}{11}{table.5}\protected@file@percent }
-\newlabel{tab:ns-mamba-vs-all}{{5}{11}{Direct RMSE and MAE comparison of NS-Mamba-D against all completed GLD models on the overlapping horizons 30, 120, 180, and 360 days. Long Avg. is computed over 120, 180, and 360 days}{table.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}NS-Mamba-D vs All Completed Models}{11}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Source-Optimized Imported Baselines}{11}{subsection.6.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Completed source-optimized GLD coverage for the imported models. Autoformer and Transformer source-style sweeps are still pending.}}{12}{table.6}\protected@file@percent }
-\newlabel{tab:gld-source-optimized-partial}{{6}{12}{Completed source-optimized GLD coverage for the imported models. Autoformer and Transformer source-style sweeps are still pending}{table.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Best completed source-optimized imported results by horizon, measured with RMSE and paired with MAE.}}{12}{table.7}\protected@file@percent }
-\newlabel{tab:gld-source-optimized-best}{{7}{12}{Best completed source-optimized imported results by horizon, measured with RMSE and paired with MAE}{table.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Mamba Hyperparameter Optimization}{12}{subsection.6.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Long-horizon comparison after Mamba hyperparameter optimization. Values are averaged over 120, 180, and 360 days.}}{13}{table.8}\protected@file@percent }
-\newlabel{tab:gld-mamba-hpo-long}{{8}{13}{Long-horizon comparison after Mamba hyperparameter optimization. Values are averaged over 120, 180, and 360 days}{table.8}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Best Mamba-HPO configuration by completed diagnostic horizon.}}{13}{table.9}\protected@file@percent }
-\newlabel{tab:gld-mamba-hpo-horizon}{{9}{13}{Best Mamba-HPO configuration by completed diagnostic horizon}{table.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Completed Result Overview}{13}{subsection.6.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Compact GLD RMSE comparison for publication. Panel A shows the main cross-model frontier across all completed horizons, including the strongest shared baselines, tuned imported baselines, and the promoted Mamba-HPO result. Panel B compares the completed Mamba-family variants on the diagnostic horizons 30, 120, 180, and 360 days. This figure preserves the ranking structure without the space cost of the full result table.}}{14}{figure.2}\protected@file@percent }
-\newlabel{fig:gld-result-overview}{{2}{14}{Compact GLD RMSE comparison for publication. Panel A shows the main cross-model frontier across all completed horizons, including the strongest shared baselines, tuned imported baselines, and the promoted Mamba-HPO result. Panel B compares the completed Mamba-family variants on the diagnostic horizons 30, 120, 180, and 360 days. This figure preserves the ranking structure without the space cost of the full result table}{figure.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Ablation Study}{14}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Discussion and Limitations}{15}{section.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9}Conclusion}{15}{section.9}\protected@file@percent }
-\bibcite{mamba}{1}
-\bibcite{smamba}{2}
-\bibcite{bimamba}{3}
-\bibcite{mambats}{4}
-\bibcite{timemachine}{5}
-\bibcite{tsmamba}{6}
-\bibcite{revin}{7}
-\bibcite{nonstationary-transformer}{8}
-\bibcite{itransformer}{9}
-\bibcite{informer}{10}
-\bibcite{autoformer}{11}
-\bibcite{reformer}{12}
-\gdef \@abspage@last{17}
+\citation{autoformer}
+\citation{fedformer}
+\citation{dlinear}
+\citation{nhits}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Long-Horizon Neural Forecasting Models}{3}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Nonstationarity, Normalization, and Decomposition}{3}{subsection.2.3}\protected@file@percent }
+\citation{itransformer}
+\citation{mamba}
+\citation{smamba}
+\citation{bimamba}
+\citation{mambats}
+\citation{timemachine}
+\citation{tsmamba}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Inverted and Variable-Token Forecasting Architectures}{4}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Mamba-Based Time Series Forecasting}{4}{subsection.2.5}\protected@file@percent }
+\citation{mamba}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Problem Formulation and Method}{5}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Forecasting Task}{5}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Mamba Backbone}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Mamba block used as the sequence-modeling backbone. Panel A shows the high-level block structure with projection, selective state-space processing, gating, fusion, and output projection. Panel B expands the selective state-space component, where input-dependent parameters control the recurrent update and readout.}}{6}{figure.1}\protected@file@percent }
+\newlabel{fig:mamba-arch}{{1}{6}{Mamba block used as the sequence-modeling backbone. Panel A shows the high-level block structure with projection, selective state-space processing, gating, fusion, and output projection. Panel B expands the selective state-space component, where input-dependent parameters control the recurrent update and readout}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}S-Mamba Forecasting Encoder}{6}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Nonstationarity Statistics}{7}{subsection.3.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces S-Mamba forecasting encoder: reversible normalization, inverted variable-token embedding, bidirectional Mamba encoding, horizon projection, and de-normalization back to the original price scale.}}{8}{figure.2}\protected@file@percent }
+\newlabel{fig:s-mamba-encoder}{{2}{8}{S-Mamba forecasting encoder: reversible normalization, inverted variable-token embedding, bidirectional Mamba encoding, horizon projection, and de-normalization back to the original price scale}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Adaptive Normalization}{9}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Series Decomposition}{9}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Shift-Aware Fusion}{9}{subsection.3.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Variant Definitions}{10}{subsection.3.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.9}Forecast Head and Loss}{10}{subsection.3.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Meaning of the Mamba-family variant names used in this manuscript.}}{11}{table.1}\protected@file@percent }
+\newlabel{tab:mamba-variant-meaning}{{1}{11}{Meaning of the Mamba-family variant names used in this manuscript}{table.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experimental Setup}{11}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Dataset and Preprocessing}{11}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Chronological Data Splits}{11}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Evaluation Horizons and Metrics}{12}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Optimized Evaluation Tracks}{13}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Optimization and Reproducibility}{13}{subsection.4.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Best and second-best GLD baseline models by horizon, measured with RMSE.}}{14}{table.2}\protected@file@percent }
+\newlabel{tab:gld-horizon-winners}{{2}{14}{Best and second-best GLD baseline models by horizon, measured with RMSE}{table.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days.}}{14}{table.3}\protected@file@percent }
+\newlabel{tab:gld-term-avg}{{3}{14}{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days}{table.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Results}{14}{section.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Current long-horizon comparison after Mamba hyperparameter search. Values are averaged over the completed common long horizons 120, 180, and 360 days.}}{15}{table.4}\protected@file@percent }
+\newlabel{tab:gld-mamba-hpo-long}{{4}{15}{Current long-horizon comparison after Mamba hyperparameter search. Values are averaged over the completed common long horizons 120, 180, and 360 days}{table.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Promoted long-horizon summary for MS-Mamba-MD and optimized reference models. Values are averaged over 120, 180, 270, and 360 days.}}{15}{table.5}\protected@file@percent }
+\newlabel{tab:gld-mamba-hpo-promoted}{{5}{15}{Promoted long-horizon summary for MS-Mamba-MD and optimized reference models. Values are averaged over 120, 180, 270, and 360 days}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Current Mamba Hyperparameter Search}{15}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Best currently completed Mamba-HPO row by horizon.}}{16}{table.6}\protected@file@percent }
+\newlabel{tab:gld-mamba-hpo-horizon}{{6}{16}{Best currently completed Mamba-HPO row by horizon}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Completed Result Overview}{16}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and Limitations}{16}{section.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Compact GLD RMSE comparison across the currently completed optimized evaluation tracks. Panel A shows the current cross-model frontier across all completed horizons, including the strongest optimized baselines, imported optimized baselines, and the promoted Mamba-HPO row. Panel B shows the currently completed Mamba-HPO variants on the diagnostic horizons 30, 120, 180, and 360 days.}}{17}{figure.3}\protected@file@percent }
+\newlabel{fig:gld-result-overview}{{3}{17}{Compact GLD RMSE comparison across the currently completed optimized evaluation tracks. Panel A shows the current cross-model frontier across all completed horizons, including the strongest optimized baselines, imported optimized baselines, and the promoted Mamba-HPO row. Panel B shows the currently completed Mamba-HPO variants on the diagnostic horizons 30, 120, 180, and 360 days}{figure.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{18}{section.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Completed source-optimized GLD coverage for the currently finished imported-model sweeps. Autoformer and Transformer source-style sweeps are still pending.}}{19}{table.7}\protected@file@percent }
+\newlabel{tab:gld-source-optimized-partial}{{7}{19}{Completed source-optimized GLD coverage for the currently finished imported-model sweeps. Autoformer and Transformer source-style sweeps are still pending}{table.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Best currently completed source-optimized imported results by horizon, measured with RMSE and paired with MAE.}}{19}{table.8}\protected@file@percent }
+\newlabel{tab:gld-source-optimized-best}{{8}{19}{Best currently completed source-optimized imported results by horizon, measured with RMSE and paired with MAE}{table.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Appendix}{19}{appendix.A}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Currently Completed Source-Optimized Imported Runs}{19}{subsection.A.1}\protected@file@percent }
+\bibstyle{unsrt}
+\bibdata{references}
+\bibcite{informer}{1}
+\bibcite{autoformer}{2}
+\bibcite{tft}{3}
+\bibcite{tsf-survey}{4}
+\bibcite{nbeats}{5}
+\bibcite{nhits}{6}
+\bibcite{dlinear}{7}
+\bibcite{patchtst}{8}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Sweep Configurations}{20}{subsection.A.2}\protected@file@percent }
+\bibcite{timesnet}{9}
+\bibcite{finance-dl-survey}{10}
+\bibcite{fedformer}{11}
+\bibcite{itransformer}{12}
+\bibcite{revin}{13}
+\bibcite{nonstationary-transformer}{14}
+\bibcite{mamba}{15}
+\bibcite{smamba}{16}
+\bibcite{bimamba}{17}
+\bibcite{mambats}{18}
+\bibcite{timemachine}{19}
+\bibcite{tsmamba}{20}
+\bibcite{m4}{21}
+\bibcite{reformer}{22}
+\gdef \@abspage@last{22}

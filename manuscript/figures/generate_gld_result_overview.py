@@ -8,7 +8,7 @@ from matplotlib.lines import Line2D
 
 
 FIG_DIR = Path(__file__).resolve().parent
-BASELINE_CSV = FIG_DIR / "gld_baselines.csv"
+BASELINE_CSV = FIG_DIR / "gld_rmse_optimized_best.csv"
 OPT_CSV = FIG_DIR / "gld_source_optimized_best.csv"
 MAMBA_HPO_CSV = FIG_DIR / "gld_mamba_hpo_best.csv"
 FIG_PDF = FIG_DIR / "gld_result_overview.pdf"

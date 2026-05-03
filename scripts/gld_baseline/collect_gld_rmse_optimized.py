@@ -84,7 +84,7 @@ RUN_RE = re.compile(
 def term_for_horizon(horizon):
     if horizon <= 7:
         return "short"
-    if horizon <= 120:
+    if horizon <= 90:
         return "middle"
     return "long"
 
@@ -111,6 +111,7 @@ def load_completed():
 
         metrics = np.load(metrics_path)
         mae, mse, rmse, mape, mspe = [float(x) for x in metrics[:5]]
+        rmsse = float(metrics[5]) if metrics.shape[0] > 5 else ""
 
         meta_path = metrics_path.parent / "meta.json"
         inverse = None
@@ -126,6 +127,7 @@ def load_completed():
             "rmse": rmse,
             "mape": mape,
             "mspe": mspe,
+            "rmsse": rmsse,
             "inverse": inverse,
             "run": metrics_path.parent.name,
         }
@@ -155,6 +157,7 @@ def base_row(model, horizon, seq_len):
         "rmse": "",
         "mape": "",
         "mspe": "",
+        "rmsse": "",
         "metric_scale": "price",
         "status": "pending",
         "run": "",
@@ -185,6 +188,7 @@ def write_csv(path, rows):
         "rmse",
         "mape",
         "mspe",
+        "rmsse",
         "metric_scale",
         "status",
         "run",
@@ -221,6 +225,7 @@ def main():
                                 "rmse": result["rmse"],
                                 "mape": result["mape"],
                                 "mspe": result["mspe"],
+                                "rmsse": result["rmsse"],
                                 "status": "complete",
                                 "run": result["run"],
                             }

@@ -14,7 +14,7 @@ The completed diagnostic stage contains 16 finished runs, corresponding to four 
 \toprule
 Model & Adaptive Norm & Decomp. & Gate & 30 & 120 & 180 & 360 & Long Avg. \\
 \midrule
-S\_Mamba & No & No & No & 11.12 & 20.31 & 26.91 & 39.48 & 28.90 \\
+S-Mamba & No & No & No & 11.12 & 20.31 & 26.91 & 39.48 & 28.90 \\
 iTransformer & Yes & No & No & 11.45 & 19.89 & 26.71 & 39.45 & 28.69 \\
 \midrule
 NS-Mamba-A & Yes & No & No & 11.16 & 21.16 & 28.40 & 43.93 & 31.16 \\
@@ -26,12 +26,11 @@ NS-Mamba-ADG & Yes & Yes & Yes & 10.64 & 20.19 & 27.60 & 45.50 & 31.10 \\
 }
 \end{table}
 
-The strongest diagnostic variant is NS-Mamba-D, which uses series decomposition with the S\_Mamba normalization pathway and does not use adaptive normalization or shift-aware fusion.
-Against the better of S\_Mamba and iTransformer at each diagnostic horizon, NS-Mamba-D reduces RMSE by 13.13\% at 30 days, 8.25\% at 120 days, 9.33\% at 180 days, and 4.33\% at 360 days.
-Its long-horizon average RMSE is 26.74, compared with 28.90 for S\_Mamba and 28.68 for iTransformer.
-This corresponds to a 7.49\% reduction versus S\_Mamba and a 6.79\% reduction versus iTransformer.
-The diagnostic result is also informative because the more complex variants do not improve the metric.
-Adaptive normalization alone is weaker than S\_Mamba on the diagnostic long horizons, and adding adaptive normalization to the decomposition branch weakens the decomposition-only result.
-The shift-aware gate also does not help in this first diagnostic sweep.
-Therefore, the next experiment should promote NS-Mamba-D to the full 12-horizon GLD evaluation before adding further complexity.
+Among the four completed diagnostic variants, NS-Mamba-D is strongest at every completed horizon and on the diagnostic long-horizon average.
+Relative to the better of S-Mamba and iTransformer at each diagnostic horizon, NS-Mamba-D reduces RMSE by 13.13\% at 30 days, 8.25\% at 120 days, 9.33\% at 180 days, and 4.33\% at 360 days.
+Its long-horizon average RMSE is 26.74, compared with 28.90 for S-Mamba and 28.68 for iTransformer.
+The completed diagnostic ablation is also informative about module choice.
+Adaptive normalization alone is weaker than both reference baselines on the long diagnostic horizons.
+Adding adaptive normalization to the decomposition branch weakens the decomposition-only result, and the shift-aware gate does not improve the decomposition variant in this first fixed-setting sweep.
+Within the completed diagnostic study, explicit decomposition is therefore the only modification that consistently improves over both reference models.
 

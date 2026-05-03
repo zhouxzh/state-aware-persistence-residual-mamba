@@ -1,33 +1,70 @@
 \section{Related Work}
 
-\subsection{Long-Horizon Time Series Forecasting}
+\subsection{Forecasting Benchmarks and Long-Horizon Evaluation}
 
-Long-horizon time series forecasting aims to predict many future steps from a historical lookback window.
-It is important in domains where decisions must be made before the target is observed, including finance, energy, traffic, weather, and operations planning.
-Compared with short-term forecasting, long-horizon forecasting is more sensitive to error accumulation, distribution shift, trend changes, and the difficulty of preserving useful long-range temporal information.
-In financial forecasting, these challenges are amplified because the target can move under changing macroeconomic conditions, market expectations, and volatility regimes.
-The GLD task studied in this manuscript follows this setting by evaluating horizons from 1 day to 360 days.
+Forecasting science has long emphasized that model comparisons must be interpreted through the evaluation setting, the forecast horizon, and the diversity of temporal patterns present in the data.
+Large empirical studies such as the M4 competition show that forecasting performance is highly dependent on the data-generating context and that no single modeling family dominates across all series and horizons \cite{m4}.
+This observation is relevant to modern deep forecasting because long-horizon tasks combine several difficulties: multi-step error accumulation, changing signal-to-noise ratios across horizons, and sensitivity to distribution shift.
+Recent surveys and forecasting studies therefore treat long-horizon prediction as a setting in which architecture design, normalization, horizon length, and evaluation protocol must be considered together \cite{tsf-survey,tft}.
 
-\subsection{Transformer-Based Time Series Forecasting}
+The present manuscript follows this forecasting-science view by evaluating a fixed GLD task across horizons from 1 to 360 days rather than reporting a single horizon or a single aggregate score.
+This choice is important because short-horizon and long-horizon performance can favor different models.
+It also motivates the use of both a shared configuration and source-optimized comparisons: the shared protocol improves interpretability across model families, while source-optimized runs indicate how strong imported baselines behave when their own hyperparameters are respected.
 
-Transformer-based forecasting models introduced attention mechanisms for modeling long temporal context.
-Informer improves efficiency by reducing the cost of attention for long sequences \cite{informer}.
-Reformer reduces attention complexity through locality-sensitive hashing and reversible layers \cite{reformer}.
-Autoformer introduces decomposition into the forecasting architecture, separating trend and seasonal components to improve long-term prediction \cite{autoformer}.
-These models provide important baselines because they represent different design choices for efficient long-context modeling, decomposition, and temporal dependency extraction.
+\subsection{Long-Horizon Neural Forecasting Models}
 
-\subsection{Inverted Forecasting Architectures}
+Deep forecasting models have developed along several complementary directions.
+N-BEATS introduced a neural basis-expansion architecture that remains an important reference point for interpretable and accurate univariate forecasting \cite{nbeats}.
+N-HiTS extended this direction with hierarchical interpolation and multi-rate signal processing to improve long-horizon performance \cite{nhits}.
+These models are not attention-based, but they are important because they show that explicit multi-scale structure can be competitive in long-horizon forecasting.
 
-iTransformer argues that treating variables as tokens and encoding their temporal histories can be effective for multivariate forecasting \cite{itransformer}.
-The S\_Mamba baseline in this repository follows a related inverted-token view by embedding each variable's lookback history before applying Mamba encoder layers.
-For the initial GLD setting, the task is single-target forecasting, but the same design remains relevant because it controls how temporal history is mapped into hidden features.
+Transformer-based models introduced another major direction by using attention to model long temporal context.
+Informer reduces the computational burden of attention for long sequence forecasting \cite{informer}, while Reformer provides a general efficient-attention design through locality-sensitive hashing and reversible layers \cite{reformer}.
+Autoformer and FEDformer add decomposition mechanisms to the forecasting architecture, reflecting the practical value of separating slowly varying components from residual temporal variation \cite{autoformer,fedformer}.
+Temporal Fusion Transformers address multi-horizon forecasting with interpretable attention and gating mechanisms, providing a journal-level reference for multi-horizon neural forecasting \cite{tft}.
+
+More recent work has also questioned whether increasingly complex attention mechanisms are always necessary.
+DLinear shows that simple decomposition-based linear models can be strong long-term forecasting baselines, especially when evaluation protocols are carefully controlled \cite{dlinear}.
+PatchTST improves Transformer forecasting by segmenting time series into patches, reducing token length and encouraging local temporal representation learning \cite{patchtst}.
+TimesNet reformulates temporal variation through two-dimensional representations and provides another strong general-purpose neural forecasting baseline \cite{timesnet}.
+Together, these studies motivate the baseline set used in this manuscript: the comparison should include not only Mamba models, but also decomposition, patch-based, inverted, and multi-scale alternatives.
+
+\subsection{Nonstationarity, Normalization, and Decomposition}
+
+Nonstationarity is a central difficulty in long-horizon forecasting because the distribution observed during training may differ from the distribution encountered during testing.
+Changes in level, scale, trend, volatility, or temporal regime can make a representation learned on past windows unreliable for future windows.
+This issue is particularly important in financial forecasting, where empirical studies and reviews emphasize the impact of regime changes, noise, and unstable temporal dependence \cite{finance-dl-survey}.
+
+Several forecasting methods address this problem by modifying either the input distribution or the model architecture.
+RevIN normalizes each instance and then reverses the normalization at the output, directly targeting distribution shift between input windows and forecast targets \cite{revin}.
+Non-stationary Transformers combine series stationarization with a de-stationary attention mechanism, arguing that forecasting models need both normalized inputs and a way to preserve useful nonstationary information \cite{nonstationary-transformer}.
+Decomposition-based methods such as Autoformer, FEDformer, DLinear, and N-HiTS also reflect a related principle: separating trend, seasonal, or multi-scale components can make long-horizon prediction more stable than forcing all variation into a single latent representation \cite{autoformer,fedformer,dlinear,nhits}.
+
+The NS-Mamba family studied here follows this line of work but applies it to a selective state-space backbone.
+Rather than treating nonstationarity only as a preprocessing issue, the architecture combines reversible scaling, decomposition, and shift-aware fusion around the Mamba encoder.
+This design is intended to expose level, scale, trend, and residual structure explicitly before those components are mixed by the sequence model.
+
+\subsection{Inverted and Variable-Token Forecasting Architectures}
+
+Inverted forecasting architectures reconsider the tokenization used by sequence models.
+iTransformer treats variables as tokens and encodes each variable's temporal history as its representation, showing that this inverted view can be effective for multivariate forecasting \cite{itransformer}.
+This design is relevant because many forecasting architectures inherit tokenization assumptions from natural language processing, where positions rather than variables are the primary tokens.
+For time series, however, the choice of tokenization controls how temporal history, cross-variable dependence, and forecast heads interact.
+
+The S\_Mamba backbone used in this study follows a related idea by embedding a variable's lookback history before applying Mamba encoder layers.
+Although the GLD experiment is a single-target forecasting task, the inverted representation remains useful because it defines how the lookback window is compressed into hidden features before horizon projection.
+This also makes S\_Mamba a natural starting point for studying whether explicit nonstationary modules can improve Mamba-based forecasting.
 
 \subsection{Mamba-Based Time Series Forecasting}
 
-Several recent studies have adapted Mamba to time series forecasting.
-S\_Mamba studies whether Mamba is effective for time series forecasting and uses a bidirectional Mamba layer to model inter-variate correlations with a feed-forward layer for temporal dependencies \cite{smamba}.
-Bi-Mamba+ extends this direction with forward and backward Mamba processing, a forget gate, and a relation-aware choice between channel-independent and channel-mixing tokenization \cite{bimamba}.
+Mamba provides linear-time sequence modeling through selective state spaces, making it attractive for long-context tasks where quadratic attention can be costly \cite{mamba}.
+Recent studies have adapted this backbone to time series forecasting in different ways.
+S\_Mamba evaluates whether Mamba is effective for forecasting and uses bidirectional Mamba layers to model inter-variate correlations with feed-forward layers for temporal dependencies \cite{smamba}.
+Bi-Mamba+ extends bidirectional processing with a forget gate and relation-aware choices between channel-independent and channel-mixing tokenization \cite{bimamba}.
 MambaTS analyzes limitations of directly applying Mamba to long-term forecasting and proposes temporal Mamba blocks, variable scanning strategies, and variable-aware scan ordering \cite{mambats}.
-TimeMachine uses multiple Mamba pathways to handle channel-mixing and channel-independence settings while preserving linear scalability for long-term forecasting \cite{timemachine}.
-TSMamba moves from task-specific forecasting toward a Mamba-based foundation model, using forward and backward Mamba encoders and transfer learning for time series prediction \cite{tsmamba}.
-Together, these examples show that Mamba has become an active backbone for forecasting, but they do not directly resolve the specific problem studied here: explicit nonstationarity handling through adaptive normalization, decomposition, and shift-aware fusion.
+TimeMachine uses multiple Mamba pathways to handle channel-mixing and channel-independence settings while preserving linear scalability \cite{timemachine}.
+TSMamba moves toward a Mamba-based foundation model for time series prediction using bidirectional encoders and transfer learning \cite{tsmamba}.
+
+These studies show that Mamba has become an active forecasting backbone, but most of them emphasize sequence modeling, scan design, channel mixing, or transfer rather than explicit handling of nonstationarity.
+The present manuscript is positioned at that intersection.
+It asks whether a Mamba forecaster benefits when nonstationary structure is made explicit through adaptive normalization, decomposition, and shift-aware fusion, and it evaluates that question against strong non-Mamba baselines under both shared and source-optimized protocols.

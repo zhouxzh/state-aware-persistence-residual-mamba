@@ -48,7 +48,7 @@ SETTING = {
 def term_for_horizon(horizon):
     if horizon <= 7:
         return "short"
-    if horizon <= 120:
+    if horizon <= 90:
         return "middle"
     return "long"
 
@@ -76,6 +76,7 @@ def load_completed_metrics():
             continue
         metrics = np.load(metrics_path)
         mae, mse, rmse, mape, mspe = [float(x) for x in metrics[:5]]
+        rmsse = float(metrics[5]) if metrics.shape[0] > 5 else ""
         current = completed.get((model, horizon))
         meta_path = metrics_path.parent / "meta.json"
         inverse = None
@@ -88,6 +89,7 @@ def load_completed_metrics():
             "rmse": rmse,
             "mape": mape,
             "mspe": mspe,
+            "rmsse": rmsse,
             "inverse": inverse,
             "run": metrics_path.parent.name,
         }
@@ -167,6 +169,7 @@ def main():
                 "rmse": "",
                 "mape": "",
                 "mspe": "",
+                "rmsse": "",
                 "best_val_loss": "",
                 "train_time_sec": "",
                 "param_count": param_counts[model],
@@ -191,6 +194,7 @@ def main():
                         "rmse": metrics["rmse"],
                         "mape": metrics["mape"],
                         "mspe": metrics["mspe"],
+                        "rmsse": metrics["rmsse"],
                         "status": status,
                         "notes": notes,
                         "run": metrics["run"],
@@ -225,6 +229,7 @@ def main():
         "rmse",
         "mape",
         "mspe",
+        "rmsse",
         "best_val_loss",
         "train_time_sec",
         "param_count",

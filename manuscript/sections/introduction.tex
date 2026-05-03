@@ -1,25 +1,35 @@
 \section{Introduction}
 
-Time series forecasting models are often evaluated under the assumption that past and future windows are drawn from similar distributions.
-This assumption is weak for nonstationary real-world data.
-Gold-related exchange-traded products such as GLD can experience abrupt level shifts, volatility changes, macroeconomic regime changes, and long periods of trend persistence or reversal.
-These effects are not just noise; they change the forecasting problem itself.
+Long-horizon time series forecasting is important in applications where decisions must be made well before the target is observed, including energy systems, transportation, operations planning, and financial markets \cite{informer,autoformer,tft,tsf-survey}.
+In this setting, forecasting performance depends not only on short-term pattern extraction but also on the ability to preserve useful temporal information across long contexts while remaining stable under changing data distributions.
+These requirements are difficult to satisfy simultaneously, which is why long-horizon forecasting remains an active research problem across both statistical and deep-learning paradigms \cite{nbeats,nhits,dlinear,patchtst,timesnet}.
 
-Recent deep forecasting models use attention, decomposition, and state-space mechanisms to model long temporal context.
-Mamba is especially attractive because it provides linear-time sequence modeling through selective state spaces \cite{mamba}.
-In a forecasting setting, however, using Mamba alone does not guarantee robustness to nonstationarity.
-The model may still entangle level, scale, trend, and residual dynamics in one hidden representation.
-This motivates an architecture that keeps the efficient Mamba backbone while explicitly exposing nonstationary structure to the network.
+The difficulty is amplified when the underlying series is nonstationary.
+Real-world financial series can undergo level shifts, volatility changes, trend reversals, and regime-dependent behavior driven by macroeconomic events, policy changes, and evolving market expectations \cite{finance-dl-survey}.
+Under such conditions, a model trained on historical windows may face a materially different prediction problem at test time.
+This issue is especially relevant for gold-related exchange-traded products such as GLD, whose price dynamics can reflect inflation expectations, risk-off behavior, U.S. dollar movements, and global uncertainty.
+For this reason, long-horizon GLD forecasting provides a useful testbed for studying whether modern sequence models can remain effective when temporal dependence and distribution shift appear together.
 
-This work begins with a strict experimental principle.
-Before introducing NS-Mamba, all suitable baselines are evaluated under a shared configuration selected by S\_Mamba calibration.
-This prevents model-specific tuning from becoming a hidden source of performance differences.
-The same horizon suite and output scale are then used for clean baselines, Mamba variants, and the proposed NS-Mamba models.
+Recent forecasting research has introduced a broad set of architectures for long-context modeling, including efficient Transformers, decomposition-based models, patch-based encoders, and inverted variable-token representations \cite{informer,autoformer,fedformer,itransformer,patchtst}.
+At the same time, recent studies have shown that explicitly addressing distribution shift and nonstationarity can improve robustness in forecasting pipelines \cite{revin,nonstationary-transformer}.
+Mamba adds another attractive direction because it replaces quadratic attention with selective state-space sequence modeling while retaining strong expressive capacity and linear-time scaling \cite{mamba}.
+This makes Mamba a promising backbone for long-horizon forecasting, and several recent papers have adapted it to time-series settings \cite{smamba,bimamba,mambats,timemachine,tsmamba}.
+However, efficient sequence modeling alone does not resolve the core difficulty of nonstationary forecasting: level, scale, trend, and residual behavior may still be entangled in a single hidden representation even when the backbone itself is computationally efficient.
 
-The intended contributions are:
+This manuscript studies that gap through a nonstationarity-aware Mamba forecasting framework for daily GLD close-price prediction across horizons from 1 to 360 days.
+The proposed NS-Mamba family preserves an S-Mamba-style backbone while adding adaptive normalization, decomposition, and shift-aware fusion modules designed to expose nonstationary structure before and around sequence modeling.
+To make comparisons interpretable while still allowing model-specific tuning, the manuscript evaluates optimized baseline and imported-model sweeps alongside a separate Mamba-family hyperparameter search.
+This produces a current view of how Transformer-style, decomposition-based, inverted, and Mamba-based models behave after lookback and architecture tuning rather than under one locked default setting.
+
+The current evidence leads to a deliberately narrow conclusion.
+Within the directly comparable optimized baseline sweep, iTransformer is the strongest overall model, while stronger long-horizon performance is obtained by PatchTST among the currently completed imported optimized runs.
+Within the Mamba family, the current hyperparameter search identifies MS-Mamba-MD as the strongest completed Mamba variant on most completed horizons and on both the shared 120/180/360 subset and the promoted 120/180/270/360 long-horizon summary.
+Accordingly, this paper does not claim a universal state-of-the-art forecasting model; rather, it argues that nonstationarity-aware design materially improves the behavior of Mamba-based forecasters and clarifies where Mamba remains competitive relative to stronger imported baselines.
+
+The main contributions of this manuscript are as follows:
 \begin{itemize}
-    \item a controlled GLD forecasting protocol covering horizons from 1 to 360 days;
-    \item a clean comparison between Transformer-style, decomposition-based, inverted, and Mamba-based forecasting models;
-    \item a nonstationarity-aware Mamba architecture family combining adaptive normalization, decomposition, and shift-aware fusion;
-    \item a diagnostic ablation showing that decomposition is the strongest first modification on GLD long-horizon forecasting.
+    \item it defines a GLD forecasting benchmark spanning 12 prediction horizons from 1 to 360 days, with optimized baseline, imported-model, and Mamba-family search tracks;
+    \item it introduces an NS-Mamba architecture family that combines an S-Mamba backbone with adaptive normalization, decomposition, and shift-aware fusion for nonstationary forecasting;
+    \item it provides a cross-family empirical comparison covering Transformer-style, decomposition-based, inverted, and Mamba-based forecasting models under optimized evaluation settings;
+    \item it identifies MS-Mamba-MD as the strongest completed Mamba-family configuration in the current hyperparameter search, while showing that PatchTST remains the strongest completed long-horizon reference model overall.
 \end{itemize}

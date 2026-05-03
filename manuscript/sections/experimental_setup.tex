@@ -1,59 +1,156 @@
 \section{Experimental Setup}
 
-\subsection{Dataset}
+\subsection{Dataset and Preprocessing}
 
-The initial dataset is GLD daily data stored at \texttt{data/GLD/GLD.csv}.
-The target column is \texttt{close}.
-The first experimental phase uses single-target forecasting.
-Future extensions may add more financial or macroeconomic variables, but those are outside the current baseline protocol.
+The experiments use the bundled GLD daily dataset stored at \texttt{data/GLD/GLD.csv}.
+The file contains 5,313 daily trading observations from 2004-11-18 to 2025-12-31, with columns \texttt{date}, \texttt{close}, \texttt{High}, \texttt{Low}, \texttt{Open}, and \texttt{Volume}.
+This study uses single-target forecasting with the \texttt{close} column as the prediction target, so the current task is univariate-to-univariate forecasting with $C=C_o=1$.
+The \texttt{close} series has no missing values in the bundled file.
 
-\subsection{Data Splits}
+The data loader applies dataset-level standardization with a \texttt{StandardScaler} fit on the training split only, and the same scaler is then applied to validation and test windows.
+At evaluation time, predictions are inverse-transformed back to the original GLD price scale before RMSE and MAE are reported.
+This dataset-level scaling is separate from the model-level reversible normalization described in Section~3.
+Date-derived time features are generated from the \texttt{date} column with daily frequency and passed to models that use temporal covariates.
 
-The repository uses the standard custom-data split from the forecasting codebase.
-The validation and test windows use historical lookback context from the previous split to construct the input sequence.
-This is a common forecasting implementation detail, but it should be reported clearly because the input context for validation and test includes observations before the split boundary.
+\subsection{Chronological Data Splits}
 
-\subsection{Baseline Models}
-
-The core baseline set is:
+The GLD series is divided chronologically into 70\% training, 10\% validation, and 20\% testing, following the custom-data split used by the forecasting codebase.
+For the bundled GLD file, this yields:
 \begin{itemize}
-    \item S\_Mamba;
-    \item Transformer;
-    \item Informer;
-    \item Reformer;
-    \item Autoformer;
-    \item iTransformer.
+    \item training: 3,719 observations from 2004-11-18 to 2019-08-28;
+    \item validation: 532 observations from 2019-08-29 to 2021-10-07;
+    \item testing: 1,062 observations from 2021-10-08 to 2025-12-31.
 \end{itemize}
-Optional Mamba-augmented variants will be reported separately if they are included.
-The clean baselines should not be tuned independently after the shared setting is locked.
 
-\subsection{Shared Configuration}
+Validation and test loaders begin \texttt{seq\_len} steps before their nominal split boundary so that each target window has a full historical lookback.
+Because the optimized sweeps use multiple lookback lengths, the exact validation and test context start date depends on the selected \texttt{seq\_len}.
+Only the input context overlaps the preceding split; the forecast targets remain inside the validation or test segment.
+This detail is important for reproducibility because it changes the effective index range seen by the loaders without leaking future targets across split boundaries.
 
-S\_Mamba calibration selected Setting A as the locked baseline configuration:
-\begin{center}
-\begin{tabular}{ll}
-\toprule
-Parameter & Value \\
-\midrule
-Lookback length & 360 \\
-Label length & 180 \\
-Prediction length & horizon-specific \\
-Model dimension & 64 \\
-Feed-forward dimension & 128 \\
-Encoder layers & 2 \\
-Batch size & 16 \\
-Target & \texttt{close} \\
-Output scale & original price scale \\
-\bottomrule
-\end{tabular}
-\end{center}
-All suitable models will use this configuration.
-If a model cannot run under this setting, the failure will be recorded rather than changing only that model's hyperparameters.
+\subsection{Evaluation Horizons and Metrics}
 
-\subsection{Metrics and Logging}
+All experiments use the same forecast horizons
+\begin{equation}
+    H \in \{1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360\}.
+\end{equation}
+When grouped summaries are reported, the manuscript uses a balanced 4/4/4 split: short = 1--7 days, middle = 14--90 days, and long = 120--360 days.
+Let $\mathcal{T}$ denote the set of evaluation windows, and let $|\mathcal{T}|$ be its size.
+For predicted values $\hat{Y}_{b,h,c}$ and targets $Y_{b,h,c}$, the mean absolute error is
+\begin{equation}
+    \operatorname{MAE}
+    =
+    \frac{1}{|\mathcal{T}|HC_o}
+    \sum_{b \in \mathcal{T}}
+    \sum_{h=1}^{H}
+    \sum_{c=1}^{C_o}
+    \left|
+    \hat{Y}_{b,h,c}-Y_{b,h,c}
+    \right|,
+\end{equation}
+and the mean squared error is
+\begin{equation}
+    \operatorname{MSE}
+    =
+    \frac{1}{|\mathcal{T}|HC_o}
+    \sum_{b \in \mathcal{T}}
+    \sum_{h=1}^{H}
+    \sum_{c=1}^{C_o}
+    \left(
+    \hat{Y}_{b,h,c}-Y_{b,h,c}
+    \right)^2.
+\end{equation}
+The root mean squared error is
+\begin{equation}
+    \operatorname{RMSE}
+    =
+    \sqrt{\operatorname{MSE}}.
+\end{equation}
+Because raw RMSE grows with forecast horizon on GLD, we also save the root mean squared scaled error (RMSSE) as a scale-normalized summary for cross-horizon comparison.
+Let $X_t$ denote the in-sample training series and let the naive denominator use the one-step lag baseline.
+Then
+\begin{equation}
+    \operatorname{RMSSE}
+    =
+    \sqrt{
+        \frac{
+            \frac{1}{|\mathcal{T}|HC_o}
+            \sum_{b \in \mathcal{T}}
+            \sum_{h=1}^{H}
+            \sum_{c=1}^{C_o}
+            \left(
+            \hat{Y}_{b,h,c}-Y_{b,h,c}
+            \right)^2
+        }{
+            \frac{1}{T_{\mathrm{train}}-1}
+            \sum_{t=2}^{T_{\mathrm{train}}}
+            \left(
+            X_t-X_{t-1}
+            \right)^2
+        }
+    }.
+\end{equation}
+For completeness, the saved percentage metrics are
+\begin{equation}
+    \operatorname{MAPE}
+    =
+    \frac{100}{|\mathcal{T}|HC_o}
+    \sum_{b \in \mathcal{T}}
+    \sum_{h=1}^{H}
+    \sum_{c=1}^{C_o}
+    \left|
+    \frac{\hat{Y}_{b,h,c}-Y_{b,h,c}}{Y_{b,h,c}+\epsilon}
+    \right|,
+\end{equation}
+\begin{equation}
+    \operatorname{MSPE}
+    =
+    \frac{100}{|\mathcal{T}|HC_o}
+    \sum_{b \in \mathcal{T}}
+    \sum_{h=1}^{H}
+    \sum_{c=1}^{C_o}
+    \left(
+    \frac{\hat{Y}_{b,h,c}-Y_{b,h,c}}{Y_{b,h,c}+\epsilon}
+    \right)^2,
+\end{equation}
+where $\epsilon$ is a small stability constant.
+For interpretation, MAE measures the typical absolute forecast error in GLD price units and is less dominated by a small number of large misses.
+RMSE is also reported in GLD price units, but because the error is squared before averaging, it penalizes large horizon misses more strongly and is therefore more sensitive to unstable long-range forecasts.
+RMSSE removes the GLD price scale and rescales the squared forecast error by the average one-step naive training error, which makes it more appropriate than raw RMSE for comparing overall performance across short, middle, and long horizons.
+MSE has the same ranking information as RMSE but is less directly interpretable because it is expressed in squared price units.
+MAPE and MSPE summarize relative error rather than absolute price error; they are useful as supporting diagnostics when comparing horizons with different price levels, but they are not the primary manuscript metrics because the main forecasting question here is how large the price-scale errors are in absolute terms.
+For the GLD series, which is strictly positive, these percentage metrics are numerically stable, but they can still overweight errors when the denominator is locally small.
+The primary manuscript metrics are RMSE and MAE on the original GLD price scale.
+RMSSE, MSE, MAPE, and MSPE are also saved for each run.
+Training uses mean squared error as the optimization loss, and early stopping is based on validation loss.
 
-The primary manuscript metrics are RMSE and MAE.
-MSE, MAPE, and MSPE are also saved when available.
-Training, validation, and test metrics are logged to TensorBoard.
-Final arrays are saved as \texttt{pred.npy}, \texttt{true.npy}, and \texttt{metrics.npy}, with run metadata stored in \texttt{meta.json}.
-The completed GLD baseline sweep contains 72 finished runs, corresponding to 6 models across 12 horizons.
+\subsection{Optimized Evaluation Tracks}
+
+The manuscript now reports only hyperparameter-searched result tracks.
+The first is an RMSE-optimized baseline sweep over six directly comparable backbone models: S-Mamba, iTransformer, Autoformer, Transformer, Informer, and Reformer.
+This sweep varies the lookback length over
+\begin{equation}
+    \texttt{seq\_len} \in \{16, 32, 64, 96, 128, 192, 256, 320, 384\},
+\end{equation}
+uses \texttt{label\_len}=\texttt{seq\_len}/2, and evaluates all 12 forecast horizons.
+The resulting summary contains 648 completed runs and 72 best-per-model/per-horizon rows.
+
+The second track is a source-optimized imported-model sweep intended to show how strong imported non-Mamba baselines behave when model-specific hyperparameters are respected.
+The completed imported subset contains DLinear, NLinear, PatchTST, TimesNet, and Non-stationary Transformer.
+These runs use the same horizon set and the same \texttt{seq\_len} sweep as the optimized baseline track, but they follow model-specific hyperparameter presets from the corresponding source-style workflow.
+The detailed imported optimized tables are reported in the Appendix rather than the main results section.
+
+The third track is Mamba-family hyperparameter optimization.
+This search covers S-Mamba, NS-Mamba-D, MS-Mamba-MD, MS-Mamba-MDG, MS-Mamba-MDS, and PMS-Mamba-PD.
+The current completed search contains 445 price-scale runs and 33 best-per-variant/per-horizon rows.
+Not every Mamba-family variant has finished all 12 horizons, so the most stable cross-variant comparison currently uses the common long-horizon subset \{120, 180, 360\}.
+Detailed sweep presets and architecture-search knobs are reported in Appendix~B so the main experimental section can stay focused on the shared data protocol and evaluation design.
+
+\subsection{Optimization and Reproducibility}
+
+All experiments use the Adam optimizer with one training run per configuration (\texttt{itr}=1) and fixed random seed 2023.
+The epoch limit is 10 and the early-stopping patience is 3 across the optimized sweeps reported here.
+The optimized imported and Mamba-family searches vary model-specific architectural hyperparameters, but keep the same optimizer family, validation-based training loop, and inverse-transformed price-scale evaluation.
+
+For reproducibility, the repository stores run-level prediction arrays, target arrays, and metric arrays together with a run metadata file.
+Training and validation curves are logged to TensorBoard.
+The machine-readable result summaries used by the manuscript are bundled under \texttt{manuscript/data/} and \texttt{results/}.

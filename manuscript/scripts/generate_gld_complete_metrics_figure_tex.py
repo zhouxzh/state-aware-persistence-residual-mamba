@@ -11,20 +11,20 @@ def build_tex():
     lines.append(r"\subsection{Completed Result Overview}")
     lines.append("")
     lines.append(
-        r"Figure~\ref{fig:gld-result-overview} replaces the oversized full-results table with a compact visual summary of the completed GLD comparisons."
+        r"Figure~\ref{fig:gld-result-overview} summarizes the currently completed GLD evidence in compact form."
     )
     lines.append(
-        r"Panel A shows the main cross-model frontier, and Panel B shows the completed Mamba-family comparisons."
+        r"Panel A shows the current cross-model frontier across the strongest optimized baseline, imported, and Mamba-family rows, while Panel B shows the currently completed Mamba-HPO variants on the diagnostic horizons 30, 120, 180, and 360 days."
     )
     lines.append(
-        r"All curves are plotted on the original GLD price scale using RMSE. The local data snapshots used by this figure are bundled in the submission package under \texttt{figures/}."
+        r"All curves are plotted on the original GLD price scale using RMSE. Because the imported optimized and Mamba-HPO tracks are still incomplete, the figure should be read as a current-status summary rather than a final global leaderboard. The detailed imported optimized tables are reported in Appendix~A."
     )
     lines.append("")
     lines.append(r"\begin{figure}[t]")
     lines.append(r"\centering")
     lines.append(r"\includegraphics[width=0.94\linewidth]{figures/gld_result_overview.pdf}")
     lines.append(
-        r"\caption{Compact GLD RMSE comparison for publication. Panel A shows the main cross-model frontier across all completed horizons, including the strongest shared baselines, tuned imported baselines, and the promoted Mamba-HPO result. Panel B compares the completed Mamba-family variants on the diagnostic horizons 30, 120, 180, and 360 days. This figure preserves the ranking structure without the space cost of the full result table.}"
+        r"\caption{Compact GLD RMSE comparison across the currently completed optimized evaluation tracks. Panel A shows the current cross-model frontier across all completed horizons, including the strongest optimized baselines, imported optimized baselines, and the promoted Mamba-HPO row. Panel B shows the currently completed Mamba-HPO variants on the diagnostic horizons 30, 120, 180, and 360 days.}"
     )
     lines.append(r"\label{fig:gld-result-overview}")
     lines.append(r"\end{figure}")

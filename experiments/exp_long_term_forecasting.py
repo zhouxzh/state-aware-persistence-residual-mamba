@@ -20,6 +20,18 @@ class Exp_Long_Term_Forecast(Exp_Basic):
     def __init__(self, args):
         super(Exp_Long_Term_Forecast, self).__init__(args)
 
+    def _metric_feature_slice(self, data):
+        if self.args.features == 'MS':
+            return data[..., -1:]
+        return data
+
+    def _rmsse_insample(self):
+        train_data, _ = self._get_data(flag='train')
+        insample = train_data.data_x
+        if getattr(train_data, 'scale', False) and self.args.inverse:
+            insample = train_data.inverse_transform(insample)
+        return self._metric_feature_slice(insample)
+
     def _build_model(self):
         model = self.model_dict[self.args.model].Model(self.args).float()
 
@@ -281,23 +293,25 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
 
-        mae, mse, rmse, mape, mspe = metric(preds, trues)
+        insample = self._rmsse_insample()
+        mae, mse, rmse, mape, mspe, rmsse = metric(preds, trues, insample=insample)
         writer = self._get_writer(setting)
         if writer is not None:
             writer.add_scalar('test/mse', mse, 0)
             writer.add_scalar('test/mae', mae, 0)
             writer.add_scalar('test/rmse', rmse, 0)
+            writer.add_scalar('test/rmsse', rmsse, 0)
             writer.add_scalar('test/mape', mape, 0)
             writer.add_scalar('test/mspe', mspe, 0)
             writer.flush()
         f = open("result_long_term_forecast.txt", 'a')
         f.write(setting + "  \n")
-        f.write('mse:{}, mae:{}'.format(mse, mae))
+        f.write('mse:{}, mae:{}, rmse:{}, rmsse:{}'.format(mse, mae, rmse, rmsse))
         f.write('\n')
         f.write('\n')
         f.close()
 
-        np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe]))
+        np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe, rmsse]))
         np.save(folder_path + 'pred.npy', preds)
         np.save(folder_path + 'true.npy', trues)
         with open(folder_path + 'meta.json', 'w') as f:
@@ -308,6 +322,8 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     'features': self.args.features,
                     'target': self.args.target,
                     'freq': self.args.freq,
+                    'metric_names': ['mae', 'mse', 'rmse', 'mape', 'mspe', 'rmsse'],
+                    'rmsse_seasonality': 1,
                 },
                 f,
                 indent=2,

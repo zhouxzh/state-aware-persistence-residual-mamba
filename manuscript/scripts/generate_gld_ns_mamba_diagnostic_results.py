@@ -67,7 +67,7 @@ def build_tex():
     lines.append(r"\toprule")
     lines.append(r"Model & Adaptive Norm & Decomp. & Gate & 30 & 120 & 180 & 360 & Long Avg. \\")
     lines.append(r"\midrule")
-    lines.append(r"S\_Mamba & No & No & No & 11.12 & 20.31 & 26.91 & 39.48 & 28.90 \\")
+    lines.append(r"S-Mamba & No & No & No & 11.12 & 20.31 & 26.91 & 39.48 & 28.90 \\")
     lines.append(r"iTransformer & Yes & No & No & 11.45 & 19.89 & 26.71 & 39.45 & 28.69 \\")
     lines.append(r"\midrule")
 
@@ -101,28 +101,25 @@ def build_tex():
     long_it = avg([baselines["iTransformer"][h] for h in LONG_HORIZONS])
 
     lines.append(
-        r"The strongest diagnostic variant is NS-Mamba-D, which uses series decomposition with the S\_Mamba normalization pathway and does not use adaptive normalization or shift-aware fusion."
+        r"Among the four completed diagnostic variants, NS-Mamba-D is strongest at every completed horizon and on the diagnostic long-horizon average."
     )
     lines.append(
-        f"Against the better of S\\_Mamba and iTransformer at each diagnostic horizon, NS-Mamba-D reduces RMSE by {improvements[0]:.2f}\\% at 30 days, {improvements[1]:.2f}\\% at 120 days, {improvements[2]:.2f}\\% at 180 days, and {improvements[3]:.2f}\\% at 360 days."
+        f"Relative to the better of S-Mamba and iTransformer at each diagnostic horizon, NS-Mamba-D reduces RMSE by {improvements[0]:.2f}\\% at 30 days, {improvements[1]:.2f}\\% at 120 days, {improvements[2]:.2f}\\% at 180 days, and {improvements[3]:.2f}\\% at 360 days."
     )
     lines.append(
-        f"Its long-horizon average RMSE is {long_best:.2f}, compared with {long_sm:.2f} for S\\_Mamba and {long_it:.2f} for iTransformer."
+        f"Its long-horizon average RMSE is {long_best:.2f}, compared with {long_sm:.2f} for S-Mamba and {long_it:.2f} for iTransformer."
     )
     lines.append(
-        f"This corresponds to a {(long_sm - long_best) / long_sm * 100:.2f}\\% reduction versus S\\_Mamba and a {(long_it - long_best) / long_it * 100:.2f}\\% reduction versus iTransformer."
+        "The completed diagnostic ablation is also informative about module choice."
     )
     lines.append(
-        "The diagnostic result is also informative because the more complex variants do not improve the metric."
+        "Adaptive normalization alone is weaker than both reference baselines on the long diagnostic horizons."
     )
     lines.append(
-        "Adaptive normalization alone is weaker than S\\_Mamba on the diagnostic long horizons, and adding adaptive normalization to the decomposition branch weakens the decomposition-only result."
+        "Adding adaptive normalization to the decomposition branch weakens the decomposition-only result, and the shift-aware gate does not improve the decomposition variant in this first fixed-setting sweep."
     )
     lines.append(
-        "The shift-aware gate also does not help in this first diagnostic sweep."
-    )
-    lines.append(
-        "Therefore, the next experiment should promote NS-Mamba-D to the full 12-horizon GLD evaluation before adding further complexity."
+        "Within the completed diagnostic study, explicit decomposition is therefore the only modification that consistently improves over both reference models."
     )
     lines.append("")
     return "\n".join(lines)

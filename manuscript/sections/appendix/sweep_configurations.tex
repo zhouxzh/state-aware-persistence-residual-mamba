@@ -1,0 +1,14 @@
+\subsection{Sweep Configurations}
+
+The RMSE-optimized baseline sweep uses one preset per model family and selects the best completed run per model and horizon by RMSE.
+The preset values are:
+\begin{itemize}
+    \item S-Mamba: \texttt{d\_model}=64, \texttt{d\_ff}=128, \texttt{d\_state}=16, batch size 16, learning rate $10^{-4}$, reversible normalization enabled;
+    \item iTransformer: \texttt{d\_model}=128, \texttt{d\_ff}=256, batch size 16, learning rate $10^{-4}$, reversible normalization enabled;
+    \item Autoformer: \texttt{d\_model}=512, \texttt{d\_ff}=2048, batch size 32, learning rate $10^{-4}$, \texttt{moving\_avg}=25;
+    \item Transformer, Informer, and Reformer: \texttt{d\_model}=512, \texttt{d\_ff}=2048, batch size 32, learning rate $10^{-4}$.
+\end{itemize}
+
+The imported optimized sweep likewise keeps one preset family per model while varying \texttt{seq\_len}.
+The Mamba-family search varies architecture-specific choices such as moving-average window, multi-scale set, fusion rule, linear skip, and patch configuration in addition to lookback length.
+For the Mamba-family search, the best row for each variant and horizon is selected by RMSE among the currently completed runs.

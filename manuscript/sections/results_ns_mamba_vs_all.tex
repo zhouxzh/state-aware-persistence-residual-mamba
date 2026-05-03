@@ -1,11 +1,11 @@
-\subsection{NS-Mamba-D vs All Completed Models}
+\subsection{NS-Mamba-D in the Current Completed Comparison Set}
 
-Table~\ref{tab:ns-mamba-vs-all} compares NS-Mamba-D against every model that currently has completed GLD results on the overlapping horizons 30, 120, 180, and 360 days.
-This includes the shared locked-setting baselines, the other NS-Mamba diagnostic variants, and the tuned imported baselines.
+Table~\ref{tab:ns-mamba-vs-all} places the fixed-setting NS-Mamba-D diagnostic row against every currently completed result on the overlapping horizons 30, 120, 180, and 360 days.
+This comparison now includes four tracks: the shared locked-setting baselines, the NS-Mamba diagnostic ablation, the currently completed source-optimized imported runs, and the currently completed Mamba-HPO rows.
 
 \begin{table}[t]
 \centering
-\caption{Direct RMSE and MAE comparison of NS-Mamba-D against all completed GLD models on the overlapping horizons 30, 120, 180, and 360 days. Long Avg. is computed over 120, 180, and 360 days.}
+\caption{Direct RMSE and MAE comparison of the fixed-setting NS-Mamba-D row against all currently completed GLD results on the overlapping horizons 30, 120, 180, and 360 days. Long Avg. is computed over 120, 180, and 360 days.}
 \label{tab:ns-mamba-vs-all}
 \small
 \resizebox{\linewidth}{!}{%
@@ -14,11 +14,17 @@ This includes the shared locked-setting baselines, the other NS-Mamba diagnostic
 Track & Model & 30 & 120 & 180 & 360 & Long Avg. RMSE & Long Avg. MAE \\
 \midrule
 Opt & PatchTST & 9.65 & 15.32 & 21.23 & 33.33 & 23.29 & 16.94 \\
+Mamba-HPO & MS-Mamba-MD & 9.49 & 16.32 & 21.47 & 35.55 & 24.45 & 17.97 \\
+Mamba-HPO & NS-Mamba-D & 9.17 & 16.76 & 21.58 & 36.15 & 24.83 & 18.25 \\
+Mamba-HPO & MS-Mamba-MDG & 9.02 & 17.26 & 21.76 & 35.98 & 25.00 & 18.28 \\
 Opt & NLinear & 9.45 & 17.53 & 24.09 & 34.31 & 25.31 & 18.08 \\
+Mamba-HPO & S-Mamba & 9.56 & 17.07 & 22.81 & 36.34 & 25.40 & 18.60 \\
+Mamba-HPO & MS-Mamba-MDS & 9.33 & 17.69 & 23.32 & 36.33 & 25.78 & 18.40 \\
 Opt & TimesNet & 9.40 & 16.33 & 24.81 & 36.63 & 25.92 & 18.90 \\
+Mamba-HPO & PMS-Mamba-PD & 9.90 & 17.63 & 24.09 & 36.07 & 25.93 & 18.62 \\
 NS-Diag & \textbf{NS-Mamba-D} & 9.66 & 18.25 & 24.22 & 37.74 & 26.74 & 19.54 \\
 Shared & iTransformer & 11.45 & 19.89 & 26.71 & 39.45 & 28.69 & 20.68 \\
-Shared & S\_Mamba & 11.12 & 20.31 & 26.91 & 39.48 & 28.90 & 20.84 \\
+Shared & S-Mamba & 11.12 & 20.31 & 26.91 & 39.48 & 28.90 & 20.84 \\
 Opt & Non-stationary Transformer & 9.63 & 20.40 & 26.76 & 39.85 & 29.00 & 19.99 \\
 NS-Diag & NS-Mamba-AD & 10.46 & 20.50 & 27.49 & 42.39 & 30.13 & 22.34 \\
 NS-Diag & NS-Mamba-ADG & 10.64 & 20.19 & 27.60 & 45.50 & 31.10 & 23.16 \\
@@ -33,7 +39,7 @@ Shared & Reformer & 73.82 & 81.33 & 85.29 & 83.92 & 83.51 & 67.99 \\
 }
 \end{table}
 
-NS-Mamba-D ranks 5th at 30 days, 4th at 120 days, 3rd at 180 days, and 4th at 360 days among all completed models.
-On the long-horizon average over 120, 180, and 360 days, NS-Mamba-D ranks 4th overall with RMSE 26.74 and MAE 19.54.
-It beats every shared locked-setting baseline and every other NS-Mamba diagnostic variant, but it trails the tuned imported PatchTST, NLinear, and TimesNet baselines.
-This comparison predates the later Mamba-family hyperparameter optimization; after that search, optimized MS-Mamba-MD becomes the strongest Mamba-family result.
+Within this current completed comparison set, the fixed-setting NS-Mamba-D row ranks 10th at 30 days, 10th at 120 days, 9th at 180 days, and 10th at 360 days among 21 completed entries.
+On the 120/180/360 long-horizon average, it ranks 10th overall with RMSE 26.74 and MAE 19.54.
+It remains stronger than the shared locked-setting baselines and the other completed NS-Mamba diagnostic variants, but it is now clearly outperformed by the stronger completed Mamba-HPO rows as well as the best completed imported optimized baselines.
+This comparison clarifies the role of the diagnostic ablation: the fixed-setting decomposition-only result is a useful proof of concept, but the strongest current Mamba-family performance comes after additional tuning of lookback length, moving-average window, and multi-scale structure.

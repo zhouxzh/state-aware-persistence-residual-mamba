@@ -38,7 +38,7 @@ RUN_PATTERN = re.compile(
 def term_for_horizon(horizon):
     if horizon <= 7:
         return "short"
-    if horizon <= 120:
+    if horizon <= 90:
         return "middle"
     return "long"
 
@@ -73,6 +73,7 @@ def parse_result_dir(path):
 def load_metrics(metrics_path):
     metrics = np.load(metrics_path)
     mae, mse, rmse, mape, mspe = [float(x) for x in metrics[:5]]
+    rmsse = float(metrics[5]) if metrics.shape[0] > 5 else ""
     meta_path = metrics_path.parent / "meta.json"
 
     if not meta_path.exists():
@@ -96,6 +97,7 @@ def load_metrics(metrics_path):
         "rmse": rmse,
         "mape": mape,
         "mspe": mspe,
+        "rmsse": rmsse,
         "status": "complete",
         "notes": "",
     }
@@ -145,6 +147,7 @@ def empty_row(variant, horizon, scales, fusion, use_decomp, moving_avg, patch_le
         "rmse": "",
         "mape": "",
         "mspe": "",
+        "rmsse": "",
         "setting_id": SETTING_ID,
         "moving_avg": moving_avg,
         "ms_scales": scales,
@@ -216,6 +219,7 @@ def main():
                         "rmse": result["rmse"],
                         "mape": result["mape"],
                         "mspe": result["mspe"],
+                        "rmsse": result["rmsse"],
                     }
                 )
             row["status"] = result["status"]
@@ -236,6 +240,7 @@ def main():
         "rmse",
         "mape",
         "mspe",
+        "rmsse",
         "setting_id",
         "moving_avg",
         "ms_scales",

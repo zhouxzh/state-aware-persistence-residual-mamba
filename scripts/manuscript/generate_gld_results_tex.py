@@ -111,7 +111,7 @@ def build_summary(rows, horizon_winners, term_avgs, overall_avgs):
     lines.append(r"\begin{table}[t]")
     lines.append(r"\centering")
     lines.append(
-        r"\caption{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--120 days, long = 180--360 days.}"
+        r"\caption{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days.}"
     )
     lines.append(r"\label{tab:gld-term-avg}")
     lines.append(r"\small")
