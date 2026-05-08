@@ -43,6 +43,17 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         data_set, data_loader = data_provider(self.args, flag)
         return data_set, data_loader
 
+    def _inverse_transform_batch(self, data_set, array):
+        shape = array.shape
+        flat = array.reshape(-1, shape[-1])
+        restored = data_set.inverse_transform(flat)
+        return restored.reshape(shape)
+
+    def _concat_prediction_batches(self, batches):
+        if not batches:
+            raise ValueError('prediction batches must not be empty')
+        return np.concatenate(batches, axis=0)
+
     def _select_optimizer(self):
         model_optim = optim.Adam(self.model.parameters(), lr=self.args.learning_rate)
         return model_optim
@@ -50,6 +61,167 @@ class Exp_Long_Term_Forecast(Exp_Basic):
     def _select_criterion(self):
         criterion = nn.MSELoss()
         return criterion
+
+    def _forward_batch(self, batch_x, batch_y, batch_x_mark, batch_y_mark):
+        batch_x = batch_x.float().to(self.device)
+        batch_y = batch_y.float().to(self.device)
+
+        if 'PEMS' in self.args.data or 'Solar' in self.args.data:
+            batch_x_mark = None
+            batch_y_mark = None
+        else:
+            batch_x_mark = batch_x_mark.float().to(self.device)
+            batch_y_mark = batch_y_mark.float().to(self.device)
+
+        dec_inp = torch.zeros_like(batch_y[:, -self.args.pred_len:, :]).float()
+        dec_inp = torch.cat([batch_y[:, :self.args.label_len, :], dec_inp], dim=1).float().to(self.device)
+        if self.args.use_amp:
+            with torch.cuda.amp.autocast():
+                if self.args.output_attention:
+                    outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)[0]
+                else:
+                    outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+        else:
+            if self.args.output_attention:
+                outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)[0]
+            else:
+                outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+
+        f_dim = -1 if self.args.features == 'MS' else 0
+        outputs = outputs[:, -self.args.pred_len:, f_dim:]
+        batch_y = batch_y[:, -self.args.pred_len:, f_dim:]
+        return outputs, batch_y, batch_x
+
+    def _collect_predictions(self, data_set, data_loader, visual_dir=None):
+        preds = []
+        trues = []
+
+        self.model.eval()
+        with torch.no_grad():
+            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(data_loader):
+                outputs, targets, batch_x_device = self._forward_batch(batch_x, batch_y, batch_x_mark, batch_y_mark)
+                outputs_scaled = outputs.detach().cpu().numpy()
+                targets_scaled = targets.detach().cpu().numpy()
+                outputs_np = outputs_scaled
+                targets_np = targets_scaled
+
+                if data_set.scale and self.args.inverse:
+                    outputs_np = self._inverse_transform_batch(data_set, outputs_np)
+                    targets_np = self._inverse_transform_batch(data_set, targets_np)
+
+                preds.append(outputs_np)
+                trues.append(targets_np)
+
+                if visual_dir is not None and i % 20 == 0:
+                    input_np = batch_x_device.detach().cpu().numpy()
+                    if data_set.scale and self.args.inverse:
+                        input_np = self._inverse_transform_batch(data_set, input_np)
+                    gt = np.concatenate((input_np[0, :, -1], targets_np[0, :, -1]), axis=0)
+                    pd = np.concatenate((input_np[0, :, -1], outputs_np[0, :, -1]), axis=0)
+                    visual(gt, pd, os.path.join(visual_dir, str(i) + '.pdf'))
+
+        preds = self._concat_prediction_batches(preds)
+        trues = self._concat_prediction_batches(trues)
+        print('test shape:', preds.shape, trues.shape)
+        return preds, trues
+
+    def _metric_dict(self, preds, trues):
+        insample = self._rmsse_insample()
+        mae, mse, rmse, mape, mspe, rmsse = metric(preds, trues, insample=insample)
+        return {
+            'mae': float(mae),
+            'mse': float(mse),
+            'rmse': float(rmse),
+            'mape': float(mape),
+            'mspe': float(mspe),
+            'rmsse': float(rmsse),
+        }
+
+    def evaluate(self, setting=None, load_checkpoint=False, save_artifacts=False,
+                 save_visuals=False, write_result_log=False, write_tensorboard=False,
+                 flag='test'):
+        test_data, test_loader = self._get_data(flag=flag)
+        if load_checkpoint:
+            if setting is None:
+                raise ValueError('setting is required when load_checkpoint=True')
+            print('loading model')
+            checkpoint_path = os.path.join('./checkpoints/' + setting, 'checkpoint.pth')
+            self.model.load_state_dict(torch.load(checkpoint_path))
+
+        visual_dir = None
+        if save_visuals:
+            if setting is None:
+                raise ValueError('setting is required when save_visuals=True')
+            visual_dir = './test_results/' + setting + '/'
+            if not os.path.exists(visual_dir):
+                os.makedirs(visual_dir)
+
+        preds, trues = self._collect_predictions(test_data, test_loader, visual_dir=visual_dir)
+        metrics = self._metric_dict(preds, trues)
+
+        if write_tensorboard:
+            if setting is None:
+                raise ValueError('setting is required when write_tensorboard=True')
+            writer = self._get_writer(setting)
+            if writer is not None:
+                writer.add_scalar('test/mse', metrics['mse'], 0)
+                writer.add_scalar('test/mae', metrics['mae'], 0)
+                writer.add_scalar('test/rmse', metrics['rmse'], 0)
+                writer.add_scalar('test/rmsse', metrics['rmsse'], 0)
+                writer.add_scalar('test/mape', metrics['mape'], 0)
+                writer.add_scalar('test/mspe', metrics['mspe'], 0)
+                writer.flush()
+
+        if write_result_log:
+            if setting is None:
+                raise ValueError('setting is required when write_result_log=True')
+            f = open("result_long_term_forecast.txt", 'a')
+            f.write(setting + "  \n")
+            f.write(
+                'mse:{}, mae:{}, rmse:{}, rmsse:{}'.format(
+                    metrics['mse'], metrics['mae'], metrics['rmse'], metrics['rmsse']
+                )
+            )
+            f.write('\n')
+            f.write('\n')
+            f.close()
+
+        if save_artifacts:
+            if setting is None:
+                raise ValueError('setting is required when save_artifacts=True')
+            folder_path = './results/' + setting + '/'
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+
+            np.save(
+                folder_path + 'metrics.npy',
+                np.array([
+                    metrics['mae'], metrics['mse'], metrics['rmse'],
+                    metrics['mape'], metrics['mspe'], metrics['rmsse']
+                ])
+            )
+            np.save(folder_path + 'pred.npy', preds)
+            np.save(folder_path + 'true.npy', trues)
+            with open(folder_path + 'meta.json', 'w') as f:
+                json.dump(
+                    {
+                        'inverse': bool(self.args.inverse),
+                        'scale': bool(getattr(test_data, 'scale', False)),
+                        'features': self.args.features,
+                        'target': self.args.target,
+                        'freq': self.args.freq,
+                        'metric_names': ['mae', 'mse', 'rmse', 'mape', 'mspe', 'rmsse'],
+                        'rmsse_seasonality': 1,
+                    },
+                    f,
+                    indent=2,
+                )
+
+        return {
+            **metrics,
+            'preds': preds,
+            'trues': trues,
+        }
 
     def vali(self, vali_data, vali_loader, criterion):
         total_loss = []
@@ -203,132 +375,14 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         return self.model
 
     def test(self, setting, test=0):
-        test_data, test_loader = self._get_data(flag='test')
-        if test:
-            print('loading model')
-            self.model.load_state_dict(torch.load(os.path.join('./checkpoints/' + setting, 'checkpoint.pth')))
-
-        preds = []
-        trues = []
-        folder_path = './test_results/' + setting + '/'
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
-
-        self.model.eval()
-        with torch.no_grad():
-            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(test_loader):
-                batch_x = batch_x.float().to(self.device)
-                batch_y = batch_y.float().to(self.device)
-                # time_points = random.sample(range(batch_x.size()[1]), 5)
-                # 假设您有一个包含每个变量标准差的张量stds，形状为(321,)
-                # 定义扰动强度
-                # epsilon = 1
-                # # 创建一个与原始张量形状相同的张量来存储扰动
-                # perturbed_tensor = torch.zeros_like(batch_x)
-                # # 对每个选定的时间点添加扰动
-                # for time_point in time_points:
-                #     # 生成与tensor在该时间点形状相同的随机噪声
-                #     noise = torch.randn(1, 321) * epsilon
-                #     perturbed_tensor[:, time_point, :] += noise.float().to(self.device)
-                # batch_x += perturbed_tensor
-                if 'PEMS' in self.args.data or 'Solar' in self.args.data:
-                    batch_x_mark = None
-                    batch_y_mark = None
-                else:
-                    batch_x_mark = batch_x_mark.float().to(self.device)
-                    batch_y_mark = batch_y_mark.float().to(self.device)
-
-                # decoder input
-                dec_inp = torch.zeros_like(batch_y[:, -self.args.pred_len:, :]).float()
-                dec_inp = torch.cat([batch_y[:, :self.args.label_len, :], dec_inp], dim=1).float().to(self.device)
-                # encoder - decoder
-                if self.args.use_amp:
-                    with torch.cuda.amp.autocast():
-                        if self.args.output_attention:
-                            outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)[0]
-                        else:
-                            outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-                else:
-                    if self.args.output_attention:
-                        outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)[0]
-
-                    else:
-                        outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-
-                f_dim = -1 if self.args.features == 'MS' else 0
-                outputs = outputs[:, -self.args.pred_len:, f_dim:]
-                batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
-                outputs_scaled = outputs.detach().cpu().numpy()
-                batch_y_scaled = batch_y.detach().cpu().numpy()
-                outputs = outputs_scaled
-                batch_y = batch_y_scaled
-                if test_data.scale and self.args.inverse:
-                    shape = outputs.shape
-                    outputs = test_data.inverse_transform(outputs.squeeze(0)).reshape(shape)
-                    batch_y = test_data.inverse_transform(batch_y.squeeze(0)).reshape(shape)
-
-                pred = outputs
-                true = batch_y
-
-                preds.append(pred)
-                trues.append(true)
-                if i % 20 == 0:
-                    input = batch_x.detach().cpu().numpy()
-                    if test_data.scale and self.args.inverse:
-                        shape = input.shape
-                        input = test_data.inverse_transform(input.squeeze(0)).reshape(shape)
-                    gt = np.concatenate((input[0, :, -1], true[0, :, -1]), axis=0)
-                    pd = np.concatenate((input[0, :, -1], pred[0, :, -1]), axis=0)
-                    visual(gt, pd, os.path.join(folder_path, str(i) + '.pdf'))
-
-        preds = np.array(preds)
-        trues = np.array(trues)
-        print('test shape:', preds.shape, trues.shape)
-        preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])
-        trues = trues.reshape(-1, trues.shape[-2], trues.shape[-1])
-        print('test shape:', preds.shape, trues.shape)
-
-        # result save
-        folder_path = './results/' + setting + '/'
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
-
-        insample = self._rmsse_insample()
-        mae, mse, rmse, mape, mspe, rmsse = metric(preds, trues, insample=insample)
-        writer = self._get_writer(setting)
-        if writer is not None:
-            writer.add_scalar('test/mse', mse, 0)
-            writer.add_scalar('test/mae', mae, 0)
-            writer.add_scalar('test/rmse', rmse, 0)
-            writer.add_scalar('test/rmsse', rmsse, 0)
-            writer.add_scalar('test/mape', mape, 0)
-            writer.add_scalar('test/mspe', mspe, 0)
-            writer.flush()
-        f = open("result_long_term_forecast.txt", 'a')
-        f.write(setting + "  \n")
-        f.write('mse:{}, mae:{}, rmse:{}, rmsse:{}'.format(mse, mae, rmse, rmsse))
-        f.write('\n')
-        f.write('\n')
-        f.close()
-
-        np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe, rmsse]))
-        np.save(folder_path + 'pred.npy', preds)
-        np.save(folder_path + 'true.npy', trues)
-        with open(folder_path + 'meta.json', 'w') as f:
-            json.dump(
-                {
-                    'inverse': bool(self.args.inverse),
-                    'scale': bool(getattr(test_data, 'scale', False)),
-                    'features': self.args.features,
-                    'target': self.args.target,
-                    'freq': self.args.freq,
-                    'metric_names': ['mae', 'mse', 'rmse', 'mape', 'mspe', 'rmsse'],
-                    'rmsse_seasonality': 1,
-                },
-                f,
-                indent=2,
-            )
-
+        self.evaluate(
+            setting=setting,
+            load_checkpoint=bool(test),
+            save_artifacts=True,
+            save_visuals=True,
+            write_result_log=True,
+            write_tensorboard=True,
+        )
         return
     def get_input(self, setting):
         test_data, test_loader = self._get_data(flag='test')
@@ -374,12 +428,10 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                 outputs = outputs.detach().cpu().numpy()
                 if pred_data.scale and self.args.inverse:
-                    shape = outputs.shape
-                    outputs = pred_data.inverse_transform(outputs.squeeze(0)).reshape(shape)
+                    outputs = self._inverse_transform_batch(pred_data, outputs)
                 preds.append(outputs)
 
-        preds = np.array(preds)
-        preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])
+        preds = self._concat_prediction_batches(preds)
 
         # result save
         folder_path = './results/' + setting + '/'

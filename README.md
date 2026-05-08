@@ -453,6 +453,43 @@ close
 
 Use GLD for quick debugging and smoke tests. It should not replace standard benchmark evaluation.
 
+## Hyperparameter Optimization (Optuna)
+
+The HPO pipeline is defined in `scripts/optuna/run_dataset_optuna.py`.
+
+### Data Split Usage
+
+The dataset is split into three disjoint periods: **train**, **val**, and **test**.
+
+| Phase | Data Split | Purpose |
+|-------|-----------|---------|
+| HPO calibration (tuning) | **val** | Optuna uses validation-set metrics (`balanced_rmsse`) to rank and prune hyperparameter trials |
+| Selection replay | **val** | The top-K calibrated configurations are re-evaluated on the full validation horizon set and the best one is selected |
+| Final report | **test** | The selected configuration is evaluated once on unseen test data for the published result |
+
+This means:
+- The **test set is never seen during hyperparameter search** — it remains a clean final benchmark.
+- The **val set guides parameter selection** (via MedianPruner + TPE sampler and the full-horizon replay).
+- All metrics reported in Optuna result files (`baseline_trials.csv`, `baseline_best_params.json`) are:
+  - **val-set metrics** for calibration trials
+  - **val-set metrics** for selection replay rows
+  - **test-set metrics** for final published rows
+
+### Usage
+
+```bash
+conda run -n mamba python scripts/optuna/run_dataset_optuna.py \
+  --dataset gld \
+  --phase baseline \
+  --models ALL \
+  --trials 20 \
+  --calibration-horizons 7 90 360 \
+  --full-horizons 1 3 5 7 14 30 60 90 120 180 270 360
+```
+
+- `--calibration-horizons` — Subset of horizons used during the tuning loop (one per term group). These control Optuna's pruning and objective computation on the **val** set.
+- `--full-horizons` — All horizons used for final replay on the **test** set after tuning is complete. The final `balanced_rmsse` averages across all these horizons.
+
 ## Models
 
 All model files live in `model/`. Each model exposes a `Model` class and is registered in `experiments/exp_basic.py`.

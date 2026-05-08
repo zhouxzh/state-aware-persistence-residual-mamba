@@ -14,6 +14,8 @@ Default behavior:
 Examples:
     python scripts/download_gld_yahoo.py
     conda run -n mamba python scripts/download_gld_yahoo.py
+    https_proxy=http://127.0.0.1:7890 conda run -n mamba python scripts/download_gld_yahoo.py
+    conda run -n mamba python scripts/download_gld_yahoo.py --https-proxy http://127.0.0.1:7890
     python scripts/download_gld_yahoo.py --full-history
     python scripts/download_gld_yahoo.py --out /tmp/GLD.csv
 """
@@ -21,6 +23,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -32,7 +35,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUT = REPO_ROOT / "data" / "GLD" / "GLD.csv"
 DEFAULT_SYMBOL = "GLD"
 DEFAULT_START = "2004-11-18"
+DEFAULT_END = "2026-04-30"
 UPDATE_BUFFER_DAYS = 14
+DEFAULT_HTTPS_PROXY = "http://127.0.0.1:7890"
 
 
 def parse_args() -> argparse.Namespace:
@@ -52,12 +57,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--end",
         default="",
-        help="Exclusive end date in YYYY-MM-DD. Default: tomorrow.",
+        help=f"Inclusive end date in YYYY-MM-DD. Default: {DEFAULT_END}",
     )
     parser.add_argument(
         "--full-history",
         action="store_true",
         help="Ignore the existing CSV and download the full history from the default start date.",
+    )
+    parser.add_argument(
+        "--https-proxy",
+        default=DEFAULT_HTTPS_PROXY,
+        help=f"HTTPS proxy URL. Default: {DEFAULT_HTTPS_PROXY}",
     )
     return parser.parse_args()
 
@@ -72,6 +82,14 @@ def require_yfinance():
             "  conda run -n mamba python -m pip install yfinance"
         ) from exc
     return yf
+
+
+def configure_proxy(https_proxy: str) -> None:
+    proxy = https_proxy or os.environ.get("https_proxy", "") or os.environ.get("HTTPS_PROXY", "")
+    if not proxy:
+        return
+    os.environ["https_proxy"] = proxy
+    os.environ["HTTPS_PROXY"] = proxy
 
 
 def infer_start(out_path: Path, explicit_start: str, full_history: bool) -> str:
@@ -90,10 +108,15 @@ def infer_start(out_path: Path, explicit_start: str, full_history: bool) -> str:
     return (latest.date() - timedelta(days=UPDATE_BUFFER_DAYS)).isoformat()
 
 
-def infer_end(explicit_end: str) -> str:
+def infer_end_inclusive(explicit_end: str) -> str:
     if explicit_end:
         return explicit_end
-    return (date.today() + timedelta(days=1)).isoformat()
+    return DEFAULT_END
+
+
+def yahoo_end_exclusive(end_inclusive: str) -> str:
+    end_date = datetime.strptime(end_inclusive, "%Y-%m-%d").date()
+    return (end_date + timedelta(days=1)).isoformat()
 
 
 def normalize_download_frame(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
@@ -132,9 +155,9 @@ def normalize_download_frame(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     return frame.reset_index(drop=True)
 
 
-def merge_with_existing(out_path: Path, fresh: pd.DataFrame) -> pd.DataFrame:
+def merge_with_existing(out_path: Path, fresh: pd.DataFrame, end_inclusive: str) -> pd.DataFrame:
     if not out_path.exists():
-        return fresh
+        return clip_to_end(fresh, end_inclusive)
 
     existing = pd.read_csv(out_path)
     missing_cols = {"date", "close", "High", "Low", "Open", "Volume"} - set(existing.columns)
@@ -150,7 +173,19 @@ def merge_with_existing(out_path: Path, fresh: pd.DataFrame) -> pd.DataFrame:
     combined = combined.sort_values("date").drop_duplicates(subset=["date"], keep="last")
     combined["date"] = combined["date"].dt.strftime("%Y-%m-%d")
     combined["Volume"] = combined["Volume"].fillna(0).round().astype("int64")
-    return combined.reset_index(drop=True)
+    combined = combined.reset_index(drop=True)
+    return clip_to_end(combined, end_inclusive)
+
+
+def clip_to_end(df: pd.DataFrame, end_inclusive: str) -> pd.DataFrame:
+    end_ts = pd.to_datetime(end_inclusive)
+    clipped = df.copy()
+    clipped["date"] = pd.to_datetime(clipped["date"], errors="coerce")
+    clipped = clipped.dropna(subset=["date"])
+    clipped = clipped[clipped["date"] <= end_ts].sort_values("date").reset_index(drop=True)
+    clipped["date"] = clipped["date"].dt.strftime("%Y-%m-%d")
+    clipped["Volume"] = clipped["Volume"].fillna(0).round().astype("int64")
+    return clipped
 
 
 def download_history(symbol: str, start: str, end: str) -> pd.DataFrame:
@@ -170,17 +205,26 @@ def download_history(symbol: str, start: str, end: str) -> pd.DataFrame:
 
 def main() -> None:
     args = parse_args()
+    configure_proxy(args.https_proxy)
     out_path = args.out.resolve()
     start = infer_start(out_path, args.start, args.full_history)
-    end = infer_end(args.end)
+    end_inclusive = infer_end_inclusive(args.end)
+    end_exclusive = yahoo_end_exclusive(end_inclusive)
 
-    fresh = download_history(args.symbol, start, end)
-    final = merge_with_existing(out_path, fresh) if not args.full_history else fresh
+    fresh = download_history(args.symbol, start, end_exclusive)
+    final = (
+        merge_with_existing(out_path, fresh, end_inclusive)
+        if not args.full_history
+        else clip_to_end(fresh, end_inclusive)
+    )
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     final.to_csv(out_path, index=False, float_format="%.6f")
 
-    print(f"Downloaded {len(fresh)} Yahoo rows for {args.symbol} from {start} to {end} (end exclusive).")
+    print(
+        f"Downloaded {len(fresh)} Yahoo rows for {args.symbol} from {start} to {end_inclusive} "
+        f"(Yahoo request end sent as {end_exclusive}, exclusive)."
+    )
     print(f"Saved {len(final)} rows to {out_path}.")
     print(f"Date range: {final['date'].iloc[0]} -> {final['date'].iloc[-1]}")
 

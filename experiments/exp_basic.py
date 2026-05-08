@@ -62,6 +62,9 @@ class Exp_Basic(object):
         pass
 
     def _get_writer(self, setting):
+        if getattr(self.args, 'disable_tensorboard', False):
+            self.writer = None
+            return None
         if self.writer is not None:
             return self.writer
         try:
