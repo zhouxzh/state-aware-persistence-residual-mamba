@@ -22,7 +22,8 @@ To make comparisons interpretable while still allowing model-specific tuning, th
 This produces a current view of how Transformer-style, decomposition-based, inverted, and Mamba-based models behave after lookback and architecture tuning rather than under one locked default setting.
 
 The current evidence leads to a deliberately narrow conclusion.
-Within the directly comparable optimized baseline sweep, iTransformer is the strongest overall model, while stronger long-horizon performance is obtained by PatchTST among the currently completed imported optimized runs.
+Within the directly comparable Optuna-tuned baseline sweep, TimesNet is the strongest overall model, with iTransformer a near-tied runner-up and PatchTST strongest at several middle and long horizons among the completed optimized baselines.
+Within the currently completed imported optimized runs, PatchTST remains the strongest long-horizon reference model.
 Within the Mamba family, the current hyperparameter search identifies MS-Mamba-MD as the strongest completed Mamba variant on most completed horizons and on both the shared 120/180/360 subset and the promoted 120/180/270/360 long-horizon summary.
 Accordingly, this paper does not claim a universal state-of-the-art forecasting model; rather, it argues that nonstationarity-aware design materially improves the behavior of Mamba-based forecasters and clarifies where Mamba remains competitive relative to stronger imported baselines.
 

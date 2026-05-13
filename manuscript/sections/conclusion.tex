@@ -1,7 +1,7 @@
 \section{Conclusion}
 
 This manuscript presents a structured path for nonstationarity-aware Mamba forecasting.
-The completed optimized GLD baseline sweep shows that iTransformer is the strongest overall directly comparable backbone model, while S-Mamba remains the strongest Mamba-style baseline before broader Mamba-family tuning.
+The completed Optuna-tuned GLD baseline sweep shows that TimesNet is the strongest overall baseline, with iTransformer a near-tied runner-up and PatchTST strongest at several middle and long horizons.
 The completed source-optimized imported sweep further shows that NLinear is strongest at short horizons and PatchTST is strongest overall among the tuned imported baselines.
 The proposed NS-Mamba and MS-Mamba architecture families combine decomposition, multi-scale temporal modeling, and Mamba-based sequence processing around an S-Mamba backbone.
 After Mamba-specific hyperparameter optimization, MS-Mamba-MD becomes the strongest completed Mamba-family model.

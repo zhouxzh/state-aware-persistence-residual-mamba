@@ -63,6 +63,14 @@ DEFAULT_MAMBA_MODELS = [
 OPTUNA_SEARCH_SPACE_VERSION = "narrow_v2"
 
 
+def study_version(cli_args):
+    suffix = str(getattr(cli_args, "study_suffix", "") or "").strip()
+    if not suffix:
+        return OPTUNA_SEARCH_SPACE_VERSION
+    safe_suffix = suffix.replace(" ", "_")
+    return f"{OPTUNA_SEARCH_SPACE_VERSION}_{safe_suffix}"
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Run Optuna HPO for a custom CSV forecasting dataset.")
     parser.add_argument("--dataset", required=True, help="Dataset slug defined in the manifest JSON.")
@@ -102,6 +110,14 @@ def parse_args():
     parser.add_argument("--warmup-steps", type=int, default=1)
     parser.add_argument("--interval-steps", type=int, default=1)
     parser.add_argument("--no-save-final-artifacts", action="store_true")
+    parser.add_argument(
+        "--study-suffix",
+        default="",
+        help=(
+            "Optional suffix appended to Optuna study names. Use this when the objective changes, "
+            "for example when switching from sparse calibration horizons to full-horizon calibration."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -597,7 +613,7 @@ def optimize_model(optuna_mod, cli_args, dataset_cfg, model_label, trials_target
     output_dir = REPO_ROOT / "results" / "optuna" / dataset_cfg["slug"]
     output_dir.mkdir(parents=True, exist_ok=True)
     storage_path = output_dir / "studies.db"
-    study_name = f"{dataset_cfg['slug']}_{cli_args.phase}_{model_label}_{OPTUNA_SEARCH_SPACE_VERSION}"
+    study_name = f"{dataset_cfg['slug']}_{cli_args.phase}_{model_label}_{study_version(cli_args)}"
     storage = f"sqlite:///{storage_path}"
 
     sampler = optuna_mod.samplers.TPESampler(seed=cli_args.seed)
@@ -775,11 +791,11 @@ def phase_best_rows(dataset_cfg, phase, model_results):
     return rows
 
 
-def best_params_payload(dataset_cfg, phase, model_results, calibration_horizons, full_horizons):
+def best_params_payload(dataset_cfg, phase, model_results, calibration_horizons, full_horizons, search_space_version):
     return {
         "dataset": dataset_cfg["slug"],
         "phase": phase,
-        "search_space_version": OPTUNA_SEARCH_SPACE_VERSION,
+        "search_space_version": search_space_version,
         "objective_metric": "balanced_rmsse",
         "calibration_horizons": list(calibration_horizons),
         "full_horizons": list(full_horizons),
@@ -899,7 +915,8 @@ def main():
     for model_label in models:
         print(
             f"Running Optuna phase={cli_args.phase}, dataset={dataset_cfg['slug']}, "
-            f"model={model_label}, target_trials={trials_target}"
+            f"model={model_label}, study_version={study_version(cli_args)}, "
+            f"target_trials={trials_target}"
         )
         result = optimize_model(
             optuna_mod=optuna_mod,
@@ -970,6 +987,7 @@ def main():
                 model_results,
                 calibration_horizons,
                 full_horizons,
+                study_version(cli_args),
             ),
             indent=2,
             sort_keys=True,

@@ -4,7 +4,7 @@ Changes in level, volatility, trend, and temporal regime can make a model traine
 This manuscript studies nonstationarity-aware forecasting with Mamba-based sequence models, using daily GLD close-price prediction as the initial testbed.
 The proposed model families extend an S-Mamba backbone with adaptive normalization, series decomposition, distribution-shift-aware fusion, and multi-scale Mamba branches.
 The current manuscript reports only hyperparameter-searched result tracks across 12 horizons from 1 to 360 days.
-Within the directly comparable optimized baseline sweep, iTransformer is the strongest overall model, while S-Mamba remains the strongest Mamba-style baseline before broader Mamba-family tuning.
+Within the directly comparable Optuna-tuned baseline sweep, TimesNet is the strongest overall model, with iTransformer a near-tied runner-up and PatchTST the strongest model at several middle and long horizons.
 After Mamba-specific hyperparameter optimization, MS-Mamba-MD becomes the strongest completed Mamba-family model.
 On the promoted four-horizon summary over 120, 180, 270, and 360 days, it outperforms optimized NLinear and TimesNet.
 The completed source-optimized imported-model sweep further shows that PatchTST is the strongest imported long-horizon baseline among the currently completed imported runs.

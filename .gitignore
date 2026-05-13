@@ -224,3 +224,6 @@ results/
 test_results/
 checkpoints/
 backups/
+
+# Reproduced experiment artifacts
+scripts/gld_baseline_optuna_bundle/reproduced_artifacts/

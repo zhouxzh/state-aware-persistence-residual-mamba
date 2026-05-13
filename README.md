@@ -15,8 +15,9 @@ Completed:
 - Added adaptive normalization: `layers/NonStationaryNorm.py`.
 - Added decomposition utilities: `layers/SeriesDecomp.py`.
 - Added shift-aware gate: `layers/NonStationaryGate.py`.
-- Completed the full GLD baseline sweep with 72 / 72 finished runs.
-- Collected the finished baseline table in `results/gld_baselines.csv`.
+- Completed the full-horizon GLD Optuna baseline sweep with 120 / 120 finished rows.
+- Collected the finished baseline table in `results/gld_baseline_optuna_best.csv`.
+- Collected reproducibility hyperparameters in `results/optuna/gld/baseline_best_params.json`.
 - Implemented and registered `model/NS_Mamba.py`.
 - Added GLD NS_Mamba ablation scripts under `scripts/gld_ns_mamba/`.
 - Completed the NS_Mamba diagnostic sweep with 16 / 48 ablation rows finished.
@@ -52,64 +53,109 @@ Run the full 12-horizon HPO evaluation for the promoted `MS_Mamba-MD` configurat
 Completed baseline table:
 
 ```text
-results/gld_baselines.csv
-72 / 72 rows complete
-6 models x 12 horizons
+results/gld_baseline_optuna_best.csv
+120 / 120 rows complete
+10 models x 12 horizons
+```
+
+Reproducibility hyperparameters:
+
+```text
+results/optuna/gld/baseline_best_params.json
 ```
 
 Generate the LaTeX include used by the manuscript with:
 
 ```bash
-python scripts/manuscript/generate_gld_results_tex.py
+python manuscript/scripts/generate_gld_baseline_results.py
+```
+
+Extract the plot-ready reproduction bundle with:
+
+```bash
+python scripts/extract_gld_baseline_optuna_bundle.py
+```
+
+Replay the saved baseline hyperparameters and archive checkpoints plus test
+predictions with CUDA:
+
+```bash
+conda run -n mamba python scripts/reproduce_gld_baseline_from_bundle.py
 ```
 
 This writes:
 
 ```text
-manuscript/generated/gld_baseline_results.tex
+manuscript/sections/results_baselines.tex
+scripts/gld_baseline_optuna_bundle/
+scripts/gld_baseline_optuna_bundle/reproduced_artifacts/
 ```
 
 Key findings:
 
-- `S_Mamba` is the best MSE baseline at horizons `1, 3, 5, 7, 14, 30, 60, 90`.
-- `iTransformer` is the best MSE baseline at horizons `120, 180, 270, 360`.
-- `Autoformer` is a stable third-place baseline at every horizon.
-- `Transformer`, `Informer`, and `Reformer` are much weaker on GLD under the locked shared setting.
+- `TimesNet` is the best Optuna-tuned baseline overall.
+- `iTransformer` is a near-tie runner-up, only `0.02` RMSSE behind.
+- `PatchTST` is third overall and strongest at `14, 30, 90` days.
+- `NLinear` is strongest at `1, 3, 7` days.
+- `Nonstationary_Transformer` is strongest at `5` days.
+- `TimesNet` is strongest at `60, 120, 180` days.
+- `iTransformer` is strongest at `270, 360` days.
+- `Transformer`, `Informer`, and `Reformer` remain far weaker on GLD under the full-horizon Optuna objective.
 
-Best model by horizon, measured with MSE:
+Best model by horizon, measured with test RMSSE:
 
-| Horizon | Best model | MSE | Runner-up | MSE |
-| --- | --- | ---: | --- | ---: |
-| 1 | `S_Mamba` | 19.80 | `iTransformer` | 21.02 |
-| 3 | `S_Mamba` | 28.06 | `iTransformer` | 29.70 |
-| 5 | `S_Mamba` | 33.13 | `iTransformer` | 37.50 |
-| 7 | `S_Mamba` | 41.91 | `iTransformer` | 46.88 |
-| 14 | `S_Mamba` | 66.70 | `iTransformer` | 73.03 |
-| 30 | `S_Mamba` | 123.61 | `iTransformer` | 131.06 |
-| 60 | `S_Mamba` | 218.91 | `iTransformer` | 221.78 |
-| 90 | `S_Mamba` | 278.28 | `iTransformer` | 285.44 |
-| 120 | `iTransformer` | 395.81 | `S_Mamba` | 412.55 |
-| 180 | `iTransformer` | 713.54 | `S_Mamba` | 723.90 |
-| 270 | `iTransformer` | 1085.45 | `S_Mamba` | 1089.31 |
-| 360 | `iTransformer` | 1556.41 | `S_Mamba` | 1558.31 |
+| Horizon | Best model | RMSSE | RMSE | MAE | Runner-up | RMSSE |
+| --- | --- | ---: | ---: | ---: | --- | ---: |
+| 1 | `NLinear` | 3.14 | 3.94 | 2.24 | `Nonstationary_Transformer` | 3.25 |
+| 3 | `NLinear` | 4.43 | 5.55 | 3.13 | `PatchTST` | 4.52 |
+| 5 | `Nonstationary_Transformer` | 5.38 | 6.75 | 4.00 | `NLinear` | 5.39 |
+| 7 | `NLinear` | 6.07 | 7.61 | 4.36 | `Nonstationary_Transformer` | 6.27 |
+| 14 | `PatchTST` | 7.99 | 10.02 | 6.04 | `NLinear` | 8.08 |
+| 30 | `PatchTST` | 10.61 | 13.31 | 8.51 | `Nonstationary_Transformer` | 10.81 |
+| 60 | `TimesNet` | 14.00 | 17.56 | 12.10 | `PatchTST` | 14.43 |
+| 90 | `PatchTST` | 16.72 | 20.97 | 14.03 | `iTransformer` | 18.33 |
+| 120 | `TimesNet` | 20.37 | 25.55 | 17.46 | `iTransformer` | 21.27 |
+| 180 | `TimesNet` | 24.22 | 30.37 | 20.88 | `iTransformer` | 24.29 |
+| 270 | `iTransformer` | 30.12 | 37.77 | 24.32 | `PatchTST` | 30.54 |
+| 360 | `iTransformer` | 37.15 | 46.58 | 31.46 | `TimesNet` | 38.05 |
 
-Average MSE by horizon group:
+Average test RMSSE by horizon group:
 
-| Model | Short | Middle | Long | Overall |
-| --- | ---: | ---: | ---: | ---: |
-| `S_Mamba` | 30.72 | 171.87 | 946.01 | 382.87 |
-| `iTransformer` | 33.78 | 177.83 | 937.80 | 383.14 |
-| `Autoformer` | 1304.48 | 1366.13 | 1868.77 | 1513.13 |
-| `Transformer` | 4777.44 | 4484.62 | 5306.52 | 4856.20 |
-| `Informer` | 6284.64 | 5841.00 | 5315.49 | 5813.71 |
-| `Reformer` | 4660.86 | 5865.86 | 7056.00 | 5860.91 |
+| Model | Short | Middle | Long | Overall | Overall RMSE |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `TimesNet` | 5.27 | 12.94 | 28.78 | 15.66 | 19.64 |
+| `iTransformer` | 5.45 | 13.39 | 28.21 | 15.68 | 19.67 |
+| `PatchTST` | 5.13 | 12.44 | 30.41 | 15.99 | 20.05 |
+| `NLinear` | 4.76 | 13.22 | 31.46 | 16.48 | 20.66 |
+| `Autoformer` | 5.45 | 14.53 | 32.37 | 17.45 | 21.88 |
+| `DLinear` | 5.01 | 15.05 | 36.30 | 18.78 | 23.55 |
+| `Nonstationary_Transformer` | 4.94 | 16.28 | 38.68 | 19.96 | 25.03 |
+| `Transformer` | 69.21 | 73.46 | 74.58 | 72.42 | 90.81 |
+| `Reformer` | 67.74 | 76.00 | 78.29 | 74.01 | 92.80 |
+| `Informer` | 70.95 | 79.65 | 75.44 | 75.35 | 94.48 |
+
+Selected reproducibility settings:
+
+| Model | Trial | Test RMSSE | Val RMSSE | Key hyperparameters |
+| --- | ---: | ---: | ---: | --- |
+| `TimesNet` | 3 | 15.66 | 6.47 | `seq_len=256, batch_size=32, learning_rate=0.0003, d_model=32, d_ff=128, factor=3, top_k=5, num_kernels=6` |
+| `iTransformer` | 1 | 15.68 | 6.48 | `seq_len=192, batch_size=16, learning_rate=0.0002, d_model=256, d_ff=512, factor=1, use_norm=1` |
+| `PatchTST` | 0 | 15.99 | 6.50 | `seq_len=256, batch_size=32, learning_rate=0.0002, d_model=256, d_ff=2048, factor=3, patch_len=32, stride=16` |
+| `NLinear` | 1 | 16.48 | 6.58 | `seq_len=192, batch_size=32, learning_rate=0.005, factor=1, individual=true` |
+| `Autoformer` | 2 | 17.45 | 6.95 | `seq_len=16, batch_size=32, learning_rate=0.0002, d_model=256, d_ff=512, factor=3, moving_avg=25` |
+| `DLinear` | 8 | 18.78 | 6.81 | `seq_len=256, batch_size=32, learning_rate=0.005, factor=1, moving_avg=25, individual=true` |
+| `Nonstationary_Transformer` | 8 | 19.96 | 6.88 | `seq_len=16, batch_size=16, learning_rate=0.0002, d_model=64, d_ff=128, factor=3, top_k=3, p_hidden_layers=2, p_hidden_dims=[256,256]` |
+| `Transformer` | 4 | 72.42 | 4.93 | `seq_len=192, batch_size=16, learning_rate=0.0001, d_model=256, d_ff=1024, factor=3` |
+| `Reformer` | 14 | 74.01 | 11.29 | `seq_len=192, batch_size=16, learning_rate=0.0003, d_model=512, d_ff=2048, factor=3` |
+| `Informer` | 6 | 75.35 | 6.82 | `seq_len=16, batch_size=32, learning_rate=0.0002, d_model=256, d_ff=1024, factor=3` |
 
 Practical interpretation:
 
-- `S_Mamba` is the stronger reference baseline for short and middle horizons.
-- `iTransformer` is the stronger reference baseline for long-horizon MSE starting at 120 days.
-- The two models are nearly tied overall: average MSE differs by `0.27`, and the 360-day MSE gap is only about `0.12%`.
-- The first `NS_Mamba` comparison should therefore target both `S_Mamba` and `iTransformer`, not only one of them.
+- `TimesNet` is the strongest overall baseline under the full-horizon Optuna objective.
+- `iTransformer` is effectively tied with `TimesNet`.
+- `PatchTST` is the strongest middle-horizon baseline on average and a top long-horizon contender.
+- `NLinear` is the strongest short-horizon baseline on average.
+- The plain attention baselines remain far weaker on GLD even after tuning.
 
 ## NS_Mamba Diagnostic Results
 
@@ -481,14 +527,32 @@ This means:
 conda run -n mamba python scripts/optuna/run_dataset_optuna.py \
   --dataset gld \
   --phase baseline \
-  --models ALL \
+  --models iTransformer Transformer Informer Reformer Autoformer DLinear NLinear PatchTST TimesNet Nonstationary_Transformer \
   --trials 20 \
+  --study-suffix fullcal_v1 \
+  --calibration-horizons 1 3 5 7 14 30 60 90 120 180 270 360 \
+  --full-horizons 1 3 5 7 14 30 60 90 120 180 270 360
+```
+
+- `--calibration-horizons` — Horizons used during the tuning loop on the **val** set. The main GLD rerun uses the full 12-horizon suite so the calibration objective matches the final horizon-balanced comparison.
+- `--full-horizons` — Horizons used for full validation replay and final **test** evaluation. The final `balanced_rmsse` averages across all these horizons.
+- `--study-suffix` — Suffix appended to the Optuna study name. Use a new suffix whenever the objective changes. For example, `fullcal_v1` keeps full-horizon calibration studies separate from earlier `7 90 360` calibration studies inside `results/optuna/gld/studies.db`.
+- `--trials` — Target total trials per model study, not additional trials. To continue a `fullcal_v1` study from 20 to 40 trials, rerun with `--trials 40`.
+
+Fast pilot calibration can still use one horizon per term group:
+
+```bash
+conda run -n mamba python scripts/optuna/run_dataset_optuna.py \
+  --dataset gld \
+  --phase baseline \
+  --models iTransformer Transformer Informer Reformer Autoformer DLinear NLinear PatchTST TimesNet Nonstationary_Transformer \
+  --trials 20 \
+  --study-suffix sparsecal_v1 \
   --calibration-horizons 7 90 360 \
   --full-horizons 1 3 5 7 14 30 60 90 120 180 270 360
 ```
 
-- `--calibration-horizons` — Subset of horizons used during the tuning loop (one per term group). These control Optuna's pruning and objective computation on the **val** set.
-- `--full-horizons` — All horizons used for final replay on the **test** set after tuning is complete. The final `balanced_rmsse` averages across all these horizons.
+Do not reuse the same study suffix across sparse and full-horizon calibration, because those objectives are not comparable.
 
 ## Models
 
@@ -839,325 +903,35 @@ Run the full 12-horizon GLD sweep for NS_Mamba-D before redesigning the gate.
 
 ### GLD Baseline Plan
 
-The GLD baseline stage is complete and now provides the reference point for `NS_Mamba`.
+The publication baseline is the Optuna-tuned comparison summarized in `## GLD Baseline Results`.
 
-GLD target:
-
-```text
-close
-```
-
-#### Baseline Goals
-
-The completed GLD baseline stage answers:
-
-1. `S_Mamba` is strongest from 1 to 90 days, while `iTransformer` is strongest from 120 to 360 days on MSE.
-2. `S_Mamba` degrades smoothly as horizon increases and remains competitive even at 270 and 360 days.
-3. The hardest GLD horizons are the long-horizon settings from 180 to 360 days.
-4. `NS_Mamba` should be compared first against both `S_Mamba` and `iTransformer`.
-
-#### Model Set
-
-Core baseline models:
-
-- `S_Mamba`
-- `Transformer`
-- `Informer`
-- `Reformer`
-- `Autoformer`
-- `iTransformer`
-
-#### Horizon Suite
-
-GLD horizons must cover short, middle, and long terms from 1 day to 360 days.
-
-| Range | Horizons |
-| --- | --- |
-| Short term | 1, 3, 5, 7 days |
-| Middle term | 14, 30, 60, 90 days |
-| Long term | 120, 180, 270, 360 days |
-
-This balanced `4/4/4` split is the default grouping for grouped summaries and overall horizon-balanced metrics.
-
-Use `pred_len` equal to the horizon in days.
-
-#### Setting Calibration
-
-Before running the full baseline table, first find one stable shared setting. The setting should be chosen around `S_Mamba` because Mamba is the main baseline and has stricter CUDA/memory constraints than the attention-only baselines.
-
-Calibration goals:
-
-1. Find a setting that runs stably for `S_Mamba` across short, middle, and long horizons.
-2. Keep the model size moderate enough that all core baselines can run.
-3. Avoid per-model tuning before the first comparison.
-4. Lock the setting before running all models.
-
-Calibration model:
-
-```text
-S_Mamba
-```
-
-Calibration horizons:
-
-```text
-1, 7, 30, 60, 90, 120, 180, 360
-```
-
-These represent short, middle, and long forecasts, including the important 30-, 60-, 120-, and 180-day horizons. If the setting works for these calibration horizons, use it for the full horizon suite.
-
-Calibration script:
+To regenerate the manuscript section and the machine-readable tables, run:
 
 ```bash
-bash scripts/gld_baseline/calibrate_s_mamba.sh
+python manuscript/scripts/generate_gld_baseline_results.py
 ```
 
-Run only one candidate setting:
-
-```bash
-bash scripts/gld_baseline/calibrate_s_mamba.sh A
-bash scripts/gld_baseline/calibrate_s_mamba.sh B
-bash scripts/gld_baseline/calibrate_s_mamba.sh C
-```
-
-Candidate setting A:
+This writes:
 
 ```text
-features=S
-target=close
-freq=d
-seq_len=360
-label_len=180
-d_model=64
-d_ff=128
-e_layers=2
-d_layers=1
-batch_size=16
-train_epochs=10
-patience=3
-itr=1
+manuscript/sections/results_baselines.tex
+manuscript/data/gld_baseline_optuna_best.csv
+manuscript/data/gld_baseline_optuna_hyperparameters.csv
 ```
 
-Candidate setting B, if candidate A is too slow or unstable:
+Source artifacts:
 
 ```text
-features=S
-target=close
-freq=d
-seq_len=180
-label_len=90
-d_model=64
-d_ff=128
-e_layers=2
-d_layers=1
-batch_size=16
-train_epochs=10
-patience=3
-itr=1
+results/gld_baseline_optuna_best.csv
+results/optuna/gld/baseline_best_params.json
 ```
 
-Candidate setting C, if candidate B is still too heavy:
+Current baseline summary:
 
-```text
-seq_len=180
-label_len=90
-d_model=32
-d_ff=64
-e_layers=1
-batch_size=16
-```
-
-Locking rule:
-
-```text
-Use the strongest setting that completes S_Mamba runs for pred_len 7, 90, and 360 without memory failure or unstable loss.
-```
-
-Calibration result:
-
-```text
-Locked default setting: A
-```
-
-Setting A is selected because it is strongest on long-horizon MSE and the 360-day stress case, which matter most for nonstationary forecasting. Setting B is a useful short-horizon or efficiency alternative, but should not be mixed into the main baseline table unless the full baseline table is explicitly labeled as setting B.
-
-Calibration summary:
-
-| Horizon | Best MSE | Best MAE |
-| --- | --- | --- |
-| 1 | B | B |
-| 7 | B | B |
-| 30 | B | B |
-| 60 | B | B |
-| 90 | A | B |
-| 120 | A | B |
-| 180 | A | B |
-| 360 | A | A |
-
-Aggregate result:
-
-| Setting | Avg MSE | Avg MAE | Long-horizon Avg MSE | Long-horizon Avg MAE |
-| --- | ---: | ---: | ---: | ---: |
-| A | 0.3769 | 0.3816 | 1.0182 | 0.7063 |
-| B | 0.3864 | 0.3750 | 1.0585 | 0.7142 |
-| C | 0.4597 | 0.4156 | 1.1815 | 0.7479 |
-
-Parsed calibration results are saved locally at:
-
-```text
-results/gld_calibration_summary.csv
-```
-
-After the setting is locked, do not tune each baseline separately in the first pass. The first pass should be a controlled comparison, not a per-model leaderboard.
-
-#### Shared Baseline Settings
-
-Use the locked setting for every model that is suitable for comparison.
-
-Suitable-for-comparison means:
-
-- the model accepts the same input/output task
-- the model can run with the locked `seq_len`, `label_len`, and `pred_len`
-- the model returns `[B, pred_len, 1]` for `features=S`
-- the model does not need architecture-specific tuning to avoid failure
-
-If a model cannot run with the locked setting, mark it as failed or excluded in `results/gld_baselines.csv` and explain why in `notes`. Do not silently change only that model's hyperparameters.
-
-#### Execution Order
-
-Run in this order:
-
-1. Calibrate the shared setting with `S_Mamba` on horizons 7, 90, and 360.
-2. Lock the shared setting.
-3. Run `S_Mamba` for all 12 horizons.
-4. Run `Transformer`, `Informer`, `Reformer`, `Autoformer`, and `iTransformer` for all 12 horizons using the same locked setting.
-5. Run optional `_M` variants for all 12 horizons using the same locked setting.
-6. Repeat the most important runs with additional seeds if the first-pass results are noisy.
-
-Recommended seeds for later confirmation:
-
-```text
-2021, 2022, 2023
-```
-
-The current `run.py` seed is fixed internally. Add a `--seed` argument later if multi-seed GLD evaluation becomes necessary.
-
-#### Metrics
-
-Record:
-
-- MSE
-- MAE
-- training time
-- best validation loss
-- test loss
-- parameter count
-- GPU memory usage if available
-- whether fallback `seq_len=180` was used
-
-#### Result File
-
-Save GLD baseline results to:
-
-```text
-results/gld_baselines.csv
-```
-
-Baseline runner:
-
-```bash
-bash scripts/gld_baseline/run_gld_baselines.sh
-```
-
-Run only one baseline model:
-
-```bash
-bash scripts/gld_baseline/run_gld_baselines.sh S_Mamba
-bash scripts/gld_baseline/run_gld_baselines.sh Transformer
-```
-
-Collect completed metrics into the baseline CSV:
-
-```bash
-conda run -n mamba python scripts/gld_baseline/collect_gld_baselines.py
-```
-
-Current CSV status:
-
-```text
-results/gld_baselines.csv exists.
-72 / 72 rows are complete.
-S_Mamba wins MSE at horizons 1-90.
-iTransformer wins MSE at horizons 120-360.
-```
-
-Recommended columns:
-
-```text
-dataset,target,model,horizon,term,setting_id,seq_len,label_len,pred_len,d_model,d_ff,e_layers,d_layers,batch_size,train_epochs,patience,seed,mse,mae,rmse,mape,mspe,best_val_loss,train_time_sec,param_count,gpu_memory_mb,status,notes,run
-```
-
-Use `term` values:
-
-```text
-short
-middle
-long
-```
-
-#### Success Criteria
-
-The baseline stage is complete when:
-
-- one shared setting is calibrated and locked
-- the locked setting is documented as `setting_id`
-- every core model has results for all 12 horizons
-- `S_Mamba` has results for all 12 horizons
-- `results/gld_baselines.csv` exists
-- the strongest baseline per horizon is identifiable
-- there is a short written summary of which horizons are hardest
-
-Baseline stage status: complete.
-
-NS_Mamba diagnostic stage status: complete for horizons `30, 120, 180, 360`.
-
-`NS_Mamba-D` is now the full 12-horizon implementation target.
-
-#### Command Template
-
-Use this after choosing the locked shared setting. Replace values such as `seq_len`, `label_len`, `d_model`, and `d_ff` with the locked setting values.
-
-```bash
-conda run -n mamba python -u run.py \
-  --is_training 1 \
-  --model_id GLD_${SETTING_ID}_${MODEL}_pl${PRED_LEN} \
-  --model ${MODEL} \
-  --data custom \
-  --root_path ./data/GLD/ \
-  --data_path GLD.csv \
-  --features S \
-  --target close \
-  --freq d \
-  --seq_len 360 \
-  --label_len 180 \
-  --pred_len ${PRED_LEN} \
-  --enc_in 1 \
-  --dec_in 1 \
-  --c_out 1 \
-  --d_model 64 \
-  --d_state 16 \
-  --d_ff 128 \
-  --e_layers 2 \
-  --d_layers 1 \
-  --batch_size 16 \
-  --train_epochs 10 \
-  --patience 3 \
-  --num_workers 0 \
-  --des gld_${SETTING_ID} \
-  --itr 1
-```
-
-Do not change the locked setting per model. If a model fails, record `status=failed` and explain the reason in `notes`.
+1. `TimesNet` is strongest overall by balanced test RMSSE.
+2. `iTransformer` is the near-tied runner-up.
+3. `PatchTST` is strongest at several middle and long horizons.
+4. `NLinear` is strongest on average at short horizons.
 
 ### Benchmark Baseline Plan
 
@@ -1239,8 +1013,9 @@ SeriesDecomp layer implemented.
 NonStationaryGate layer implemented.
 Baseline model cleanup completed.
 Full GLD baseline evaluation completed.
-72 / 72 baseline rows collected in results/gld_baselines.csv.
-S_Mamba and iTransformer identified as the two reference baselines.
+120 / 120 baseline rows collected in results/gld_baseline_optuna_best.csv.
+Reproducibility hyperparameters collected in results/optuna/gld/baseline_best_params.json.
+TimesNet, iTransformer, and PatchTST identified as the top three Optuna-tuned baselines.
 NS_Mamba implemented and registered.
 Diagnostic NS_Mamba ablation completed for horizons 30, 120, 180, and 360.
 NS_Mamba-D identified as the strongest diagnostic variant.

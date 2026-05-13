@@ -42,7 +42,7 @@ figures/%.pdf: figures/%.dot
 		exit 127; \
 	fi
 
-sections/results_baselines.tex: scripts/generate_gld_baseline_results.py data/gld_rmse_optimized_best.csv
+sections/results_baselines.tex: scripts/generate_gld_baseline_results.py ../results/gld_baseline_optuna_best.csv ../results/optuna/gld/baseline_best_params.json
 	$(PYTHON) $<
 
 sections/appendix/results_source_optimized.tex: scripts/generate_gld_source_optimized_partial_results.py data/gld_source_optimized_all.csv data/gld_source_optimized_best.csv data/gld_rmse_optimized_best.csv

@@ -7,7 +7,7 @@
 \input{sections/results_overview_figure}
 
 Taken together, the currently completed optimized evidence supports three main observations.
-First, within the directly comparable optimized baseline sweep, iTransformer is the strongest overall model and dominates most middle- and long-horizon settings, while S-Mamba remains competitive and is still strongest at a small subset of horizons.
+First, within the directly comparable Optuna-tuned baseline sweep, TimesNet is the strongest overall model, iTransformer is a near-tied runner-up, and PatchTST is the strongest model at several middle and long horizons.
 Second, the imported optimized sweeps raise the performance bar substantially: among the completed imported models, PatchTST is the strongest long-horizon reference model, and both NLinear and TimesNet improve markedly over the optimized baseline families at selected horizons. The detailed imported optimized tables are deferred to Appendix~A.
 Third, the current Mamba-family search improves the best Mamba result further, with MS-Mamba-MD emerging as the strongest completed Mamba variant on most completed horizons, on the shared 120/180/360 subset, and on the promoted 120/180/270/360 long-horizon summary.
 

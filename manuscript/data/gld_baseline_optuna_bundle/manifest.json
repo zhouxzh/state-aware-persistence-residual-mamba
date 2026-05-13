@@ -1,0 +1,16 @@
+{
+  "bundle_root": "data/gld_baseline_optuna_bundle",
+  "config_files": [
+    "configs/baseline_reproduction_config.json",
+    "configs/baseline_best_params.json"
+  ],
+  "horizons": 12,
+  "models": 10,
+  "plot_ready_files": [
+    "plot_ready/baseline_best.csv",
+    "plot_ready/model_summary.csv",
+    "plot_ready/horizon_summary.csv",
+    "plot_ready/baseline_hyperparameters.csv"
+  ],
+  "rows": 120
+}
