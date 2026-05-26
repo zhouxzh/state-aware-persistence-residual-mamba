@@ -1,10 +1,9 @@
 \section{Conclusion}
 
 This manuscript presents a structured path for nonstationarity-aware Mamba forecasting.
-The completed Optuna-tuned GLD baseline sweep shows that TimesNet is the strongest overall baseline, with iTransformer a near-tied runner-up and PatchTST strongest at several middle and long horizons.
-The completed source-optimized imported sweep further shows that NLinear is strongest at short horizons and PatchTST is strongest overall among the tuned imported baselines.
-The proposed NS-Mamba and MS-Mamba architecture families combine decomposition, multi-scale temporal modeling, and Mamba-based sequence processing around an S-Mamba backbone.
-After Mamba-specific hyperparameter optimization, MS-Mamba-MD becomes the strongest completed Mamba-family model.
-On the promoted four-horizon summary over 120, 180, 270, and 360 days, it reaches average RMSE 25.43 and average MAE 18.64.
-This optimized Mamba result is stronger than optimized NLinear and TimesNet on the same four-horizon average, but optimized PatchTST remains best with average RMSE 24.50.
-The next step is to complete the broader optimized benchmark evaluation with traceable quantitative evidence beyond GLD and beyond the currently uneven cross-variant coverage.
+The completed Optuna-tuned GLD baseline sweep shows, under RMSSE-based evaluation, that TimesNet is the strongest overall baseline, with iTransformer a near-tied runner-up, NLinear strongest on short horizons, PatchTST strongest on middle horizons, and TimesNet/iTransformer splitting the long-horizon wins.
+The proposed NS-Mamba and Mamba architecture families combine decomposition, multi-scale temporal modeling, and Mamba-based sequence processing around an S-Mamba backbone.
+After Mamba-specific Optuna search, PMS-Mamba-PD becomes the strongest completed Mamba-family model.
+On the promoted four-horizon summary over 120, 180, 270, and 360 days, it reaches average RMSSE 27.25, average RMSE 34.17, and average MAE 23.72.
+This optimized Mamba result is slightly stronger than the strongest Optuna-tuned non-Mamba reference on the same RMSSE summary, while the broader claim still remains limited to GLD.
+The next step is to complete the broader optimized benchmark evaluation with traceable quantitative evidence beyond GLD.

@@ -4,9 +4,9 @@ Changes in level, volatility, trend, and temporal regime can make a model traine
 This manuscript studies nonstationarity-aware forecasting with Mamba-based sequence models, using daily GLD close-price prediction as the initial testbed.
 The proposed model families extend an S-Mamba backbone with adaptive normalization, series decomposition, distribution-shift-aware fusion, and multi-scale Mamba branches.
 The current manuscript reports only hyperparameter-searched result tracks across 12 horizons from 1 to 360 days.
-Within the directly comparable Optuna-tuned baseline sweep, TimesNet is the strongest overall model, with iTransformer a near-tied runner-up and PatchTST the strongest model at several middle and long horizons.
-After Mamba-specific hyperparameter optimization, MS-Mamba-MD becomes the strongest completed Mamba-family model.
-On the promoted four-horizon summary over 120, 180, 270, and 360 days, it outperforms optimized NLinear and TimesNet.
-The completed source-optimized imported-model sweep further shows that PatchTST is the strongest imported long-horizon baseline among the currently completed imported runs.
-PatchTST remains the strongest overall long-horizon model in the current optimized evidence, so the manuscript treats MS-Mamba-MD as the promoted Mamba candidate rather than as a final state-of-the-art claim.
+Within the refreshed Optuna-tuned non-Mamba baseline sweep, RMSSE-based evaluation identifies TimesNet as the strongest overall model, iTransformer as a near-tied runner-up, NLinear as the short-horizon leader, PatchTST as the middle-horizon leader, and TimesNet/iTransformer as split long-horizon winners.
+After Mamba-specific Optuna search, PMS-Mamba-PD becomes the strongest completed Mamba-family model.
+On the promoted four-horizon summary over 120, 180, 270, and 360 days, PMS-Mamba-PD reaches RMSSE 27.25, RMSE 34.17, and MAE 23.72.
+This is a 3.40\% RMSSE reduction relative to the strongest Optuna-tuned non-Mamba baseline on the same promoted horizon set.
+Because the current evidence is limited to GLD and the manuscript is still a single-dataset draft, it treats PMS-Mamba-PD as the current strongest completed Mamba result rather than as a universal state-of-the-art claim.
 \end{abstract}

@@ -30,6 +30,11 @@ Completed:
 - Added source-style GLD optimized sweep scripts for imported models.
 - Completed the optimized GLD sweep for `Nonstationary_Transformer`, `TimesNet`, `PatchTST`, `DLinear`, and `NLinear`.
 - Identified `PatchTST` as the strongest imported model overall under the completed optimized sweep.
+- Completed the GLD Mamba Optuna comparison with 48 / 48 finished rows.
+- Collected the Mamba comparison table in `results/gld_mamba_optuna_best.csv`.
+- Collected the Mamba reproducibility settings in `results/optuna/gld/mamba_best_params.json`.
+- Added the baseline-vs-Mamba comparison table in `results/gld_optuna_comparison.csv`.
+- Added the Mamba reproduction bundle script pair under `scripts/`.
 - Cleaned model baselines:
   - removed Mamba from `model/Transformer.py`
   - removed Mamba from `model/Reformer.py`
@@ -45,7 +50,7 @@ Completed:
 Next immediate task:
 
 ```text
-Run the full 12-horizon HPO evaluation for the promoted `MS_Mamba-MD` configuration.
+Update the manuscript tables and figures with the completed GLD baseline and Mamba comparison.
 ```
 
 ## GLD Baseline Results
@@ -83,12 +88,26 @@ predictions with CUDA:
 conda run -n mamba python scripts/reproduce_gld_baseline_from_bundle.py
 ```
 
+Replay the best Mamba model with CUDA:
+
+```bash
+conda run -n mamba python scripts/reproduce_gld_mamba_from_bundle.py
+```
+
+Mamba bundle files live under:
+
+```text
+scripts/gld_mamba_optuna_bundle/
+```
+
 This writes:
 
 ```text
 manuscript/sections/results_baselines.tex
 scripts/gld_baseline_optuna_bundle/
 scripts/gld_baseline_optuna_bundle/reproduced_artifacts/
+scripts/gld_mamba_optuna_bundle/
+scripts/gld_mamba_optuna_bundle/reproduced_artifacts/
 ```
 
 Key findings:
@@ -156,6 +175,45 @@ Practical interpretation:
 - `PatchTST` is the strongest middle-horizon baseline on average and a top long-horizon contender.
 - `NLinear` is the strongest short-horizon baseline on average.
 - The plain attention baselines remain far weaker on GLD even after tuning.
+
+## GLD Mamba Optuna Comparison
+
+Current Mamba tables:
+
+```text
+results/gld_mamba_optuna_best.csv
+48 / 48 rows complete
+4 models x 12 horizons
+```
+
+Reproducibility and comparison artifacts:
+
+```text
+results/optuna/gld/mamba_best_params.json
+results/gld_optuna_comparison.csv
+```
+
+Compared with the tuned baseline family:
+
+| Family | Best model | Balanced RMSSE | vs best baseline |
+| --- | --- | ---: | ---: |
+| Baseline | `TimesNet` | 15.66 | - |
+| Mamba | `PMS_Mamba-PD` | 14.74 | 5.89% better |
+
+Mamba family summary:
+
+| Model | Short | Middle | Long | Overall | Overall RMSE |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `PMS_Mamba-PD` | 5.30 | 11.67 | 27.25 | 14.74 | 18.48 |
+| `NS_Mamba-D` | 4.99 | 12.10 | 28.63 | 15.24 | 19.11 |
+| `MS_Mamba-MD` | 5.06 | 12.70 | 30.16 | 15.98 | 20.03 |
+| `S_Mamba` | 4.78 | 13.67 | 31.91 | 16.79 | 21.05 |
+
+Family winners by horizon:
+
+- Baseline wins `1, 3, 360`.
+- Mamba wins `5, 7, 14, 30, 60, 90, 120, 180, 270`.
+- The best Mamba model beats the best baseline overall, but the baseline family still edges Mamba at the shortest horizons and at 360 days.
 
 ## NS_Mamba Diagnostic Results
 
@@ -381,10 +439,10 @@ Interpretation:
 Current HPO tables:
 
 ```text
-results/gld_mamba_hpo_all.csv
-results/gld_mamba_hpo_best.csv
-458 completed runs
-33 best rows selected by RMSE
+results/gld_mamba_optuna_best.csv
+results/optuna/gld/mamba_best_params.json
+48 / 48 rows complete
+4 models x 12 horizons
 ```
 
 The HPO search includes:
@@ -392,45 +450,29 @@ The HPO search includes:
 - `S_Mamba`
 - `NS_Mamba-D`
 - `MS_Mamba-MD`
-- `MS_Mamba-MDG`
-- `MS_Mamba-MDS`
 - `PMS_Mamba-PD`
 
-The direct long-horizon comparison now uses the completed full long horizons:
+Best Mamba model:
 
-```text
-120, 180, 270, 360 days
-```
+- `PMS_Mamba-PD`
 
-Long-horizon average by RMSE:
+Comparison with the tuned baseline family:
 
-| Model | Track | Long Avg. RMSE | Long Avg. MAE |
-| --- | --- | ---: | ---: |
-| `PatchTST` | Opt | 24.50 | 17.77 |
-| `MS_Mamba-MD` | Mamba-HPO | 25.43 | 18.64 |
-| `NLinear` | Opt | 26.28 | 18.70 |
-| `TimesNet` | Opt | 27.01 | 19.74 |
-
-Best Mamba-HPO row by completed diagnostic horizon:
-
-| Horizon | Best Mamba | RMSE | MAE | seq_len | Config |
-| ---: | --- | ---: | ---: | ---: | --- |
-| 30 | `MS_Mamba-MDG` | 9.02 | 6.61 | 256 | `MSG25S124` |
-| 120 | `MS_Mamba-MD` | 16.32 | 12.77 | 320 | `MSD49S124` |
-| 180 | `MS_Mamba-MD` | 21.47 | 16.20 | 360 | `MSD49S124` |
-| 360 | `MS_Mamba-MD` | 35.55 | 24.95 | 360 | `MSD49S124` |
+| Family | Best model | Balanced RMSSE |
+| --- | --- | ---: |
+| Baseline | `TimesNet` | 15.66 |
+| Mamba | `PMS_Mamba-PD` | 14.74 |
 
 Interpretation:
 
-- HPO confirms `MS_Mamba-MD` as the strongest current Mamba-family model.
-- On the completed full long-horizon average `120/180/270/360`, optimized `MS_Mamba-MD` beats optimized `NLinear` and `TimesNet`.
-- Optimized `PatchTST` remains the best long-horizon model, with a remaining `3.78%` RMSE gap versus optimized `MS_Mamba-MD`.
-- The promoted Mamba configuration is `MS_Mamba-MD` with `moving_avg=49`, `ms_scales=1 2 4`, `d_model=64`, `d_ff=128`, and `d_state=16`.
+- `PMS_Mamba-PD` is the strongest current Mamba-family model.
+- It beats the tuned baseline winner `TimesNet` on overall balanced RMSSE.
+- `NS_Mamba-D` remains the strongest diagnostic Mamba variant outside the final promoted PMS configuration.
+- Short-horizon performance still favors the baseline family at `1`, `3`, and `360` days, while Mamba dominates most of the remaining horizons.
 
 Next commands:
 
 ```bash
-bash scripts/gld_ns_mamba/run_gld_mamba_hpo.sh full MS_Mamba-MD
 python scripts/gld_ns_mamba/collect_gld_mamba_hpo.py
 python scripts/gld_ns_mamba/analyze_gld_mamba_hpo.py
 ```

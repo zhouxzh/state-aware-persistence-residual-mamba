@@ -82,40 +82,36 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Evaluation Horizons and Metrics}{12}{subsection.4.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Optimized Evaluation Tracks}{13}{subsection.4.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Optimization and Reproducibility}{13}{subsection.4.5}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Best and second-best GLD baseline models by horizon, measured with RMSE.}}{14}{table.2}\protected@file@percent }
-\newlabel{tab:gld-horizon-winners}{{2}{14}{Best and second-best GLD baseline models by horizon, measured with RMSE}{table.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days.}}{14}{table.3}\protected@file@percent }
-\newlabel{tab:gld-term-avg}{{3}{14}{Average GLD baseline RMSE grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days}{table.3}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Results}{14}{section.5}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Current long-horizon comparison after Mamba hyperparameter search. Values are averaged over the completed common long horizons 120, 180, and 360 days.}}{15}{table.4}\protected@file@percent }
-\newlabel{tab:gld-mamba-hpo-long}{{4}{15}{Current long-horizon comparison after Mamba hyperparameter search. Values are averaged over the completed common long horizons 120, 180, and 360 days}{table.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Promoted long-horizon summary for MS-Mamba-MD and optimized reference models. Values are averaged over 120, 180, 270, and 360 days.}}{15}{table.5}\protected@file@percent }
-\newlabel{tab:gld-mamba-hpo-promoted}{{5}{15}{Promoted long-horizon summary for MS-Mamba-MD and optimized reference models. Values are averaged over 120, 180, 270, and 360 days}{table.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Current Mamba Hyperparameter Search}{15}{subsection.5.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Best currently completed Mamba-HPO row by horizon.}}{16}{table.6}\protected@file@percent }
-\newlabel{tab:gld-mamba-hpo-horizon}{{6}{16}{Best currently completed Mamba-HPO row by horizon}{table.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Completed Result Overview}{16}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and Limitations}{16}{section.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Compact GLD RMSE comparison across the currently completed optimized evaluation tracks. Panel A shows the current cross-model frontier across all completed horizons, including the strongest optimized baselines, imported optimized baselines, and the promoted Mamba-HPO row. Panel B shows the currently completed Mamba-HPO variants on the diagnostic horizons 30, 120, 180, and 360 days.}}{17}{figure.3}\protected@file@percent }
-\newlabel{fig:gld-result-overview}{{3}{17}{Compact GLD RMSE comparison across the currently completed optimized evaluation tracks. Panel A shows the current cross-model frontier across all completed horizons, including the strongest optimized baselines, imported optimized baselines, and the promoted Mamba-HPO row. Panel B shows the currently completed Mamba-HPO variants on the diagnostic horizons 30, 120, 180, and 360 days}{figure.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{18}{section.7}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Completed source-optimized GLD coverage for the currently finished imported-model sweeps. Autoformer and Transformer source-style sweeps are still pending.}}{19}{table.7}\protected@file@percent }
-\newlabel{tab:gld-source-optimized-partial}{{7}{19}{Completed source-optimized GLD coverage for the currently finished imported-model sweeps. Autoformer and Transformer source-style sweeps are still pending}{table.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Best currently completed source-optimized imported results by horizon, measured with RMSE and paired with MAE.}}{19}{table.8}\protected@file@percent }
-\newlabel{tab:gld-source-optimized-best}{{8}{19}{Best currently completed source-optimized imported results by horizon, measured with RMSE and paired with MAE}{table.8}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {A}Appendix}{19}{appendix.A}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Currently Completed Source-Optimized Imported Runs}{19}{subsection.A.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Optimized GLD Model Comparison}{14}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Combined optimized GLD model summary grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days. Lower RMSSE is better.}}{14}{table.2}\protected@file@percent }
+\newlabel{tab:gld-term-avg}{{2}{14}{Combined optimized GLD model summary grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days. Lower RMSSE is better}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Completed Result Overview}{14}{subsection.5.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Compact GLD RMSSE summary for the currently completed optimized evaluation tracks. Panel A reports Optuna-tuned non-Mamba baseline RMSSE across all horizons. Panel B reports Mamba Optuna RMSSE across all horizons.}}{15}{figure.3}\protected@file@percent }
+\newlabel{fig:gld-result-overview}{{3}{15}{Compact GLD RMSSE summary for the currently completed optimized evaluation tracks. Panel A reports Optuna-tuned non-Mamba baseline RMSSE across all horizons. Panel B reports Mamba Optuna RMSSE across all horizons}{figure.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and Limitations}{15}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{16}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Appendix}{17}{appendix.A}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Sweep Configurations}{17}{subsection.A.1}\protected@file@percent }
+\newlabel{app:sweep-configurations}{{A.1}{17}{Sweep Configurations}{subsection.A.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Baseline Optuna Hyperparameters}{17}{subsection.A.2}\protected@file@percent }
+\newlabel{app:baseline-optuna-hyperparameters}{{A.2}{17}{Baseline Optuna Hyperparameters}{subsection.A.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Selected non-Mamba Optuna configurations for the reported GLD baseline rows. Configurations are selected by balanced validation RMSSE; test RMSSE is reported only for final evaluation. All selected configurations use the study suffix \texttt  {fullcal\_v1}.}}{18}{table.3}\protected@file@percent }
+\newlabel{tab:gld-baseline-optuna-hparams}{{3}{18}{Selected non-Mamba Optuna configurations for the reported GLD baseline rows. Configurations are selected by balanced validation RMSSE; test RMSSE is reported only for final evaluation. All selected configurations use the study suffix \texttt {fullcal\_v1}}{table.3}{}}
 \bibstyle{unsrt}
 \bibdata{references}
 \bibcite{informer}{1}
 \bibcite{autoformer}{2}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Mamba Optuna Hyperparameters}{19}{subsection.A.3}\protected@file@percent }
+\newlabel{app:mamba-optuna-hyperparameters}{{A.3}{19}{Mamba Optuna Hyperparameters}{subsection.A.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Selected Mamba-family Optuna configurations for the completed GLD bundle. Configurations are selected by balanced validation RMSSE; test RMSSE is reported only for final evaluation.}}{19}{table.4}\protected@file@percent }
+\newlabel{tab:gld-mamba-optuna-hparams}{{4}{19}{Selected Mamba-family Optuna configurations for the completed GLD bundle. Configurations are selected by balanced validation RMSSE; test RMSSE is reported only for final evaluation}{table.4}{}}
 \bibcite{tft}{3}
 \bibcite{tsf-survey}{4}
 \bibcite{nbeats}{5}
 \bibcite{nhits}{6}
 \bibcite{dlinear}{7}
 \bibcite{patchtst}{8}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Sweep Configurations}{20}{subsection.A.2}\protected@file@percent }
 \bibcite{timesnet}{9}
 \bibcite{finance-dl-survey}{10}
 \bibcite{fedformer}{11}
@@ -130,4 +126,4 @@
 \bibcite{tsmamba}{20}
 \bibcite{m4}{21}
 \bibcite{reformer}{22}
-\gdef \@abspage@last{22}
+\gdef \@abspage@last{21}

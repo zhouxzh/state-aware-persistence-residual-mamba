@@ -5,19 +5,22 @@ ARCH_TEX := $(wildcard arch/*.tex)
 DOT_SOURCES := $(wildcard figures/*.dot)
 DOT_FIGURES := $(DOT_SOURCES:.dot=.pdf)
 SECTION_TEX := $(wildcard sections/*.tex)
+APPENDIX_TEX := $(wildcard sections/appendix/*.tex)
 RESULT_SECTION_TEX := \
 	sections/results_baselines.tex \
-	sections/appendix/results_source_optimized.tex \
-	sections/results_mamba_hpo.tex \
+	sections/results_mamba_optuna.tex \
 	sections/results_overview_figure.tex
-FIGURE_DATA := figures/gld_rmse_optimized_best.csv figures/gld_source_optimized_best.csv figures/gld_mamba_hpo_best.csv
+APPENDIX_RESULT_TEX := \
+	sections/appendix/baseline_optuna_hyperparameters.tex \
+	sections/appendix/mamba_optuna_hyperparameters.tex
+FIGURE_DATA := data/gld_baseline_optuna_best.csv data/gld_mamba_optuna_best.csv
 FIGURE_OUTPUTS := figures/gld_result_overview.pdf figures/gld_result_overview.png
 
 .PHONY: pdf clean distclean watch help
 
 pdf: $(PDF)
 
-$(PDF): $(TEX) $(ARCH_TEX) $(DOT_FIGURES) $(SECTION_TEX) $(RESULT_SECTION_TEX) $(FIGURE_OUTPUTS)
+$(PDF): $(TEX) $(ARCH_TEX) $(DOT_FIGURES) $(SECTION_TEX) $(APPENDIX_TEX) $(RESULT_SECTION_TEX) $(APPENDIX_RESULT_TEX) $(FIGURE_OUTPUTS)
 	@if command -v latexmk >/dev/null 2>&1; then \
 		latexmk -pdf -interaction=nonstopmode -halt-on-error $(TEX); \
 	elif command -v pdflatex >/dev/null 2>&1 && command -v bibtex >/dev/null 2>&1; then \
@@ -42,13 +45,10 @@ figures/%.pdf: figures/%.dot
 		exit 127; \
 	fi
 
-sections/results_baselines.tex: scripts/generate_gld_baseline_results.py ../results/gld_baseline_optuna_best.csv ../results/optuna/gld/baseline_best_params.json
+sections/results_baselines.tex sections/appendix/baseline_optuna_hyperparameters.tex: scripts/generate_gld_baseline_results.py ../results/gld_baseline_optuna_best.csv ../results/optuna/gld/baseline_best_params.json data/gld_mamba_optuna_best.csv
 	$(PYTHON) $<
 
-sections/appendix/results_source_optimized.tex: scripts/generate_gld_source_optimized_partial_results.py data/gld_source_optimized_all.csv data/gld_source_optimized_best.csv data/gld_rmse_optimized_best.csv
-	$(PYTHON) $<
-
-sections/results_mamba_hpo.tex: scripts/generate_gld_mamba_hpo_results.py data/gld_mamba_hpo_best.csv data/gld_source_optimized_best.csv
+sections/results_mamba_optuna.tex sections/appendix/mamba_optuna_hyperparameters.tex: scripts/generate_gld_mamba_optuna_results.py data/gld_mamba_optuna_best.csv data/gld_mamba_optuna_hyperparameters.csv data/gld_baseline_optuna_best.csv
 	$(PYTHON) $<
 
 sections/results_overview_figure.tex: scripts/generate_gld_complete_metrics_figure_tex.py $(FIGURE_OUTPUTS)
@@ -74,7 +74,7 @@ clean:
 	rm -rf figures/__pycache__ scripts/__pycache__
 
 distclean: clean
-	rm -f $(PDF) $(DOT_FIGURES) $(FIGURE_OUTPUTS) $(RESULT_SECTION_TEX)
+	rm -f $(PDF) $(DOT_FIGURES) $(FIGURE_OUTPUTS) $(RESULT_SECTION_TEX) $(APPENDIX_RESULT_TEX)
 
 help:
 	@echo "Targets:"

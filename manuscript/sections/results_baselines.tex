@@ -1,83 +1,47 @@
-The refreshed Optuna baseline sweep is complete for ten non-Mamba baseline models.
-Each model was tuned with 20 Optuna trials using the full 12-horizon validation objective, then replayed on the full validation horizon set and evaluated once on the held-out test split.
-The machine-readable result tables are bundled in \texttt{manuscript/data/gld\_baseline\_optuna\_best.csv} and \texttt{manuscript/data/gld\_baseline\_optuna\_hyperparameters.csv}.
+\subsection{Optimized GLD Model Comparison}
 
-\begin{table}[t]
-\centering
-\caption{Best and second-best Optuna-tuned GLD baseline models by horizon, measured with test RMSSE. RMSE and MAE are shown for the best model at each horizon.}
-\label{tab:gld-horizon-winners}
-\small
-\begin{tabular}{r l r r r l r}
-\toprule
-Horizon & Best model & RMSSE & RMSE & MAE & Runner-up & RMSSE \\
-\midrule
-1 & NLinear & 3.14 & 3.94 & 2.24 & Non-stationary Transformer & 3.25 \\
-3 & NLinear & 4.43 & 5.55 & 3.13 & PatchTST & 4.52 \\
-5 & Non-stationary Transformer & 5.38 & 6.75 & 4.00 & NLinear & 5.39 \\
-7 & NLinear & 6.07 & 7.61 & 4.36 & Non-stationary Transformer & 6.27 \\
-14 & PatchTST & 7.99 & 10.02 & 6.04 & NLinear & 8.08 \\
-30 & PatchTST & 10.61 & 13.31 & 8.51 & Non-stationary Transformer & 10.81 \\
-60 & TimesNet & 14.00 & 17.56 & 12.10 & PatchTST & 14.43 \\
-90 & PatchTST & 16.72 & 20.97 & 14.03 & iTransformer & 18.33 \\
-120 & TimesNet & 20.37 & 25.55 & 17.46 & iTransformer & 21.27 \\
-180 & TimesNet & 24.22 & 30.37 & 20.88 & iTransformer & 24.29 \\
-270 & iTransformer & 30.12 & 37.77 & 24.32 & PatchTST & 30.54 \\
-360 & iTransformer & 37.15 & 46.58 & 31.46 & TimesNet & 38.05 \\
-\bottomrule
-\end{tabular}
-\end{table}
+The optimized GLD comparison brings the ten Optuna-tuned non-Mamba baseline families and the four completed Mamba-family variants into one test summary.
+For each non-Mamba baseline family, 20 Optuna trials were ranked by balanced validation RMSSE over the complete 12-horizon set.
+The selected baseline configuration was then replayed on the validation horizons and evaluated once on the held-out test split, yielding 120 complete final baseline test rows.
+The Mamba rows use the completed selected configurations for S-Mamba, NS-Mamba-D, MS-Mamba-MD, and PMS-Mamba-PD, evaluated with the same horizon grouping and final test metrics.
+The machine-readable result tables are bundled in \texttt{manuscript/data/gld\_baseline\_optuna\_best.csv} and \texttt{manuscript/data/gld\_mamba\_optuna\_best.csv}; selected hyperparameters are listed in Appendix~A.
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
-\caption{Optuna-tuned GLD baseline summary grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days. Lower RMSSE is better.}
+\caption{Combined optimized GLD model summary grouped by forecast range. Short = 1--7 days, middle = 14--90 days, long = 120--360 days. Lower RMSSE is better.}
 \label{tab:gld-term-avg}
 \small
-\begin{tabular}{lrrrrr}
-\toprule
-Model & Short RMSSE & Middle RMSSE & Long RMSSE & Overall RMSSE & Overall RMSE \\
-\midrule
-TimesNet & 5.27 & 12.94 & 28.78 & 15.66 & 19.64 \\
-iTransformer & 5.45 & 13.39 & 28.21 & 15.68 & 19.67 \\
-PatchTST & 5.13 & 12.44 & 30.41 & 15.99 & 20.05 \\
-NLinear & 4.76 & 13.22 & 31.46 & 16.48 & 20.66 \\
-Autoformer & 5.45 & 14.53 & 32.37 & 17.45 & 21.88 \\
-DLinear & 5.01 & 15.05 & 36.30 & 18.78 & 23.55 \\
-Non-stationary Transformer & 4.94 & 16.28 & 38.68 & 19.96 & 25.03 \\
-Transformer & 69.21 & 73.46 & 74.58 & 72.42 & 90.81 \\
-Reformer & 67.74 & 76.00 & 78.29 & 74.01 & 92.80 \\
-Informer & 70.95 & 79.65 & 75.44 & 75.35 & 94.48 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[t]
-\centering
-\caption{Selected Optuna hyperparameters used to reproduce the reported GLD baseline rows. All selected configurations use the study suffix \texttt{fullcal\_v1}.}
-\label{tab:gld-baseline-optuna-hparams}
-\scriptsize
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{lrrrl}
+\begin{tabular}{lrrrrrr}
 \toprule
-Model & Trial & Test RMSSE & Val RMSSE & Selected hyperparameters \\
+Model & Short RMSSE & Middle RMSSE & Long RMSSE & Overall RMSSE & Overall RMSE & Overall MAE \\
 \midrule
-TimesNet & 3 & 15.66 & 6.47 & \texttt{seq\_len=256, batch\_size=32, learning\_rate=0.0003, d\_model=32, d\_ff=128, factor=3, top\_k=5, num\_kernels=6} \\
-iTransformer & 1 & 15.68 & 6.48 & \texttt{seq\_len=192, batch\_size=16, learning\_rate=0.0002, d\_model=256, d\_ff=512, factor=1, use\_norm=1} \\
-PatchTST & 0 & 15.99 & 6.50 & \texttt{seq\_len=256, batch\_size=32, learning\_rate=0.0002, d\_model=256, d\_ff=2048, factor=3, patch\_len=32, stride=16} \\
-NLinear & 1 & 16.48 & 6.58 & \texttt{seq\_len=192, batch\_size=32, learning\_rate=0.005, factor=1, individual=true} \\
-Autoformer & 2 & 17.45 & 6.95 & \texttt{seq\_len=16, batch\_size=32, learning\_rate=0.0002, d\_model=256, d\_ff=512, factor=3, moving\_avg=25} \\
-DLinear & 8 & 18.78 & 6.81 & \texttt{seq\_len=256, batch\_size=32, learning\_rate=0.005, factor=1, moving\_avg=25, individual=true} \\
-Non-stationary Transformer & 8 & 19.96 & 6.88 & \texttt{seq\_len=16, batch\_size=16, learning\_rate=0.0002, d\_model=64, d\_ff=128, factor=3, top\_k=3, p\_hidden\_layers=2, p\_hidden\_dims=[256,256]} \\
-Transformer & 4 & 72.42 & 4.93 & \texttt{seq\_len=192, batch\_size=16, learning\_rate=0.0001, d\_model=256, d\_ff=1024, factor=3} \\
-Reformer & 14 & 74.01 & 11.29 & \texttt{seq\_len=192, batch\_size=16, learning\_rate=0.0003, d\_model=512, d\_ff=2048, factor=3} \\
-Informer & 6 & 75.35 & 6.82 & \texttt{seq\_len=16, batch\_size=32, learning\_rate=0.0002, d\_model=256, d\_ff=1024, factor=3} \\
+PMS-Mamba-PD & 5.30 & 11.67 & 27.25 & 14.74 & 18.48 & 12.40 \\
+NS-Mamba-D & 4.99 & 12.10 & 28.63 & 15.24 & 19.11 & 12.81 \\
+TimesNet & 5.27 & 12.94 & 28.78 & 15.66 & 19.64 & 13.30 \\
+iTransformer & 5.45 & 13.39 & 28.21 & 15.68 & 19.67 & 12.84 \\
+MS-Mamba-MD & 5.06 & 12.70 & 30.16 & 15.98 & 20.03 & 13.11 \\
+PatchTST & 5.13 & 12.44 & 30.41 & 15.99 & 20.05 & 13.45 \\
+NLinear & 4.76 & 13.22 & 31.46 & 16.48 & 20.66 & 13.23 \\
+S-Mamba & 4.78 & 13.67 & 31.91 & 16.79 & 21.05 & 13.60 \\
+Autoformer & 5.45 & 14.53 & 32.37 & 17.45 & 21.88 & 14.05 \\
+DLinear & 5.01 & 15.05 & 36.30 & 18.78 & 23.55 & 15.28 \\
+Non-stationary Transformer & 4.94 & 16.28 & 38.68 & 19.96 & 25.03 & 16.62 \\
+Transformer & 69.21 & 73.46 & 74.58 & 72.42 & 90.81 & 57.67 \\
+Reformer & 67.74 & 76.00 & 78.29 & 74.01 & 92.80 & 61.97 \\
+Informer & 70.95 & 79.65 & 75.44 & 75.35 & 94.48 & 61.08 \\
 \bottomrule
 \end{tabular}
 }
 \end{table}
 
-TimesNet is the strongest Optuna-tuned baseline overall, with balanced test RMSSE 15.66.
-iTransformer is effectively tied for first, trailing by only 0.02 RMSSE points (0.14\%), while PatchTST is third with balanced test RMSSE 15.99.
-The horizon-level winners show a regime split: NLinear is strongest at 1, 3, and 7 days; Non-stationary Transformer is strongest at 5 days; PatchTST leads at 14, 30, and 90 days; TimesNet leads at 60, 120, and 180 days; and iTransformer leads at 270 and 360 days.
+The combined table shows that the strongest overall row is a Mamba-family model rather than a non-Mamba baseline.
+PMS-Mamba-PD reaches the lowest balanced 12-horizon test RMSSE (14.74), followed by NS-Mamba-D (15.24).
+Relative to the strongest non-Mamba baseline, PMS-Mamba-PD reduces overall RMSSE from 15.66 to 14.74, a 5.89\% reduction.
+The strongest non-Mamba rows remain competitive: TimesNet is the best baseline overall (15.66), with iTransformer and PatchTST close behind in the upper part of the ranking.
 
-The plain Transformer, Reformer, and Informer configurations remain far weaker on the held-out test split despite low validation objectives for some trials.
-This validation-to-test mismatch is why the manuscript reports final test RMSSE and keeps the selected hyperparameters visible for exact reproduction.
+The horizon-range averages show different model strengths rather than a single dominant architecture at every range.
+NLinear has the best short-range average RMSSE (4.76), while PMS-Mamba-PD leads both the middle range (11.67) and the long range (27.25).
+
+The plain Transformer, Reformer, and Informer configurations remain far weaker on the held-out test split, with overall test RMSSE above 72 despite low validation objectives for some selected trials.
+This validation-to-test mismatch is why the manuscript reports final test RMSSE and moves the selected hyperparameters to Appendix~A for exact reproduction.

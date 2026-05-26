@@ -2,14 +2,11 @@
 
 \input{sections/results_baselines}
 
-\input{sections/results_mamba_hpo}
-
 \input{sections/results_overview_figure}
 
 Taken together, the currently completed optimized evidence supports three main observations.
-First, within the directly comparable Optuna-tuned baseline sweep, TimesNet is the strongest overall model, iTransformer is a near-tied runner-up, and PatchTST is the strongest model at several middle and long horizons.
-Second, the imported optimized sweeps raise the performance bar substantially: among the completed imported models, PatchTST is the strongest long-horizon reference model, and both NLinear and TimesNet improve markedly over the optimized baseline families at selected horizons. The detailed imported optimized tables are deferred to Appendix~A.
-Third, the current Mamba-family search improves the best Mamba result further, with MS-Mamba-MD emerging as the strongest completed Mamba variant on most completed horizons, on the shared 120/180/360 subset, and on the promoted 120/180/270/360 long-horizon summary.
+First, Table~\ref{tab:gld-term-avg} shows that PMS-Mamba-PD is the strongest overall model across the combined baseline and Mamba comparison, followed by NS-Mamba-D and the best non-Mamba baselines.
+Second, the horizon-range averages show a trade-off: NLinear remains strongest on the short-range average, while PMS-Mamba-PD leads the middle-range, long-range, and overall summaries.
+Third, because the Mamba rows now use the same RMSSE definition and horizon grouping as the baseline rows, the comparison is direct: PMS-Mamba-PD reduces average RMSSE by 5.89\% against the strongest Optuna-tuned non-Mamba baseline on the full 12-horizon summary.
 
-At the same time, the imported optimized and Mamba-HPO tracks are still incomplete.
-The cross-track comparisons in this section should therefore be interpreted as the current completed state of the optimized benchmark rather than as a final global ranking across all candidate models.
+At the same time, the Mamba rows should be interpreted as the completed GLD Mamba-family search state rather than as a final complete ranking beyond GLD.

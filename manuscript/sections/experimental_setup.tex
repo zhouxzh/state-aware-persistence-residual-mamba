@@ -126,30 +126,24 @@ Training uses mean squared error as the optimization loss, and early stopping is
 \subsection{Optimized Evaluation Tracks}
 
 The manuscript now reports only hyperparameter-searched result tracks.
-The first is an RMSE-optimized baseline sweep over six directly comparable backbone models: S-Mamba, iTransformer, Autoformer, Transformer, Informer, and Reformer.
-This sweep varies the lookback length over
-\begin{equation}
-    \texttt{seq\_len} \in \{16, 32, 64, 96, 128, 192, 256, 320, 384\},
-\end{equation}
-uses \texttt{label\_len}=\texttt{seq\_len}/2, and evaluates all 12 forecast horizons.
-The resulting summary contains 648 completed runs and 72 best-per-model/per-horizon rows.
+The first is the refreshed Optuna-tuned non-Mamba baseline sweep.
+It covers Autoformer, DLinear, Informer, NLinear, Non-stationary Transformer, PatchTST, Reformer, TimesNet, Transformer, and iTransformer.
+Each model family is tuned with 20 Optuna trials using balanced validation RMSSE over the complete 12-horizon set.
+The selected configuration is then replayed across all validation horizons and evaluated once on the held-out test split.
+The resulting summary contains 120 complete best-per-model/per-horizon test rows.
 
-The second track is a source-optimized imported-model sweep intended to show how strong imported non-Mamba baselines behave when model-specific hyperparameters are respected.
-The completed imported subset contains DLinear, NLinear, PatchTST, TimesNet, and Non-stationary Transformer.
-These runs use the same horizon set and the same \texttt{seq\_len} sweep as the optimized baseline track, but they follow model-specific hyperparameter presets from the corresponding source-style workflow.
-The detailed imported optimized tables are reported in the Appendix rather than the main results section.
-
-The third track is Mamba-family hyperparameter optimization.
-This search covers S-Mamba, NS-Mamba-D, MS-Mamba-MD, MS-Mamba-MDG, MS-Mamba-MDS, and PMS-Mamba-PD.
-The current completed search contains 445 price-scale runs and 33 best-per-variant/per-horizon rows.
-Not every Mamba-family variant has finished all 12 horizons, so the most stable cross-variant comparison currently uses the common long-horizon subset \{120, 180, 360\}.
-Detailed sweep presets and architecture-search knobs are reported in Appendix~B so the main experimental section can stay focused on the shared data protocol and evaluation design.
+The second track is Mamba-family Optuna search.
+This search covers S-Mamba, NS-Mamba-D, MS-Mamba-MD, and PMS-Mamba-PD.
+The completed bundle contains 48 price-scale runs and 48 best-per-model/per-horizon rows, with four selected model-level hyperparameter summaries in Appendix~A.2.
+All four completed Mamba-family variants cover all 12 horizons, so the cross-variant comparison uses both the common long-horizon subset \{120, 180, 360\} and the promoted long-horizon subset \{120, 180, 270, 360\}.
+The current Mamba Optuna summary stores RMSSE, RMSE, and MAE for the selected rows, so RMSSE is used for comparison with the Optuna baseline leaderboard and RMSE/MAE are retained for price-scale interpretation.
+Detailed sweep presets and architecture-search knobs are reported in Appendix~A so the main experimental section can stay focused on the shared data protocol and evaluation design.
 
 \subsection{Optimization and Reproducibility}
 
 All experiments use the Adam optimizer with one training run per configuration (\texttt{itr}=1) and fixed random seed 2023.
 The epoch limit is 10 and the early-stopping patience is 3 across the optimized sweeps reported here.
-The optimized imported and Mamba-family searches vary model-specific architectural hyperparameters, but keep the same optimizer family, validation-based training loop, and inverse-transformed price-scale evaluation.
+The Optuna baseline and Mamba-family searches vary model-specific architectural hyperparameters, but keep the same optimizer family, validation-based training loop, and inverse-transformed price-scale evaluation.
 
 For reproducibility, the repository stores run-level prediction arrays, target arrays, and metric arrays together with a run metadata file.
 Training and validation curves are logged to TensorBoard.

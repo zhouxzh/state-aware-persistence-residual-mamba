@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering
+\caption{Selected non-Mamba Optuna configurations for the reported GLD baseline rows. Configurations are selected by balanced validation RMSSE; test RMSSE is reported only for final evaluation. All selected configurations use the study suffix \texttt{fullcal\_v1}.}
+\label{tab:gld-baseline-optuna-hparams}
+\scriptsize
+\begingroup
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.16}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\linewidth}>{\centering\arraybackslash}p{0.06\linewidth}>{\centering\arraybackslash}p{0.06\linewidth}>{\centering\arraybackslash}p{0.045\linewidth}>{\raggedright\arraybackslash}p{0.12\linewidth}>{\raggedright\arraybackslash}p{0.17\linewidth}>{\raggedright\arraybackslash}p{0.29\linewidth}@{}}
+\toprule
+Model & Val. & Test & Seq. & Training & Width & Family-specific settings \\
+\midrule
+TimesNet & 6.47 & 15.66 & 256 & bs=32; lr=3e-4 & d\_model=32; d\_ff=128 & factor=3; top-k=5; kernels=6 \\
+iTransformer & 6.48 & 15.68 & 192 & bs=16; lr=2e-4 & d\_model=256; d\_ff=512 & factor=1; norm \\
+PatchTST & 6.50 & 15.99 & 256 & bs=32; lr=2e-4 & d\_model=256; d\_ff=2048 & factor=3; patch=32; stride=16 \\
+NLinear & 6.58 & 16.48 & 192 & bs=32; lr=5e-3 & -- & factor=1; individual \\
+Autoformer & 6.95 & 17.45 & 16 & bs=32; lr=2e-4 & d\_model=256; d\_ff=512 & factor=3; moving avg=25 \\
+DLinear & 6.81 & 18.78 & 256 & bs=32; lr=5e-3 & -- & factor=1; moving avg=25; individual \\
+Non-stationary Transformer & 6.88 & 19.96 & 16 & bs=16; lr=2e-4 & d\_model=64; d\_ff=128 & factor=3; top-k=3; projector=2x256 \\
+Transformer & 4.93 & 72.42 & 192 & bs=16; lr=1e-4 & d\_model=256; d\_ff=1024 & factor=3 \\
+Reformer & 11.29 & 74.01 & 192 & bs=16; lr=3e-4 & d\_model=512; d\_ff=2048 & factor=3 \\
+Informer & 6.82 & 75.35 & 16 & bs=32; lr=2e-4 & d\_model=256; d\_ff=1024 & factor=3 \\
+\bottomrule
+\end{tabular}
+\endgroup
+\end{table}
+

@@ -1,23 +1,16 @@
 \section{Discussion and Limitations}
 
-This manuscript is currently a draft after the Optuna-tuned baseline sweep, the completed imported-model sweeps for five non-Mamba models, and a partial Mamba-family hyperparameter search.
-The main limitation is no longer whether strong optimized baselines exist; that part is complete.
-The main remaining limitation is no longer horizon coverage for the promoted model, because MS-Mamba-MD now has completed HPO-selected rows across all 12 GLD horizons.
-The remaining limitation is that the other Mamba-family variants still cover only the diagnostic subset, so the full cross-variant comparison is still uneven.
-The source-optimized imported baseline sweep is complete for PatchTST, NLinear, TimesNet, Non-stationary Transformer, and DLinear, but the optional source-style Autoformer and Transformer sweeps are still pending.
-
-The second limitation is dataset scope.
+This manuscript is currently a draft after the Optuna-tuned non-Mamba baseline sweep and the completed Mamba-family Optuna search.
+The main limitation is no longer whether strong optimized non-Mamba baselines exist; that part is complete.
+The remaining limitation is dataset scope.
 GLD provides a useful nonstationary financial testbed, but one dataset is not enough to establish general forecasting superiority.
 After GLD experiments are complete, the method should also be tested on standard long-horizon forecasting datasets such as Exchange, Weather, ETT, Electricity, and Traffic.
 
-The third limitation is split sensitivity.
+The second limitation is split sensitivity.
 Financial time series evaluation can change substantially with different historical periods.
 The final manuscript should report the exact date range, train-validation-test boundaries, random seeds, and whether validation or test windows use lookback context from earlier splits.
 
-Finally, the architecture may add complexity.
-The current Mamba-HPO results suggest that the best-performing Mamba variants depend not only on nonstationary modules but also on lookback selection, moving-average window, and multi-scale structure, so future changes should be justified by improved metrics rather than by architectural novelty alone.
-The optimized baseline table also raises the bar for improvement: the optimized Mamba model now needs to preserve its long-horizon advantage while remaining competitive at short and middle horizons.
-The completed optimized imported sweep raises the bar further, because NLinear is strongest at the short horizons and PatchTST is strongest overall under the imported-model tuning regime.
-The baseline analysis also suggests where the improvement must come from.
-If NS-Mamba only adds complexity without preserving the inverted-token and reversible-normalization advantages already present in the strongest optimized baseline models, it is unlikely to close the gap to the stronger tuned imported baselines for the right reason.
-The proposed model therefore needs to build on the strengths of S-Mamba while explicitly targeting the long-horizon regime where PatchTST remains strongest under optimized evaluation.
+The third limitation is architectural scope.
+The current Optuna bundle only covers four completed Mamba-family variants, so it supports a clean comparison on GLD but not a broader claim about the entire Mamba design space.
+The present results suggest that the strongest Mamba configuration depends on lookback selection, moving-average window, and multi-scale structure, so future changes should be justified by improved metrics rather than by architectural novelty alone.
+The baseline analysis also raises the bar for improvement: any new Mamba variant has to preserve the RMSSE advantage while keeping price-scale RMSE and MAE stable at short, middle, and long horizons.

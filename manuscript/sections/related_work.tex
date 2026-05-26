@@ -9,7 +9,7 @@ Recent surveys and forecasting studies therefore treat long-horizon prediction a
 
 The present manuscript follows this forecasting-science view by evaluating a fixed GLD task across horizons from 1 to 360 days rather than reporting a single horizon or a single aggregate score.
 This choice is important because short-horizon and long-horizon performance can favor different models.
-It also motivates the use of both a shared configuration and source-optimized comparisons: the shared protocol improves interpretability across model families, while source-optimized runs indicate how strong imported baselines behave when their own hyperparameters are respected.
+It also motivates the use of hyperparameter-searched comparisons rather than a single locked default configuration, because model families can be sensitive to lookback length, normalization, and architecture-specific settings.
 
 \subsection{Long-Horizon Neural Forecasting Models}
 
@@ -67,4 +67,4 @@ TSMamba moves toward a Mamba-based foundation model for time series prediction u
 
 These studies show that Mamba has become an active forecasting backbone, but most of them emphasize sequence modeling, scan design, channel mixing, or transfer rather than explicit handling of nonstationarity.
 The present manuscript is positioned at that intersection.
-It asks whether a Mamba forecaster benefits when nonstationary structure is made explicit through adaptive normalization, decomposition, and shift-aware fusion, and it evaluates that question against strong non-Mamba baselines under both shared and source-optimized protocols.
+It asks whether a Mamba forecaster benefits when nonstationary structure is made explicit through adaptive normalization, decomposition, and shift-aware fusion, and it evaluates the completed Mamba Optuna rows with the same RMSSE metric used for the Optuna-tuned non-Mamba baseline leaderboard.

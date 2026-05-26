@@ -1,13 +1,13 @@
 \subsection{Completed Result Overview}
 
 Figure~\ref{fig:gld-result-overview} summarizes the currently completed GLD evidence in compact form.
-Panel A shows the current cross-model frontier across the strongest optimized baseline, imported, and Mamba-family rows, while Panel B shows the currently completed Mamba-HPO variants on the diagnostic horizons 30, 120, 180, and 360 days.
-All curves are plotted on the original GLD price scale using RMSE. Because the imported optimized and Mamba-HPO tracks are still incomplete, the figure should be read as a current-status summary rather than a final global leaderboard. The detailed imported optimized tables are reported in Appendix~A.
+Panel A shows the Optuna-tuned non-Mamba baseline frontier using RMSSE, while Panel B shows the completed Mamba Optuna variants using the same RMSSE metric across all horizons.
+The panels use the same scale-normalized metric, so the baseline and Mamba tracks can be read on the same axis.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.94\linewidth]{figures/gld_result_overview.pdf}
-\caption{Compact GLD RMSE comparison across the currently completed optimized evaluation tracks. Panel A shows the current cross-model frontier across all completed horizons, including the strongest optimized baselines, imported optimized baselines, and the promoted Mamba-HPO row. Panel B shows the currently completed Mamba-HPO variants on the diagnostic horizons 30, 120, 180, and 360 days.}
+\caption{Compact GLD RMSSE summary for the currently completed optimized evaluation tracks. Panel A reports Optuna-tuned non-Mamba baseline RMSSE across all horizons. Panel B reports Mamba Optuna RMSSE across all horizons.}
 \label{fig:gld-result-overview}
 \end{figure}
 

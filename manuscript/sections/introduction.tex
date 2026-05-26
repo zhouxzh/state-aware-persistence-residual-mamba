@@ -18,19 +18,19 @@ However, efficient sequence modeling alone does not resolve the core difficulty 
 
 This manuscript studies that gap through a nonstationarity-aware Mamba forecasting framework for daily GLD close-price prediction across horizons from 1 to 360 days.
 The proposed NS-Mamba family preserves an S-Mamba-style backbone while adding adaptive normalization, decomposition, and shift-aware fusion modules designed to expose nonstationary structure before and around sequence modeling.
-To make comparisons interpretable while still allowing model-specific tuning, the manuscript evaluates optimized baseline and imported-model sweeps alongside a separate Mamba-family hyperparameter search.
+To make comparisons interpretable while still allowing model-specific tuning, the manuscript evaluates an Optuna-tuned non-Mamba baseline sweep alongside a separate Mamba-family Optuna search.
 This produces a current view of how Transformer-style, decomposition-based, inverted, and Mamba-based models behave after lookback and architecture tuning rather than under one locked default setting.
 
 The current evidence leads to a deliberately narrow conclusion.
-Within the directly comparable Optuna-tuned baseline sweep, TimesNet is the strongest overall model, with iTransformer a near-tied runner-up and PatchTST strongest at several middle and long horizons among the completed optimized baselines.
-Within the currently completed imported optimized runs, PatchTST remains the strongest long-horizon reference model.
-Within the Mamba family, the current hyperparameter search identifies MS-Mamba-MD as the strongest completed Mamba variant on most completed horizons and on both the shared 120/180/360 subset and the promoted 120/180/270/360 long-horizon summary.
-Accordingly, this paper does not claim a universal state-of-the-art forecasting model; rather, it argues that nonstationarity-aware design materially improves the behavior of Mamba-based forecasters and clarifies where Mamba remains competitive relative to stronger imported baselines.
+In the refreshed Optuna-tuned non-Mamba sweep, RMSSE-based evaluation identifies TimesNet as the strongest overall baseline and iTransformer as a near-tied runner-up.
+NLinear leads the short horizons, PatchTST leads the middle horizons, and TimesNet/iTransformer split the long-horizon wins.
+Within the Mamba family, the current RMSSE/RMSE/MAE Optuna search identifies PMS-Mamba-PD as the strongest completed Mamba variant on both the shared 120/180/360 subset and the promoted 120/180/270/360 long-horizon summary.
+Because the current evidence is limited to GLD and this is still a draft, the paper avoids a universal state-of-the-art claim.
 
 The main contributions of this manuscript are as follows:
 \begin{itemize}
-    \item it defines a GLD forecasting benchmark spanning 12 prediction horizons from 1 to 360 days, with optimized baseline, imported-model, and Mamba-family search tracks;
+    \item it defines a GLD forecasting benchmark spanning 12 prediction horizons from 1 to 360 days, with Optuna-tuned non-Mamba and Mamba-family search tracks;
     \item it introduces an NS-Mamba architecture family that combines an S-Mamba backbone with adaptive normalization, decomposition, and shift-aware fusion for nonstationary forecasting;
-    \item it provides a cross-family empirical comparison covering Transformer-style, decomposition-based, inverted, and Mamba-based forecasting models under optimized evaluation settings;
-    \item it identifies MS-Mamba-MD as the strongest completed Mamba-family configuration in the current hyperparameter search, while showing that PatchTST remains the strongest completed long-horizon reference model overall.
+    \item it reports Optuna-tuned non-Mamba baseline results and Mamba-family search results under RMSSE-based evaluation, with RMSE and MAE retained for price-scale interpretation;
+    \item it identifies PMS-Mamba-PD as the strongest completed Mamba-family configuration in the current hyperparameter search and compares it against the strongest Optuna-tuned non-Mamba RMSSE references.
 \end{itemize}

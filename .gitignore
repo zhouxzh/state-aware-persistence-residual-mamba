@@ -227,3 +227,4 @@ backups/
 
 # Reproduced experiment artifacts
 scripts/gld_baseline_optuna_bundle/reproduced_artifacts/
+scripts/gld_mamba_optuna_bundle/reproduced_artifacts/

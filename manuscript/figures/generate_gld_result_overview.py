@@ -8,9 +8,9 @@ from matplotlib.lines import Line2D
 
 
 FIG_DIR = Path(__file__).resolve().parent
-BASELINE_CSV = FIG_DIR / "gld_rmse_optimized_best.csv"
-OPT_CSV = FIG_DIR / "gld_source_optimized_best.csv"
-MAMBA_HPO_CSV = FIG_DIR / "gld_mamba_hpo_best.csv"
+MANUSCRIPT_ROOT = FIG_DIR.parent
+BASELINE_CSV = MANUSCRIPT_ROOT / "data" / "gld_baseline_optuna_best.csv"
+MAMBA_OPTUNA_CSV = MANUSCRIPT_ROOT / "data" / "gld_mamba_optuna_best.csv"
 FIG_PDF = FIG_DIR / "gld_result_overview.pdf"
 FIG_PNG = FIG_DIR / "gld_result_overview.png"
 
@@ -21,15 +21,12 @@ FRONTIER_MODELS = [
     "PatchTST",
     "NLinear",
     "TimesNet",
-    "S_Mamba",
     "iTransformer",
-    "MS_Mamba-MD",
 ]
 MAMBA_MODELS = [
+    "S_Mamba",
     "NS_Mamba-D",
     "MS_Mamba-MD",
-    "MS_Mamba-MDG",
-    "MS_Mamba-MDS",
     "PMS_Mamba-PD",
 ]
 
@@ -102,31 +99,35 @@ def load_rows(path, name_key):
                     "name": row[name_key],
                     "horizon": int(row["horizon"]),
                     "rmse": float(row["rmse"]),
+                    "rmsse": float(row["rmsse"]) if row.get("rmsse") else None,
                 }
             )
     return rows
 
 
-def index_rows(rows):
+def index_rows(rows, metric):
     indexed = defaultdict(dict)
     for row in rows:
-        indexed[row["name"]][row["horizon"]] = row["rmse"]
+        value = row.get(metric)
+        if value is None:
+            continue
+        indexed[row["name"]][row["horizon"]] = value
     return indexed
 
 
-def style_axes(ax, title):
+def style_axes(ax, title, ylabel):
     ax.set_title(title, fontsize=10, loc="left")
     ax.set_xscale("linear")
     ax.set_yscale("log")
     ax.grid(True, which="major", axis="both", color="#d1d5db", linewidth=0.7, alpha=0.8)
     ax.grid(True, which="minor", axis="y", color="#e5e7eb", linewidth=0.5, alpha=0.5)
-    ax.set_ylabel("RMSE")
+    ax.set_ylabel(ylabel)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
 
-def plot_panel(ax, indexed, models, horizons, title):
-    style_axes(ax, title)
+def plot_panel(ax, indexed, models, horizons, title, ylabel):
+    style_axes(ax, title, ylabel)
     for model in models:
         xs = [h for h in horizons if h in indexed.get(model, {})]
         ys = [indexed[model][h] for h in xs]
@@ -171,38 +172,28 @@ def add_panel_legend(ax, models, ncol):
 
 
 def main():
-    shared = index_rows(load_rows(BASELINE_CSV, "model"))
-    opt = index_rows(load_rows(OPT_CSV, "model"))
-    hpo = index_rows(load_rows(MAMBA_HPO_CSV, "variant"))
-
-    frontier = {}
-    for model in FRONTIER_MODELS:
-        if model in shared:
-            frontier[model] = shared[model]
-        elif model in opt:
-            frontier[model] = opt[model]
-        elif model in hpo:
-            frontier[model] = hpo[model]
+    baseline = index_rows(load_rows(BASELINE_CSV, "model"), "rmsse")
+    hpo = index_rows(load_rows(MAMBA_OPTUNA_CSV, "model"), "rmsse")
+    baseline_frontier = {
+        model: baseline[model]
+        for model in FRONTIER_MODELS
+        if model in baseline
+    }
 
     fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.35), constrained_layout=True)
 
     plot_panel(
         axes[0],
-        frontier,
-        FRONTIER_MODELS,
+        baseline_frontier,
+        list(baseline_frontier.keys()),
         HORIZONS,
-        "A. Best overall model frontier",
+        "A. Optuna baseline RMSSE",
+        "RMSSE",
     )
     axes[0].set_xlabel("Horizon (days)")
-    add_panel_legend(axes[0], FRONTIER_MODELS, ncol=2)
+    add_panel_legend(axes[0], list(baseline_frontier.keys()), ncol=2)
 
-    plot_panel(
-        axes[1],
-        hpo,
-        MAMBA_MODELS,
-        DIAG_HORIZONS,
-        "B. Mamba-family variants",
-    )
+    plot_panel(axes[1], hpo, MAMBA_MODELS, HORIZONS, "B. Mamba Optuna RMSSE", "RMSSE")
     axes[1].set_xlabel("Horizon (days)")
     add_panel_legend(axes[1], MAMBA_MODELS, ncol=2)
 
