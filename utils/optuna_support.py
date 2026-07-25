@@ -73,9 +73,9 @@ def load_dataset_manifest(manifest_path, dataset_slug, repo_root):
             f"Missing: {missing_from_groups}, extra: {extra_in_groups}"
         )
 
-    if config["features"] != "S":
+    if config["features"] not in ("S", "M", "MS"):
         raise ValueError(
-            f"Dataset '{dataset_slug}' must use features='S' for the current Optuna pipeline"
+            f"Dataset '{dataset_slug}' has unsupported features='{config['features']}'. Use S, M, or MS."
         )
 
     root_path = _resolve_root(repo_root, config["root_path"])

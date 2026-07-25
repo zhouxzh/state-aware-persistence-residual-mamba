@@ -1,9 +1,29 @@
 import os
 import torch
 from model import Transformer, Informer, Reformer, \
-    iTransformer, S_Mamba, Autoformer, \
-    NS_Mamba, MS_Mamba, PMS_Mamba, Nonstationary_Transformer, \
+    iTransformer, Autoformer, \
+    Nonstationary_Transformer, \
     DLinear, NLinear, PatchTST, TimesNet
+
+try:
+    from model import S_Mamba
+except RuntimeError:
+    S_Mamba = None
+
+try:
+    from model import NS_Mamba
+except RuntimeError:
+    NS_Mamba = None
+
+try:
+    from model import MS_Mamba
+except RuntimeError:
+    MS_Mamba = None
+
+try:
+    from model import PMS_Mamba
+except RuntimeError:
+    PMS_Mamba = None
 
 
 class Exp_Basic(object):

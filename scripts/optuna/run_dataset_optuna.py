@@ -381,7 +381,7 @@ def sample_params(trial, phase, model_label):
                 batch_size=trial.suggest_categorical("batch_size", [32, 64]),
                 learning_rate=trial.suggest_categorical("learning_rate", [0.003, 0.005]),
                 moving_avg=trial.suggest_categorical("moving_avg", [13, 25]),
-                individual=True,
+                individual=False,
                 factor=1,
             )
         elif model_label == "NLinear":
@@ -390,7 +390,7 @@ def sample_params(trial, phase, model_label):
                 seq_len=int(seq_len),
                 batch_size=trial.suggest_categorical("batch_size", [32, 64]),
                 learning_rate=trial.suggest_categorical("learning_rate", [0.005, 0.01]),
-                individual=True,
+                individual=False,
                 factor=1,
             )
         elif model_label == "PatchTST":

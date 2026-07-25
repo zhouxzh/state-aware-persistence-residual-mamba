@@ -8,49 +8,15 @@ This README is the single project document for setup, model inventory, current s
 
 Completed:
 
-- Verified the `mamba` conda environment with Torch, CUDA, and `mamba_ssm`.
-- Moved the GLD dataset to `data/GLD/GLD.csv`.
-- Normalized the GLD target column from `Close` to `close`.
-- Ran a one-epoch `S_Mamba` smoke test on GLD `close`.
-- Added adaptive normalization: `layers/NonStationaryNorm.py`.
-- Added decomposition utilities: `layers/SeriesDecomp.py`.
-- Added shift-aware gate: `layers/NonStationaryGate.py`.
-- Completed the full-horizon GLD Optuna baseline sweep with 120 / 120 finished rows.
-- Collected the finished baseline table in `results/gld_baseline_optuna_best.csv`.
-- Collected reproducibility hyperparameters in `results/optuna/gld/baseline_best_params.json`.
-- Implemented and registered `model/NS_Mamba.py`.
-- Added GLD NS_Mamba ablation scripts under `scripts/gld_ns_mamba/`.
-- Completed the NS_Mamba diagnostic sweep with 16 / 48 ablation rows finished.
-- Identified `NS_Mamba-D` as the strongest diagnostic variant.
-- Implemented and registered `model/MS_Mamba.py` for multi-scale Mamba forecasting.
-- Added GLD MS_Mamba ablation and collection scripts under `scripts/gld_ns_mamba/`.
-- Verified `MS_Mamba-MDG` with a one-epoch GLD smoke run.
-- Completed Mamba-family HPO with 266 finished runs and 25 RMSE-selected best rows.
-- Identified optimized `MS_Mamba-MD` as the strongest current Mamba-family model.
-- Added source-style GLD optimized sweep scripts for imported models.
-- Completed the optimized GLD sweep for `Nonstationary_Transformer`, `TimesNet`, `PatchTST`, `DLinear`, and `NLinear`.
-- Identified `PatchTST` as the strongest imported model overall under the completed optimized sweep.
-- Completed the GLD Mamba Optuna comparison with 48 / 48 finished rows.
-- Collected the Mamba comparison table in `results/gld_mamba_optuna_best.csv`.
-- Collected the Mamba reproducibility settings in `results/optuna/gld/mamba_best_params.json`.
-- Added the baseline-vs-Mamba comparison table in `results/gld_optuna_comparison.csv`.
-- Added the Mamba reproduction bundle script pair under `scripts/`.
-- Cleaned model baselines:
-  - removed Mamba from `model/Transformer.py`
-  - removed Mamba from `model/Reformer.py`
-  - fixed hard-coded `d_state=16` in Mamba variants
-  - made `output_attention=True` safe across registered models
-  - removed unused hard-coded modules from `layers/Mamba_EncDec.py`
-- Added repo-local skills:
-  - `.codex/skills/nonstationary-mamba`
-  - `.codex/skills/latex-manuscript`
-  - `.codex/skills/graphviz`
-  - `.codex/skills/tikz`
-
+- Replaced the old 1990–2010 exchange-rate dataset with FRED daily data (1971–2026).
+- Completed the full-horizon Exchange Optuna sweep (baseline + Mamba, UK Pound/USD).
+- Completed the full-horizon Weather Optuna sweep (baseline + Mamba, Jena OT).
+- All three benchmark datasets (GLD, Exchange, Weather) have finished S-mode evaluation.
+- Consolidated benchmark results in `## Benchmark Results` below.
 Next immediate task:
 
 ```text
-Update the manuscript tables and figures with the completed GLD baseline and Mamba comparison.
+Update the manuscript tables and figures with the three completed benchmark datasets (GLD, Exchange, Weather).
 ```
 
 ## GLD Baseline Results
@@ -477,6 +443,81 @@ python scripts/gld_ns_mamba/collect_gld_mamba_hpo.py
 python scripts/gld_ns_mamba/analyze_gld_mamba_hpo.py
 ```
 
+## Benchmark Results
+
+All benchmark datasets are evaluated in **S mode** (single-variate) under identical
+Optuna HPO settings: 20 baseline trials per model, 24 Mamba trials per model,
+`calibration-horizons` focused on one representative horizon per term group,
+full-horizon replay for the top-5 candidates, and the best candidate evaluated
+on unseen test data. The objective is `balanced_rmsse` across short, middle, and
+long horizon groups.
+
+### Summary
+
+| Dataset | Nonstationarity | Best Baseline | Best Mamba | Mamba vs Baseline |
+| --- | --- | --- | --- | ---: |
+| GLD | Trend + volatility shift | TimesNet (15.66) | PMS_Mamba-PD (14.74) | **+5.89%** |
+| Exchange | Mean shift (1.44) | PatchTST (6.37) | S_Mamba (6.29) | **+1.24%** |
+| Weather | Variance shift (1.37) | NLinear (0.132) | PMS_Mamba-PD (0.137) | −3.70% |
+
+### Exchange (UK Pound/USD, 1971–2026)
+
+Daily UK Pound/USD exchange rate sourced from FRED. 13,885 rows.
+Trend-drift nonstationarity: ADF cannot reject unit root, mean_shift=1.44.
+
+| Model | Phase | Short | Middle | Long | Balanced RMSSE |
+| --- | --- | ---: | ---: | ---: | ---: |
+| **S_Mamba** | mamba | 1.94 | 5.38 | 11.55 | **6.29** |
+| NS_Mamba-D | mamba | 1.93 | 5.39 | 11.59 | 6.30 |
+| PMS_Mamba-PD | mamba | 1.93 | 5.38 | 11.61 | 6.31 |
+| MS_Mamba-MD | mamba | 1.96 | 5.45 | 11.62 | 6.35 |
+| PatchTST | baseline | 1.96 | 5.48 | 11.67 | 6.37 |
+| NLinear | baseline | **1.91** | 5.54 | 11.81 | 6.42 |
+| iTransformer | baseline | 2.13 | 5.70 | 11.86 | 6.56 |
+| Nonstationary_Transformer | baseline | 1.93 | 5.55 | 12.30 | 6.59 |
+| TimesNet | baseline | 2.20 | 5.73 | 11.90 | 6.61 |
+| Autoformer | baseline | 2.39 | 5.70 | 11.78 | 6.62 |
+| DLinear | baseline | 1.92 | 5.57 | 14.46 | 7.32 |
+| Informer | baseline | 2.40 | 7.03 | 15.11 | 8.18 |
+| Transformer | baseline | 2.43 | 6.42 | 15.70 | 8.19 |
+| Reformer | baseline | 3.28 | 13.71 | 23.37 | 13.45 |
+
+Key findings:
+
+- Mamba models occupy the top 4 spots, with S_Mamba as the overall winner.
+- Mamba's advantage grows with horizon length: long-horizon RMSSE 11.55 vs best baseline 11.67.
+- Traditional Transformer-family models (Transformer, Informer, Reformer) fail badly on this strongly nonstationary series.
+
+### Weather (Jena, 2020–2021)
+
+10-minute meteorological data from the Max Planck Institute Jena weather station.
+52,696 rows, predicting outdoor temperature (OT). Variance-shift nonstationarity:
+std_shift=1.37, the highest among all evaluated datasets.
+
+| Model | Phase | Short | Middle | Long | Balanced RMSSE |
+| --- | --- | ---: | ---: | ---: | ---: |
+| **NLinear** | baseline | 0.112 | 0.128 | 0.155 | **0.132** |
+| PMS_Mamba-PD | mamba | 0.121 | 0.133 | 0.156 | 0.137 |
+| PatchTST | baseline | 0.122 | 0.135 | 0.155 | 0.137 |
+| iTransformer | baseline | 0.125 | 0.135 | 0.158 | 0.139 |
+| TimesNet | baseline | 0.124 | 0.135 | 0.165 | 0.141 |
+| MS_Mamba-MD | mamba | 0.127 | 0.137 | 0.160 | 0.141 |
+| NS_Mamba-D | mamba | 0.127 | 0.138 | 0.162 | 0.142 |
+| S_Mamba | mamba | 0.128 | 0.138 | 0.166 | 0.144 |
+| Nonstationary_Transformer | baseline | 0.129 | 0.148 | 0.167 | 0.148 |
+| Informer | baseline | 0.181 | 0.207 | 0.181 | 0.190 |
+| Transformer | baseline | 0.222 | 0.225 | 0.182 | 0.210 |
+| Autoformer | baseline | 0.230 | 0.187 | 0.217 | 0.211 |
+| DLinear | baseline | 0.202 | 0.269 | 0.284 | 0.252 |
+| Reformer | baseline | 2.149 | 0.234 | 0.293 | 0.892 |
+
+Key findings:
+
+- NLinear's `x - last_value` normalization is particularly effective against variance-shift nonstationarity.
+- PMS_Mamba-PD is a close runner-up, only 3.7% behind NLinear in balanced RMSSE.
+- Mamba models are tightly clustered (0.137–0.144), showing consistent behavior.
+- DLinear performs poorly (0.252) despite sharing a similar architecture with NLinear, showing that the last-value subtraction is critical for variance-drift scenarios.
+
 ## Environment
 
 Tested local environment:
@@ -525,7 +566,58 @@ Custom CSV datasets use:
 The CSV must contain:
 
 - `date`
-- target column
+- target column (single in `S` mode, one of the feature columns in `M` mode)
+- feature columns (for `M` / `MS` mode)
+
+### Exchange Rate Dataset
+
+The exchange rate data is sourced from the **US Federal Reserve (FRED)**:
+
+```text
+Foreign exchange rates from US Federal Reserve in daily, monthly and yearly basis.
+https://fred.stlouisfed.org
+```
+
+Local files:
+
+```text
+data/Exchange/daily.csv          # raw FRED long-format data (22 countries, 1971–2026)
+data/Exchange/exchange_rate.csv  # processed wide-format data for the pipeline
+```
+
+The processed dataset contains **11 USD/currency exchange rates** at daily frequency:
+
+```text
+Australia, Canada, Denmark, Japan, Malaysia, New Zealand, Norway,
+Sweden, Switzerland, United Kingdom, OT (India)
+```
+
+- Date range: 1973-01-02 to 2026-05-15 (53 years, 13,924 rows)
+- All 11 channels are **multivariate** (`features: "M"`)
+- Missing values (weekends/holidays) are forward-filled
+
+This dataset replaces the old 1990–2010 anonymous 7-country exchange rate file.
+Compared with the old dataset, the FRED dataset spans more than twice the time range,
+covers additional economic regimes (1970s oil crisis, Plaza Accord, Asian Financial
+Crisis, 2008 GFC, Euro crisis, COVID-19, post-COVID rate hikes), and the source is
+independently citable.
+
+### Multivariate Mode and Weight Sharing
+
+All models in this project now operate under **multivariate** (`features: "M"`) mode
+for the exchange rate dataset. In this mode, all channels are predicted simultaneously
+and all evaluation metrics (MSE, MAE, RMSSE) are averaged across channels.
+
+For fair comparison, all models use **shared weights across channels**:
+
+| Architecture | Weight sharing | Models |
+| --- | --- | --- |
+| Inverted (variate-as-token) | Identical weights (0 extra params) | iTransformer, S_Mamba, NS_Mamba, MS_Mamba, PMS_Mamba |
+| Channel-shared | Identical weights (0 extra params) | PatchTST, DLinear (`individual=False`), NLinear (`individual=False`) |
+| Traditional (input embedding) | <1% extra params (input projection only) | Transformer, Informer, Reformer, Autoformer, TimesNet, Nonstationary_Transformer |
+
+This ensures no model gains an unfair parameter advantage when scaling from single-variate
+to multivariate forecasting.
 
 Local GLD dataset:
 

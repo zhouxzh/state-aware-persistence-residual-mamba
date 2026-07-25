@@ -3,20 +3,19 @@
 Batch Optuna HPO runner for all non-stationary benchmark datasets.
 
 Runs baseline and mamba phases sequentially for each dataset.
-Supports pause/resume — skipped if study already has enough trials.
+Supports pause/resume - trials accumulate in the study database.
 
 Usage:
     python scripts/run_all_optuna.py                              # all datasets, baseline + mamba
     python scripts/run_all_optuna.py --datasets exchange,ili      # specific datasets
-    python scripts/run_all_optuna.py --phase baseline             # baseline only
-    python scripts/run_all_optuna.py --phase mamba                # mamba only
-    python scripts/run_all_optuna.py --datasets etth1 --phase mamba --trials 30
+    python scripts/run_all_optuna.py --phase baseline             # baseline only (CPU safe)
+    python scripts/run_all_optuna.py --phase mamba                # mamba only (GPU required)
+    python scripts/run_all_optuna.py --datasets etth1 --trials 30
     python scripts/run_all_optuna.py --dry-run                    # print plan only
-    python scripts/run_all_optuna.py --gpu 1 --trials 24
+    python scripts/run_all_optuna.py --cpu --train-epochs 5       # quick CPU run (baseline only)
 """
 
 import argparse
-import json
 import subprocess
 import sys
 import time
@@ -28,7 +27,6 @@ MANIFEST = REPO_ROOT / "configs" / "optuna_datasets.json"
 OPTUNA_SCRIPT = REPO_ROOT / "scripts" / "optuna" / "run_dataset_optuna.py"
 
 ALL_DATASETS = [
-    "gld",
     "exchange",
     "etth1",
     "etth2",
@@ -37,11 +35,9 @@ ALL_DATASETS = [
     "electricity",
     "traffic",
     "weather",
-    "ili",
 ]
 
 CALIBRATION_HORIZONS = {
-    "gld":         [7, 90, 360],
     "exchange":    [7, 90, 360],
     "etth1":       [48, 168, 720],
     "etth2":       [48, 168, 720],
@@ -50,7 +46,6 @@ CALIBRATION_HORIZONS = {
     "electricity": [48, 168, 720],
     "traffic":     [48, 168, 720],
     "weather":     [96, 336, 720],
-    "ili":         [24, 48, 60],
 }
 
 DEFAULT_TRIALS = {"baseline": 20, "mamba": 24}
@@ -73,7 +68,7 @@ def parse_args():
     parser.add_argument("--trials", type=int, default=0, help="Trials per model per dataset (0 = use defaults)")
     parser.add_argument("--top-k-replays", type=int, default=5)
     parser.add_argument("--gpu", type=int, default=0)
-    parser.add_argument("--cpu", action="store_true")
+    parser.add_argument("--cpu", action="store_true", help="Force CPU (auto-detected if CUDA unavailable)")
     parser.add_argument("--train-epochs", type=int, default=10)
     parser.add_argument("--patience", type=int, default=3)
     parser.add_argument("--num-workers", type=int, default=0)
@@ -86,6 +81,14 @@ def resolve_phases(arg_phase):
     if arg_phase == "both":
         return ["baseline", "mamba"]
     return [arg_phase]
+
+
+def has_cuda():
+    try:
+        import torch
+        return torch.cuda.is_available()
+    except Exception:
+        return False
 
 
 def run_optuna(dataset, phase, args):
@@ -127,6 +130,12 @@ def run_optuna(dataset, phase, args):
 
 def main():
     args = parse_args()
+
+    cuda_available = has_cuda()
+    if not cuda_available:
+        print("[error] CUDA GPU is required. This machine does not have CUDA available.")
+        sys.exit(1)
+
     selected = [s.strip() for s in args.datasets.split(",") if s.strip()]
     invalid = [s for s in selected if s not in ALL_DATASETS]
     if invalid:
@@ -137,6 +146,7 @@ def main():
 
     # Print plan
     print("=" * 72)
+    print(f"CUDA:     {'yes' if cuda_available else 'no (CPU mode)'}")
     print(f"Datasets: {selected}")
     print(f"Phases:   {phases}")
     for ds in selected:
@@ -144,7 +154,6 @@ def main():
         bt = args.trials if args.trials > 0 else DEFAULT_TRIALS["baseline"]
         mt = args.trials if args.trials > 0 else DEFAULT_TRIALS["mamba"]
         print(f"  {ds:12s}  calib={calib}  baseline_trials={bt}  mamba_trials={mt}")
-    print(f"GPU:      {args.gpu}")
     if args.dry_run:
         print("(dry-run, no experiments will run)")
     print("=" * 72)

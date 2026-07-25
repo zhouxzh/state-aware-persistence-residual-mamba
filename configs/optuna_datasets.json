@@ -154,22 +154,6 @@
     "enc_in": 1,
     "dec_in": 1,
     "c_out": 1
-  },
-
-  "ili": {
-    "root_path": "data/ILI",
-    "data_path": "national_illness.csv",
-    "target": "OT",
-    "freq": "w",
-    "features": "S",
-    "horizons": [24, 36, 48, 60],
-    "term_groups": {
-      "short": [24],
-      "middle": [36, 48],
-      "long": [60]
-    },
-    "enc_in": 1,
-    "dec_in": 1,
-    "c_out": 1
   }
+
 }
