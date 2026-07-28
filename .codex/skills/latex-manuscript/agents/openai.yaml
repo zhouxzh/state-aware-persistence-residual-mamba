@@ -1,4 +1,4 @@
 interface:
-  display_name: "Scientific Manuscript"
-  short_description: "Draft, revise, and compile scientific LaTeX manuscripts"
-  default_prompt: "Use $latex-manuscript to write or revise the scientific manuscript in manuscript/main.tex, keep claims aligned with completed experiments, and rebuild the PDF when LaTeX tools are available."
+  display_name: "Evidence-First LaTeX Manuscript"
+  short_description: "Traceable scientific writing, review, figures, and PDF builds"
+  default_prompt: "Use $latex-manuscript to revise manuscript/main.tex, trace claims to completed experiments, preserve generated artifacts, and rebuild the PDF."

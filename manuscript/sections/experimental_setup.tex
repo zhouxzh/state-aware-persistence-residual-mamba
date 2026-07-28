@@ -1,150 +1,110 @@
 \section{Experimental Setup}
 
-\subsection{Dataset and Preprocessing}
+\subsection{Datasets and Forecasting Tasks}
 
-The experiments use the bundled GLD daily dataset stored at \texttt{data/GLD/GLD.csv}.
-The file contains 5,313 daily trading observations from 2004-11-18 to 2025-12-31, with columns \texttt{date}, \texttt{close}, \texttt{High}, \texttt{Low}, \texttt{Open}, and \texttt{Volume}.
-This study uses single-target forecasting with the \texttt{close} column as the prediction target, so the current task is univariate-to-univariate forecasting with $C=C_o=1$.
-The \texttt{close} series has no missing values in the bundled file.
+Table~\ref{tab:datasets} summarizes the two included S-mode tasks.
+Only the named target column is provided to each model, even when the source file contains additional variables.
+Both files are ordered, contain no duplicate dates, and contain no missing values in the evaluated target.
+Horizons are reported in observations because GLD follows business-day trading observations and the processed Exchange file contains only non-missing source dates.
 
-The data loader applies dataset-level standardization with a \texttt{StandardScaler} fit on the training split only, and the same scaler is then applied to validation and test windows.
-At evaluation time, predictions are inverse-transformed back to the original GLD price scale before RMSE and MAE are reported.
-This dataset-level scaling is separate from the model-level reversible normalization described in Section~3.
-Date-derived time features are generated from the \texttt{date} column with daily frequency and passed to models that use temporal covariates.
+\begin{table}[H]
+\centering
+\caption{Included univariate forecasting tasks. Split counts follow the chronological 70/10/20 loader rule.}
+\label{tab:datasets}
+{\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l l l r r r r l}
+\toprule
+Dataset & Target & Sampling & Total & Train & Validation & Test & Horizons \\
+\midrule
+GLD & \texttt{close} & Business-day observations & 5,395 & 3,776 & 540 & 1,079 & 1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360 \\
+Exchange & \texttt{OT} (United Kingdom) & Non-missing daily quotes & 13,885 & 9,719 & 1,389 & 2,777 & 1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360 \\
+\bottomrule
+\end{tabular}%
+}
+}
+\end{table}
 
-\subsection{Chronological Data Splits}
+GLD was downloaded from Yahoo Finance with ticker \texttt{GLD} and \texttt{auto\_adjust=False}; the target is therefore the unadjusted close rather than an adjusted return series \cite{yahoo-gld}.
+The local snapshot spans 2004-11-18 to 2026-04-30.
+Its training, validation, and test targets end on 2019-11-18, 2022-01-10, and 2026-04-30, respectively.
 
-The GLD series is divided chronologically into 70\% training, 10\% validation, and 20\% testing, following the custom-data split used by the forecasting codebase.
-For the bundled GLD file, this yields:
-\begin{itemize}
-    \item training: 3,719 observations from 2004-11-18 to 2019-08-28;
-    \item validation: 532 observations from 2019-08-29 to 2021-10-07;
-    \item testing: 1,062 observations from 2021-10-08 to 2025-12-31.
-\end{itemize}
+The Exchange source is a repository-local long-format compilation identified as originating from FRED \cite{fred}.
+The preparation script \path{scripts/prepare_exchange_uk.py} selects rows labelled \texttt{United Kingdom}, removes missing source values, sorts by date, and renames the value to \texttt{OT}.
+The resulting series spans 1971-01-04 to 2026-05-15, with target boundaries at 2009-09-17, 2015-04-06, and 2026-05-15.
+The raw retrieval record and exact FRED series identifier were not preserved; the quote direction and unit therefore cannot be independently verified from the repository and the target is treated as a quoted rate rather than assigned an economic unit.
 
-Validation and test loaders begin \texttt{seq\_len} steps before their nominal split boundary so that each target window has a full historical lookback.
-Because the optimized sweeps use multiple lookback lengths, the exact validation and test context start date depends on the selected \texttt{seq\_len}.
-Only the input context overlaps the preceding split; the forecast targets remain inside the validation or test segment.
-This detail is important for reproducibility because it changes the effective index range seen by the loaders without leaking future targets across split boundaries.
+Validation and test datasets include up to \texttt{seq\_len} earlier observations as input context, but their forecast targets remain within the nominal split.
+The loader fits a \texttt{StandardScaler} on the training target only and applies it to all splits.
+Predictions and targets are inverse-transformed before metrics are computed.
 
-\subsection{Evaluation Horizons and Metrics}
+Weather was run exploratorily before a data-quality defect was identified: 50 training-target values encoded as \texttt{-9999} were neither replaced nor masked before scaling and training.
+Its exclusion is therefore a post hoc protocol amendment made after exploratory outcomes existed, not a prespecified dataset filter.
+No Weather value contributes to the reported comparison; a documented cleaning rule and complete rerun of every method are required before it can be used as evidence.
 
-All experiments use the same forecast horizons
-\begin{equation}
-    H \in \{1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360\}.
-\end{equation}
-When grouped summaries are reported, the manuscript uses a balanced 4/4/4 split: short = 1--7 days, middle = 14--90 days, and long = 120--360 days.
-Let $\mathcal{T}$ denote the set of evaluation windows, and let $|\mathcal{T}|$ be its size.
-For predicted values $\hat{Y}_{b,h,c}$ and targets $Y_{b,h,c}$, the mean absolute error is
-\begin{equation}
-    \operatorname{MAE}
-    =
-    \frac{1}{|\mathcal{T}|HC_o}
-    \sum_{b \in \mathcal{T}}
-    \sum_{h=1}^{H}
-    \sum_{c=1}^{C_o}
-    \left|
-    \hat{Y}_{b,h,c}-Y_{b,h,c}
-    \right|,
-\end{equation}
-and the mean squared error is
-\begin{equation}
-    \operatorname{MSE}
-    =
-    \frac{1}{|\mathcal{T}|HC_o}
-    \sum_{b \in \mathcal{T}}
-    \sum_{h=1}^{H}
-    \sum_{c=1}^{C_o}
-    \left(
-    \hat{Y}_{b,h,c}-Y_{b,h,c}
-    \right)^2.
-\end{equation}
-The root mean squared error is
+\subsection{Metrics, Origins, and Aggregation}
+
+For a nominal forecast length $H$, each test example predicts all leads $h=1,\ldots,H$.
+With $T_{\mathrm{test}}$ target observations, the sliding-window loader yields $O_H=T_{\mathrm{test}}-H+1$ origins and $N_H=O_HH$ scalar forecast errors.
+The reported value for length $H$ pools every origin and all leads up to $H$; it is not an error calculated only at lead $H$.
+Thus, origin counts range from 1,079 to 720 for GLD and from 2,777 to 2,418 for Exchange as $H$ increases from 1 to 360.
+
+For predictions $\hat{Y}$ and targets $Y$, root mean squared error is
 \begin{equation}
     \operatorname{RMSE}
     =
-    \sqrt{\operatorname{MSE}}.
+    \sqrt{\frac{1}{N_H}\sum_{i=1}^{N_H}(Y_i-\hat{Y}_i)^2}.
 \end{equation}
-Because raw RMSE grows with forecast horizon on GLD, we also save the root mean squared scaled error (RMSSE) as a scale-normalized summary for cross-horizon comparison.
-Let $X_t$ denote the in-sample training series and let the naive denominator use the one-step lag baseline.
-Then
+RMSSE normalizes forecast error by one-step changes in the inverse-transformed training target $X_{1:T}$ \cite{m5}:
 \begin{equation}
     \operatorname{RMSSE}
     =
     \sqrt{
-        \frac{
-            \frac{1}{|\mathcal{T}|HC_o}
-            \sum_{b \in \mathcal{T}}
-            \sum_{h=1}^{H}
-            \sum_{c=1}^{C_o}
-            \left(
-            \hat{Y}_{b,h,c}-Y_{b,h,c}
-            \right)^2
-        }{
-            \frac{1}{T_{\mathrm{train}}-1}
-            \sum_{t=2}^{T_{\mathrm{train}}}
-            \left(
-            X_t-X_{t-1}
-            \right)^2
-        }
+        \frac{N_H^{-1}\sum_{i=1}^{N_H}(Y_i-\hat{Y}_i)^2}
+        {(T-1)^{-1}\sum_{t=2}^{T}(X_t-X_{t-1})^2}
     }.
 \end{equation}
-For completeness, the saved percentage metrics are
+The denominator is fixed within a dataset but differs across datasets, so raw RMSSE is compared only within each dataset.
+
+Short, middle, and long sets are $\{1,3,5,7\}$, $\{14,30,60,90\}$, and $\{120,180,270,360\}$.
+If $\bar{R}_{g}$ denotes mean RMSSE within group $g$, the study-level aggregation is
 \begin{equation}
-    \operatorname{MAPE}
-    =
-    \frac{100}{|\mathcal{T}|HC_o}
-    \sum_{b \in \mathcal{T}}
-    \sum_{h=1}^{H}
-    \sum_{c=1}^{C_o}
-    \left|
-    \frac{\hat{Y}_{b,h,c}-Y_{b,h,c}}{Y_{b,h,c}+\epsilon}
-    \right|,
+    \operatorname{BalancedRMSSE}
+    = \frac{1}{3}\left(\bar{R}_{\mathrm{short}}+\bar{R}_{\mathrm{middle}}+\bar{R}_{\mathrm{long}}\right).
 \end{equation}
-\begin{equation}
-    \operatorname{MSPE}
-    =
-    \frac{100}{|\mathcal{T}|HC_o}
-    \sum_{b \in \mathcal{T}}
-    \sum_{h=1}^{H}
-    \sum_{c=1}^{C_o}
-    \left(
-    \frac{\hat{Y}_{b,h,c}-Y_{b,h,c}}{Y_{b,h,c}+\epsilon}
-    \right)^2,
-\end{equation}
-where $\epsilon$ is a small stability constant.
-For interpretation, MAE measures the typical absolute forecast error in GLD price units and is less dominated by a small number of large misses.
-RMSE is also reported in GLD price units, but because the error is squared before averaging, it penalizes large horizon misses more strongly and is therefore more sensitive to unstable long-range forecasts.
-RMSSE removes the GLD price scale and rescales the squared forecast error by the average one-step naive training error, which makes it more appropriate than raw RMSE for comparing overall performance across short, middle, and long horizons.
-MSE has the same ranking information as RMSE but is less directly interpretable because it is expressed in squared price units.
-MAPE and MSPE summarize relative error rather than absolute price error; they are useful as supporting diagnostics when comparing horizons with different price levels, but they are not the primary manuscript metrics because the main forecasting question here is how large the price-scale errors are in absolute terms.
-For the GLD series, which is strictly positive, these percentage metrics are numerically stable, but they can still overweight errors when the denominator is locally small.
-The primary manuscript metrics are RMSE and MAE on the original GLD price scale.
-RMSSE, MSE, MAPE, and MSPE are also saved for each run.
-Training uses mean squared error as the optimization loss, and early stopping is based on validation loss.
+Because every group contains four forecast lengths here, this quantity is also the arithmetic mean of the 12 RMSSE values.
+It is a protocol-specific summary and does not create independent replications from the 12 overlapping tasks.
 
-\subsection{Optimized Evaluation Tracks}
+\subsection{Training and Hyperparameter Selection}
 
-The manuscript now reports only hyperparameter-searched result tracks.
-The first is the refreshed Optuna-tuned non-Mamba baseline sweep.
-It covers Autoformer, DLinear, Informer, NLinear, Non-stationary Transformer, PatchTST, Reformer, TimesNet, Transformer, and iTransformer.
-Each model family is tuned with 20 Optuna trials using balanced validation RMSSE over the complete 12-horizon set.
-The selected configuration is then replayed across all validation horizons and evaluated once on the held-out test split.
-The resulting summary contains 120 complete best-per-model/per-horizon test rows.
+Each learned model--horizon configuration is trained separately with Adam, at most 10 epochs, early-stopping patience 3, and configured seed 2023.
+Optuna uses a seeded TPE sampler and median pruning.
+The neural baseline family contains Autoformer, DLinear, Informer, NLinear, Non-stationary Transformer, PatchTST, Reformer, TimesNet, Transformer, and iTransformer.
+The Mamba family contains S-Mamba, NS-Mamba-D, MS-Mamba-MD, and PMS-Mamba-PD.
+Last-value is deterministic and receives no tuning budget.
 
-The second track is Mamba-family Optuna search.
-This search covers S-Mamba, NS-Mamba-D, MS-Mamba-MD, and PMS-Mamba-PD.
-The completed bundle contains 48 price-scale runs and 48 best-per-model/per-horizon rows, with four selected model-level hyperparameter summaries in Appendix~A.2.
-All four completed Mamba-family variants cover all 12 horizons, so the cross-variant comparison uses both the common long-horizon subset \{120, 180, 360\} and the promoted long-horizon subset \{120, 180, 270, 360\}.
-The current Mamba Optuna summary stores RMSSE, RMSE, and MAE for the selected rows, so RMSSE is used for comparison with the Optuna baseline leaderboard and RMSE/MAE are retained for price-scale interpretation.
-Detailed sweep presets and architecture-search knobs are reported in Appendix~A so the main experimental section can stay focused on the shared data protocol and evaluation design.
+The neural search first evaluates a calibration horizon set.
+Up to five top completed trials are replayed across the full validation horizon suite, and the candidate with the lowest validation balanced RMSSE is selected.
+Only that selected configuration is evaluated by the final-sweep code on the test split.
+This procedure yields 336 trained-model test cells, 168 per dataset; the deterministic calculation adds 24 last-value cells.
 
-\subsection{Optimization and Reproducibility}
+Search budgets are not identical.
+GLD stores 20 trial records per baseline and Mamba model, but its refreshed neural-baseline search calibrates on all 12 horizons while the Mamba search calibrates on three.
+Exchange stores 20 neural-baseline trial records and 24 Mamba trial records per model.
+Search spaces are model-specific, and some archived studies contain interrupted or failed states.
+Table~\ref{tab:benchmark-optuna-protocol} reports the exact records; comparisons are therefore model-specific tuned point estimates rather than equal-compute optimization results.
 
-All experiments use the Adam optimizer with one training run per configuration (\texttt{itr}=1) and fixed random seed 2023.
-The epoch limit is 10 and the early-stopping patience is 3 across the optimized sweeps reported here.
-The Optuna baseline and Mamba-family searches vary model-specific architectural hyperparameters, but keep the same optimizer family, validation-based training loop, and inverse-transformed price-scale evaluation.
+The split discipline above describes each final sweep, not the complete research cycle.
+Repository development records show that earlier GLD test outcomes informed promotion of decomposition and patch-temporal variants before the reported benchmark was frozen.
+Accordingly, the current GLD test period is development evidence and cannot support an untouched confirmatory claim.
 
-For reproducibility, the repository stores run-level prediction arrays, target arrays, and metric arrays together with a run metadata file.
-Training and validation curves are logged to TensorBoard.
-The machine-readable result summaries used by the manuscript are bundled under \texttt{manuscript/data/} and \texttt{results/}.
+\subsection{Result and Software Provenance}
+
+The four trained-model result matrices follow \path{results/<dataset>_<phase>_optuna_best.csv}; selected configurations and trial histories are stored under \path{results/optuna/}.
+The last-value rows are deterministically regenerated from the two target files by \path{manuscript/scripts/generate_benchmark_results.py} and written to \path{manuscript/data/last_value_baseline.csv}.
+The same generator checks model--horizon coverage, completion state, split flags, metric finiteness, group aggregation, and agreement with selected-parameter metadata before writing the tables.
+
+All 216 Exchange and GLD-Mamba trained rows match saved run-level \texttt{metrics.npy} files.
+The 120 GLD neural-baseline rows are frozen in the authoritative CSV and a reproduction bundle containing parameters, checkpoints, predictions, and replay summaries.
+The pinned software environment records Python 3.9.23, PyTorch 2.6.0 with CUDA 12.6 build, \texttt{mamba-ssm} 2.2.4, NumPy 1.23.5, pandas 2.3.1, and scikit-learn 1.6.1.
+The original GPU model, runtime, memory use, and energy consumption were not recorded, so no computational-efficiency comparison is made.

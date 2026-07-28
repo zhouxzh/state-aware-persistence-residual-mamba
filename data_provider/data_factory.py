@@ -34,7 +34,7 @@ def data_provider(args, flag):
         batch_size = args.batch_size  # bsz for train and valid
         freq = args.freq
 
-    data_set = Data(
+    dataset_kwargs = dict(
         root_path=args.root_path,
         data_path=args.data_path,
         flag=flag,
@@ -44,6 +44,9 @@ def data_provider(args, flag):
         timeenc=timeenc,
         freq=freq,
     )
+    if Data is Dataset_Custom:
+        dataset_kwargs['split_dates'] = getattr(args, 'split_dates', None)
+    data_set = Data(**dataset_kwargs)
     print(flag, len(data_set))
     data_loader = DataLoader(
         data_set,

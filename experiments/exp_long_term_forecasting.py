@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 from torch import optim
 import os
+import subprocess
 import time
 import warnings
 import json
@@ -43,10 +44,57 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         data_set, data_loader = data_provider(self.args, flag)
         return data_set, data_loader
 
+    def _wait_for_thermal_resume(self):
+        guard_temp = int(getattr(self.args, 'thermal_guard_temp', 0) or 0)
+        if guard_temp <= 0 or not self.args.use_gpu:
+            return
+        resume_temp = int(getattr(self.args, 'thermal_resume_temp', guard_temp - 5))
+        poll_seconds = float(getattr(self.args, 'thermal_poll_seconds', 5.0))
+        gpu_id = int(getattr(self.args, 'gpu', 0))
+        announced = False
+        while True:
+            try:
+                result = subprocess.run(
+                    [
+                        'nvidia-smi',
+                        f'--id={gpu_id}',
+                        '--query-gpu=temperature.gpu',
+                        '--format=csv,noheader,nounits',
+                    ],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                )
+                temperature = int(result.stdout.strip().splitlines()[0])
+            except (OSError, subprocess.SubprocessError, ValueError, IndexError) as exc:
+                print(f'Thermal guard disabled after temperature query failed: {exc}')
+                return
+            if temperature < guard_temp and not announced:
+                return
+            if announced and temperature <= resume_temp:
+                print(f'GPU thermal guard resumed at {temperature}C')
+                return
+            if not announced:
+                print(
+                    f'GPU thermal guard pausing at {temperature}C; '
+                    f'waiting for <= {resume_temp}C'
+                )
+                announced = True
+            time.sleep(max(1.0, poll_seconds))
+
+    def _maybe_wait_for_thermal_resume(self, batch_index):
+        check_batches = int(getattr(self.args, 'thermal_check_batches', 0) or 0)
+        if check_batches > 0 and batch_index % check_batches == 0:
+            self._wait_for_thermal_resume()
+
     def _inverse_transform_batch(self, data_set, array):
         shape = array.shape
         flat = array.reshape(-1, shape[-1])
-        restored = data_set.inverse_transform(flat)
+        if self.args.features == 'MS' and shape[-1] == 1 and hasattr(data_set, 'inverse_transform_target'):
+            restored = data_set.inverse_transform_target(flat)
+        else:
+            restored = data_set.inverse_transform(flat)
         return restored.reshape(shape)
 
     def _concat_prediction_batches(self, batches):
@@ -99,6 +147,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         self.model.eval()
         with torch.no_grad():
             for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(data_loader):
+                self._maybe_wait_for_thermal_resume(i)
                 outputs, targets, batch_x_device = self._forward_batch(batch_x, batch_y, batch_x_mark, batch_y_mark)
                 outputs_scaled = outputs.detach().cpu().numpy()
                 targets_scaled = targets.detach().cpu().numpy()
@@ -145,7 +194,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
             if setting is None:
                 raise ValueError('setting is required when load_checkpoint=True')
             print('loading model')
-            checkpoint_path = os.path.join('./checkpoints/' + setting, 'checkpoint.pth')
+            checkpoint_path = os.path.join(self.args.checkpoints, setting, 'checkpoint.pth')
             self.model.load_state_dict(torch.load(checkpoint_path))
 
         visual_dir = None
@@ -189,7 +238,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         if save_artifacts:
             if setting is None:
                 raise ValueError('setting is required when save_artifacts=True')
-            folder_path = './results/' + setting + '/'
+            folder_path = os.path.join(getattr(self.args, 'results_root', './results/'), setting) + '/'
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)
 
@@ -202,6 +251,14 @@ class Exp_Long_Term_Forecast(Exp_Basic):
             )
             np.save(folder_path + 'pred.npy', preds)
             np.save(folder_path + 'true.npy', trues)
+            origin_dates = None
+            if hasattr(test_data, 'forecast_origin_dates'):
+                origin_dates = test_data.forecast_origin_dates()
+                if len(origin_dates) != len(preds):
+                    raise ValueError(
+                        f'Origin-date count {len(origin_dates)} does not match predictions {len(preds)}'
+                    )
+                np.save(folder_path + 'origin_dates.npy', origin_dates)
             with open(folder_path + 'meta.json', 'w') as f:
                 json.dump(
                     {
@@ -212,6 +269,16 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         'freq': self.args.freq,
                         'metric_names': ['mae', 'mse', 'rmse', 'mape', 'mspe', 'rmsse'],
                         'rmsse_seasonality': 1,
+                        'seed': int(getattr(self.args, 'seed', 2023)),
+                        'split_dates': getattr(self.args, 'split_dates', None),
+                        'origin_dates_file': 'origin_dates.npy' if origin_dates is not None else None,
+                        'model': self.args.model,
+                        'model_id': self.args.model_id,
+                        'prediction_horizon': int(self.args.pred_len),
+                        'evaluation_split': flag,
+                        'protocol_version': getattr(self.args, 'protocol_version', ''),
+                        'protocol_sha256': getattr(self.args, 'protocol_sha256', ''),
+                        'dataset_sha256': getattr(self.args, 'data_sha256', ''),
                     },
                     f,
                     indent=2,
@@ -228,6 +295,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         self.model.eval()
         with torch.no_grad():
             for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(vali_loader):
+                self._maybe_wait_for_thermal_resume(i)
                 batch_x = batch_x.float().to(self.device)
                 batch_y = batch_y.float()
 
@@ -270,7 +338,6 @@ class Exp_Long_Term_Forecast(Exp_Basic):
     def train(self, setting):
         train_data, train_loader = self._get_data(flag='train')
         vali_data, vali_loader = self._get_data(flag='val')
-        test_data, test_loader = self._get_data(flag='test')
         writer = self._get_writer(setting)
 
         path = os.path.join(self.args.checkpoints, setting)
@@ -295,6 +362,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
             self.model.train()
             epoch_time = time.time()
             for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(train_loader):
+                self._maybe_wait_for_thermal_resume(i)
                 iter_count += 1
                 model_optim.zero_grad()
                 batch_x = batch_x.float().to(self.device)
@@ -353,7 +421,9 @@ class Exp_Long_Term_Forecast(Exp_Basic):
 
             epoch_time_sec = time.time() - epoch_time
             train_loss = np.average(train_loss)
+            self._wait_for_thermal_resume()
             vali_loss = self.vali(vali_data, vali_loader, criterion)
+            self._wait_for_thermal_resume()
             current_lr = model_optim.param_groups[0]['lr']
             if writer is not None:
                 writer.add_scalar('train/loss_epoch', train_loss, epoch + 1)

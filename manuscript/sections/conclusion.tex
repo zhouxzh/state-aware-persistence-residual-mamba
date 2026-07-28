@@ -1,9 +1,10 @@
 \section{Conclusion}
 
-This manuscript presents a structured path for nonstationarity-aware Mamba forecasting.
-The completed Optuna-tuned GLD baseline sweep shows, under RMSSE-based evaluation, that TimesNet is the strongest overall baseline, with iTransformer a near-tied runner-up, NLinear strongest on short horizons, PatchTST strongest on middle horizons, and TimesNet/iTransformer splitting the long-horizon wins.
-The proposed NS-Mamba and Mamba architecture families combine decomposition, multi-scale temporal modeling, and Mamba-based sequence processing around an S-Mamba backbone.
-After Mamba-specific Optuna search, PMS-Mamba-PD becomes the strongest completed Mamba-family model.
-On the promoted four-horizon summary over 120, 180, 270, and 360 days, it reaches average RMSSE 27.25, average RMSE 34.17, and average MAE 23.72.
-This optimized Mamba result is slightly stronger than the strongest Optuna-tuned non-Mamba reference on the same RMSSE summary, while the broader claim still remains limited to GLD.
-The next step is to complete the broader optimized benchmark evaluation with traceable quantitative evidence beyond GLD.
+This study describes completed single-seed evaluations of four Mamba variants, ten tuned neural baselines, and last-value forecasts on two univariate financial level series.
+On GLD, PMS-Mamba-PD has the lowest observed balanced RMSSE at 14.74, compared with TimesNet at 15.66 and last-value at 17.07.
+On Exchange, last-value is lowest at 6.26, ahead of S-Mamba at 6.29 and PatchTST at 6.37.
+
+The benchmark therefore does not establish general Mamba superiority.
+Its defensible result is narrower: the tested patch-temporal Mamba configuration is competitive on the current GLD period, while persistence remains the stronger reference on Exchange.
+Because architecture development used prior GLD test outcomes, search budgets differ, training uses one seed, forecast windows overlap, and no inferential intervals are available, all reported differences are descriptive.
+An untouched evaluation period, equal-compute tuning, repeated seeds, dependence-aware uncertainty, controlled ablations, and broader datasets are required before confirmatory or mechanism-level claims can be made.

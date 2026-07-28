@@ -13,31 +13,6 @@ Haixu Wu, Jiehui Xu, Jianmin Wang, and Mingsheng Long.
   long-term series forecasting.
 \newblock In {\em Advances in Neural Information Processing Systems}, 2021.
 
-\bibitem{tft}
-Bryan Lim, Sercan~O. Arik, Nicolas Loeff, and Tomas Pfister.
-\newblock Temporal fusion transformers for interpretable multi-horizon time
-  series forecasting.
-\newblock {\em International Journal of Forecasting}, 37(4):1748--1764, 2021.
-
-\bibitem{tsf-survey}
-Jose~F. Torres, Dalil Hadjout, Abderrazak Sebaa, Francisco Martinez-Alvarez,
-  and Alicia Troncoso.
-\newblock Deep learning for time series forecasting: A survey.
-\newblock {\em Big Data}, 9(1):3--21, 2021.
-
-\bibitem{nbeats}
-Boris~N. Oreshkin, Dmitri Carpov, Nicolas Chapados, and Yoshua Bengio.
-\newblock N-beats: Neural basis expansion analysis for interpretable time
-  series forecasting.
-\newblock In {\em International Conference on Learning Representations}, 2020.
-
-\bibitem{nhits}
-Cristian Challu, Kin~G. Olivares, Boris~N. Oreshkin, Federico Garza, Max
-  Mergenthaler-Canseco, and Artur Dubrawski.
-\newblock N-hits: Neural hierarchical interpolation for time series
-  forecasting.
-\newblock In {\em AAAI Conference on Artificial Intelligence}, 2023.
-
 \bibitem{dlinear}
 Ailing Zeng, Muxi Chen, Lei Zhang, and Qiang Xu.
 \newblock Are transformers effective for time series forecasting?
@@ -55,24 +30,28 @@ Haixu Wu, Tengge Hu, Yong Liu, Hang Zhou, Jianmin Wang, and Mingsheng Long.
   analysis.
 \newblock In {\em International Conference on Learning Representations}, 2023.
 
-\bibitem{finance-dl-survey}
-Omer~Berat Sezer, Mehmet~Ugur Gudelek, and Ahmet~Murat Ozbayoglu.
-\newblock Financial time series forecasting with deep learning: A systematic
-  literature review: 2005--2019.
-\newblock {\em Applied Soft Computing}, 90:106181, 2020.
-
-\bibitem{fedformer}
-Tian Zhou, Ziqing Ma, Qingsong Wen, Xue Wang, Liang Sun, and Rong Jin.
-\newblock Fedformer: Frequency enhanced decomposed transformer for long-term
-  series forecasting.
-\newblock In {\em International Conference on Machine Learning}, 2022.
-
 \bibitem{itransformer}
 Yong Liu, Tengge Hu, Haoran Zhang, Haixu Wu, Shiyu Wang, Lintao Ma, and
   Mingsheng Long.
 \newblock itransformer: Inverted transformers are effective for time series
   forecasting.
 \newblock In {\em International Conference on Learning Representations}, 2024.
+
+\bibitem{m4}
+Spyros Makridakis, Evangelos Spiliotis, and Vassilios Assimakopoulos.
+\newblock The m4 competition: 100,000 time series and 61 forecasting methods.
+\newblock {\em International Journal of Forecasting}, 36(1):54--74, 2020.
+
+\bibitem{m5}
+Spyros Makridakis, Evangelos Spiliotis, and Vassilios Assimakopoulos.
+\newblock The {M5} accuracy competition: Results, findings, and conclusions.
+\newblock {\em International Journal of Forecasting}, 38(4):1346--1364, 2022.
+
+\bibitem{tsf-survey}
+Jose~F. Torres, Dalil Hadjout, Abderrazak Sebaa, Francisco Martinez-Alvarez,
+  and Alicia Troncoso.
+\newblock Deep learning for time series forecasting: A survey.
+\newblock {\em Big Data}, 9(1):3--21, 2021.
 
 \bibitem{revin}
 Tae-Hyun Kim, Jinhee Kim, Yunwon Tae, Cheonbok Park, Jang-Ho Choi, and Jaegul
@@ -87,6 +66,12 @@ Yong Liu, Haixu Wu, Jianmin Wang, and Mingsheng Long.
   series forecasting.
 \newblock In {\em Advances in Neural Information Processing Systems}, 2022.
 
+\bibitem{fedformer}
+Tian Zhou, Ziqing Ma, Qingsong Wen, Xue Wang, Liang Sun, and Rong Jin.
+\newblock Fedformer: Frequency enhanced decomposed transformer for long-term
+  series forecasting.
+\newblock In {\em International Conference on Machine Learning}, 2022.
+
 \bibitem{mamba}
 Albert Gu and Tri Dao.
 \newblock Mamba: Linear-time sequence modeling with selective state spaces.
@@ -96,7 +81,7 @@ Albert Gu and Tri Dao.
 Zihan Wang, Fanheng Kong, Shi Feng, Ming Wang, Xiaocui Yang, Han Zhao, Daling
   Wang, and Yifei Zhang.
 \newblock Is mamba effective for time series forecasting?
-\newblock {\em arXiv preprint arXiv:2403.11144}, 2024.
+\newblock {\em Neurocomputing}, 619:129178, 2025.
 
 \bibitem{bimamba}
 Aobo Liang, Xingguo Jiang, Yan Sun, Xiaohou Shi, and Ke~Li.
@@ -121,14 +106,57 @@ Haoyu Ma, Yushu Chen, Wenlai Zhao, Jinzhe Yang, Yingsheng Ji, Xinghua Xu,
 \newblock A mamba foundation model for time series forecasting.
 \newblock {\em arXiv preprint arXiv:2411.02941}, 2024.
 
-\bibitem{m4}
-Spyros Makridakis, Evangelos Spiliotis, and Vassilios Assimakopoulos.
-\newblock The m4 competition: 100,000 time series and 61 forecasting methods.
-\newblock {\em International Journal of Forecasting}, 36(1):54--74, 2020.
+\bibitem{msmamba}
+Yusuf~Meric Karadag, Ismail Talaz, Ipek~Gursel Dino, and Sinan Kalkan.
+\newblock ms-mamba: Multi-scale mamba for time-series forecasting.
+\newblock {\em arXiv preprint arXiv:2504.07654}, 2025.
+
+\bibitem{karma}
+Hang Ye, Gaoxiang Duan, Haoran Zeng, Yangxin Zhu, Lingxue Meng, Xiaoying Zheng,
+  and Yongxin Zhu.
+\newblock {KARMA}: A multilevel decomposition hybrid mamba framework for
+  multivariate long-term time series forecasting.
+\newblock {\em arXiv preprint arXiv:2506.08939}, 2025.
+
+\bibitem{dmamba}
+Ruxuan Chen and Fang Sun.
+\newblock {DMamba}: Decomposition-enhanced mamba for time series forecasting.
+\newblock {\em arXiv preprint arXiv:2602.09081}, 2026.
+
+\bibitem{finance-dl-survey}
+Omer~Berat Sezer, Mehmet~Ugur Gudelek, and Ahmet~Murat Ozbayoglu.
+\newblock Financial time series forecasting with deep learning: A systematic
+  literature review: 2005--2019.
+\newblock {\em Applied Soft Computing}, 90:106181, 2020.
 
 \bibitem{reformer}
 Nikita Kitaev, Lukasz Kaiser, and Anselm Levskaya.
 \newblock Reformer: The efficient transformer.
 \newblock In {\em International Conference on Learning Representations}, 2020.
+
+\bibitem{nbeats}
+Boris~N. Oreshkin, Dmitri Carpov, Nicolas Chapados, and Yoshua Bengio.
+\newblock N-beats: Neural basis expansion analysis for interpretable time
+  series forecasting.
+\newblock In {\em International Conference on Learning Representations}, 2020.
+
+\bibitem{nhits}
+Cristian Challu, Kin~G. Olivares, Boris~N. Oreshkin, Federico Garza, Max
+  Mergenthaler-Canseco, and Artur Dubrawski.
+\newblock N-hits: Neural hierarchical interpolation for time series
+  forecasting.
+\newblock In {\em AAAI Conference on Artificial Intelligence}, 2023.
+
+\bibitem{yahoo-gld}
+{Yahoo Finance}.
+\newblock {SPDR Gold Shares (GLD) Historical Data}.
+\newblock \url{https://finance.yahoo.com/quote/GLD/history/}.
+\newblock Repository snapshot ends 2026-04-30.
+
+\bibitem{fred}
+{Federal Reserve Bank of St. Louis}.
+\newblock {FRED: Federal Reserve Economic Data}.
+\newblock \url{https://fred.stlouisfed.org/}.
+\newblock Repository source snapshot ends 2026-05-15.
 
 \end{thebibliography}

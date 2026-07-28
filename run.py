@@ -3,6 +3,7 @@ import torch
 from experiments.exp_long_term_forecasting import Exp_Long_Term_Forecast
 import random
 import numpy as np
+import json
 
 if __name__ == '__main__':
     fix_seed = 2023
@@ -30,6 +31,10 @@ if __name__ == '__main__':
     parser.add_argument('--freq', type=str, default='h',
                         help='freq for time features encoding, options:[s:secondly, t:minutely, h:hourly, d:daily, b:business days, w:weekly, m:monthly], you can also use more detailed freq like 15min or 3h')
     parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='location of model checkpoints')
+    parser.add_argument('--results_root', type=str, default='./results/', help='location of saved result artifacts')
+    parser.add_argument('--split_config', type=str, default='', help='JSON file containing explicit chronological split dates')
+    parser.add_argument('--evaluation_split', choices=['val', 'test'], default='test',
+                        help='split evaluated after training; use val for smoke tests and selection')
 
     # forecasting task
     parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')
@@ -66,6 +71,7 @@ if __name__ == '__main__':
     # optimization
     parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
     parser.add_argument('--itr', type=int, default=1, help='experiments times')
+    parser.add_argument('--seed', type=int, default=2023, help='training random seed')
     parser.add_argument('--train_epochs', type=int, default=10, help='train epochs')
     parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data')
     parser.add_argument('--patience', type=int, default=3, help='early stopping patience')
@@ -75,9 +81,19 @@ if __name__ == '__main__':
     parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
     parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
     parser.add_argument('--tensorboard_dir', type=str, default='./tensorboard/', help='tensorboard log directory')
+    parser.add_argument('--thermal_guard_temp', type=int, default=0,
+                        help='pause between train/validation phases at or above this GPU temperature; 0 disables')
+    parser.add_argument('--thermal_resume_temp', type=int, default=75,
+                        help='resume after a thermal pause at or below this GPU temperature')
+    parser.add_argument('--thermal_poll_seconds', type=float, default=5.0,
+                        help='temperature polling interval during a thermal pause')
+    parser.add_argument('--thermal_check_batches', type=int, default=0,
+                        help='check the thermal guard every N batches; 0 disables batch checks')
 
     # GPU
     parser.add_argument('--use_gpu', type=bool, default=True, help='use gpu')
+    parser.add_argument('--require_cuda', action='store_true',
+                        help='abort instead of falling back to CPU when CUDA is unavailable')
     parser.add_argument('--gpu', type=int, default=0, help='gpu')
     parser.add_argument('--use_multi_gpu', action='store_true', help='use multiple gpus', default=False)
     parser.add_argument('--devices', type=str, default='0,1,2,3', help='device ids of multile gpus')
@@ -113,8 +129,19 @@ if __name__ == '__main__':
                         help='blend an NLinear-style last-value skip forecast into MS_Mamba')
 
     args = parser.parse_args()
+    random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
+    if args.split_config:
+        with open(args.split_config) as split_handle:
+            split_payload = json.load(split_handle)
+        args.split_dates = split_payload.get('splits', split_payload)
+    else:
+        args.split_dates = None
     args.channel_independence = False
     args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
+    if args.require_cuda and not args.use_gpu:
+        raise SystemExit('CUDA is required for this run but is unavailable')
 
     if args.use_gpu and args.use_multi_gpu:
         args.devices = args.devices.replace(' ', '')
@@ -156,8 +183,19 @@ if __name__ == '__main__':
             print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
             exp.train(setting)
 
-            print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-            exp.test(setting)
+            print('>>>>>>>evaluating {} : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(
+                args.evaluation_split, setting))
+            if args.evaluation_split == 'test':
+                exp.test(setting)
+            else:
+                exp.evaluate(
+                    setting=setting,
+                    save_artifacts=True,
+                    save_visuals=False,
+                    write_result_log=False,
+                    write_tensorboard=False,
+                    flag=args.evaluation_split,
+                )
 
             if args.do_predict:
                 print('>>>>>>>predicting : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))

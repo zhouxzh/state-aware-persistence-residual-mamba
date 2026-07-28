@@ -5,6 +5,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{array}
+\usepackage{authblk}
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{graphicx}
@@ -18,12 +19,23 @@
     colorlinks=true,
     linkcolor=blue,
     citecolor=blue,
-    urlcolor=blue
+    urlcolor=blue,
+    pdftitle={Evaluating Mamba Against Persistence for Financial Time-Series Forecasting: Evidence from Gold and Exchange-Rate Series},
+    pdfauthor={Bing Mo, Wei Zhang, Xianzhong Zhou, Qi Zheng, Feng Yang},
+    pdfkeywords={time-series forecasting, Mamba, financial time series, RMSSE, persistence baseline}
 }
 
-\title{Nonstationarity-Aware Mamba for Time Series Forecasting}
-\author{Draft Manuscript}
-\date{\today}
+\title{Evaluating Mamba Against Persistence for Financial Time-Series Forecasting: Evidence from Gold and Exchange-Rate Series}
+\author[1]{Bing Mo\thanks{Corresponding author: \href{mailto:hitmbzq@126.com}{hitmbzq@126.com}}}
+\author[1]{Wei Zhang}
+\author[2]{Xianzhong Zhou\thanks{Corresponding author: \href{mailto:zhouxzh@gdut.edu.cn}{zhouxzh@gdut.edu.cn}}}
+\author[3,4]{Qi Zheng\thanks{Corresponding author: \href{mailto:mbzq@163.com}{mbzq@163.com}}}
+\author[4]{Feng Yang}
+\affil[1]{Frontier Interdisciplinary Domain, Beijing Institute of Technology, Zhuhai, China}
+\affil[2]{School of Integrated Circuits, Guangdong University of Technology, Guangzhou, China}
+\affil[3]{Tsinghua Shenzhen International Graduate School, Tsinghua University, Shenzhen, China}
+\affil[4]{Silictec (Shenzhen) Electronic Technology Co., Ltd., Shenzhen, China}
+\date{}
 
 \begin{document}
 
@@ -37,7 +49,6 @@
 \input{sections/results}
 \input{sections/discussion}
 \input{sections/conclusion}
-\clearpage
 \appendix
 \section{Appendix}
 \input{sections/appendix/sweep_configurations}

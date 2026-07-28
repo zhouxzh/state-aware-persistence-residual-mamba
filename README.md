@@ -10,13 +10,15 @@ Completed:
 
 - Replaced the old 1990–2010 exchange-rate dataset with FRED daily data (1971–2026).
 - Completed the full-horizon Exchange Optuna sweep (baseline + Mamba, UK Pound/USD).
-- Completed the full-horizon Weather Optuna sweep (baseline + Mamba, Jena OT).
-- All three benchmark datasets (GLD, Exchange, Weather) have finished S-mode evaluation.
+- Completed an exploratory full-horizon Weather Optuna sweep, which is excluded from the manuscript because its training target contains unhandled sentinels.
+- GLD and Exchange form the current two-dataset S-mode manuscript benchmark.
 - Consolidated benchmark results in `## Benchmark Results` below.
+- Rewrote the manuscript around the completed two-dataset financial benchmark and added generated cross-dataset tables and figures.
+
 Next immediate task:
 
 ```text
-Update the manuscript tables and figures with the three completed benchmark datasets (GLD, Exchange, Weather).
+Replace the 50 Weather OT training sentinels, rerun Weather, then repeat the benchmark with matched HPO budgets and multiple seeds.
 ```
 
 ## GLD Baseline Results
@@ -35,10 +37,10 @@ Reproducibility hyperparameters:
 results/optuna/gld/baseline_best_params.json
 ```
 
-Generate the LaTeX include used by the manuscript with:
+Regenerate the current cross-dataset manuscript tables, figure, and PDF with:
 
 ```bash
-python manuscript/scripts/generate_gld_baseline_results.py
+make -C manuscript pdf
 ```
 
 Extract the plot-ready reproduction bundle with:
@@ -66,7 +68,7 @@ Mamba bundle files live under:
 scripts/gld_mamba_optuna_bundle/
 ```
 
-This writes:
+The GLD reproduction commands write:
 
 ```text
 manuscript/sections/results_baselines.tex
@@ -445,29 +447,36 @@ python scripts/gld_ns_mamba/analyze_gld_mamba_hpo.py
 
 ## Benchmark Results
 
-All benchmark datasets are evaluated in **S mode** (single-variate) under identical
-Optuna HPO settings: 20 baseline trials per model, 24 Mamba trials per model,
-`calibration-horizons` focused on one representative horizon per term group,
-full-horizon replay for the top-5 candidates, and the best candidate evaluated
-on unseen test data. The objective is `balanced_rmsse` across short, middle, and
-long horizon groups.
+The manuscript benchmark evaluates GLD and Exchange in **S mode** (single-variate).
+Optuna uses 20 trial records per baseline model; Mamba uses 20 on GLD and 24 on
+Exchange. GLD baseline calibration covers all 12 horizons, while the other studies
+calibrate on one representative horizon per term group. Up to five candidates are
+replayed across the full validation suite before one final test evaluation. The
+objective is `balanced_rmsse` across short, middle, and long horizon groups.
+
+Weather is excluded because 50 missing training-target observations encoded as
+`-9999` were not masked or replaced before scaling and training. The exclusion was
+made after exploratory outcomes existed, so those runs are not confirmatory and are
+not used in the manuscript; every model must be retrained after a prespecified cleaning rule.
 
 ### Summary
 
-| Dataset | Nonstationarity | Best Baseline | Best Mamba | Mamba vs Baseline |
-| --- | --- | --- | --- | ---: |
-| GLD | Trend + volatility shift | TimesNet (15.66) | PMS_Mamba-PD (14.74) | **+5.89%** |
-| Exchange | Mean shift (1.44) | PatchTST (6.37) | S_Mamba (6.29) | **+1.24%** |
-| Weather | Variance shift (1.37) | NLinear (0.132) | PMS_Mamba-PD (0.137) | −3.70% |
+| Dataset | Last-value | Best Neural Baseline | Best Mamba | Lowest Point Estimate |
+| --- | ---: | --- | --- | --- |
+| GLD | 17.07 | TimesNet (15.66) | PMS_Mamba-PD (14.74) | PMS_Mamba-PD |
+| Exchange | **6.26** | PatchTST (6.37) | S_Mamba (6.29) | Last-value |
 
-### Exchange (UK Pound/USD, 1971–2026)
+### Exchange (United Kingdom quoted rate, 1971–2026)
 
-Daily UK Pound/USD exchange rate sourced from FRED. 13,885 rows.
+Repository-local FRED-derived quoted rate labelled United Kingdom. 13,885 non-missing rows.
+The exact FRED series identifier and quote direction were not preserved, so the manuscript
+does not assign an economic unit to `OT`.
 Trend-drift nonstationarity: ADF cannot reject unit root, mean_shift=1.44.
 
 | Model | Phase | Short | Middle | Long | Balanced RMSSE |
 | --- | --- | ---: | ---: | ---: | ---: |
-| **S_Mamba** | mamba | 1.94 | 5.38 | 11.55 | **6.29** |
+| **Last-value** | reference | - | - | - | **6.26** |
+| S_Mamba | mamba | 1.94 | 5.38 | 11.55 | 6.29 |
 | NS_Mamba-D | mamba | 1.93 | 5.39 | 11.59 | 6.30 |
 | PMS_Mamba-PD | mamba | 1.93 | 5.38 | 11.61 | 6.31 |
 | MS_Mamba-MD | mamba | 1.96 | 5.45 | 11.62 | 6.35 |
@@ -484,39 +493,9 @@ Trend-drift nonstationarity: ADF cannot reject unit root, mean_shift=1.44.
 
 Key findings:
 
-- Mamba models occupy the top 4 spots, with S_Mamba as the overall winner.
-- Mamba's advantage grows with horizon length: long-horizon RMSSE 11.55 vs best baseline 11.67.
-- Traditional Transformer-family models (Transformer, Informer, Reformer) fail badly on this strongly nonstationary series.
-
-### Weather (Jena, 2020–2021)
-
-10-minute meteorological data from the Max Planck Institute Jena weather station.
-52,696 rows, predicting outdoor temperature (OT). Variance-shift nonstationarity:
-std_shift=1.37, the highest among all evaluated datasets.
-
-| Model | Phase | Short | Middle | Long | Balanced RMSSE |
-| --- | --- | ---: | ---: | ---: | ---: |
-| **NLinear** | baseline | 0.112 | 0.128 | 0.155 | **0.132** |
-| PMS_Mamba-PD | mamba | 0.121 | 0.133 | 0.156 | 0.137 |
-| PatchTST | baseline | 0.122 | 0.135 | 0.155 | 0.137 |
-| iTransformer | baseline | 0.125 | 0.135 | 0.158 | 0.139 |
-| TimesNet | baseline | 0.124 | 0.135 | 0.165 | 0.141 |
-| MS_Mamba-MD | mamba | 0.127 | 0.137 | 0.160 | 0.141 |
-| NS_Mamba-D | mamba | 0.127 | 0.138 | 0.162 | 0.142 |
-| S_Mamba | mamba | 0.128 | 0.138 | 0.166 | 0.144 |
-| Nonstationary_Transformer | baseline | 0.129 | 0.148 | 0.167 | 0.148 |
-| Informer | baseline | 0.181 | 0.207 | 0.181 | 0.190 |
-| Transformer | baseline | 0.222 | 0.225 | 0.182 | 0.210 |
-| Autoformer | baseline | 0.230 | 0.187 | 0.217 | 0.211 |
-| DLinear | baseline | 0.202 | 0.269 | 0.284 | 0.252 |
-| Reformer | baseline | 2.149 | 0.234 | 0.293 | 0.892 |
-
-Key findings:
-
-- NLinear's `x - last_value` normalization is particularly effective against variance-shift nonstationarity.
-- PMS_Mamba-PD is a close runner-up, only 3.7% behind NLinear in balanced RMSSE.
-- Mamba models are tightly clustered (0.137–0.144), showing consistent behavior.
-- DLinear performs poorly (0.252) despite sharing a similar architecture with NLinear, showing that the last-value subtraction is critical for variance-drift scenarios.
+- Last-value is the lowest observed Exchange method; no learned model improves on persistence.
+- S_Mamba is the lowest learned model, but its balanced RMSSE is about 0.58% above last-value.
+- Learned-model values come from a single configured seed and overlapping forecast windows.
 
 ## Environment
 
@@ -581,43 +560,28 @@ https://fred.stlouisfed.org
 Local files:
 
 ```text
-data/Exchange/daily.csv          # raw FRED long-format data (22 countries, 1971–2026)
-data/Exchange/exchange_rate.csv  # processed wide-format data for the pipeline
+data/Exchange/daily.csv          # local FRED-derived long-format source
+data/Exchange/exchange_rate.csv  # processed UK single-target file
 ```
 
-The processed dataset contains **11 USD/currency exchange rates** at daily frequency:
+The processed dataset contains one target:
 
 ```text
-Australia, Canada, Denmark, Japan, Malaysia, New Zealand, Norway,
-Sweden, Switzerland, United Kingdom, OT (India)
+OT = non-missing rows labelled United Kingdom in daily.csv
 ```
 
-- Date range: 1973-01-02 to 2026-05-15 (53 years, 13,924 rows)
-- All 11 channels are **multivariate** (`features: "M"`)
-- Missing values (weekends/holidays) are forward-filled
+- Date range: 1971-01-04 to 2026-05-15 (13,885 rows)
+- Forecasting mode: **single-target** (`features: "S"`, `target: "OT"`)
+- Missing source rows are dropped; values are not forward-filled
 
-This dataset replaces the old 1990–2010 anonymous 7-country exchange rate file.
-Compared with the old dataset, the FRED dataset spans more than twice the time range,
-covers additional economic regimes (1970s oil crisis, Plaza Accord, Asian Financial
-Crisis, 2008 GFC, Euro crisis, COVID-19, post-COVID rate hikes), and the source is
-independently citable.
+Verify the deterministic extraction with:
 
-### Multivariate Mode and Weight Sharing
+```bash
+conda run -n mamba python scripts/prepare_exchange_uk.py --check
+```
 
-All models in this project now operate under **multivariate** (`features: "M"`) mode
-for the exchange rate dataset. In this mode, all channels are predicted simultaneously
-and all evaluation metrics (MSE, MAE, RMSSE) are averaged across channels.
-
-For fair comparison, all models use **shared weights across channels**:
-
-| Architecture | Weight sharing | Models |
-| --- | --- | --- |
-| Inverted (variate-as-token) | Identical weights (0 extra params) | iTransformer, S_Mamba, NS_Mamba, MS_Mamba, PMS_Mamba |
-| Channel-shared | Identical weights (0 extra params) | PatchTST, DLinear (`individual=False`), NLinear (`individual=False`) |
-| Traditional (input embedding) | <1% extra params (input projection only) | Transformer, Informer, Reformer, Autoformer, TimesNet, Nonstationary_Transformer |
-
-This ensures no model gains an unfair parameter advantage when scaling from single-variate
-to multivariate forecasting.
+The original retrieval record and exact FRED identifier remain a provenance gap that must
+be resolved before formal submission.
 
 Local GLD dataset:
 
@@ -645,11 +609,12 @@ The dataset is split into three disjoint periods: **train**, **val**, and **test
 |-------|-----------|---------|
 | HPO calibration (tuning) | **val** | Optuna uses validation-set metrics (`balanced_rmsse`) to rank and prune hyperparameter trials |
 | Selection replay | **val** | The top-K calibrated configurations are re-evaluated on the full validation horizon set and the best one is selected |
-| Final report | **test** | The selected configuration is evaluated once on unseen test data for the published result |
+| Final-sweep report | **test** | The selected configuration is evaluated once by the final-sweep code |
 
 This means:
-- The **test set is never seen during hyperparameter search** — it remains a clean final benchmark.
+- The final-sweep code does not feed test metrics into Optuna or candidate replay.
 - The **val set guides parameter selection** (via MedianPruner + TPE sampler and the full-horizon replay).
+- Earlier GLD test outcomes informed architecture promotion, so the current GLD test period is development evidence rather than an untouched confirmatory benchmark.
 - All metrics reported in Optuna result files (`baseline_trials.csv`, `baseline_best_params.json`) are:
   - **val-set metrics** for calibration trials
   - **val-set metrics** for selection replay rows
@@ -1030,7 +995,7 @@ Shift-aware branch fusion is implemented in `NS_Mamba-ADG`, but it did not impro
 Next action:
 
 ```text
-Run the full 12-horizon GLD sweep for NS_Mamba-D before redesigning the gate.
+Clean and rerun Weather before drawing conclusions from its absolute RMSSE.
 ```
 
 ## Experiment Plan
@@ -1039,18 +1004,21 @@ Run the full 12-horizon GLD sweep for NS_Mamba-D before redesigning the gate.
 
 The publication baseline is the Optuna-tuned comparison summarized in `## GLD Baseline Results`.
 
-To regenerate the manuscript section and the machine-readable tables, run:
+To regenerate the current two-dataset manuscript and machine-readable tables, run:
 
 ```bash
-python manuscript/scripts/generate_gld_baseline_results.py
+make -C manuscript pdf
 ```
 
 This writes:
 
 ```text
-manuscript/sections/results_baselines.tex
-manuscript/data/gld_baseline_optuna_best.csv
-manuscript/data/gld_baseline_optuna_hyperparameters.csv
+manuscript/sections/results_benchmark_summary.tex
+manuscript/sections/results_model_ranking.tex
+manuscript/sections/appendix/benchmark_protocol.tex
+manuscript/data/benchmark_summary.csv
+manuscript/figures/benchmark_family_comparison.{pdf,png}
+manuscript/main.pdf
 ```
 
 Source artifacts:

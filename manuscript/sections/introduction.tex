@@ -1,36 +1,33 @@
 \section{Introduction}
 
-Long-horizon time series forecasting is important in applications where decisions must be made well before the target is observed, including energy systems, transportation, operations planning, and financial markets \cite{informer,autoformer,tft,tsf-survey}.
-In this setting, forecasting performance depends not only on short-term pattern extraction but also on the ability to preserve useful temporal information across long contexts while remaining stable under changing data distributions.
-These requirements are difficult to satisfy simultaneously, which is why long-horizon forecasting remains an active research problem across both statistical and deep-learning paradigms \cite{nbeats,nhits,dlinear,patchtst,timesnet}.
+Long-horizon forecasting requires a model to extract predictive structure while the usefulness of past observations changes with the forecast length.
+Modern approaches address this problem through efficient attention, decomposition, temporal patches, inverted tokenization, and multi-scale representations \cite{informer,autoformer,dlinear,patchtst,timesnet,itransformer}.
+Their relative performance is strongly protocol- and dataset-dependent: lookback length, normalization, optimization budget, temporal split, and evaluation metric can alter model rankings \cite{m4,m5,tsf-survey}.
 
-The difficulty is amplified when the underlying series is nonstationary.
-Real-world financial series can undergo level shifts, volatility changes, trend reversals, and regime-dependent behavior driven by macroeconomic events, policy changes, and evolving market expectations \cite{finance-dl-survey}.
-Under such conditions, a model trained on historical windows may face a materially different prediction problem at test time.
-This issue is especially relevant for gold-related exchange-traded products such as GLD, whose price dynamics can reflect inflation expectations, risk-off behavior, U.S. dollar movements, and global uncertainty.
-For this reason, long-horizon GLD forecasting provides a useful testbed for studying whether modern sequence models can remain effective when temporal dependence and distribution shift appear together.
+Nonstationarity adds a second difficulty.
+Changes in level, scale, trend, volatility, or local dynamics can make future windows differ from the observations used for training.
+RevIN addresses window-level distribution shift through reversible normalization, while Non-stationary Transformers combine stationarization with a learned mechanism intended to restore useful nonstationary information \cite{revin,nonstationary-transformer}.
+Decomposition models provide a complementary inductive bias by separating slowly varying and residual components before forecasting \cite{autoformer,fedformer,dlinear}.
 
-Recent forecasting research has introduced a broad set of architectures for long-context modeling, including efficient Transformers, decomposition-based models, patch-based encoders, and inverted variable-token representations \cite{informer,autoformer,fedformer,itransformer,patchtst}.
-At the same time, recent studies have shown that explicitly addressing distribution shift and nonstationarity can improve robustness in forecasting pipelines \cite{revin,nonstationary-transformer}.
-Mamba adds another attractive direction because it replaces quadratic attention with selective state-space sequence modeling while retaining strong expressive capacity and linear-time scaling \cite{mamba}.
-This makes Mamba a promising backbone for long-horizon forecasting, and several recent papers have adapted it to time-series settings \cite{smamba,bimamba,mambats,timemachine,tsmamba}.
-However, efficient sequence modeling alone does not resolve the core difficulty of nonstationary forecasting: level, scale, trend, and residual behavior may still be entangled in a single hidden representation even when the backbone itself is computationally efficient.
+Mamba offers input-selective state-space sequence modeling with linear scaling in sequence length \cite{mamba}.
+Forecasting adaptations differ in how they tokenize time and variables, scan in one or two directions, and combine temporal resolutions \cite{smamba,bimamba,mambats,timemachine,tsmamba}.
+Recent multi-scale and decomposition-enhanced Mamba studies make this design space increasingly crowded \cite{msmamba,karma,dmamba}.
+An efficient or more elaborate sequence operator is therefore not, by itself, evidence of improved forecasting.
 
-This manuscript studies that gap through a nonstationarity-aware Mamba forecasting framework for daily GLD close-price prediction across horizons from 1 to 360 days.
-The proposed NS-Mamba family preserves an S-Mamba-style backbone while adding adaptive normalization, decomposition, and shift-aware fusion modules designed to expose nonstationary structure before and around sequence modeling.
-To make comparisons interpretable while still allowing model-specific tuning, the manuscript evaluates an Optuna-tuned non-Mamba baseline sweep alongside a separate Mamba-family Optuna search.
-This produces a current view of how Transformer-style, decomposition-based, inverted, and Mamba-based models behave after lookback and architecture tuning rather than under one locked default setting.
+The requirement for a strong reference forecast is particularly important for persistent financial level series.
+Forecasting competitions repeatedly show that simple methods can remain difficult to beat \cite{m4,m5}, while financial forecasting reviews emphasize sensitivity to target definition, regime changes, and evaluation design \cite{finance-dl-survey}.
+A model comparison on price or exchange-rate levels should therefore include a last-observation forecast before attributing an observed difference to architectural sophistication.
 
-The current evidence leads to a deliberately narrow conclusion.
-In the refreshed Optuna-tuned non-Mamba sweep, RMSSE-based evaluation identifies TimesNet as the strongest overall baseline and iTransformer as a near-tied runner-up.
-NLinear leads the short horizons, PatchTST leads the middle horizons, and TimesNet/iTransformer split the long-horizon wins.
-Within the Mamba family, the current RMSSE/RMSE/MAE Optuna search identifies PMS-Mamba-PD as the strongest completed Mamba variant on both the shared 120/180/360 subset and the promoted 120/180/270/360 long-horizon summary.
-Because the current evidence is limited to GLD and this is still a draft, the paper avoids a universal state-of-the-art claim.
+This study reports the completed repository benchmark for four Mamba configurations: S-Mamba, a decomposition variant (NS-Mamba-D), a multi-scale decomposition variant (MS-Mamba-MD), and a patch-temporal multi-scale decomposition variant (PMS-Mamba-PD).
+They are compared with ten tuned neural baselines and a deterministic last-value forecast on GLD and Exchange under single-target (S-mode) forecasting.
+Both datasets use 12 forecast lengths from 1 to 360 observations.
+Within each final neural sweep, candidate configurations are selected by validation performance and evaluated on the test period.
+However, earlier GLD test results were consulted during architecture development; consequently, the present evaluation is descriptive rather than an untouched confirmatory test.
 
-The main contributions of this manuscript are as follows:
+The contributions are:
 \begin{itemize}
-    \item it defines a GLD forecasting benchmark spanning 12 prediction horizons from 1 to 360 days, with Optuna-tuned non-Mamba and Mamba-family search tracks;
-    \item it introduces an NS-Mamba architecture family that combines an S-Mamba backbone with adaptive normalization, decomposition, and shift-aware fusion for nonstationary forecasting;
-    \item it reports Optuna-tuned non-Mamba baseline results and Mamba-family search results under RMSSE-based evaluation, with RMSE and MAE retained for price-scale interpretation;
-    \item it identifies PMS-Mamba-PD as the strongest completed Mamba-family configuration in the current hyperparameter search and compares it against the strongest Optuna-tuned non-Mamba RMSSE references.
+    \item a traceable two-series benchmark covering 14 trained models, a deterministic last-value reference, and 12 forecast lengths;
+    \item an implementation-grounded comparison of inverted, decomposition, multi-scale, and patch-temporal Mamba configurations against diverse neural alternatives;
+    \item a reproducible persistence calculation showing that the strongest learned model differs by series and that last-value is best on Exchange under the current metric; and
+    \item an explicit account of test-period reuse, single-seed uncertainty, overlapping forecast windows, search-budget asymmetry, post hoc dataset exclusion, and univariate tokenization.
 \end{itemize}

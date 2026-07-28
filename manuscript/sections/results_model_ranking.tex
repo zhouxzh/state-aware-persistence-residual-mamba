@@ -1,0 +1,30 @@
+\begin{table}[H]
+\centering
+\caption{Balanced-RMSSE point estimates for all evaluated methods. Neural models are validation-selected single-seed runs; Last-value is a deterministic reference. Bold marks the lowest observed value in each dataset. No cross-dataset rank is aggregated.}
+\label{tab:benchmark-model-ranking}
+{\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l l r r}
+\toprule
+Model & Type & GLD & Exchange \\
+\midrule
+Last-value & Reference & 17.07 & \textbf{6.26} \\ 
+MS-Mamba-MD & Mamba & 15.98 & 6.35 \\ 
+NS-Mamba-D & Mamba & 15.24 & 6.30 \\ 
+PMS-Mamba-PD & Mamba & \textbf{14.74} & 6.31 \\ 
+S-Mamba & Mamba & 16.79 & 6.29 \\ 
+Autoformer & Neural baseline & 17.45 & 6.62 \\ 
+DLinear & Neural baseline & 18.78 & 7.32 \\ 
+Informer & Neural baseline & 75.35 & 8.18 \\ 
+NLinear & Neural baseline & 16.48 & 6.42 \\ 
+Non-stationary Transformer & Neural baseline & 19.96 & 6.59 \\ 
+PatchTST & Neural baseline & 15.99 & 6.37 \\ 
+Reformer & Neural baseline & 74.01 & 13.45 \\ 
+TimesNet & Neural baseline & 15.66 & 6.61 \\ 
+Transformer & Neural baseline & 72.42 & 8.19 \\ 
+iTransformer & Neural baseline & 15.68 & 6.56 \\ 
+\bottomrule
+\end{tabular}%
+}
+}
+\end{table}

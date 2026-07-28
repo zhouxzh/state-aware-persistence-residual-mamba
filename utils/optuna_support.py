@@ -96,6 +96,10 @@ def load_dataset_manifest(manifest_path, dataset_slug, repo_root):
         "enc_in": int(config.get("enc_in", 1)),
         "dec_in": int(config.get("dec_in", 1)),
         "c_out": int(config.get("c_out", 1)),
+        "split_dates": config.get("split_dates"),
+        "protocol_version": config.get("protocol_version", ""),
+        "protocol_sha256": config.get("protocol_sha256", ""),
+        "data_sha256": config.get("data_sha256", ""),
         "data_file": str(data_file),
     }
 

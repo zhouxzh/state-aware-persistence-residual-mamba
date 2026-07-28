@@ -8,6 +8,7 @@ import os
 import random
 import shutil
 import sys
+import time
 from argparse import Namespace
 from pathlib import Path
 
@@ -101,15 +102,31 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=2023)
     parser.add_argument("--gpu", type=int, default=0)
     parser.add_argument("--cpu", action="store_true", help="Force CPU execution.")
+    parser.add_argument(
+        "--require-cuda",
+        action="store_true",
+        help="Abort instead of falling back to CPU when CUDA is unavailable.",
+    )
     parser.add_argument("--train-epochs", type=int, default=10)
     parser.add_argument("--patience", type=int, default=3)
     parser.add_argument("--num-workers", type=int, default=0)
     parser.add_argument("--tensorboard-dir", type=str, default="./tensorboard/optuna")
     parser.add_argument("--checkpoints", type=str, default="./checkpoints/")
+    parser.add_argument("--results-root", type=str, default="./results/")
     parser.add_argument("--startup-trials", type=int, default=4)
     parser.add_argument("--warmup-steps", type=int, default=1)
     parser.add_argument("--interval-steps", type=int, default=1)
     parser.add_argument("--no-save-final-artifacts", action="store_true")
+    parser.add_argument(
+        "--discard-final-checkpoints",
+        action="store_true",
+        help="Delete trained checkpoints after prediction artifacts and metadata are saved.",
+    )
+    parser.add_argument(
+        "--selection-only",
+        action="store_true",
+        help="Stop after validation selection and do not open the test split.",
+    )
     parser.add_argument(
         "--study-suffix",
         default="",
@@ -161,11 +178,16 @@ def selected_models(phase, requested):
 
 def set_global_seed(seed):
     require_torch()
+    os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+    if hasattr(torch.backends, "cudnn"):
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+    torch.use_deterministic_algorithms(True, warn_only=True)
 
 
 def model_config_hash(params):
@@ -184,6 +206,8 @@ def model_label_to_runtime_name(model_label):
 
 def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_tag):
     require_torch()
+    if getattr(cli_args, "require_cuda", False) and not torch.cuda.is_available():
+        raise RuntimeError("CUDA became unavailable during a required-GPU experiment")
     runtime_model = model_label_to_runtime_name(model_label)
     seq_len = int(params["seq_len"])
     label_len = seq_len // 2
@@ -203,6 +227,12 @@ def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_
         target=dataset_cfg["target"],
         freq=dataset_cfg["freq"],
         checkpoints=cli_args.checkpoints,
+        results_root=cli_args.results_root,
+        split_dates=dataset_cfg.get("split_dates"),
+        protocol_version=dataset_cfg.get("protocol_version", ""),
+        protocol_sha256=dataset_cfg.get("protocol_sha256", ""),
+        data_sha256=dataset_cfg.get("data_sha256", ""),
+        seed=int(cli_args.seed),
         seq_len=seq_len,
         label_len=label_len,
         pred_len=int(pred_len),
@@ -238,7 +268,12 @@ def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_
         lradj="type1",
         use_amp=False,
         tensorboard_dir=cli_args.tensorboard_dir,
+        thermal_guard_temp=85 if model_label == "TimesNet" else 0,
+        thermal_resume_temp=75,
+        thermal_poll_seconds=5.0,
+        thermal_check_batches=5 if model_label == "TimesNet" else 0,
         use_gpu=use_gpu,
+        require_cuda=bool(getattr(cli_args, "require_cuda", False)),
         gpu=int(cli_args.gpu),
         use_multi_gpu=False,
         devices=str(cli_args.gpu),
@@ -292,10 +327,10 @@ def close_writer(exp):
         exp.writer = None
 
 
-def cleanup_run_artifacts(setting, tensorboard_dir):
+def cleanup_run_artifacts(setting, tensorboard_dir, results_root="./results/", checkpoints="./checkpoints/"):
     paths = [
-        Path("./checkpoints") / setting,
-        Path("./results") / setting,
+        Path(checkpoints) / setting,
+        Path(results_root) / setting,
         Path("./test_results") / setting,
         Path(tensorboard_dir) / setting,
     ]
@@ -327,6 +362,23 @@ def suggest_patch_stride_pair(trial, param_name, valid_pairs):
     )
     patch_len_str, stride_str = pair_tag.split(":")
     return int(patch_len_str), int(stride_str)
+
+
+def model_params_feasibility_error(model_label, params):
+    if model_label != "PMS_Mamba-PD":
+        return None
+
+    seq_len = int(params["seq_len"])
+    patch_len = int(params["patch_len"])
+    stride = int(params["stride"])
+    scales = [int(scale) for scale in params["ms_scales"]]
+    shortest_branch = max(1, (seq_len + max(scales) - 1) // max(scales))
+    if shortest_branch + stride < patch_len:
+        return (
+            "infeasible PMS patch layout: shortest scaled branch "
+            f"has length {shortest_branch}, but patch_len={patch_len} and stride padding={stride}"
+        )
+    return None
 
 
 def sample_params(trial, phase, model_label):
@@ -501,6 +553,9 @@ def run_horizon(cli_args, dataset_cfg, model_label, params, pred_len, stage_tag,
     exp = None
     args = build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_tag)
     set_global_seed(cli_args.seed)
+    started = time.perf_counter()
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
     try:
         exp = Exp_Long_Term_Forecast(args)
         setting = format_setting(args)
@@ -508,21 +563,52 @@ def run_horizon(cli_args, dataset_cfg, model_label, params, pred_len, stage_tag,
         evaluation = exp.evaluate(
             setting=setting,
             save_artifacts=save_artifacts,
-            save_visuals=save_artifacts,
+            save_visuals=False,
             write_result_log=save_artifacts,
             write_tensorboard=False,
             flag=eval_flag,
         )
         metrics = {metric: float(evaluation[metric]) for metric in METRIC_FIELDS}
+        runtime_seconds = time.perf_counter() - started
+        peak_gpu_memory_mb = (
+            float(torch.cuda.max_memory_allocated() / (1024 ** 2))
+            if torch.cuda.is_available()
+            else None
+        )
+        if save_artifacts:
+            meta_path = Path(args.results_root) / setting / "meta.json"
+            metadata = json.loads(meta_path.read_text())
+            metadata.update(
+                runtime_seconds=runtime_seconds,
+                peak_gpu_memory_mb=peak_gpu_memory_mb,
+                dataset_sha256=dataset_cfg.get("data_sha256", ""),
+                protocol_version=dataset_cfg.get("protocol_version", ""),
+                model_label=model_label,
+                prediction_horizon=int(pred_len),
+                evaluation_split=eval_flag,
+                checkpoint_retained=not bool(getattr(cli_args, "discard_final_checkpoints", False)),
+                torch_version=torch.__version__,
+                cuda_version=torch.version.cuda,
+                cudnn_version=torch.backends.cudnn.version(),
+                gpu_name=(torch.cuda.get_device_name(args.gpu) if torch.cuda.is_available() else None),
+                deterministic_algorithms=bool(torch.are_deterministic_algorithms_enabled()),
+                cudnn_deterministic=bool(torch.backends.cudnn.deterministic),
+                cudnn_benchmark=bool(torch.backends.cudnn.benchmark),
+            )
+            meta_path.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
         return {
             "setting": setting,
             "metrics": metrics,
+            "runtime_seconds": runtime_seconds,
+            "peak_gpu_memory_mb": peak_gpu_memory_mb,
         }
     finally:
         if exp is not None:
             close_writer(exp)
         if not save_artifacts and setting is not None:
-            cleanup_run_artifacts(setting, args.tensorboard_dir)
+            cleanup_run_artifacts(setting, args.tensorboard_dir, args.results_root, args.checkpoints)
+        elif save_artifacts and setting is not None and getattr(cli_args, "discard_final_checkpoints", False):
+            shutil.rmtree(Path(args.checkpoints) / setting, ignore_errors=True)
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         gc.collect()
@@ -609,6 +695,22 @@ def replay_rows_from_candidates(dataset_slug, phase, model_label, study_name, ca
     return rows
 
 
+def prepare_study_resume(study, optuna_mod, trials_target):
+    """Recover interrupted trials and return the remaining effective budget."""
+    trial_state = optuna_mod.trial.TrialState
+    running_trials = [trial for trial in study.trials if trial.state == trial_state.RUNNING]
+    for trial in running_trials:
+        message = "Recovered stale RUNNING trial after an interrupted process"
+        study._storage.set_trial_user_attr(trial._trial_id, "error", message)
+        changed = study._storage.set_trial_state_values(trial._trial_id, trial_state.FAIL)
+        if changed:
+            print(f"Marked interrupted trial {trial.number} as FAIL before resuming")
+
+    budget_states = {trial_state.COMPLETE, trial_state.PRUNED}
+    effective_trials = sum(trial.state in budget_states for trial in study.trials)
+    return max(0, trials_target - effective_trials)
+
+
 def optimize_model(optuna_mod, cli_args, dataset_cfg, model_label, trials_target, calibration_horizons, full_horizons):
     output_dir = REPO_ROOT / "results" / "optuna" / dataset_cfg["slug"]
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -634,6 +736,10 @@ def optimize_model(optuna_mod, cli_args, dataset_cfg, model_label, trials_target
     def objective(trial):
         params = sample_params(trial, cli_args.phase, model_label)
         trial.set_user_attr("resolved_params", params)
+        feasibility_error = model_params_feasibility_error(model_label, params)
+        if feasibility_error:
+            trial.set_user_attr("infeasible", feasibility_error)
+            raise optuna_mod.exceptions.TrialPruned(feasibility_error)
         try:
             horizon_metrics, summary, _ = evaluate_horizons(
                 cli_args=cli_args,
@@ -654,8 +760,7 @@ def optimize_model(optuna_mod, cli_args, dataset_cfg, model_label, trials_target
             trial.set_user_attr("error", str(exc))
             raise optuna_mod.exceptions.TrialPruned(str(exc))
 
-    completed_trials_before = len(study.trials)
-    remaining_trials = max(0, trials_target - completed_trials_before)
+    remaining_trials = prepare_study_resume(study, optuna_mod, trials_target)
     if remaining_trials > 0:
         study.optimize(objective, n_trials=remaining_trials, gc_after_trial=True)
 
@@ -669,25 +774,35 @@ def optimize_model(optuna_mod, cli_args, dataset_cfg, model_label, trials_target
 
     candidate_trials = completed_trials[: min(cli_args.top_k_replays, len(completed_trials))]
     candidate_results = []
+    replay_cache = {}
     for candidate_rank, trial in enumerate(candidate_trials, start=1):
         params = normalize_params(trial.user_attrs.get("resolved_params", {}))
-        try:
-            horizon_metrics, summary, _ = evaluate_horizons(
-                cli_args=cli_args,
-                dataset_cfg=dataset_cfg,
-                model_label=model_label,
-                params=params,
-                horizons=full_horizons,
-                stage_tag=f"trial{trial.number}_valfullrank{candidate_rank}",
-                save_artifacts=False,
-                eval_flag='val',
-            )
-        except Exception as exc:
+        cache_key = json_dumps_stable(params)
+        if cache_key in replay_cache:
+            horizon_metrics, summary = replay_cache[cache_key]
             print(
-                f"Skipping validation replay candidate for {model_label}: "
-                f"trial={trial.number}, rank={candidate_rank}, error={exc}"
+                f"Reusing validation replay for duplicate {model_label} parameters: "
+                f"trial={trial.number}, rank={candidate_rank}"
             )
-            continue
+        else:
+            try:
+                horizon_metrics, summary, _ = evaluate_horizons(
+                    cli_args=cli_args,
+                    dataset_cfg=dataset_cfg,
+                    model_label=model_label,
+                    params=params,
+                    horizons=full_horizons,
+                    stage_tag=f"trial{trial.number}_valfullrank{candidate_rank}",
+                    save_artifacts=False,
+                    eval_flag='val',
+                )
+            except Exception as exc:
+                print(
+                    f"Skipping validation replay candidate for {model_label}: "
+                    f"trial={trial.number}, rank={candidate_rank}, error={exc}"
+                )
+                continue
+            replay_cache[cache_key] = (horizon_metrics, summary)
         candidate_results.append(
             {
                 "trial_number": trial.number,
@@ -703,16 +818,20 @@ def optimize_model(optuna_mod, cli_args, dataset_cfg, model_label, trials_target
         raise RuntimeError(f"No successful validation replay candidates for {model_label}")
 
     best_candidate = min(candidate_results, key=lambda row: row["summary"]["balanced_rmsse"])
-    final_horizon_metrics, final_summary, final_settings = evaluate_horizons(
-        cli_args=cli_args,
-        dataset_cfg=dataset_cfg,
-        model_label=model_label,
-        params=best_candidate["params"],
-        horizons=full_horizons,
-        stage_tag=f"trial{best_candidate['trial_number']}_bestfinal",
-        save_artifacts=not cli_args.no_save_final_artifacts,
-        eval_flag='test',
-    )
+    final_horizon_metrics = None
+    final_summary = None
+    final_settings = None
+    if not cli_args.selection_only:
+        final_horizon_metrics, final_summary, final_settings = evaluate_horizons(
+            cli_args=cli_args,
+            dataset_cfg=dataset_cfg,
+            model_label=model_label,
+            params=best_candidate["params"],
+            horizons=full_horizons,
+            stage_tag=f"trial{best_candidate['trial_number']}_bestfinal",
+            save_artifacts=not cli_args.no_save_final_artifacts,
+            eval_flag='test',
+        )
 
     return {
         "study": study,
@@ -795,6 +914,9 @@ def best_params_payload(dataset_cfg, phase, model_results, calibration_horizons,
     return {
         "dataset": dataset_cfg["slug"],
         "phase": phase,
+        "protocol_version": dataset_cfg.get("protocol_version", ""),
+        "protocol_sha256": dataset_cfg.get("protocol_sha256", ""),
+        "data_sha256": dataset_cfg.get("data_sha256", ""),
         "search_space_version": search_space_version,
         "objective_metric": "balanced_rmsse",
         "calibration_horizons": list(calibration_horizons),
@@ -807,8 +929,12 @@ def best_params_payload(dataset_cfg, phase, model_results, calibration_horizons,
                 "selection_eval_flag": result["best_candidate"]["eval_flag"],
                 "best_validation_replay_trial": result["best_candidate"]["trial_number"],
                 "best_validation_replay_balanced_rmsse": result["best_candidate"]["summary"]["balanced_rmsse"],
-                "final_eval_flag": "test",
-                "final_test_balanced_rmsse": result["final_summary"]["balanced_rmsse"],
+                "final_eval_flag": "test" if result["final_summary"] is not None else "not_opened",
+                "final_test_balanced_rmsse": (
+                    result["final_summary"]["balanced_rmsse"]
+                    if result["final_summary"] is not None
+                    else None
+                ),
                 "params": result["best_candidate"]["params"],
             }
             for result in model_results
@@ -994,11 +1120,12 @@ def main():
         )
     )
 
-    phase_best = phase_best_rows(dataset_cfg, cli_args.phase, model_results)
-    write_csv(
-        phase_best_csv,
-        phase_best,
-        [
+    if not cli_args.selection_only:
+        phase_best = phase_best_rows(dataset_cfg, cli_args.phase, model_results)
+        write_csv(
+            phase_best_csv,
+            phase_best,
+            [
             "dataset",
             "target",
             "phase",
@@ -1037,20 +1164,20 @@ def main():
             "run",
             "status",
             "notes",
-        ],
-    )
+            ],
+        )
 
-    comparison_rows = comparison_summary_rows(
-        dataset_cfg["slug"],
-        [
-            REPO_ROOT / "results" / f"{dataset_cfg['slug']}_baseline_optuna_best.csv",
-            REPO_ROOT / "results" / f"{dataset_cfg['slug']}_mamba_optuna_best.csv",
-        ],
-    )
-    write_csv(
-        comparison_csv,
-        comparison_rows,
-        [
+        comparison_rows = comparison_summary_rows(
+            dataset_cfg["slug"],
+            [
+                REPO_ROOT / "results" / f"{dataset_cfg['slug']}_baseline_optuna_best.csv",
+                REPO_ROOT / "results" / f"{dataset_cfg['slug']}_mamba_optuna_best.csv",
+            ],
+        )
+        write_csv(
+            comparison_csv,
+            comparison_rows,
+            [
             "dataset",
             "target",
             "phase",
@@ -1073,14 +1200,17 @@ def main():
             "trial_number",
             "params_json",
             "per_horizon_metrics_json",
-        ],
-    )
+            ],
+        )
 
     print(f"wrote {trials_csv.relative_to(REPO_ROOT)}")
     print(f"wrote {replays_csv.relative_to(REPO_ROOT)}")
     print(f"wrote {best_params_json.relative_to(REPO_ROOT)}")
-    print(f"wrote {phase_best_csv.relative_to(REPO_ROOT)}")
-    print(f"wrote {comparison_csv.relative_to(REPO_ROOT)}")
+    if not cli_args.selection_only:
+        print(f"wrote {phase_best_csv.relative_to(REPO_ROOT)}")
+        print(f"wrote {comparison_csv.relative_to(REPO_ROOT)}")
+    else:
+        print("test split was not opened (--selection-only)")
 
 
 if __name__ == "__main__":

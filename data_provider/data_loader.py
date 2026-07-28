@@ -191,7 +191,7 @@ class Dataset_ETT_minute(Dataset):
 class Dataset_Custom(Dataset):
     def __init__(self, root_path, flag='train', size=None,
                  features='S', data_path='ETTh1.csv',
-                 target='OT', scale=True, timeenc=0, freq='h'):
+                 target='OT', scale=True, timeenc=0, freq='h', split_dates=None):
         # size [seq_len, label_len, pred_len]
         # info
         if size == None:
@@ -212,6 +212,7 @@ class Dataset_Custom(Dataset):
         self.scale = scale
         self.timeenc = timeenc
         self.freq = freq
+        self.split_dates = split_dates
 
         self.root_path = root_path
         self.data_path = data_path
@@ -229,13 +230,48 @@ class Dataset_Custom(Dataset):
         cols.remove(self.target)
         cols.remove('date')
         df_raw = df_raw[['date'] + cols + [self.target]]
-        num_train = int(len(df_raw) * 0.7)
-        num_test = int(len(df_raw) * 0.2)
-        num_vali = len(df_raw) - num_train - num_test
-        border1s = [0, num_train - self.seq_len, len(df_raw) - num_test - self.seq_len]
-        border2s = [num_train, num_train + num_vali, len(df_raw)]
+        parsed_dates = pd.to_datetime(df_raw['date'], errors='raise')
+        if not parsed_dates.is_monotonic_increasing or parsed_dates.duplicated().any():
+            raise ValueError('Custom dataset dates must be unique and monotonically increasing')
+
+        if self.split_dates:
+            required = {
+                'train_end', 'validation_start', 'validation_end', 'test_start', 'test_end'
+            }
+            missing = sorted(required - set(self.split_dates))
+            if missing:
+                raise ValueError(f'split_dates is missing fields: {missing}')
+
+            def first_index_on_or_after(value):
+                return int(parsed_dates.searchsorted(pd.Timestamp(value), side='left'))
+
+            def first_index_after(value):
+                return int(parsed_dates.searchsorted(pd.Timestamp(value), side='right'))
+
+            train_end = first_index_after(self.split_dates['train_end'])
+            validation_start = first_index_on_or_after(self.split_dates['validation_start'])
+            validation_end = first_index_after(self.split_dates['validation_end'])
+            test_start = first_index_on_or_after(self.split_dates['test_start'])
+            test_end = first_index_after(self.split_dates['test_end'])
+            if not (0 < train_end <= validation_start < validation_end <= test_start < test_end <= len(df_raw)):
+                raise ValueError(
+                    'Invalid chronological split boundaries: '
+                    f'train_end={train_end}, validation={validation_start}:{validation_end}, '
+                    f'test={test_start}:{test_end}, rows={len(df_raw)}'
+                )
+            border1s = [0, validation_start - self.seq_len, test_start - self.seq_len]
+            border2s = [train_end, validation_end, test_end]
+        else:
+            num_train = int(len(df_raw) * 0.7)
+            num_test = int(len(df_raw) * 0.2)
+            num_vali = len(df_raw) - num_train - num_test
+            border1s = [0, num_train - self.seq_len, len(df_raw) - num_test - self.seq_len]
+            border2s = [num_train, num_train + num_vali, len(df_raw)]
+            train_end = border2s[0]
         border1 = border1s[self.set_type]
         border2 = border2s[self.set_type]
+        if border1 < 0:
+            raise ValueError('Not enough pre-split context for the configured seq_len')
 
         if self.features == 'M' or self.features == 'MS':
             cols_data = df_raw.columns[1:]
@@ -244,7 +280,7 @@ class Dataset_Custom(Dataset):
             df_data = df_raw[[self.target]]
 
         if self.scale:
-            train_data = df_data[border1s[0]:border2s[0]]
+            train_data = df_data.iloc[:train_end]
             self.scaler.fit(train_data.values)
             data = self.scaler.transform(df_data.values)
         else:
@@ -265,6 +301,7 @@ class Dataset_Custom(Dataset):
         self.data_x = data[border1:border2]
         self.data_y = data[border1:border2]
         self.data_stamp = data_stamp
+        self.data_dates = parsed_dates.iloc[border1:border2].reset_index(drop=True)
 
     def __getitem__(self, index):
         s_begin = index
@@ -284,6 +321,16 @@ class Dataset_Custom(Dataset):
 
     def inverse_transform(self, data):
         return self.scaler.inverse_transform(data)
+
+    def inverse_transform_target(self, data):
+        if not self.scale:
+            return data
+        return data * self.scaler.scale_[-1] + self.scaler.mean_[-1]
+
+    def forecast_origin_dates(self):
+        count = len(self)
+        dates = self.data_dates.iloc[self.seq_len:self.seq_len + count]
+        return np.asarray(dates.dt.strftime('%Y-%m-%d').tolist(), dtype='U10')
 
 
 class Dataset_PEMS(Dataset):

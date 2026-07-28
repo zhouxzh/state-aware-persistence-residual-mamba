@@ -1,60 +1,51 @@
-\subsection{Sweep Configurations}
+\subsection{Optimization Records}
 \label{app:sweep-configurations}
 
-The refreshed Optuna baseline sweep tunes each non-Mamba model family with 20 trials and selects configurations by balanced validation RMSSE across all 12 horizons.
-The replayed best rows are stored in \texttt{manuscript/data/gld\_baseline\_optuna\_best.csv}, and the selected hyperparameters are summarized below in Appendix~\ref{app:baseline-optuna-hyperparameters}.
-The tuned model families are:
+\input{sections/appendix/benchmark_protocol}
+
+The archived state counts in Table~\ref{tab:benchmark-optuna-protocol} are reported instead of assuming that every requested trial completed.
+The baseline and Mamba studies use the search spaces implemented in \path{scripts/optuna/run_dataset_optuna.py}.
+Shared choices include lookback length, learning rate, batch size, and model width where applicable.
+Baseline-specific choices include decomposition windows, patch and stride sizes, attention factors, normalization, and family-specific widths.
+Mamba-specific choices include state dimension, decomposition window, scale set, and patch/stride pairs.
+
+The exact selected parameters, study names, calibration objectives, validation replay scores, and final test scores are stored in:
 \begin{itemize}
-    \item decomposition and linear baselines: Autoformer, DLinear, and NLinear;
-    \item attention baselines: Informer, Reformer, Transformer, iTransformer, and Non-stationary Transformer;
-    \item patch and multi-period baselines: PatchTST and TimesNet.
+    \item the GLD directory at \path{results/optuna/gld/};
+    \item the Exchange directory at \path{results/optuna/exchange/}.
 \end{itemize}
+The associated baseline and Mamba trial CSV files retain every archived Optuna state and per-horizon calibration metric.
 
-The Mamba-family Optuna bundle is stored in \texttt{manuscript/data/gld\_mamba\_optuna\_bundle/} and mirrors the extracted reproduction bundle under \texttt{scripts/gld\_mamba\_optuna\_bundle/}.
-The top-level draft inputs are \texttt{manuscript/data/gld\_mamba\_optuna\_best.csv}, with selected hyperparameters summarized below in Appendix~\ref{app:mamba-optuna-hyperparameters}.
-The Mamba-family search varies architecture-specific choices such as moving-average window, multi-scale set, fusion rule, linear skip, and patch configuration in addition to lookback length.
-For the Mamba-family search, the selected model-level configuration is chosen by balanced validation RMSSE, and each reported test row uses the completed replay for that selected configuration.
+\subsection{Evaluated Mamba Configurations}
 
-\subsection{Baseline Optuna Hyperparameters}
-\label{app:baseline-optuna-hyperparameters}
+Four Mamba labels enter the completed benchmark.
+S-Mamba is the reversible-normalized inverted forecasting backbone.
+NS-Mamba-D adds three-way moving-average decomposition and sums component forecasts.
+MS-Mamba-MD adds multiple downsampled temporal scales with mean scale fusion.
+PMS-Mamba-PD replaces the inverted branch at each scale with a temporal patch-token Mamba branch while retaining decomposition and mean fusion.
+Other architecture labels described by the implementation are not included in the 336 trained-model cells and are not used to support the reported comparison.
 
-Table~\ref{tab:gld-baseline-optuna-hparams} reports the selected non-Mamba configuration for each baseline family.
-\emph{Val.} and \emph{Test} are balanced RMSSE on the validation replay and held-out test split, respectively, so lower values are better.
-\emph{Seq.} is the lookback length used as model input.
-The \emph{Training} column gives batch size (\texttt{bs}) and learning rate (\texttt{lr}).
-The \emph{Width} column reports \texttt{d\_model}, the latent representation width, and \texttt{d\_ff}, the hidden width of the feed-forward or projection block used inside Transformer-style layers.
-Linear baselines do not use these width parameters, so the table marks them with ``--''.
-The final column lists family-specific settings: \texttt{factor} controls sparse attention or model-specific expansion settings, \texttt{top-k} and \texttt{kernels} are TimesNet period-selection settings, \texttt{patch} and \texttt{stride} define PatchTST tokenization, \texttt{moving avg} is the decomposition window, \texttt{individual} enables per-channel linear heads, \texttt{norm} enables reversible/input normalization, and \texttt{projector} gives the Non-stationary Transformer de-stationary projector shape.
+\subsection{Deterministic Reference and Dataset Preparation}
 
-The selected baseline configurations show three useful patterns.
-First, the strongest test rows use either long lookback windows or explicit temporal tokenization: TimesNet uses \texttt{seq\_len}=256 and reaches the lowest baseline test RMSSE (15.66), iTransformer uses \texttt{seq\_len}=192 with normalization and is nearly tied (15.68), and PatchTST uses \texttt{seq\_len}=256 with 32-step patches and stride 16 (15.99).
-Second, the linear baselines prefer simpler capacity choices: NLinear and DLinear have no \texttt{d\_model}/\texttt{d\_ff} width, use the largest learning rate in the selected set (\texttt{lr}=5e-3), and differ mainly by decomposition, with DLinear using a 25-step moving-average window.
-Third, low validation RMSSE is not sufficient for good held-out performance.
-The plain Transformer has the lowest validation RMSSE in Table~\ref{tab:gld-baseline-optuna-hparams} (4.93) but a much worse test RMSSE (72.42), and Reformer and Informer show similar validation-to-test degradation.
-This is why the manuscript treats the validation metric as the selection objective and the test metric as the final comparison result.
+The manuscript result generator computes last-value errors using the same 70/10/20 split, test origins, all-lead pooling, and training-difference RMSSE denominator as the learned models.
+It writes 24 rows to \path{manuscript/data/last_value_baseline.csv}, including the origin count and scalar forecast count for each nominal length.
+No fitted parameter or test-informed choice enters this calculation.
 
-\input{sections/appendix/baseline_optuna_hyperparameters}
+The current Exchange target can be checked against its local long-format input with
+\begin{verbatim}
+conda run -n mamba python scripts/prepare_exchange_uk.py --check
+\end{verbatim}
+The script selects the \texttt{United Kingdom} rows, drops missing quoted values, sorts the dates, and verifies exact equality with \path{data/Exchange/exchange_rate.csv}.
 
-\clearpage
-\subsection{Mamba Optuna Hyperparameters}
-\label{app:mamba-optuna-hyperparameters}
+\subsection{Evidence and Regeneration}
 
-Table~\ref{tab:gld-mamba-optuna-hparams} uses the same reporting convention for the Mamba-family sweep.
-Here \texttt{d\_model} is the channel width passed through the Mamba encoder blocks, \texttt{d\_ff} is the internal projection/feed-forward width around those blocks, and \texttt{d\_state} is the selective state-space state dimension.
-The \texttt{moving avg} setting controls decomposition smoothing when decomposition is enabled.
-The \texttt{scales} list gives the multi-scale downsampling factors used by MS-Mamba/PMS-Mamba, and \texttt{fusion} specifies how scale outputs are merged.
-\texttt{decomp} indicates that trend/seasonal decomposition is active.
-For PMS-Mamba-PD, \texttt{patch} and \texttt{stride} define the patching step before multi-scale Mamba processing.
-\texttt{norm} indicates input normalization; \texttt{no adaptive norm}, \texttt{no shift gate}, and \texttt{no linear skip} report disabled optional components in the selected configuration.
+The manuscript build reads the four final trained-model matrices directly from \path{results/} and the two target files from \path{data/}.
+Running \texttt{make -C manuscript pdf} first regenerates the last-value rows, Table~\ref{tab:benchmark-family-summary}, Table~\ref{tab:benchmark-model-ranking}, Table~\ref{tab:benchmark-optuna-protocol}, and Figure~\ref{fig:benchmark-family-comparison}.
+Generation fails if a trained model--horizon row is missing, a run is incomplete, selection/test flags are wrong, a metric is non-finite, balanced RMSSE does not match its term groups, a final score disagrees with selected-parameter metadata, or a last-value target is missing.
 
-The selected Mamba-family hyperparameters separate validation preference from final test performance.
-NS-Mamba-D has the lowest validation RMSSE (6.32) with \texttt{seq\_len}=192, \texttt{d\_model}=128, \texttt{d\_ff}=256, decomposition, normalization, and no adaptive normalization or shift gate, but its test RMSSE is 15.24.
-PMS-Mamba-PD has a slightly higher validation RMSSE (6.45) but the best held-out test RMSSE among the Mamba variants (14.74).
-Its selected configuration uses the longest lookback window (\texttt{seq\_len}=320), four scales \([1,2,4,8]\), mean fusion, decomposition, 16-step patches with stride 8, and \texttt{d\_state}=32.
-MS-Mamba-MD uses a shorter lookback (\texttt{seq\_len}=96), three scales \([1,4,8]\), smaller \texttt{d\_model}=64, and \texttt{d\_state}=16, giving test RMSSE 15.98.
-The S-Mamba backbone is the simplest selected configuration: \texttt{seq\_len}=32, \texttt{d\_model}=64, \texttt{d\_ff}=128, no multi-scale or patch settings, and test RMSSE 16.79.
+The GLD baseline reproduction bundle is rooted at \path{scripts/gld_baseline_optuna_bundle/}; its run archive is the \texttt{reproduced\_artifacts} subdirectory.
+It contains checkpoints, predictions, targets, metrics, and run metadata for all 120 baseline rows.
+Because stochastic replay changes 30 metric vectors, the frozen \path{results/gld_baseline_optuna_best.csv} remains the source for the descriptive GLD table; the replay difference is disclosed in the limitations rather than silently replacing the selected-run result.
 
-Compared with the non-Mamba baselines in Appendix~\ref{app:baseline-optuna-hyperparameters}, the best Mamba-family test result comes from combining a long lookback, decomposition, multi-scale processing, and patching.
-PMS-Mamba-PD improves over the strongest non-Mamba baseline in Table~\ref{tab:gld-baseline-optuna-hparams} by test RMSSE, 14.74 versus 15.66 for TimesNet, while NS-Mamba-D shows that the lowest validation score does not necessarily identify the strongest held-out model.
-
-\input{sections/appendix/mamba_optuna_hyperparameters}
+The repository currently lacks a public archival tag or DOI containing the exact manuscript state, and the original experiment hardware record is incomplete.
+These items remain prerequisites for an external reproducibility claim and formal submission package.

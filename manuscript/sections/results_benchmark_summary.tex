@@ -1,0 +1,17 @@
+\begin{table}[H]
+\centering
+\caption{Descriptive balanced-RMSSE point estimates on the current test periods. The neural and Mamba entries are the post hoc within-family minima; Last-value is deterministic and requires no fitting. No uncertainty interval is available.}
+\label{tab:benchmark-family-summary}
+{\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l r l r l r l}
+\toprule
+Dataset & Last-value & Neural baseline & RMSSE & Mamba & RMSSE & Lowest point estimate \\
+\midrule
+GLD & 17.07 & TimesNet & 15.66 & PMS-Mamba-PD & 14.74 & PMS-Mamba-PD (14.74) \\
+Exchange & 6.26 & PatchTST & 6.37 & S-Mamba & 6.29 & Last-value (6.26) \\
+\bottomrule
+\end{tabular}%
+}
+}
+\end{table}

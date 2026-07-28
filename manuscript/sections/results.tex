@@ -1,12 +1,34 @@
 \section{Results}
 
-\input{sections/results_baselines}
+\subsection{Dataset-Level Point Estimates}
 
-\input{sections/results_overview_figure}
+\input{sections/results_benchmark_summary}
 
-Taken together, the currently completed optimized evidence supports three main observations.
-First, Table~\ref{tab:gld-term-avg} shows that PMS-Mamba-PD is the strongest overall model across the combined baseline and Mamba comparison, followed by NS-Mamba-D and the best non-Mamba baselines.
-Second, the horizon-range averages show a trade-off: NLinear remains strongest on the short-range average, while PMS-Mamba-PD leads the middle-range, long-range, and overall summaries.
-Third, because the Mamba rows now use the same RMSSE definition and horizon grouping as the baseline rows, the comparison is direct: PMS-Mamba-PD reduces average RMSSE by 5.89\% against the strongest Optuna-tuned non-Mamba baseline on the full 12-horizon summary.
+Table~\ref{tab:benchmark-family-summary} changes the interpretation of the neural-only comparison by retaining persistence.
+On GLD, PMS-Mamba-PD records balanced RMSSE 14.74, compared with 15.66 for TimesNet and 17.07 for last-value.
+These point estimates correspond to a 5.89\% reduction relative to TimesNet and a 13.66\% reduction relative to last-value.
+They show that the selected PMS-Mamba-PD run is competitive on this GLD test period, but they do not quantify sampling or training uncertainty.
 
-At the same time, the Mamba rows should be interpreted as the completed GLD Mamba-family search state rather than as a final complete ranking beyond GLD.
+On Exchange, last-value records the lowest balanced RMSSE, 6.26.
+S-Mamba is the lowest learned model at 6.29, approximately 0.58\% higher than last-value, while PatchTST records 6.37.
+Consequently, the earlier neural-only statement that S-Mamba improves on the strongest baseline does not survive inclusion of the deterministic reference.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/benchmark_family_comparison.pdf}
+    \caption{RMSSE by nominal forecast length for one fixed method from each comparison class. Within each dataset, the displayed neural and Mamba models are selected descriptively by the lowest test-period balanced RMSSE and are then held fixed across all 12 lengths: TimesNet and PMS-Mamba-PD for GLD; PatchTST and S-Mamba for Exchange. Last-value is deterministic. Each point pools all test origins and leads $1,\ldots,H$. Values are single-run point estimates without uncertainty intervals.}
+    \label{fig:benchmark-family-comparison}
+\end{figure}
+
+Figure~\ref{fig:benchmark-family-comparison} avoids a per-horizon family oracle: every learned curve represents one model across the complete length set.
+RMSSE increases with nominal forecast length for all displayed methods because each length pools progressively more distant leads.
+The GLD curves separate more visibly at intermediate and long lengths, whereas the Exchange curves remain close and the persistence curve is lowest in the aggregate.
+
+\subsection{Model-Level Comparison}
+
+\input{sections/results_model_ranking}
+
+Table~\ref{tab:benchmark-model-ranking} reports every evaluated method without pooling ranks across the two targets.
+Among Mamba variants, PMS-Mamba-PD is lowest on GLD, while S-Mamba is lowest on Exchange; NS-Mamba-D is close to the selected Mamba model on both series.
+No Mamba configuration is lowest on both datasets once last-value is included.
+The observed ordering therefore supports a dataset-specific description, not a universal architectural ranking.

@@ -1,0 +1,19 @@
+\begin{table}[h]
+\centering
+\caption{Archived Optuna study records. The state column gives complete/pruned/other trial counts across all model studies in a row. Each study replays up to five top completed calibration trials on the full validation horizon set before one final test evaluation.}
+\label{tab:benchmark-optuna-protocol}
+{\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l l r r l l}
+\toprule
+Dataset & Family & Trial records/model & Models & Trial states & Calibration horizons \\
+\midrule
+GLD & Baseline & 20 & 10 & 124/76/0 & 1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360 \\
+GLD & Mamba & 20 & 4 & 37/43/0 & 7, 90, 360 \\
+Exchange & Baseline & 20 & 10 & 129/69/2 & 7, 90, 360 \\
+Exchange & Mamba & 24 & 4 & 52/44/0 & 7, 90, 360 \\
+\bottomrule
+\end{tabular}%
+}
+}
+\end{table}
