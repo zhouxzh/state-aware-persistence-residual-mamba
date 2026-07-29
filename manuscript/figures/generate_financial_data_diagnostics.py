@@ -110,10 +110,9 @@ def main() -> None:
         "Author": "Generated from financial_confirmatory_v1 data artifacts",
         "Subject": diagnostics["scope"],
     }
-    figure.savefig(FIGURE_DIR / f"{stem}.pdf", bbox_inches="tight", metadata=metadata)
+    figure.savefig(FIGURE_DIR / f"{stem}.pdf", metadata=metadata)
     figure.savefig(
         FIGURE_DIR / f"{stem}.png",
-        bbox_inches="tight",
         dpi=300,
         metadata={"Software": "Matplotlib", "Scope": diagnostics["scope"]},
     )

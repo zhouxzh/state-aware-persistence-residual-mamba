@@ -91,7 +91,7 @@ Do not invoke a formal peer review during an ordinary section edit. Read the sel
 - Run forecasting experiments with `conda run -n mamba ...` as defined by `$nonstationary-mamba`.
 - Run the dependency-free `$scientific-writing` and `$peer-review` CLIs with a Python interpreter at version 3.11 or newer. Check the interpreter first; do not assume the `mamba` experiment environment meets that requirement.
 - Keep existing repository figure generators and their environment unless a dependency change is necessary.
-- For `$scientific-visualization` pinned examples, prefer `uv` when available. Without `uv`, use a Conda interpreter only after checking required imports and record that the environment is not the upstream pinned snapshot.
+- Run `$scientific-visualization` examples in the dedicated Anaconda `scientific-skills` environment. Install required packages there with `conda run -n scientific-skills python -m pip install ...`, check imports before use, and record the installed versions because this local environment is not the upstream pinned snapshot.
 
 ## Build Conventions
 

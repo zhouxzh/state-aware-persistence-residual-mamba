@@ -1,34 +1,54 @@
-\section{Results}
+\section{Interim Results}
 
-\subsection{Dataset-Level Point Estimates}
+\subsection{Selection-Safe Evidence}
 
-\input{sections/results_benchmark_summary}
+The evidence presently available supports the intended nonstationary setting but not a forecasting-performance conclusion.
+Across all four training targets, the level ADF test fails to reject a unit root while the level KPSS test rejects trend stationarity at its reported lower $p$-value bound (Table~\ref{tab:selection-safe-diagnostics}).
+This concordance is not treated as proof that every series follows an integrated process; it establishes that a stationary-level assumption is not an adequate common description of the training panels.
 
-Table~\ref{tab:benchmark-family-summary} changes the interpretation of the neural-only comparison by retaining persistence.
-On GLD, PMS-Mamba-PD records balanced RMSSE 14.74, compared with 15.66 for TimesNet and 17.07 for last-value.
-These point estimates correspond to a 5.89\% reduction relative to TimesNet and a 13.66\% reduction relative to last-value.
-They show that the selected PMS-Mamba-PD run is competitive on this GLD test period, but they do not quantify sampling or training uncertainty.
+The held-out validation interval differs visibly from training (Figure~\ref{fig:financial-nonstationarity}).
+Foreign exchange and Treasury yields shift downward by 1.294 and 0.512 training standard deviations, respectively, whereas GLD shifts upward by 1.708 standard deviations.
+BTCUSDT exhibits the largest shift: its validation mean is 7.750 training standard deviations above the training mean, its level standard deviation is 3.669 times the training value, and its first-difference standard deviation is 4.521 times the training value.
+These quantities justify evaluating distribution-shift-sensitive designs, but they do not predict which model will perform best in the untouched final period.
 
-On Exchange, last-value records the lowest balanced RMSSE, 6.26.
-S-Mamba is the lowest learned model at 6.29, approximately 0.58\% higher than last-value, while PatchTST records 6.37.
-Consequently, the earlier neural-only statement that S-Mamba improves on the strongest baseline does not survive inclusion of the deterministic reference.
+The MS tasks also face changing cross-series structure.
+The maximum absolute change from training to validation in a feature--target first-difference correlation is 0.268 for foreign exchange, 0.026 for yields, 0.323 for cross assets, and 0.106 for cryptoassets.
+Consequently, an MS improvement cannot be assumed merely because additional histories are supplied; the paired S/MS comparison is required.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figures/benchmark_family_comparison.pdf}
-    \caption{RMSSE by nominal forecast length for one fixed method from each comparison class. Within each dataset, the displayed neural and Mamba models are selected descriptively by the lowest test-period balanced RMSSE and are then held fixed across all 12 lengths: TimesNet and PMS-Mamba-PD for GLD; PatchTST and S-Mamba for Exchange. Last-value is deterministic. Each point pools all test origins and leads $1,\ldots,H$. Values are single-run point estimates without uncertainty intervals.}
-    \label{fig:benchmark-family-comparison}
-\end{figure}
+\subsection{Locked Outcome Status}
 
-Figure~\ref{fig:benchmark-family-comparison} avoids a per-horizon family oracle: every learned curve represents one model across the complete length set.
-RMSSE increases with nominal forecast length for all displayed methods because each length pools progressively more distant leads.
-The GLD curves separate more visibly at intermediate and long lengths, whereas the Exchange curves remain close and the persistence curve is lowest in the aggregate.
+Table~\ref{tab:evidence-status} records the evidence boundary for this manuscript version.
+Source retrieval, preprocessing, checksums, fixed splits, and selection-safe diagnostics are complete.
+Validation-only hyperparameter selection is still running, and the final neural matrix, statistical-reference forecasts, bootstrap contrasts, and full-period diagnostics have not been generated.
+The result generator is designed to fail unless all required artifacts match the frozen protocol and data hashes.
 
-\subsection{Model-Level Comparison}
+\begin{table}[H]
+\centering
+\caption{Evidence status for the interim manuscript. ``Locked'' means that the workflow requires an explicit gate and preceding completeness audit before reading final-period targets.}
+\label{tab:evidence-status}
+{\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.29\linewidth}>{\raggedright\arraybackslash}p{0.23\linewidth}>{\raggedright\arraybackslash}p{0.38\linewidth}}
+\toprule
+Evidence component & Status & Admissible use in this version \\
+\midrule
+Source and processed-data manifests & Complete & Dataset provenance and counts \\
+Training/validation diagnostics & Complete & Selection-safe characterization \\
+Validation-only model selection & In progress & Methods only; no ranking claim \\
+2023--2026 neural evaluation & Locked & None \\
+Statistical-reference evaluation & Blocked by neural matrix & None \\
+Bootstrap and regime outcome analysis & Not generated & None \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
 
-\input{sections/results_model_ranking}
+\subsection{Prespecified Final Reporting}
 
-Table~\ref{tab:benchmark-model-ranking} reports every evaluated method without pooling ranks across the two targets.
-Among Mamba variants, PMS-Mamba-PD is lowest on GLD, while S-Mamba is lowest on Exchange; NS-Mamba-D is close to the selected Mamba model on both series.
-No Mamba configuration is lowest on both datasets once last-value is included.
-The observed ordering therefore supports a dataset-specific description, not a universal architectural ranking.
+After the protected evaluation is unlocked and validated, the final paper will report every task separately.
+The primary table will contain balanced path RMSSE for last-value, the validation-selected non-Mamba comparator, S-Mamba, and the three proposed Mamba variants; neural entries will be mean $\pm$ standard deviation over five seeds.
+Horizon-specific path and terminal metrics, random-walk-with-drift, ARIMA, and VAR-difference estimates will be retained in generated supplementary tables rather than selectively omitted.
+
+Claims of improvement will require more than the smallest point estimate.
+They will be based on paired origin-level loss differences, 95\% moving-block bootstrap intervals, and Holm-adjusted $p$-values for the prespecified contrasts.
+The S/MS analysis will report signed differences for the same panel, model, and horizon.
+Regime results will remain secondary, and return forecasts will be labeled robustness analyses performed only after completion of the level benchmark.

@@ -1,10 +1,10 @@
 \begin{abstract}
-Selective state-space models are increasingly used for time-series forecasting, but their performance relative to tuned attention, linear, decomposition, patch-based, and persistence methods remains protocol- and dataset-dependent.
-This descriptive study evaluates four Mamba variants, ten non-Mamba neural baselines, and a deterministic last-value forecast on two univariate financial level series: the GLD unadjusted close and a United Kingdom exchange-rate series.
-The neural comparison comprises 336 model--horizon test cells, supplemented by 24 last-value cells, across 12 forecast lengths and chronological 70/10/20 splits.
-Within the completed neural sweeps, hyperparameters are selected on validation data; the reported test scores are nevertheless treated as development-period evidence because earlier GLD test outcomes informed architecture promotion.
-On GLD, PMS-Mamba-PD records balanced RMSSE 14.74, below TimesNet at 15.66 and last-value at 17.07.
-On Exchange, last-value is lowest at 6.26, followed by S-Mamba at 6.29 and PatchTST at 6.37; thus, no learned model improves on persistence for that series under the current protocol.
-These are single-seed point estimates from overlapping forecast windows, with unequal search budgets and no inferential intervals.
-The results support conditional competitiveness of the tested Mamba variants on GLD, not general superiority or a confirmatory financial-forecasting claim.
+Financial level series exhibit persistent levels, changing volatility, and evolving cross-series relationships, conditions under which model rankings can depend strongly on the evaluation protocol.
+We define a prospectively frozen benchmark of four daily financial panels: foreign exchange, U.S. Treasury yields, cross-asset indicators, and cryptoassets.
+Each panel yields a univariate-input task and a multivariate-input, single-target task.
+Nine learned models---five non-Mamba baselines, S-Mamba, and three decomposition or multi-scale Mamba variants---are compared with last-value, random-walk-with-drift, ARIMA, and, for multivariate tasks, VAR-on-differences references at horizons of 1, 5, 20, 60, 120, and 252 observations.
+Hyperparameters are selected using 2021--2022 validation data after training through 2020; the 2023--2026 final period remains inaccessible until the complete selection audit passes.
+Selection-safe diagnostics show that all four training targets are consistent with nonstationary levels under the prespecified ADF/KPSS diagnostic pair, while validation-period mean shifts range from 0.51 to 7.75 training standard deviations in magnitude and first-difference volatility ratios range from 0.82 to 4.52.
+Final neural estimates will average five seeds, and paired loss contrasts will use a moving-block bootstrap with multiplicity adjustment.
+Because the locked evaluation is still running, this interim manuscript reports the protocol and data characterization but makes no performance claim.
 \end{abstract}

@@ -60,8 +60,8 @@ Surrounding prose should separate observation, interpretation, and implication.
 
 - Use its integrity, encoding, accessibility, and export rules for data plots.
 - Preserve the repository's established generator scripts and Makefile dependencies.
-- Use its pinned `uv` commands when `uv` is available and exact snapshot replay matters.
-- Without `uv`, use an available Conda Python only after checking Python version and required imports. Record package versions and do not describe the environment as the upstream pinned snapshot.
+- Run its examples in the dedicated Anaconda `scientific-skills` environment after checking Python version and required imports.
+- Install missing packages with that environment's `python -m pip`, record package versions, and do not describe the local environment as the upstream pinned snapshot.
 - Run optional metadata or palette helpers only on compatible inputs and dependencies; their reports are screening aids, not accessibility or journal-compliance certificates.
 
 ## Architecture Figures

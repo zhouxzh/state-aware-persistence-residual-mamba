@@ -1,33 +1,34 @@
 \section{Introduction}
 
-Long-horizon forecasting requires a model to extract predictive structure while the usefulness of past observations changes with the forecast length.
-Modern approaches address this problem through efficient attention, decomposition, temporal patches, inverted tokenization, and multi-scale representations \cite{informer,autoformer,dlinear,patchtst,timesnet,itransformer}.
-Their relative performance is strongly protocol- and dataset-dependent: lookback length, normalization, optimization budget, temporal split, and evaluation metric can alter model rankings \cite{m4,m5,tsf-survey}.
+Financial forecasting is frequently evaluated on price or rate levels that combine strong persistence with changes in location, scale, volatility, and dependence across markets.
+These properties complicate both modeling and evaluation.
+A flexible model can appear accurate by reproducing persistence, while a random chronological split can expose it to a future period unlike the one used for fitting.
+Accordingly, evidence for a forecasting architecture requires explicit reference forecasts, fixed temporal boundaries, selection separated from final evaluation, and uncertainty estimates that respect dependent forecast origins \cite{m4,m5,finance-dl-survey}.
 
-Nonstationarity adds a second difficulty.
-Changes in level, scale, trend, volatility, or local dynamics can make future windows differ from the observations used for training.
-RevIN addresses window-level distribution shift through reversible normalization, while Non-stationary Transformers combine stationarization with a learned mechanism intended to restore useful nonstationary information \cite{revin,nonstationary-transformer}.
-Decomposition models provide a complementary inductive bias by separating slowly varying and residual components before forecasting \cite{autoformer,fedformer,dlinear}.
+Modern long-horizon forecasters use linear decompositions, temporal patches, two-dimensional temporal representations, or inverted variable tokens \cite{dlinear,patchtst,timesnet,itransformer}.
+Mamba provides an input-selective state-space operator with sequence-length scaling that is linear in the recurrent scan \cite{mamba}.
+Forecasting adaptations differ in whether the scan acts across variables or temporal tokens and whether decomposition or multiple temporal resolutions are introduced \cite{smamba,bimamba,mambats,timemachine,msmamba,karma,dmamba}.
+These architectural differences are plausible responses to changing temporal structure, but plausibility alone does not show that they improve out-of-period financial forecasts.
 
-Mamba offers input-selective state-space sequence modeling with linear scaling in sequence length \cite{mamba}.
-Forecasting adaptations differ in how they tokenize time and variables, scan in one or two directions, and combine temporal resolutions \cite{smamba,bimamba,mambats,timemachine,tsmamba}.
-Recent multi-scale and decomposition-enhanced Mamba studies make this design space increasingly crowded \cite{msmamba,karma,dmamba}.
-An efficient or more elaborate sequence operator is therefore not, by itself, evidence of improved forecasting.
+This study asks three bounded questions.
+First, do the tested Mamba variants improve level forecasts relative to persistence, drift, statistical models, and tuned non-Mamba neural baselines?
+Second, are any differences stable across foreign-exchange, yield-curve, cross-asset, and cryptoasset panels and across forecast horizons from one observation to approximately one trading year?
+Third, does adding contemporaneously available panel histories improve single-target forecasts relative to the paired univariate-input task?
+The study predicts statistical levels rather than returns and does not evaluate trading profitability.
 
-The requirement for a strong reference forecast is particularly important for persistent financial level series.
-Forecasting competitions repeatedly show that simple methods can remain difficult to beat \cite{m4,m5}, while financial forecasting reviews emphasize sensitivity to target definition, regime changes, and evaluation design \cite{finance-dl-survey}.
-A model comparison on price or exchange-rate levels should therefore include a last-observation forecast before attributing an observed difference to architectural sophistication.
+To answer these questions without reusing the development evidence, we froze version 1 of the financial confirmatory protocol before opening its final period.
+Four panels generate eight paired tasks: S mode uses only the target history, whereas MS mode supplies the complete panel history but evaluates only the named target.
+Nine learned models share a 12-trial selection budget per task and are evaluated at six horizons using five final seeds.
+The final period, 2023-01-01 through 2026-06-30, is protected by an explicit software gate until all validation selections and their hashes pass audit.
+Legacy GLD and Exchange experiments informed development and are excluded from confirmatory claims; non-financial application benchmarks are outside the frozen scope.
 
-This study reports the completed repository benchmark for four Mamba configurations: S-Mamba, a decomposition variant (NS-Mamba-D), a multi-scale decomposition variant (MS-Mamba-MD), and a patch-temporal multi-scale decomposition variant (PMS-Mamba-PD).
-They are compared with ten tuned neural baselines and a deterministic last-value forecast on GLD and Exchange under single-target (S-mode) forecasting.
-Both datasets use 12 forecast lengths from 1 to 360 observations.
-Within each final neural sweep, candidate configurations are selected by validation performance and evaluated on the test period.
-However, earlier GLD test results were consulted during architecture development; consequently, the present evaluation is descriptive rather than an untouched confirmatory test.
-
-The contributions are:
+The contributions of the study design are:
 \begin{itemize}
-    \item a traceable two-series benchmark covering 14 trained models, a deterministic last-value reference, and 12 forecast lengths;
-    \item an implementation-grounded comparison of inverted, decomposition, multi-scale, and patch-temporal Mamba configurations against diverse neural alternatives;
-    \item a reproducible persistence calculation showing that the strongest learned model differs by series and that last-value is best on Exchange under the current metric; and
-    \item an explicit account of test-period reuse, single-seed uncertainty, overlapping forecast windows, search-budget asymmetry, post hoc dataset exclusion, and univariate tokenization.
+    \item a checksum-bound, fixed-calendar benchmark spanning four financial targets, paired S/MS tasks, six horizons, and five final seeds;
+    \item an implementation-grounded comparison of inverted, decomposition, multi-scale, and patch-temporal Mamba configurations against neural and statistical references;
+    \item a prespecified analysis of path and terminal errors, improvement relative to last-value, paired S/MS differences, volatility regimes, and dependence-aware bootstrap contrasts; and
+    \item fail-closed result generation that withholds final tables until every required model, seed, task, horizon, and provenance field is present.
 \end{itemize}
+
+This version is an interim, protocol-aligned manuscript.
+It reports only training/validation data characterization; performance results and conclusions remain deliberately unwritten until the locked matrix is complete.

@@ -20,9 +20,9 @@ nine learned models, six horizons, and five final seeds. Weather, ETT, Electrici
 Traffic are outside this manuscript's confirmatory scope. Legacy GLD and Exchange runs
 remain development evidence only.
 
-The current machine state blocks formal training: CUDA is unavailable and `nvidia-smi`
-reports an NVIDIA driver/library mismatch. Do not start formal training until the first
-preflight command below returns success.
+Before any new or resumed formal run, require the first preflight command below to return
+success. The HPO command is resumable and must not be replaced with a fresh study after an
+interruption.
 
 ## After Reboot
 
@@ -48,8 +48,8 @@ Run all commands from the repository root, `/data/zhong/mamba`.
    reading final-period targets:
 
    ```bash
-   python scripts/financial/analyze_financial_data.py
-   python manuscript/figures/generate_financial_data_diagnostics.py
+   conda run --no-capture-output -n mamba python scripts/financial/analyze_financial_data.py
+   conda run --no-capture-output -n mamba python manuscript/figures/generate_financial_data_diagnostics.py
    ```
 
 3. Run GPU smoke tests. These train NLinear plus S-Mamba, NS-Mamba-D, MS-Mamba-MD, and
@@ -86,7 +86,7 @@ Run all commands from the repository root, `/data/zhong/mamba`.
    references. This command refuses to run if the neural matrix is incomplete:
 
    ```bash
-   python scripts/financial/run_statistical_baselines.py --unlock-test
+   conda run --no-capture-output -n mamba python scripts/financial/run_statistical_baselines.py --unlock-test
    ```
 
 8. Validate artifacts and compute path/terminal metrics, last-value skill, S-versus-MS
@@ -94,15 +94,15 @@ Run all commands from the repository root, `/data/zhong/mamba`.
    p-values:
 
    ```bash
-   python scripts/financial/analyze_financial_results.py
+   conda run --no-capture-output -n mamba python scripts/financial/analyze_financial_results.py
    ```
 
    Once the final period has already been unlocked, generate the full-period descriptive
    diagnostics with the frozen rule:
 
    ```bash
-   python scripts/financial/analyze_financial_data.py --include-test
-   python manuscript/figures/generate_financial_data_diagnostics.py --include-test
+   conda run --no-capture-output -n mamba python scripts/financial/analyze_financial_data.py --include-test
+   conda run --no-capture-output -n mamba python manuscript/figures/generate_financial_data_diagnostics.py --include-test
    ```
 
 9. Generate evidence-bound LaTeX tables and publication figures:
@@ -135,7 +135,7 @@ If raw files ever need to be recovered, the downloaders first try direct access 
 use Clash explicitly at `http://127.0.0.1:7890`:
 
 ```bash
-python scripts/financial/download_financial_data.py --proxy-first --skip-yahoo
+conda run --no-capture-output -n mamba python scripts/financial/download_financial_data.py --proxy-first --skip-yahoo
 conda run --no-capture-output -n mamba python scripts/financial/download_financial_data.py --only-yahoo --proxy-first --skip-binance
 conda run --no-capture-output -n mamba python scripts/financial/prepare_financial_data.py
 ```

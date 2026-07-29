@@ -332,6 +332,7 @@ def main() -> None:
         test_start = int(date_index.searchsorted(protocol["splits"]["test_start"], side="left"))
         arima_order = select_arima_order(target[:train_end])
         var_lag = select_var_lag(values[:train_end]) if config["features"] == "MS" else None
+        pretest_end = str(dates[test_start - 1])
 
         for horizon in protocol["horizons"]:
             methods = {
@@ -359,6 +360,17 @@ def main() -> None:
                         "target": config["target"],
                         "arima_order": list(arima_order) if model == "ARIMA" else None,
                         "var_lag": var_lag if model == "VAR-difference" else None,
+                        "order_selection_end": (
+                            protocol["splits"]["train_end"]
+                            if model in {"ARIMA", "VAR-difference"}
+                            else None
+                        ),
+                        "coefficient_fit_end": (
+                            pretest_end if model in {"ARIMA", "VAR-difference"} else None
+                        ),
+                        "sequential_update_refit": (
+                            False if model in {"ARIMA", "VAR-difference"} else None
+                        ),
                         "evaluation_split": "test",
                         "python_version": sys.version,
                         "numpy_version": np.__version__,

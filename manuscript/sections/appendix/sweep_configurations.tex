@@ -1,51 +1,115 @@
-\subsection{Optimization Records}
-\label{app:sweep-configurations}
+\subsection{Frozen protocol}
+\label{app:frozen-protocol}
 
-\input{sections/appendix/benchmark_protocol}
+\begin{table}[H]
+\centering
+\caption{Controlling protocol fields.}
+\label{tab:frozen-protocol}
+\begin{tabular}{ll}
+\toprule
+Field & Frozen value \\
+\midrule
+Version & \texttt{financial\_confirmatory\_v1} \\
+Frozen on & 2026-07-25 \\
+Data cutoff & 2026-06-30 \\
+Train / validation / test & through 2020 / 2021--2022 / 2023--2026-06 \\
+Horizons & 1, 5, 20, 60, 120, 252 observations \\
+Calibration horizons & 5, 60, 252 observations \\
+Trials / full replays & 12 effective trials / top 3 completed trials \\
+Training cap / patience & 10 epochs / 3 epochs \\
+HPO sampler seed & 20260725 \\
+Final neural seeds & 2023, 2024, 2025, 2026, 2027 \\
+Bootstrap & 10,000 circular moving-block replicates; seed 20260725 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-The archived state counts in Table~\ref{tab:benchmark-optuna-protocol} are reported instead of assuming that every requested trial completed.
-The baseline and Mamba studies use the search spaces implemented in \path{scripts/optuna/run_dataset_optuna.py}.
-Shared choices include lookback length, learning rate, batch size, and model width where applicable.
-Baseline-specific choices include decomposition windows, patch and stride sizes, attention factors, normalization, and family-specific widths.
-Mamba-specific choices include state dimension, decomposition window, scale set, and patch/stride pairs.
+The eight task identifiers are listed by panel in Table~\ref{tab:task-identifiers}.
+\begin{table}[H]
+\centering
+\caption{Paired task identifiers.}
+\label{tab:task-identifiers}
+\begin{tabular}{lll}
+\toprule
+Panel & S task & MS task \\
+\midrule
+Foreign exchange & \texttt{financial\_fx\_s} & \texttt{financial\_fx\_ms} \\
+Treasury yields & \texttt{financial\_yields\_s} & \texttt{financial\_yields\_ms} \\
+Cross asset & \texttt{financial\_cross\_asset\_s} & \texttt{financial\_cross\_asset\_ms} \\
+Cryptoasset & \texttt{financial\_crypto\_s} & \texttt{financial\_crypto\_ms} \\
+\bottomrule
+\end{tabular}
+\end{table}
+Every manifest entry stores its processed-data hash, the protocol hash, fixed split dates, target, input/output channel counts, horizon suite, and term groups.
 
-The exact selected parameters, study names, calibration objectives, validation replay scores, and final test scores are stored in:
-\begin{itemize}
-    \item the GLD directory at \path{results/optuna/gld/};
-    \item the Exchange directory at \path{results/optuna/exchange/}.
-\end{itemize}
-The associated baseline and Mamba trial CSV files retain every archived Optuna state and per-horizon calibration metric.
+\subsection{Neural search spaces}
 
-\subsection{Evaluated Mamba Configurations}
+The following values are categorical choices, not continuous ranges.
+All models use two encoder layers, dropout 0.1, and label length $L/2$ unless the implementation ignores a field.
+The common Mamba space is $L\in\{16,32,64,96,128,192,256,320,384\}$, $d_{\mathrm{model}}\in\{64,128\}$, $d_{\mathrm{ff}}\in\{128,256\}$, state dimension $\in\{16,32\}$, moving-average window $\in\{13,25,49\}$, learning rate $\in\{5\times10^{-5},10^{-4},2\times10^{-4},3\times10^{-4}\}$, and batch size 16.
+S-Mamba adds no variant-specific choice.
+NS-Mamba-D fixes standard rather than adaptive normalization, activates decomposition, and disables shift gating.
+MS-Mamba-MD chooses scales from $\{1,2,4\}$, $\{1,2,4,8\}$, $\{1,3,6\}$, or $\{1,4,8\}$; it fixes decomposition on, mean scale fusion, and no linear skip.
+PMS-Mamba-PD chooses $\{1,2,4\}$ or $\{1,2,4,8\}$ and a patch-length/stride pair from $(8,4)$, $(8,8)$, $(16,4)$, or $(16,8)$; infeasible scaled patch layouts are rejected before training.
 
-Four Mamba labels enter the completed benchmark.
-S-Mamba is the reversible-normalized inverted forecasting backbone.
-NS-Mamba-D adds three-way moving-average decomposition and sums component forecasts.
-MS-Mamba-MD adds multiple downsampled temporal scales with mean scale fusion.
-PMS-Mamba-PD replaces the inverted branch at each scale with a temporal patch-token Mamba branch while retaining decomposition and mean fusion.
-Other architecture labels described by the implementation are not included in the 336 trained-model cells and are not used to support the reported comparison.
+\begin{table*}[t]
+\centering
+\caption{Non-Mamba categorical search spaces. ``LR'' denotes learning rate and ``BS'' batch size.}
+\label{tab:baseline-search-spaces}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llllll}
+\toprule
+Model & Lookback $L$ & Width choices & LR & BS & Specific choices \\
+\midrule
+DLinear & 96, 192, 256 & -- & 0.003, 0.005 & 32, 64 & Moving average 13, 25; shared channels \\
+NLinear & 64, 192, 320, 384 & -- & 0.005, 0.01 & 32, 64 & Shared channels \\
+PatchTST & 128, 256, 320 & $d_m$: 128, 256; $d_{ff}$: 512, 2048 & 0.0002, 0.0003, 0.0005 & 16, 32 & Patch/stride: 16/8, 24/12, 32/16 \\
+TimesNet & 128, 256, 320 & $d_m$: 32, 64; $d_{ff}$: 128, 256 & 0.0001, 0.0002, 0.0003 & 16, 32 & Top-$k=5$; kernels 6, 8 \\
+iTransformer & 128, 192, 256 & $d_m$: 128, 256; $d_{ff}$: 256, 512 & 0.0001, 0.0002, 0.0003 & 16 & Reversible normalization on \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
 
-\subsection{Deterministic Reference and Dataset Preparation}
+Optuna uses TPE with the frozen sampler seed and a median pruner with four startup trials, one warm-up step, and one-step intervals.
+Interrupted \texttt{RUNNING} trials are marked \texttt{FAIL} on recovery.
+The fixed budget counts \texttt{COMPLETE} and \texttt{PRUNED} trials; failed trials do not consume it.
+Only completed trials can enter the top-three full validation replay.
 
-The manuscript result generator computes last-value errors using the same 70/10/20 split, test origins, all-lead pooling, and training-difference RMSSE denominator as the learned models.
-It writes 24 rows to \path{manuscript/data/last_value_baseline.csv}, including the origin count and scalar forecast count for each nominal length.
-No fitted parameter or test-informed choice enters this calculation.
+\subsection{Reference-model specification}
 
-The current Exchange target can be checked against its local long-format input with
+Last-value and random-walk-with-drift have no fitted hyperparameters.
+ARIMA searches $d\in\{0,1\}$ and $p,q\in\{0,1,2,3\}$ on the training target and selects minimum AIC; ARIMA$(0,0,0)$ is excluded.
+A time trend is used for $d=1$, and a constant plus trend is used for $d=0$.
+VAR-difference is available only for MS tasks and selects lags 1--10 by minimum training BIC with constant and trend.
+After order or lag selection, coefficients are estimated once using all observations before the test boundary.
+At each final origin, ARIMA state and VAR lagged differences use observations available up to that origin, while fitted coefficients remain fixed.
+
+\subsection{Artifact gates and regeneration}
+
+The complete workflow is executed in the Anaconda environment with:
 \begin{verbatim}
-conda run -n mamba python scripts/prepare_exchange_uk.py --check
+conda run --no-capture-output -n mamba python \
+  scripts/financial/run_financial_benchmark.py --stage hpo
+conda run --no-capture-output -n mamba python \
+  scripts/financial/run_financial_benchmark.py --stage selection
+conda run --no-capture-output -n mamba python \
+  scripts/financial/run_financial_benchmark.py --stage final --unlock-test
+conda run --no-capture-output -n mamba python \
+  scripts/financial/run_statistical_baselines.py --unlock-test
+conda run --no-capture-output -n mamba python \
+  scripts/financial/analyze_financial_results.py
+make -C manuscript financial-assets
 \end{verbatim}
-The script selects the \texttt{United Kingdom} rows, drops missing quoted values, sorts the dates, and verifies exact equality with \path{data/Exchange/exchange_rate.csv}.
+The selection command refuses missing models, wrong hashes or horizons, non-validation selection, and prior test access.
+The final runner records task, model, seed, horizon, origin dates, predictions, targets, run time, peak GPU memory, software versions, GPU identity, and deterministic-algorithm settings.
+Completed cells are written atomically and skipped on restart.
 
-\subsection{Evidence and Regeneration}
+The statistical runner is blocked until every neural cell is complete.
+The analysis script then verifies forecast shapes, origin dates, saved metrics, metadata, and expected row counts before writing aggregate metrics, S/MS pairs, regime metrics, and bootstrap contrasts.
+The manuscript generator additionally requires full-period diagnostics marked \texttt{test\_targets\_read=true} and exactly 10,000 bootstrap replicates.
+No partial task selection can produce the final result section.
 
-The manuscript build reads the four final trained-model matrices directly from \path{results/} and the two target files from \path{data/}.
-Running \texttt{make -C manuscript pdf} first regenerates the last-value rows, Table~\ref{tab:benchmark-family-summary}, Table~\ref{tab:benchmark-model-ranking}, Table~\ref{tab:benchmark-optuna-protocol}, and Figure~\ref{fig:benchmark-family-comparison}.
-Generation fails if a trained model--horizon row is missing, a run is incomplete, selection/test flags are wrong, a metric is non-finite, balanced RMSSE does not match its term groups, a final score disagrees with selected-parameter metadata, or a last-value target is missing.
-
-The GLD baseline reproduction bundle is rooted at \path{scripts/gld_baseline_optuna_bundle/}; its run archive is the \texttt{reproduced\_artifacts} subdirectory.
-It contains checkpoints, predictions, targets, metrics, and run metadata for all 120 baseline rows.
-Because stochastic replay changes 30 metric vectors, the frozen \path{results/gld_baseline_optuna_best.csv} remains the source for the descriptive GLD table; the replay difference is disclosed in the limitations rather than silently replacing the selected-run result.
-
-The repository currently lacks a public archival tag or DOI containing the exact manuscript state, and the original experiment hardware record is incomplete.
-These items remain prerequisites for an external reproducibility claim and formal submission package.
+The current interim paper instead uses only the selection-safe diagnostics manifest.
+That manifest records a training/validation scope and confirms that test targets were not read.
+The final generated tables and copied machine-readable supplements will be added only after the protected workflow completes.

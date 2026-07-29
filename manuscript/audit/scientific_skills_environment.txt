@@ -1,0 +1,26 @@
+Environment: scientific-skills
+Manager: Anaconda environment with environment-local pip
+Python: 3.13.14
+Recorded: 2026-07-29
+
+numpy==2.5.1
+pandas==3.0.5
+scipy==1.18.0
+statsmodels==0.14.6
+matplotlib==3.11.1
+seaborn==0.13.2
+scikit-learn==1.9.0
+plotly==6.9.0
+pillow==12.3.0
+imageio==2.37.4
+requests==2.34.2
+bibtexparser==1.4.4
+pylatexenc==2.11
+pyDOE3==1.6.2
+pingouin==0.6.1
+pint==0.25.3
+uncertainties==3.2.3
+parallel-web-tools==0.7.1
+
+Optional components intentionally not installed: PyTorch, TimesFM, CUDA-specific RAPIDS
+packages, Google Scholar scraping extras, and domain-specific biomedical format readers.

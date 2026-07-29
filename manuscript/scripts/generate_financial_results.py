@@ -150,10 +150,17 @@ def selected_non_mamba(task: str, protocol: dict, training: dict) -> str:
         raise RuntimeError(f"selection protocol hash mismatch: {path}")
     if payload.get("data_sha256") != training[task]["data_sha256"]:
         raise RuntimeError(f"selection data hash mismatch: {path}")
+    if list(map(int, payload.get("full_horizons", []))) != protocol["horizons"]:
+        raise RuntimeError(f"selection horizon mismatch: {path}")
     models = payload.get("models", {})
     expected = {"DLinear", "NLinear", "PatchTST", "TimesNet", "iTransformer"}
     if set(models) != expected:
         raise RuntimeError(f"selection model set mismatch: {path}")
+    for model, record in models.items():
+        if record.get("selection_eval_flag") != "val":
+            raise RuntimeError(f"selection did not use validation data: {task}/{model}")
+        if record.get("final_eval_flag") != "not_opened":
+            raise RuntimeError(f"selection record accessed test data: {task}/{model}")
     scores = {
         model: float(record["best_validation_replay_balanced_rmsse"])
         for model, record in models.items()

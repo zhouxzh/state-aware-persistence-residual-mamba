@@ -1,34 +1,23 @@
 TEX := main.tex
 PDF := main.pdf
-PYTHON ?= python
+PYTHON ?= conda run --no-capture-output -n mamba python
 ARCH_TEX := $(wildcard arch/*.tex)
 DOT_SOURCES := $(wildcard figures/*.dot)
 DOT_FIGURES := $(DOT_SOURCES:.dot=.pdf)
 SECTION_TEX := $(wildcard sections/*.tex)
 APPENDIX_TEX := $(wildcard sections/appendix/*.tex)
-RESULT_SECTION_TEX := \
-	sections/results_benchmark_summary.tex \
-	sections/results_model_ranking.tex
-APPENDIX_RESULT_TEX := \
-	sections/appendix/benchmark_protocol.tex
-BENCHMARK_DATA := \
-	../results/gld_baseline_optuna_best.csv \
-	../results/gld_mamba_optuna_best.csv \
-	../results/exchange_baseline_optuna_best.csv \
-	../results/exchange_mamba_optuna_best.csv
-BENCHMARK_METADATA := \
-	../configs/optuna_datasets.json \
-	$(wildcard ../results/optuna/gld/*_best_params.json) \
-	$(wildcard ../results/optuna/gld/*_trials.csv) \
-	$(wildcard ../results/optuna/exchange/*_best_params.json) \
-	$(wildcard ../results/optuna/exchange/*_trials.csv)
-BENCHMARK_SOURCE_DATA := \
-	../data/GLD/GLD.csv \
-	../data/Exchange/exchange_rate.csv
-LAST_VALUE_DATA := data/last_value_baseline.csv
-FIGURE_OUTPUTS := figures/benchmark_family_comparison.pdf figures/benchmark_family_comparison.png
+SELECTION_DIAGNOSTICS := \
+	../data/financial/manifests/nonstationarity_diagnostics_selection_safe.json \
+	../data/financial/manifests/quality_report.json \
+	../configs/financial_benchmark.json
+SELECTION_FIGURES := \
+	figures/financial_nonstationarity_selection_safe.pdf \
+	figures/financial_nonstationarity_selection_safe.png
+FINAL_GENERATED_TEX := \
+	sections/results_financial_confirmatory.tex \
+	sections/appendix/financial_protocol.tex
 
-.PHONY: pdf financial-assets clean distclean watch help
+.PHONY: pdf selection-assets financial-assets clean distclean watch help
 
 pdf: $(PDF)
 
@@ -39,7 +28,9 @@ financial-assets:
 	$(PYTHON) figures/generate_financial_results.py
 	$(PYTHON) figures/generate_financial_data_diagnostics.py --include-test
 
-$(PDF): $(TEX) $(ARCH_TEX) $(DOT_FIGURES) $(SECTION_TEX) $(APPENDIX_TEX) $(RESULT_SECTION_TEX) $(APPENDIX_RESULT_TEX) $(FIGURE_OUTPUTS)
+selection-assets: $(SELECTION_FIGURES)
+
+$(PDF): $(TEX) references.bib $(ARCH_TEX) $(DOT_FIGURES) $(SECTION_TEX) $(APPENDIX_TEX) $(SELECTION_FIGURES)
 	@if command -v latexmk >/dev/null 2>&1; then \
 		latexmk -pdf -interaction=nonstopmode -halt-on-error $(TEX); \
 	elif command -v pdflatex >/dev/null 2>&1 && command -v bibtex >/dev/null 2>&1; then \
@@ -64,11 +55,8 @@ figures/%.pdf: figures/%.dot
 		exit 127; \
 	fi
 
-$(RESULT_SECTION_TEX) $(APPENDIX_RESULT_TEX) data/benchmark_summary.csv $(LAST_VALUE_DATA) &: scripts/generate_benchmark_results.py $(BENCHMARK_DATA) $(BENCHMARK_METADATA) $(BENCHMARK_SOURCE_DATA)
-	$(PYTHON) scripts/generate_benchmark_results.py
-
-$(FIGURE_OUTPUTS) &: figures/generate_benchmark_overview.py $(BENCHMARK_DATA) $(LAST_VALUE_DATA)
-	$(PYTHON) figures/generate_benchmark_overview.py
+$(SELECTION_FIGURES) &: figures/generate_financial_data_diagnostics.py $(SELECTION_DIAGNOSTICS)
+	$(PYTHON) figures/generate_financial_data_diagnostics.py
 
 watch:
 	@if command -v latexmk >/dev/null 2>&1; then \
@@ -87,11 +75,12 @@ clean:
 	rm -rf figures/__pycache__ scripts/__pycache__
 
 distclean: clean
-	rm -f $(PDF) $(DOT_FIGURES) $(FIGURE_OUTPUTS) $(RESULT_SECTION_TEX) $(APPENDIX_RESULT_TEX)
+	rm -f $(PDF) $(DOT_FIGURES) $(SELECTION_FIGURES) $(FINAL_GENERATED_TEX)
 
 help:
 	@echo "Targets:"
-	@echo "  make pdf       Build $(PDF)"
+	@echo "  make pdf       Build the protocol-aligned interim $(PDF)"
+	@echo "  make selection-assets Regenerate train/validation-only diagnostics"
 	@echo "  make financial-assets Validate complete financial evidence and generate tables/figures"
 	@echo "  make watch     Rebuild continuously with latexmk"
 	@echo "  make clean     Remove auxiliary LaTeX files"

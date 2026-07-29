@@ -1,10 +1,10 @@
 \section{Conclusion}
 
-This study describes completed single-seed evaluations of four Mamba variants, ten tuned neural baselines, and last-value forecasts on two univariate financial level series.
-On GLD, PMS-Mamba-PD has the lowest observed balanced RMSSE at 14.74, compared with TimesNet at 15.66 and last-value at 17.07.
-On Exchange, last-value is lowest at 6.26, ahead of S-Mamba at 6.29 and PatchTST at 6.37.
+This work establishes a locked benchmark for evaluating Mamba-based forecasts of nonstationary financial levels.
+Four financial panels yield paired univariate-input and multivariate-input single-target tasks, evaluated at six horizons against five learned baselines and four Mamba configurations.
+The final design adds persistence, drift, ARIMA, and VAR-on-differences references, five neural seeds, paired S/MS analysis, moving-block bootstrap intervals, multiplicity adjustment, and prespecified volatility regimes.
 
-The benchmark therefore does not establish general Mamba superiority.
-Its defensible result is narrower: the tested patch-temporal Mamba configuration is competitive on the current GLD period, while persistence remains the stronger reference on Exchange.
-Because architecture development used prior GLD test outcomes, search budgets differ, training uses one seed, forecast windows overlap, and no inferential intervals are available, all reported differences are descriptive.
-An untouched evaluation period, equal-compute tuning, repeated seeds, dependence-aware uncertainty, controlled ablations, and broader datasets are required before confirmatory or mechanism-level claims can be made.
+Training/validation diagnostics show substantial nonstationarity and distribution shift, but they do not establish forecast superiority.
+The 2023--2026 final period remains locked while validation-only selection is completed and audited.
+Accordingly, the present conclusion is procedural rather than empirical: the study is positioned to test whether the proposed variants improve on strong financial references without reusing development outcomes, but that question remains unanswered in this manuscript version.
+Any final conclusion will be generated only from the complete validated evidence matrix and will preserve unfavorable, null, and panel-specific findings.

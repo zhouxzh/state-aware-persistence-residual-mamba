@@ -1,39 +1,40 @@
 \section{Discussion and Limitations}
 
-The descriptive result differs by series.
-On GLD, the selected PMS-Mamba-PD point estimate is below both TimesNet and last-value, whereas persistence is lowest on Exchange.
-The Exchange result is especially important for interpretation: a small neural-to-neural difference does not establish forecasting value when neither learned model improves on the last observation.
-The evidence therefore supports conditional competitiveness on one target period rather than a general Mamba advantage.
+The selection-safe evidence confirms that the benchmark poses the intended problem: persistent financial levels are accompanied by substantial temporal changes in location, scale, volatility, and, for some panels, feature--target correlations.
+The size and direction of these changes vary sharply across panels.
+This heterogeneity is precisely why the study is organized around task-level estimates and paired comparisons rather than a single rank averaged across unrelated units.
 
-The present test periods are not fully independent confirmation sets for the research program.
-Although the final sweep implementation selects hyperparameters on validation data, earlier GLD test outcomes informed architecture promotion.
-This research-cycle reuse can make the final GLD ordering optimistic and cannot be corrected through textual qualification alone.
-A confirmatory study requires a newly frozen future period or an additional untouched dataset, with the model family, metric, exclusions, and analysis fixed before outcomes are inspected.
+Several outcome interpretations are fixed in advance.
+First, a neural model is not considered useful merely because it outperforms another neural architecture; performance relative to last-value and other statistical references is central.
+Second, a favorable result on one panel or horizon does not establish general Mamba superiority.
+Third, an MS advantage indicates predictive value from the supplied panel histories under this protocol, not a causal cross-market mechanism.
+Fourth, level-forecast accuracy is not evidence of profitable trading, market inefficiency, directional accuracy, calibrated risk, or robustness to transaction costs.
 
-Optimization and stochastic uncertainty further limit architecture comparisons.
-Exchange allocates 24 trial records per Mamba study and 20 per neural-baseline study, while GLD uses different calibration suites across families.
-Search spaces and pruning rates are model-specific, and several studies retain interrupted or failed records.
-Every selected configuration uses seed 2023, and CUDA execution is not guaranteed to be bitwise deterministic.
-In the GLD reproduction bundle, 90 of 120 replayed neural-baseline metric vectors match the frozen table at strict numerical tolerance, while TimesNet balanced RMSSE changes from 15.66 to 15.50.
-The resulting PMS-Mamba-PD reduction is 4.94\% rather than 5.89\%, illustrating why small differences require repeated training.
+The benchmark improves on the legacy development experiments by using a newly frozen final period, fixed task definitions, equal trial counts, five neural seeds, explicit statistical references, and dependence-aware paired resampling.
+The protocol and processed-data hashes are checked at every transition, and final manuscript generation is blocked until the complete matrix is available.
+These controls reduce opportunities for selective reporting, but they do not eliminate all researcher degrees of freedom.
+The model families and their search spaces reflect prior development, and the proposed Mamba variants are not accompanied by a full factorial ablation that isolates tokenization, decomposition, scale construction, and parameter count.
 
-The test errors are also statistically dependent.
-Adjacent forecast origins overlap, and every nominal length $H$ pools leads 1 through $H$; estimates at different origins, leads, and lengths are therefore not independent replications.
-The 360 reported method--length cells summarize evaluation tasks rather than a sample size for inference.
-Repeated seeds and paired uncertainty procedures that respect temporal dependence, such as block resampling over forecast origins or an appropriately specified loss-differential analysis, are needed before making inferential claims.
+The data design also has limitations.
+Four panels cannot represent all financial markets, frequencies, or institutional regimes.
+Complete-case intersection removes imputation assumptions but changes each panel's observation calendar and may privilege dates on which every constituent market reports.
+The study uses one fixed final interval rather than multiple historical backtests, and the shortest cryptoasset training segment contains 973 observations.
+The final period may therefore provide a demanding distribution shift without supporting broad temporal generalization.
 
-The S-mode design limits mechanism claims.
-S-Mamba's inverted encoder normally scans variable tokens, but each experiment here contains only one variable token, so the bidirectional variable scan cannot express cross-variable dependence.
-PMS-Mamba-PD instead scans temporal patch tokens, but the current comparison does not isolate tokenization, decomposition, parameter count, or optimization budget in a controlled ablation.
-The results therefore do not demonstrate that a particular component causes an improvement.
-Likewise, absent parameter, runtime, memory, and hardware records, Mamba's computational scaling is a literature motivation rather than an empirical result of this study.
+Statistical uncertainty remains conditional on the implemented resampling design.
+Forecast origins overlap, losses at different horizons are related, and five neural seeds quantify only part of optimization variability.
+The moving-block bootstrap preserves local origin dependence approximately; its block-length rule is prespecified rather than estimated for each series.
+Holm adjustment is applied within each task--proposal--comparator horizon family, not across every exploratory quantity in the paper.
+Regime estimates are secondary and may have unequal origin counts.
 
-Dataset scope remains narrow.
-Two financial level series and one chronological split do not represent the diversity of forecasting applications, and no rolling-origin evaluation is included.
-The study predicts levels rather than returns and reports statistical errors rather than direction, risk, transaction-cost-adjusted utility, or another economic outcome.
-It should not be interpreted as evidence of trading profitability or market inefficiency.
-Weather cannot currently broaden the evidence because its exclusion followed exploratory runs with an unhandled missing-value code; all methods must be rerun after a prespecified cleaning rule.
+The statistical references are intentionally practical rather than exhaustive.
+ARIMA and VAR orders are selected on the training period; coefficients are estimated once from the full pre-test history, remain fixed during final evaluation, and observed values update the forecasting state sequentially.
+In contrast, neural weights are estimated from training observations while validation controls early stopping.
+This asymmetric use of validation values gives the statistical references a conservative information advantage and must be retained when interpreting neural-to-statistical differences.
+More elaborate financial-econometric specifications, probabilistic forecasts, and models of conditional variance are outside the primary comparison.
+Specialist financial-econometrics review is therefore warranted before submission, particularly for any interpretation beyond point-forecast accuracy.
 
-Finally, the Exchange extraction is reproducible from the local raw file, but the original FRED series identifier, quote convention, and retrieval record are missing.
-The exact experiment hardware is also absent, and the working repository has not yet been archived as a citable release.
-These provenance gaps must be resolved before a reproducibility claim extends beyond the accompanying local artifacts.
+Finally, this interim version has no confirmatory performance result.
+Validation scores are model-selection evidence and will not be substituted for test outcomes.
+The discussion must be revised after the final matrix is complete, including explicit reporting of negative or null results.
+Dataset redistribution terms, a citable code archive, author contributions, funding, competing interests, and venue-specific AI-use disclosure also require accountable author confirmation before submission.

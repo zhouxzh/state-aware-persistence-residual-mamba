@@ -2,33 +2,22 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{informer}
-\citation{autoformer}
+\citation{m4}
+\citation{m5}
+\citation{finance-dl-survey}
 \citation{dlinear}
 \citation{patchtst}
 \citation{timesnet}
 \citation{itransformer}
-\citation{m4}
-\citation{m5}
-\citation{tsf-survey}
-\citation{revin}
-\citation{nonstationary-transformer}
-\citation{autoformer}
-\citation{fedformer}
-\citation{dlinear}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \citation{mamba}
 \citation{smamba}
 \citation{bimamba}
 \citation{mambats}
 \citation{timemachine}
-\citation{tsmamba}
 \citation{msmamba}
 \citation{karma}
 \citation{dmamba}
-\citation{m4}
-\citation{m5}
-\citation{finance-dl-survey}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \citation{informer}
 \citation{reformer}
 \citation{autoformer}
@@ -39,13 +28,13 @@
 \citation{itransformer}
 \citation{nbeats}
 \citation{nhits}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Long-Horizon Forecasting}{2}{subsection.2.1}\protected@file@percent }
 \citation{revin}
 \citation{nonstationary-transformer}
 \citation{autoformer}
 \citation{fedformer}
 \citation{dlinear}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Long-Horizon Forecasting}{2}{subsection.2.1}\protected@file@percent }
 \citation{mamba}
 \citation{smamba}
 \citation{bimamba}
@@ -55,83 +44,100 @@
 \citation{msmamba}
 \citation{karma}
 \citation{dmamba}
+\citation{finance-dl-survey}
 \citation{m4}
 \citation{m5}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Nonstationarity and Distribution Shift}{3}{subsection.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Mamba for Time Series}{3}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Evaluation Perspective}{3}{subsection.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Forecasting Models}{3}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Task Definition}{3}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Financial Forecast Evaluation}{3}{subsection.2.4}\protected@file@percent }
 \citation{mamba}
 \citation{smamba}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Conceptual Mamba block. Input-dependent selective state-space parameters control the recurrent update and readout before gated fusion and output projection.}}{4}{figure.1}\protected@file@percent }
-\newlabel{fig:mamba-arch}{{1}{4}{Conceptual Mamba block. Input-dependent selective state-space parameters control the recurrent update and readout before gated fusion and output projection}{figure.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Forecasting Models}{4}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Paired Forecasting Tasks}{4}{subsection.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Selective State-Space Backbone}{4}{subsection.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}S-Mamba Forecasting Encoder}{4}{subsection.3.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces S-Mamba forecasting encoder with reversible normalization, variable-token embedding, bidirectional Mamba encoding, horizon projection, and inverse normalization.}}{5}{figure.2}\protected@file@percent }
-\newlabel{fig:s-mamba-encoder}{{2}{5}{S-Mamba forecasting encoder with reversible normalization, variable-token embedding, bidirectional Mamba encoding, horizon projection, and inverse normalization}{figure.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Decomposition Variant}{6}{subsection.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Multi-Scale and Patch-Temporal Variants}{6}{subsection.3.5}\protected@file@percent }
-\citation{yahoo-gld}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}S-Mamba}{4}{subsection.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Conceptual bidirectional Mamba block used by the forecasting encoders. The diagram describes the implemented information flow; it does not imply a causal interpretation of the learned state.}}{5}{figure.1}\protected@file@percent }
+\newlabel{fig:mamba-arch}{{1}{5}{Conceptual bidirectional Mamba block used by the forecasting encoders. The diagram describes the implemented information flow; it does not imply a causal interpretation of the learned state}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Decomposition and Multi-Scale Variants}{5}{subsection.3.4}\protected@file@percent }
+\citation{dlinear}
+\citation{patchtst}
+\citation{timesnet}
+\citation{itransformer}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces S-Mamba forecasting encoder with reversible normalization, variable-token embedding, bidirectional encoding, horizon projection, and inverse normalization.}}{6}{figure.2}\protected@file@percent }
+\newlabel{fig:s-mamba-encoder}{{2}{6}{S-Mamba forecasting encoder with reversible normalization, variable-token embedding, bidirectional encoding, horizon projection, and inverse normalization}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Learned and Statistical Comparators}{6}{subsection.3.5}\protected@file@percent }
 \citation{fred}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Mamba configurations included in the completed benchmark.}}{7}{table.1}\protected@file@percent }
-\newlabel{tab:mamba-variant-meaning}{{1}{7}{Mamba configurations included in the completed benchmark}{table.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Deterministic Reference Forecast}{7}{subsection.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Training Objective}{7}{subsection.3.7}\protected@file@percent }
+\citation{fred}
+\citation{fred}
+\citation{yahoo-gld}
+\citation{binance-data}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Mamba configurations in the frozen benchmark.}}{7}{table.1}\protected@file@percent }
+\newlabel{tab:mamba-variant-meaning}{{1}{7}{Mamba configurations in the frozen benchmark}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Training Objective}{7}{subsection.3.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {4}Experimental Setup}{7}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Datasets and Forecasting Tasks}{7}{subsection.4.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Included univariate forecasting tasks. Split counts follow the chronological 70/10/20 loader rule.}}{7}{table.2}\protected@file@percent }
-\newlabel{tab:datasets}{{2}{7}{Included univariate forecasting tasks. Split counts follow the chronological 70/10/20 loader rule}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Financial Panels and Data Provenance}{7}{subsection.4.1}\protected@file@percent }
+\citation{dickey-fuller}
+\citation{kpss}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Frozen financial panels. Counts refer to target observations within each calendar split. Each panel defines a target-only S task and a complete-panel MS task.}}{8}{table.2}\protected@file@percent }
+\newlabel{tab:financial-panels}{{2}{8}{Frozen financial panels. Counts refer to target observations within each calendar split. Each panel defines a target-only S task and a complete-panel MS task}{table.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Selection-safe diagnostics computed without reading final-period targets. Mean shift is measured in training standard deviations; standard-deviation and difference-volatility columns are validation-to-training ratios. Correlation shift is the largest absolute change in a feature--target first-difference correlation.}}{8}{table.3}\protected@file@percent }
+\newlabel{tab:selection-safe-diagnostics}{{3}{8}{Selection-safe diagnostics computed without reading final-period targets. Mean shift is measured in training standard deviations; standard-deviation and difference-volatility columns are validation-to-training ratios. Correlation shift is the largest absolute change in a feature--target first-difference correlation}{table.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Selection-Safe Nonstationarity Characterization}{8}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Selection and Locked Evaluation}{8}{subsection.4.3}\protected@file@percent }
 \citation{m5}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Metrics, Origins, and Aggregation}{8}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Training and Hyperparameter Selection}{8}{subsection.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Result and Software Provenance}{9}{subsection.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Results}{9}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Dataset-Level Point Estimates}{9}{subsection.5.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Descriptive balanced-RMSSE point estimates on the current test periods. The neural and Mamba entries are the post hoc within-family minima; Last-value is deterministic and requires no fitting. No uncertainty interval is available.}}{9}{table.3}\protected@file@percent }
-\newlabel{tab:benchmark-family-summary}{{3}{9}{Descriptive balanced-RMSSE point estimates on the current test periods. The neural and Mamba entries are the post hoc within-family minima; Last-value is deterministic and requires no fitting. No uncertainty interval is available}{table.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces RMSSE by nominal forecast length for one fixed method from each comparison class. Within each dataset, the displayed neural and Mamba models are selected descriptively by the lowest test-period balanced RMSSE and are then held fixed across all 12 lengths: TimesNet and PMS-Mamba-PD for GLD; PatchTST and S-Mamba for Exchange. Last-value is deterministic. Each point pools all test origins and leads $1,\ldots  ,H$. Values are single-run point estimates without uncertainty intervals.}}{10}{figure.3}\protected@file@percent }
-\newlabel{fig:benchmark-family-comparison}{{3}{10}{RMSSE by nominal forecast length for one fixed method from each comparison class. Within each dataset, the displayed neural and Mamba models are selected descriptively by the lowest test-period balanced RMSSE and are then held fixed across all 12 lengths: TimesNet and PMS-Mamba-PD for GLD; PatchTST and S-Mamba for Exchange. Last-value is deterministic. Each point pools all test origins and leads $1,\ldots ,H$. Values are single-run point estimates without uncertainty intervals}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Model-Level Comparison}{11}{subsection.5.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Balanced-RMSSE point estimates for all evaluated methods. Neural models are validation-selected single-seed runs; Last-value is a deterministic reference. Bold marks the lowest observed value in each dataset. No cross-dataset rank is aggregated.}}{11}{table.4}\protected@file@percent }
-\newlabel{tab:benchmark-model-ranking}{{4}{11}{Balanced-RMSSE point estimates for all evaluated methods. Neural models are validation-selected single-seed runs; Last-value is a deterministic reference. Bold marks the lowest observed value in each dataset. No cross-dataset rank is aggregated}{table.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and Limitations}{11}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{12}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Appendix}{13}{appendix.A}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Optimization Records}{13}{subsection.A.1}\protected@file@percent }
-\newlabel{app:sweep-configurations}{{A.1}{13}{Optimization Records}{subsection.A.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Archived Optuna study records. The state column gives complete/pruned/other trial counts across all model studies in a row. Each study replays up to five top completed calibration trials on the full validation horizon set before one final test evaluation.}}{13}{table.5}\protected@file@percent }
-\newlabel{tab:benchmark-optuna-protocol}{{5}{13}{Archived Optuna study records. The state column gives complete/pruned/other trial counts across all model studies in a row. Each study replays up to five top completed calibration trials on the full validation horizon set before one final test evaluation}{table.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Evaluated Mamba Configurations}{13}{subsection.A.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Selection-safe financial data characterization. Dashed vertical lines mark the start of validation, and gray regions denote validation observations. The left column shows target levels standardized using training data only. The right column shows lagged trailing 60-observation first-difference volatility relative to its training median. Test targets are neither read nor plotted.}}{9}{figure.3}\protected@file@percent }
+\newlabel{fig:financial-nonstationarity}{{3}{9}{Selection-safe financial data characterization. Dashed vertical lines mark the start of validation, and gray regions denote validation observations. The left column shows target levels standardized using training data only. The right column shows lagged trailing 60-observation first-difference volatility relative to its training median. Test targets are neither read nor plotted}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Metrics and Prespecified Analysis}{10}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Reproducibility and Evidence Boundary}{10}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Interim Results}{11}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Selection-Safe Evidence}{11}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Locked Outcome Status}{11}{subsection.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Evidence status for the interim manuscript. ``Locked'' means that the workflow requires an explicit gate and preceding completeness audit before reading final-period targets.}}{11}{table.4}\protected@file@percent }
+\newlabel{tab:evidence-status}{{4}{11}{Evidence status for the interim manuscript. ``Locked'' means that the workflow requires an explicit gate and preceding completeness audit before reading final-period targets}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Prespecified Final Reporting}{11}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and Limitations}{12}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{13}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Frozen Protocol and Reproducibility Details}{14}{appendix.A}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Frozen protocol}{14}{subsection.A.1}\protected@file@percent }
+\newlabel{app:frozen-protocol}{{A.1}{14}{Frozen protocol}{subsection.A.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Controlling protocol fields.}}{14}{table.5}\protected@file@percent }
+\newlabel{tab:frozen-protocol}{{5}{14}{Controlling protocol fields}{table.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Paired task identifiers.}}{14}{table.6}\protected@file@percent }
+\newlabel{tab:task-identifiers}{{6}{14}{Paired task identifiers}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Neural search spaces}{14}{subsection.A.2}\protected@file@percent }
 \bibstyle{unsrt}
 \bibdata{references}
-\bibcite{informer}{1}
-\bibcite{autoformer}{2}
-\bibcite{dlinear}{3}
-\bibcite{patchtst}{4}
-\bibcite{timesnet}{5}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Deterministic Reference and Dataset Preparation}{14}{subsection.A.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.4}Evidence and Regeneration}{14}{subsection.A.4}\protected@file@percent }
-\bibcite{itransformer}{6}
-\bibcite{m4}{7}
-\bibcite{m5}{8}
-\bibcite{tsf-survey}{9}
-\bibcite{revin}{10}
-\bibcite{nonstationary-transformer}{11}
-\bibcite{fedformer}{12}
-\bibcite{mamba}{13}
-\bibcite{smamba}{14}
-\bibcite{bimamba}{15}
-\bibcite{mambats}{16}
-\bibcite{timemachine}{17}
-\bibcite{tsmamba}{18}
-\bibcite{msmamba}{19}
-\bibcite{karma}{20}
-\bibcite{dmamba}{21}
-\bibcite{finance-dl-survey}{22}
-\bibcite{reformer}{23}
-\bibcite{nbeats}{24}
-\bibcite{nhits}{25}
+\bibcite{m4}{1}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Non-Mamba categorical search spaces. ``LR'' denotes learning rate and ``BS'' batch size.}}{15}{table.7}\protected@file@percent }
+\newlabel{tab:baseline-search-spaces}{{7}{15}{Non-Mamba categorical search spaces. ``LR'' denotes learning rate and ``BS'' batch size}{table.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Reference-model specification}{15}{subsection.A.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.4}Artifact gates and regeneration}{15}{subsection.A.4}\protected@file@percent }
+\bibcite{m5}{2}
+\bibcite{finance-dl-survey}{3}
+\bibcite{dlinear}{4}
+\bibcite{patchtst}{5}
+\bibcite{timesnet}{6}
+\bibcite{itransformer}{7}
+\bibcite{mamba}{8}
+\bibcite{smamba}{9}
+\bibcite{bimamba}{10}
+\bibcite{mambats}{11}
+\bibcite{timemachine}{12}
+\bibcite{msmamba}{13}
+\bibcite{karma}{14}
+\bibcite{dmamba}{15}
+\bibcite{informer}{16}
+\bibcite{reformer}{17}
+\bibcite{autoformer}{18}
+\bibcite{fedformer}{19}
+\bibcite{nbeats}{20}
+\bibcite{nhits}{21}
+\bibcite{revin}{22}
+\bibcite{nonstationary-transformer}{23}
+\bibcite{tsmamba}{24}
+\bibcite{fred}{25}
 \bibcite{yahoo-gld}{26}
-\bibcite{fred}{27}
-\gdef \@abspage@last{16}
+\bibcite{binance-data}{27}
+\bibcite{dickey-fuller}{28}
+\bibcite{kpss}{29}
+\gdef \@abspage@last{18}

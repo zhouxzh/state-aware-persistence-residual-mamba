@@ -1,0 +1,185 @@
+{
+  "schema_version": "1.0",
+  "numeric_facts": [
+    {
+      "fact_id": "N001",
+      "concept": "financial_panel_count",
+      "section": "Abstract",
+      "value": 4,
+      "unit": "panels",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 4,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E001"]
+    },
+    {
+      "fact_id": "N002",
+      "concept": "financial_panel_count",
+      "section": "Introduction",
+      "value": 4,
+      "unit": "panels",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 4,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E001"]
+    },
+    {
+      "fact_id": "N003",
+      "concept": "paired_task_count",
+      "section": "Introduction",
+      "value": 8,
+      "unit": "tasks",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 8,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E002"]
+    },
+    {
+      "fact_id": "N004",
+      "concept": "paired_task_count",
+      "section": "Experimental Setup",
+      "value": 8,
+      "unit": "tasks",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 8,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E002"]
+    },
+    {
+      "fact_id": "N005",
+      "concept": "learned_model_count",
+      "section": "Abstract",
+      "value": 9,
+      "unit": "models",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 9,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E001"]
+    },
+    {
+      "fact_id": "N006",
+      "concept": "learned_model_count",
+      "section": "Introduction",
+      "value": 9,
+      "unit": "models",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 9,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E001"]
+    },
+    {
+      "fact_id": "N007",
+      "concept": "forecast_horizon_count",
+      "section": "Abstract",
+      "value": 6,
+      "unit": "horizons",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 6,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E001"]
+    },
+    {
+      "fact_id": "N008",
+      "concept": "forecast_horizon_count",
+      "section": "Forecasting Models",
+      "value": 6,
+      "unit": "horizons",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 6,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E001"]
+    },
+    {
+      "fact_id": "N009",
+      "concept": "final_seed_count",
+      "section": "Abstract",
+      "value": 5,
+      "unit": "seeds",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 5,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E001"]
+    },
+    {
+      "fact_id": "N010",
+      "concept": "final_seed_count",
+      "section": "Experimental Setup",
+      "value": 5,
+      "unit": "seeds",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 5,
+      "analysis_set": "financial_confirmatory_v1",
+      "evidence_ids": ["E001"]
+    },
+    {
+      "fact_id": "N011",
+      "concept": "crypto_validation_mean_shift",
+      "section": "Selection-Safe Nonstationarity Characterization",
+      "value": 7.750096776689237,
+      "unit": "training_standard_deviations",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 730,
+      "analysis_set": "crypto_train_validation",
+      "evidence_ids": ["E003"]
+    },
+    {
+      "fact_id": "N012",
+      "concept": "crypto_validation_mean_shift",
+      "section": "Interim Results",
+      "value": 7.750096776689237,
+      "unit": "training_standard_deviations",
+      "numerator": null,
+      "denominator": null,
+      "sample_size": 730,
+      "analysis_set": "crypto_train_validation",
+      "evidence_ids": ["E003"]
+    }
+  ],
+  "methods": [
+    {
+      "method_id": "M001",
+      "name": "selection_safe_adf_kpss_level_diagnostics",
+      "analysis_intent": "descriptive",
+      "protocol_status": "prespecified",
+      "outcome_ids": ["O001"]
+    },
+    {
+      "method_id": "M002",
+      "name": "selection_safe_validation_shift_diagnostics",
+      "analysis_intent": "descriptive",
+      "protocol_status": "prespecified",
+      "outcome_ids": ["O002"]
+    }
+  ],
+  "results": [
+    {
+      "result_id": "R001",
+      "method_id": "M001",
+      "outcome_id": "O001",
+      "analysis_intent": "descriptive",
+      "sample_size": 4,
+      "evidence_ids": ["E003"],
+      "reported_sections": ["Abstract", "Experimental Setup", "Interim Results"]
+    },
+    {
+      "result_id": "R002",
+      "method_id": "M002",
+      "outcome_id": "O002",
+      "analysis_intent": "descriptive",
+      "sample_size": 4,
+      "evidence_ids": ["E003"],
+      "reported_sections": ["Abstract", "Experimental Setup", "Interim Results"]
+    }
+  ]
+}

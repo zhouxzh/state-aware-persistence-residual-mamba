@@ -14,7 +14,7 @@ Forecasting under distribution shift has motivated both normalization and archit
 RevIN normalizes each input instance and reverses the transformation at the output \cite{revin}.
 Non-stationary Transformers argue that normalization can remove predictive information and introduce a learned de-stationary mechanism \cite{nonstationary-transformer}.
 Decomposition methods separate trend-like and residual structure so that one representation need not explain all temporal scales \cite{autoformer,fedformer,dlinear}.
-The variants evaluated here combine reversible scaling with decomposition, multiple downsampling rates, or temporal patches, but their component labels denote architectural constructions rather than uniquely identified physical processes.
+The variants evaluated here combine reversible window normalization with decomposition, multiple downsampling rates, or temporal patches, but their component labels denote architectural constructions rather than uniquely identified financial processes.
 
 \subsection{Mamba for Time Series}
 
@@ -25,11 +25,15 @@ TSMamba further explores transfer through a bidirectional time-series foundation
 Several later studies overlap directly with the decomposition and multi-scale ideas considered in this repository.
 ms-Mamba uses Mamba blocks operating at multiple temporal sampling rates \cite{msmamba}; KARMA combines multilevel decomposition with multi-scale Mamba blocks for multivariate forecasting \cite{karma}; and DMamba assigns different forecasting modules to decomposed components \cite{dmamba}.
 The present study does not claim priority for decomposition or multi-scale Mamba as general principles.
-Its narrower purpose is to document the behavior of four implemented configurations under one repository protocol and to expose where that evidence is insufficient.
+Its narrower purpose is to compare four implemented configurations under a prospectively frozen financial protocol.
 
-\subsection{Evaluation Perspective}
+\subsection{Financial Forecast Evaluation}
 
-Forecasting competitions show that rankings vary across series, horizons, and evaluation choices, and that simple reference methods remain necessary comparators \cite{m4,m5}.
-Accordingly, this study retains a last-value forecast, reports each dataset separately, and does not average raw errors across targets with different scales.
-The reported model minima and horizon profiles are descriptive test-period summaries, not statistically significant differences.
-This distinction matters because the current runs use one seed, overlapping forecast windows, nonidentical optimization budgets, and a test period that was observed during architecture development.
+Financial time-series studies are sensitive to the definition of the target, temporal split, regime coverage, and reference forecast \cite{finance-dl-survey}.
+For persistent levels, a last-value forecast is an essential benchmark; drift and classical univariate or multivariate models provide additional checks that apparent neural gains are not consequences of an undemanding comparator.
+Forecasting competitions likewise show that rankings vary by series and horizon and that simple methods remain competitive \cite{m4,m5}.
+
+The present benchmark therefore reports each task and horizon rather than pooling raw errors across targets with different units.
+It uses a fixed future period, repeated neural training, and paired loss comparisons over common forecast origins.
+Overlapping origins are handled with moving-block resampling rather than treated as independent observations.
+These choices estimate performance within the frozen panels and dates; they do not identify a stable market mechanism or establish economic value.

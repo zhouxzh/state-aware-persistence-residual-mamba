@@ -1,110 +1,146 @@
 \section{Experimental Setup}
 
-\subsection{Datasets and Forecasting Tasks}
+\subsection{Financial Panels and Data Provenance}
 
-Table~\ref{tab:datasets} summarizes the two included S-mode tasks.
-Only the named target column is provided to each model, even when the source file contains additional variables.
-Both files are ordered, contain no duplicate dates, and contain no missing values in the evaluated target.
-Horizons are reported in observations because GLD follows business-day trading observations and the processed Exchange file contains only non-missing source dates.
+The frozen data cutoff is 2026-06-30.
+Table~\ref{tab:financial-panels} describes four daily panels after chronological sorting and complete-case intersection.
+The foreign-exchange panel uses six FRED exchange-rate series, with reciprocal transformations where needed so that every column is quoted as U.S. dollars per unit of foreign currency \cite{fred}.
+The yield panel contains 2-, 5-, 10-, and 30-year U.S. Treasury constant-maturity rates from FRED, with DGS10 as target \cite{fred}.
+The cross-asset panel aligns FRED S\&P 500, WTI crude-oil, and VIX levels with the unadjusted GLD close obtained from Yahoo Finance \cite{fred,yahoo-gld}.
+The cryptoasset panel uses daily UTC spot-closing prices from the official Binance public archive \cite{binance-data}.
+For the latter two panels, redistribution rights must be confirmed before a public data release; the local source archives, URLs, retrieval dates, byte counts, and SHA-256 hashes are retained.
 
-\begin{table}[H]
+\begin{table*}[t]
 \centering
-\caption{Included univariate forecasting tasks. Split counts follow the chronological 70/10/20 loader rule.}
-\label{tab:datasets}
-{\small
+\caption{Frozen financial panels. Counts refer to target observations within each calendar split. Each panel defines a target-only S task and a complete-panel MS task.}
+\label{tab:financial-panels}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{l l l r r r r l}
+\begin{tabular}{llllrrrr}
 \toprule
-Dataset & Target & Sampling & Total & Train & Validation & Test & Horizons \\
+Panel & Date range & Inputs in MS mode (target last) & Target & Total & Train & Validation & Test \\
 \midrule
-GLD & \texttt{close} & Business-day observations & 5,395 & 3,776 & 540 & 1,079 & 1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360 \\
-Exchange & \texttt{OT} (United Kingdom) & Non-missing daily quotes & 13,885 & 9,719 & 1,389 & 2,777 & 1, 3, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360 \\
+Foreign exchange & 1999-01-04--2026-06-30 & EURUSD, CADUSD, JPYUSD, CHFUSD, AUDUSD, GBPUSD & GBPUSD & 6,894 & 5,521 & 499 & 874 \\
+Treasury yields & 2006-02-09--2026-06-30 & DGS2, DGS5, DGS30, DGS10 & DGS10 & 5,101 & 3,728 & 500 & 873 \\
+Cross asset & 2016-07-25--2026-06-30 & S\&P 500, WTI, VIX, GLD & GLD & 2,483 & 1,112 & 502 & 869 \\
+Cryptoasset & 2018-05-04--2026-06-30 & ETHUSDT, BNBUSDT, XRPUSDT, BTCUSDT & BTCUSDT & 2,980 & 973 & 730 & 1,277 \\
 \bottomrule
 \end{tabular}%
 }
+\end{table*}
+
+All processed panels have unique increasing dates and no missing cells.
+Complete-case alignment avoids imputed targets but produces an irregular observation calendar governed by common market availability; horizons are therefore measured in panel observations, not elapsed calendar days.
+The fixed splits are training through 2020-12-31, validation from 2021-01-01 through 2022-12-31, and final evaluation from 2023-01-01 through 2026-06-30.
+Validation and test loaders can use preceding observations as input context, but every forecast target remains inside its named split.
+Each scaler is fitted only on the training rows.
+
+The legacy GLD and Exchange benchmarks were used during model development and are excluded from the present evidence boundary.
+Non-financial application benchmarks are also outside the protocol because the research question is specifically nonstationary financial forecasting rather than broad application-domain ranking.
+These exclusions were frozen with the new protocol and are not based on outcomes from its protected final period.
+
+\subsection{Selection-Safe Nonstationarity Characterization}
+
+Before test access, diagnostics read only training and validation targets.
+For training levels, the augmented Dickey--Fuller (ADF) test includes a constant and trend, and the KPSS test uses trend stationarity as its null \cite{dickey-fuller,kpss}.
+The same tests are applied to first differences with a constant but no trend.
+The diagnostic pair is interpreted descriptively: failure to reject an ADF unit-root null together with rejection of the KPSS trend-stationarity null supports treating the observed level as nonstationary, but neither test identifies a unique data-generating mechanism.
+
+Table~\ref{tab:selection-safe-diagnostics} reports the prespecified level tests and validation shifts.
+All four training targets show ADF $p>0.36$ and KPSS $p\leq0.01$ for levels.
+The validation period also changes materially in at least one location, scale, difference-volatility, or cross-series-correlation summary for every panel.
+Cryptoassets show the largest location and difference-volatility shifts, while cross-asset and foreign-exchange panels show the largest maximum absolute changes in feature--target first-difference correlations.
+
+\begin{table*}[t]
+\centering
+\caption{Selection-safe diagnostics computed without reading final-period targets. Mean shift is measured in training standard deviations; standard-deviation and difference-volatility columns are validation-to-training ratios. Correlation shift is the largest absolute change in a feature--target first-difference correlation.}
+\label{tab:selection-safe-diagnostics}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+Panel & Level ADF $p$ & Level KPSS $p$ & Mean shift & SD ratio & Difference-volatility ratio & Max. correlation shift \\
+\midrule
+Foreign exchange & 0.682 & $\leq0.010$ & $-1.294$ & 0.430 & 0.823 & 0.268 \\
+Treasury yields & 0.363 & $\leq0.010$ & $-0.512$ & 0.858 & 1.129 & 0.026 \\
+Cross asset & 0.719 & $\leq0.010$ & 1.708 & 0.344 & 1.251 & 0.323 \\
+Cryptoasset & 1.000 & $\leq0.010$ & 7.750 & 3.669 & 4.521 & 0.106 \\
+\bottomrule
+\end{tabular}%
 }
-\end{table}
+\end{table*}
 
-GLD was downloaded from Yahoo Finance with ticker \texttt{GLD} and \texttt{auto\_adjust=False}; the target is therefore the unadjusted close rather than an adjusted return series \cite{yahoo-gld}.
-The local snapshot spans 2004-11-18 to 2026-04-30.
-Its training, validation, and test targets end on 2019-11-18, 2022-01-10, and 2026-04-30, respectively.
+Figure~\ref{fig:financial-nonstationarity} visualizes the same evidence boundary.
+Targets are standardized by training means and standard deviations; trailing 60-observation first-difference volatility is divided by its training median.
+The gray interval is validation, and no 2023--2026 target is shown.
 
-The Exchange source is a repository-local long-format compilation identified as originating from FRED \cite{fred}.
-The preparation script \path{scripts/prepare_exchange_uk.py} selects rows labelled \texttt{United Kingdom}, removes missing source values, sorts by date, and renames the value to \texttt{OT}.
-The resulting series spans 1971-01-04 to 2026-05-15, with target boundaries at 2009-09-17, 2015-04-06, and 2026-05-15.
-The raw retrieval record and exact FRED series identifier were not preserved; the quote direction and unit therefore cannot be independently verified from the repository and the target is treated as a quoted rate rather than assigned an economic unit.
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/financial_nonstationarity_selection_safe.pdf}
+    \caption{Selection-safe financial data characterization. Dashed vertical lines mark the start of validation, and gray regions denote validation observations. The left column shows target levels standardized using training data only. The right column shows lagged trailing 60-observation first-difference volatility relative to its training median. Test targets are neither read nor plotted.}
+    \label{fig:financial-nonstationarity}
+\end{figure*}
 
-Validation and test datasets include up to \texttt{seq\_len} earlier observations as input context, but their forecast targets remain within the nominal split.
-The loader fits a \texttt{StandardScaler} on the training target only and applies it to all splits.
-Predictions and targets are inverse-transformed before metrics are computed.
+\subsection{Selection and Locked Evaluation}
 
-Weather was run exploratorily before a data-quality defect was identified: 50 training-target values encoded as \texttt{-9999} were neither replaced nor masked before scaling and training.
-Its exclusion is therefore a post hoc protocol amendment made after exploratory outcomes existed, not a prespecified dataset filter.
-No Weather value contributes to the reported comparison; a documented cleaning rule and complete rerun of every method are required before it can be used as evidence.
+The learned set contains DLinear, NLinear, PatchTST, TimesNet, iTransformer, S-Mamba, NS-Mamba-D, MS-Mamba-MD, and PMS-Mamba-PD.
+Every model--task study receives 12 effective Optuna trials, where completed and pruned trials count toward the fixed budget.
+A seeded TPE sampler evaluates calibration horizons 5, 60, and 252; median pruning begins after four startup trials.
+The three best completed calibration trials are then replayed across all six validation horizons.
+The configuration with the smallest balanced validation RMSSE is frozen for that model and task.
+Training uses Adam, at most 10 epochs, early-stopping patience 3, and mean squared error.
+Model-specific search spaces are listed in Appendix~\ref{app:frozen-protocol}.
 
-\subsection{Metrics, Origins, and Aggregation}
+No final-period evaluation is permitted during selection.
+The selection audit verifies task and model coverage, protocol and data hashes, horizon lists, validation flags, and that the final-evaluation flag remains unopened for every selected record.
+Only after this audit may the explicit \texttt{--unlock-test} gate be invoked.
+The selected neural configurations are then retrained and evaluated with seeds 2023--2027.
+Neural weights are fitted on training observations, with validation observations used for early stopping rather than gradient updates.
+The complete neural matrix contains $8\times9\times5=360$ task--model--seed cells, each comprising six separately fitted horizon models.
+Statistical references refuse to access the final period until all 360 neural cells are complete.
 
-For a nominal forecast length $H$, each test example predicts all leads $h=1,\ldots,H$.
-With $T_{\mathrm{test}}$ target observations, the sliding-window loader yields $O_H=T_{\mathrm{test}}-H+1$ origins and $N_H=O_HH$ scalar forecast errors.
-The reported value for length $H$ pools every origin and all leads up to $H$; it is not an error calculated only at lead $H$.
-Thus, origin counts range from 1,079 to 720 for GLD and from 2,777 to 2,418 for Exchange as $H$ increases from 1 to 360.
+\subsection{Metrics and Prespecified Analysis}
 
-For predictions $\hat{Y}$ and targets $Y$, root mean squared error is
+For task $d$, horizon $H$, forecast origin $o$, and lead $h$, let $e_{d,o,h}=Y_{d,o,h}-\hat{Y}_{d,o,h}$.
+Path MSE averages $e_{d,o,h}^2$ over every available origin and all leads $1,\ldots,H$; terminal MSE uses only lead $H$.
+MAE and RMSE are defined analogously.
+RMSSE divides MSE by the mean squared one-step difference of the inverse-transformed training target and then takes the square root \cite{m5}:
 \begin{equation}
-    \operatorname{RMSE}
-    =
-    \sqrt{\frac{1}{N_H}\sum_{i=1}^{N_H}(Y_i-\hat{Y}_i)^2}.
+    \operatorname{RMSSE}_{d,H}=
+    \sqrt{\frac{\operatorname{MSE}_{d,H}}
+    {(T_d-1)^{-1}\sum_{t=2}^{T_d}(Y_{d,t}-Y_{d,t-1})^2}}.
 \end{equation}
-RMSSE normalizes forecast error by one-step changes in the inverse-transformed training target $X_{1:T}$ \cite{m5}:
+Metrics remain task-specific; raw errors are never averaged across targets with different units.
+Balanced RMSSE is the unweighted mean over the six horizons, equivalently the mean of the short ($1,5$), middle ($20,60$), and long ($120,252$) group means.
+
+For each fitted model, skill relative to last-value is
 \begin{equation}
-    \operatorname{RMSSE}
-    =
-    \sqrt{
-        \frac{N_H^{-1}\sum_{i=1}^{N_H}(Y_i-\hat{Y}_i)^2}
-        {(T-1)^{-1}\sum_{t=2}^{T}(X_t-X_{t-1})^2}
-    }.
+    \operatorname{Skill}_{d,H}=1-
+    \frac{\operatorname{MSE}_{d,H}^{\mathrm{model}}}
+         {\operatorname{MSE}_{d,H}^{\mathrm{LV}}}.
 \end{equation}
-The denominator is fixed within a dataset but differs across datasets, so raw RMSSE is compared only within each dataset.
+Positive values indicate lower path MSE than persistence.
+Neural metrics are summarized as mean and standard deviation over five seeds.
+S and MS estimates are paired by panel, model, and horizon.
 
-Short, middle, and long sets are $\{1,3,5,7\}$, $\{14,30,60,90\}$, and $\{120,180,270,360\}$.
-If $\bar{R}_{g}$ denotes mean RMSSE within group $g$, the study-level aggregation is
-\begin{equation}
-    \operatorname{BalancedRMSSE}
-    = \frac{1}{3}\left(\bar{R}_{\mathrm{short}}+\bar{R}_{\mathrm{middle}}+\bar{R}_{\mathrm{long}}\right).
-\end{equation}
-Because every group contains four forecast lengths here, this quantity is also the arithmetic mean of the 12 RMSSE values.
-It is a protocol-specific summary and does not create independent replications from the 12 overlapping tasks.
+For confirmatory contrasts, origin-level squared losses are first averaged across the five neural seeds.
+Each proposed variant (NS-Mamba-D, MS-Mamba-MD, and PMS-Mamba-PD) is paired with S-Mamba and with the non-Mamba model selected on validation for the same task.
+A circular moving-block bootstrap resamples the paired origin-level loss difference 10,000 times.
+The block length is $\min\{n,\max(H,\lceil n^{1/3}\rceil)\}$, and percentile 95\% intervals are reported.
+Within each task, proposal, and comparator, two-sided bootstrap $p$-values across the six horizons receive Holm adjustment.
 
-\subsection{Training and Hyperparameter Selection}
+The prespecified secondary regime analysis assigns each origin using the standard deviation of target first differences over the preceding 60 observations, lagged by one observation.
+Training-period 0.25 and 0.75 quantiles define low-, middle-, and high-volatility regimes.
+Return forecasting is deferred until the primary level benchmark is complete and cannot replace an unfavorable level result.
 
-Each learned model--horizon configuration is trained separately with Adam, at most 10 epochs, early-stopping patience 3, and configured seed 2023.
-Optuna uses a seeded TPE sampler and median pruning.
-The neural baseline family contains Autoformer, DLinear, Informer, NLinear, Non-stationary Transformer, PatchTST, Reformer, TimesNet, Transformer, and iTransformer.
-The Mamba family contains S-Mamba, NS-Mamba-D, MS-Mamba-MD, and PMS-Mamba-PD.
-Last-value is deterministic and receives no tuning budget.
+\subsection{Reproducibility and Evidence Boundary}
 
-The neural search first evaluates a calibration horizon set.
-Up to five top completed trials are replayed across the full validation horizon suite, and the candidate with the lowest validation balanced RMSSE is selected.
-Only that selected configuration is evaluated by the final-sweep code on the test split.
-This procedure yields 336 trained-model test cells, 168 per dataset; the deterministic calculation adds 24 last-value cells.
+Protocol version \texttt{financial\_confirmatory\_v1} was frozen on 2026-07-25.
+Its SHA-256 is
+\begin{center}
+\small\ttfamily 1b1a8d94847ab2296dec0db9a5cbe596836aae15fd8e7d88c1e4082e178d5963
+\end{center}
+Processed-data hashes, source hashes, split counts, software and GPU metadata, deterministic-algorithm flags, run times, and peak GPU memory are checked before manuscript generation.
+Interrupted Optuna studies resume from persistent storage, with stale running trials marked failed rather than silently counted as completed.
+Final tables cannot be generated from a partial task subset or from validation scores.
 
-Search budgets are not identical.
-GLD stores 20 trial records per baseline and Mamba model, but its refreshed neural-baseline search calibrates on all 12 horizons while the Mamba search calibrates on three.
-Exchange stores 20 neural-baseline trial records and 24 Mamba trial records per model.
-Search spaces are model-specific, and some archived studies contain interrupted or failed states.
-Table~\ref{tab:benchmark-optuna-protocol} reports the exact records; comparisons are therefore model-specific tuned point estimates rather than equal-compute optimization results.
-
-The split discipline above describes each final sweep, not the complete research cycle.
-Repository development records show that earlier GLD test outcomes informed promotion of decomposition and patch-temporal variants before the reported benchmark was frozen.
-Accordingly, the current GLD test period is development evidence and cannot support an untouched confirmatory claim.
-
-\subsection{Result and Software Provenance}
-
-The four trained-model result matrices follow \path{results/<dataset>_<phase>_optuna_best.csv}; selected configurations and trial histories are stored under \path{results/optuna/}.
-The last-value rows are deterministically regenerated from the two target files by \path{manuscript/scripts/generate_benchmark_results.py} and written to \path{manuscript/data/last_value_baseline.csv}.
-The same generator checks model--horizon coverage, completion state, split flags, metric finiteness, group aggregation, and agreement with selected-parameter metadata before writing the tables.
-
-All 216 Exchange and GLD-Mamba trained rows match saved run-level \texttt{metrics.npy} files.
-The 120 GLD neural-baseline rows are frozen in the authoritative CSV and a reproduction bundle containing parameters, checkpoints, predictions, and replay summaries.
-The pinned software environment records Python 3.9.23, PyTorch 2.6.0 with CUDA 12.6 build, \texttt{mamba-ssm} 2.2.4, NumPy 1.23.5, pandas 2.3.1, and scikit-learn 1.6.1.
-The original GPU model, runtime, memory use, and energy consumption were not recorded, so no computational-efficiency comparison is made.
+At the time of this manuscript version, selection remains in progress and the final outcome files do not exist.
+Accordingly, no validation ranking is presented as a result, no test target has been opened for manuscript analysis, and all performance statements remain pending.

@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "document_id": "financial-confirmatory-v1-interim",
+  "study_design": "locked_time_series_prediction_benchmark",
+  "draft_status": "internal_review",
+  "submission_ready": false,
+  "registries": {
+    "authorship_manifest": "author_verification_required.md",
+    "claim_evidence": "not_created_until_final_results",
+    "consistency_manifest": "consistency_manifest.json",
+    "reporting_coverage": "not_selected_until_target_venue",
+    "source_manifest": "references.bib"
+  },
+  "reporting_guidelines": [],
+  "human_verification": {
+    "completed": false,
+    "verified_by": "",
+    "verified_on": ""
+  },
+  "confidentiality_review": {
+    "completed": false,
+    "external_services_authorized": false,
+    "policy_checked": false,
+    "verified_by": "",
+    "verified_on": ""
+  },
+  "required_statements": {
+    "ai_disclosure": "missing",
+    "author_contributions": "missing",
+    "code_availability": "missing",
+    "conflicts": "missing",
+    "consent": "missing",
+    "data_availability": "missing",
+    "ethics": "missing",
+    "funding": "missing"
+  }
+}
