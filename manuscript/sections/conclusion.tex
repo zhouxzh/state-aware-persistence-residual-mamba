@@ -1,10 +1,10 @@
 \section{Conclusion}
 
-This work establishes a locked benchmark for evaluating Mamba-based forecasts of nonstationary financial levels.
-Four financial panels yield paired univariate-input and multivariate-input single-target tasks, evaluated at six horizons against five learned baselines and four Mamba configurations.
-The final design adds persistence, drift, ARIMA, and VAR-on-differences references, five neural seeds, paired S/MS analysis, moving-block bootstrap intervals, multiplicity adjustment, and prespecified volatility regimes.
+This work develops PMS-Mamba, a decomposition-aware multi-scale patch Mamba model for nonstationary financial level forecasting.
+Its central design choice is to place the selective state-space scan over ordered temporal patches rather than over variable tokens alone.
+The resulting representation preserves the normalized input through additive decomposition, pools temporal variation without amplifying a maximum-norm perturbation, and uses bounded fixed mean fusion across scales.
 
-Training/validation diagnostics show substantial nonstationarity and distribution shift, but they do not establish forecast superiority.
-The 2023--2026 final period remains locked after validation-only selection was completed and audited.
-Accordingly, the present conclusion is procedural rather than empirical: the study is positioned to test whether the proposed variants improve on strong financial references without reusing development outcomes, but that question remains unanswered in this manuscript version.
-Any final conclusion will be generated only from the complete validated evidence matrix and will preserve unfavorable, null, and panel-specific findings.
+Selection-safe analysis of foreign exchange, Treasury yields, cross-asset prices, and cryptoassets documents material changes in local level, scale, volatility, and cross-series dependence.
+These observations motivate the model but do not demonstrate forecast superiority.
+The required next step is a recomputed, mechanism-oriented ablation study with matched capacity and a protected out-of-sample evaluation.
+Until those results are complete, the manuscript makes no claim that PMS-Mamba improves financial forecasts.

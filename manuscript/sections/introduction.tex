@@ -1,34 +1,30 @@
 \section{Introduction}
 
-Financial forecasting is frequently evaluated on price or rate levels that combine strong persistence with changes in location, scale, volatility, and dependence across markets.
-These properties complicate both modeling and evaluation.
-A flexible model can appear accurate by reproducing persistence, while a random chronological split can expose it to a future period unlike the one used for fitting.
-Accordingly, evidence for a forecasting architecture requires explicit reference forecasts, fixed temporal boundaries, selection separated from final evaluation, and uncertainty estimates that respect dependent forecast origins \cite{m4,m5,finance-dl-survey}.
+Financial level forecasting is difficult not simply because prices and rates are persistent, but because the representation useful in one local window can become poorly scaled or emphasize the wrong time scale in another.
+Location, volatility, and cross-series dependence can all change while the prediction target remains a level.
+An architecture for this setting should therefore preserve local scale information, separate slow and rapidly changing structure without treating either as an identified economic mechanism, and retain temporal order at more than one resolution.
 
-Modern long-horizon forecasters use linear decompositions, temporal patches, two-dimensional temporal representations, or inverted variable tokens \cite{dlinear,patchtst,timesnet,itransformer}.
-Mamba provides an input-selective state-space operator with sequence-length scaling that is linear in the recurrent scan \cite{mamba}.
-Forecasting adaptations differ in whether the scan acts across variables or temporal tokens and whether decomposition or multiple temporal resolutions are introduced \cite{smamba,bimamba,mambats,timemachine,msmamba,karma,dmamba}.
-These architectural differences are plausible responses to changing temporal structure, but plausibility alone does not show that they improve out-of-period financial forecasts.
+Mamba supplies an input-selective state-space recurrence with a linear recurrent scan \cite{mamba}.
+However, the tokenization choice determines what that scan can model.
+In an inverted variable-token encoder, each whole variable history is embedded into one token \cite{smamba,itransformer}.
+For a univariate task, the resulting token sequence has length one: the Mamba block can transform the embedded history, but it cannot perform a recurrence across temporal tokens.
+This implementation-level limitation motivates a temporal-patch state-space model rather than another variable-token variant.
 
-This study asks three bounded questions.
-First, do the tested Mamba variants improve level forecasts relative to persistence, drift, statistical models, and tuned non-Mamba neural baselines?
-Second, are any differences stable across foreign-exchange, yield-curve, cross-asset, and cryptoasset panels and across forecast horizons from one observation to approximately one trading year?
-Third, does adding contemporaneously available panel histories improve single-target forecasts relative to the paired univariate-input task?
-The study predicts statistical levels rather than returns and does not evaluate trading profitability.
+We construct PMS-Mamba (patch multi-scale Mamba), which applies reversible window normalization, an additive moving-average decomposition, mean-pooled temporal resolutions, and bidirectional Mamba encoders over ordered patches.
+The model is designed around three representation hypotheses: slow and high-frequency variation should not be forced through the same branch; a local perturbation should be smoothed rather than amplified before coarse-scale encoding; and a univariate state-space model should receive a sequence of temporal patches rather than a single variable token.
+These are architectural hypotheses, not assumptions that financial markets follow a fixed trend--seasonal--residual process.
 
-To answer these questions without reusing the development evidence, we froze version 1 of the financial confirmatory protocol before opening its final period.
-Four panels generate eight paired tasks: S mode uses only the target history, whereas MS mode supplies the complete panel history but evaluates only the named target.
-Nine learned models share a 12-trial selection budget per task and are evaluated at six horizons using five final seeds.
-The final period, 2023-01-01 through 2026-06-30, is protected by an explicit software gate until all validation selections and their hashes pass audit.
-Legacy GLD and Exchange experiments informed development and are excluded from confirmatory claims; non-financial application benchmarks are outside the frozen scope.
+The four financial panels are used first to test whether the proposed representation problem is present in the data.
+They span foreign exchange, Treasury yields, cross-asset prices, and cryptoassets, and produce paired target-only and multivariate-input tasks.
+The analysis uses only training and validation observations to characterize nonstationarity and distribution shift; it does not use the protected 2023--2026 targets to select the narrative.
 
-The contributions of the study design are:
+The contributions are:
 \begin{itemize}
-    \item a checksum-bound, fixed-calendar benchmark spanning four financial targets, paired S/MS tasks, six horizons, and five final seeds;
-    \item an implementation-grounded comparison of inverted, decomposition, multi-scale, and patch-temporal Mamba configurations against neural and statistical references;
-    \item a prespecified analysis of path and terminal errors, improvement relative to last-value, paired S/MS differences, volatility regimes, and dependence-aware bootstrap contrasts; and
-    \item fail-closed result generation that withholds final tables until every required model, seed, task, horizon, and provenance field is present.
+    \item an implementation-grounded diagnosis of the single-token limitation of inverted Mamba encoders for univariate forecasting;
+    \item PMS-Mamba, which joins additive decomposition, multi-scale pooling, temporal patches, and bidirectional selective state-space encoding in one financial-level forecaster;
+    \item representation-level propositions for additive component preservation, pooling stability, and bounded fixed scale fusion, with proofs in Appendix~\ref{app:theory}; and
+    \item a data analysis across four financial panels together with a leakage-controlled evaluation design for testing the model against persistence, statistical, and neural references.
 \end{itemize}
 
-This version is an interim, protocol-aligned manuscript.
-It reports only training/validation data characterization; performance results and conclusions remain deliberately unwritten until the locked matrix is complete.
+This version reports the model, its representation properties, and selection-safe data analysis.
+The final out-of-sample outcome matrix is not yet available, so the manuscript makes no claim that PMS-Mamba improves forecasting accuracy.

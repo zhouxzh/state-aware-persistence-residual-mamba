@@ -1,46 +1,42 @@
-\section{Forecasting Models}
+\section{PMS-Mamba}
 
-\subsection{Paired Forecasting Tasks}
+\subsection{Forecasting Task and Notation}
 
-Let $\mathbf{X}_{t-L+1:t}\in\mathbb{R}^{L\times C}$ denote the observations available at forecast origin $t$, and let $Y_{t+1:t+H}\in\mathbb{R}^{H}$ denote the future path of one target series.
-For each financial panel, the S task sets $C=1$ and supplies only the target history.
-The paired MS task supplies all $C>1$ panel variables, with the target stored in the last channel.
-Although MS models emit one forecast per input channel internally, training loss and evaluation select only this final target channel.
-Thus, MS means multivariate input to single-target prediction rather than unrestricted multivariate forecasting.
-The horizon set is
+Let $\mathbf{X}_{t-L+1:t}\in\mathbb{R}^{L\times C}$ be the observations available at forecast origin $t$, and let $\mathbf{Y}_{t+1:t+H}\in\mathbb{R}^{H}$ be the future path of one target series.
+The target-only task uses $C=1$.
+The paired multivariate-input task uses all $C>1$ panel variables while evaluating only the target stored in the final channel.
+Thus, the multivariate task tests whether contemporaneously available histories improve one target forecast; it is not a claim of unrestricted multivariate forecasting or causal cross-market influence.
+Separate models are fitted for horizons
 \begin{equation}
     H\in\{1,5,20,60,120,252\}.
 \end{equation}
-A separate model is fitted for every task and horizon; its lookback length $L$ and other hyperparameters are selected using validation data only.
 
-\subsection{Selective State-Space Backbone}
+\subsection{Why Temporal Patches Are Needed}
 
-A discretized linear state-space model updates a latent state $\mathbf{h}_t$ and produces an output $\mathbf{y}_t$ as
+Mamba is an input-selective state-space model with updates
 \begin{equation}
-    \mathbf{h}_t=\bar{\mathbf{A}}\mathbf{h}_{t-1}+\bar{\mathbf{B}}\mathbf{x}_t,
+    \mathbf{h}_j=\bar{\mathbf{A}}_j\mathbf{h}_{j-1}+\bar{\mathbf{B}}_j\mathbf{e}_j,
     \qquad
-    \mathbf{y}_t=\mathbf{C}\mathbf{h}_t.
+    \mathbf{o}_j=\mathbf{C}_j\mathbf{h}_j,
 \end{equation}
-Mamba makes the discretization and readout input-dependent, producing selective parameters $\bar{\mathbf{A}}_t$, $\bar{\mathbf{B}}_t$, and $\mathbf{C}_t$ \cite{mamba}:
-\begin{equation}
-    \mathbf{h}_t=\bar{\mathbf{A}}_t\mathbf{h}_{t-1}+\bar{\mathbf{B}}_t\mathbf{x}_t,
-    \qquad
-    \mathbf{y}_t=\mathbf{C}_t\mathbf{h}_t.
-\end{equation}
-The repository encoder applies independent forward and reverse Mamba scans, sums their outputs, and uses residual connections, layer normalization, and a feed-forward sublayer.
-Figure~\ref{fig:mamba-arch} shows this conceptual block.
+where the transition and readout parameters depend on the input token $\mathbf{e}_j$ \cite{mamba}.
+The recurrence is only meaningful along the sequence presented to it.
+S-Mamba uses an inverted embedding that maps each complete variable history to one token \cite{smamba}.
+It therefore receives $C$ tokens rather than $L$ temporal tokens.
 
-\begin{figure}[t]
-    \centering
-    \input{arch/mamba_arch_tikz}
-    \caption{Conceptual bidirectional Mamba block used by the forecasting encoders. The diagram describes the implemented information flow; it does not imply a causal interpretation of the learned state.}
-    \label{fig:mamba-arch}
-\end{figure}
+\begin{proposition}[Single-token limitation]
+\label{prop:single-token}
+For a target-only input ($C=1$), an inverted variable-token encoder presents exactly one token to its state-space block. Its output may depend on the complete input history through the embedding, but the state-space block has no transition between distinct temporal tokens.
+\end{proposition}
 
-\subsection{S-Mamba}
+Proposition~\ref{prop:single-token} does not imply that S-Mamba is incapable of forecasting a univariate series; its embedding and projection remain learned functions of the input window.
+It identifies a mismatch between a temporal state-space motivation and a one-token implementation.
+PMS-Mamba resolves that mismatch by tokenizing each normalized time history into ordered temporal patches.
 
-S-Mamba uses reversible normalization and inverted variable tokens \cite{smamba}.
-For sample $b$ and variable $c$,
+\subsection{Decomposition-Aware Multi-Scale Patch Encoder}
+
+For every input window, PMS-Mamba first applies reversible per-window normalization.
+For a batch item $b$ and channel $c$,
 \begin{equation}
     \mu_{b,c}=\frac{1}{L}\sum_{t=1}^{L}X_{b,t,c},
     \qquad
@@ -49,93 +45,87 @@ For sample $b$ and variable $c$,
 \begin{equation}
     Z_{b,t,c}=\frac{X_{b,t,c}-\mu_{b,c}}{\sigma_{b,c}}.
 \end{equation}
-The entire normalized history of variable $c$ is projected to one token,
-\begin{equation}
-    \mathbf{e}_{b,c}=W_{\mathrm{emb}}\mathbf{z}_{b,:,c}+\mathbf{b}_{\mathrm{emb}},
-    \qquad
-    \mathbf{E}\in\mathbb{R}^{B\times C\times d_{\mathrm{model}}}.
-\end{equation}
-After bidirectional Mamba encoding, a linear head produces $H$ values per variable and the window transformation is reversed.
-In S tasks, the encoder receives one variable token and therefore cannot model cross-series relations.
-In MS tasks, it receives all panel variables and can represent associations among their histories, although the paired design does not establish that any such association is causal.
+The final forecast is returned to the input window's location and scale.
+This operation stabilizes the representation under local changes in level and magnitude; because $\epsilon>0$, it is not claimed to provide exact affine equivariance.
 
-\begin{figure}[t]
-    \centering
-    \input{arch/s_mamba_encoder_tikz}
-    \caption{S-Mamba forecasting encoder with reversible normalization, variable-token embedding, bidirectional encoding, horizon projection, and inverse normalization.}
-    \label{fig:s-mamba-encoder}
-\end{figure}
-
-\subsection{Decomposition and Multi-Scale Variants}
-
-NS-Mamba-D uses standard reversible normalization and a three-way moving-average decomposition.
-With centered moving average $\operatorname{MA}_{m}(\cdot)$ and boundary replication,
+Let $\mathcal{M}_m$ denote the boundary-replicated moving average with window $m$ used in the implementation.
+PMS-Mamba constructs three additive components,
 \begin{align}
-    \mathbf{Z}^{\mathrm{tr}} &= \operatorname{MA}_{m}(\mathbf{Z}), \\
-    \mathbf{R}^{0} &= \mathbf{Z}-\mathbf{Z}^{\mathrm{tr}}, \\
-    \mathbf{Z}^{\mathrm{se}} &= \operatorname{MA}_{m}(\mathbf{R}^{0}), \\
-    \mathbf{Z}^{\mathrm{re}} &= \mathbf{R}^{0}-\mathbf{Z}^{\mathrm{se}}.
+    \mathbf{T} &= \mathcal{M}_m(\mathbf{Z}), \\
+    \mathbf{D} &= \mathbf{Z}-\mathbf{T}, \\
+    \mathbf{S} &= \mathcal{M}_m(\mathbf{D}), \\
+    \mathbf{R} &= \mathbf{D}-\mathbf{S}.
 \end{align}
-Independent S-Mamba branches forecast the three components, and their normalized forecasts are summed before inverse normalization.
-The labels trend, seasonal, and residual name architectural components only; they are not identified economic processes.
+The symbols $\mathbf{T}$, $\mathbf{S}$, and $\mathbf{R}$ denote a smoothed component, a smoothed residual, and a residual component, respectively.
+They are architectural representations, not identified trend, seasonal, or structural financial processes.
 
-MS-Mamba-MD first concatenates the three components along the variable dimension and forms average-pooled temporal scales $s\in\mathcal{S}$:
+For each scale $s\in\mathcal{S}=\{1,2,4\}$, average pooling constructs
 \begin{equation}
-    \mathbf{V}_{s}=\mathcal{P}_{s}\!\left(
-        \operatorname{concat}_{C}[\mathbf{Z}^{\mathrm{tr}},\mathbf{Z}^{\mathrm{se}},\mathbf{Z}^{\mathrm{re}}]
-    \right).
+    \mathbf{V}^{(s)}=\mathcal{P}_s\!\left(\operatorname{concat}_{C}[\mathbf{T},\mathbf{S},\mathbf{R}]\right).
 \end{equation}
-One inverted-token Mamba branch processes the $3C$ component tokens at each scale.
-Its component forecasts are summed within variable, and the frozen MD configuration averages forecasts over scales.
-
-The patch variant, PMS-Mamba-PD, retains the decomposition and scale construction.
-It replaces each inverted-token branch with temporal patch tokens.
-For component channel $k$, patch length $p$, and stride $r$, patch $j$ is embedded as
+Each channel of $\mathbf{V}^{(s)}$ is divided into ordered, right-padded patches of length $p$ and stride $r$.
+The patch embedding is followed by a bidirectional Mamba encoder and a flattened projection head.
+If $g_s$ denotes this scale-specific mapping, its output is regrouped into the three components and summed within each original variable:
 \begin{equation}
-    \mathbf{e}_{j,k}^{(s)}=
-    W_p\operatorname{vec}\!\left(\mathbf{V}_{s,j:j+p-1,k}\right).
+    \widetilde{\mathbf{Y}}^{(s)}_c=
+    \sum_{k\in\{T,S,R\}}g_{s,k,c}(\mathbf{V}^{(s)}),
+    \qquad
+    \widetilde{\mathbf{Y}}=
+    \frac{1}{|\mathcal{S}|}\sum_{s\in\mathcal{S}}\widetilde{\mathbf{Y}}^{(s)}.
 \end{equation}
-Mamba scans the patch sequence, a flattened head maps it to $H$ values, and component and scale forecasts are combined by sums and means, respectively.
-Table~\ref{tab:mamba-variant-meaning} summarizes the fixed distinctions among the four Mamba labels.
+The frozen PMS-Mamba-PD configuration uses this fixed mean scale fusion rather than learned or shift-gated fusion.
+Figure~\ref{fig:pms-mamba} summarizes the implemented flow.
 
-\begin{table}[t]
-\centering
-\caption{Mamba configurations in the frozen benchmark.}
-\label{tab:mamba-variant-meaning}
-{\small
-\begin{tabular}{lll}
-\toprule
-Variant & Tokenization and structure & Fusion \\
-\midrule
-S-Mamba & Inverted variable tokens & Single path \\
-NS-Mamba-D & Three independent decomposition branches & Component sum \\
-MS-Mamba-MD & Component tokens at multiple temporal scales & Mean over scales \\
-PMS-Mamba-PD & Temporal patches at multiple decomposed scales & Mean over scales \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
+\begin{figure*}[t]
+    \centering
+    \resizebox{0.88\textwidth}{!}{\input{figures/pms_mamba_arch}}
+    \caption{PMS-Mamba-PD. A normalized input window is decomposed, pooled at multiple temporal resolutions, converted into ordered patches, and processed by a bidirectional Mamba encoder at each scale. Component forecasts are summed and scale forecasts are mean fused before inverse normalization.}
+    \label{fig:pms-mamba}
+\end{figure*}
 
-\subsection{Learned and Statistical Comparators}
+\subsection{Representation Properties}
 
-The learned comparison set contains DLinear, NLinear, PatchTST, TimesNet, and iTransformer \cite{dlinear,patchtst,timesnet,itransformer}.
-These models cover decomposition-based and last-value-centered linear mappings, temporal patch attention, two-dimensional temporal modeling, and inverted variable-token attention.
-All learned models use the same task-specific optimization budget and final seed set.
+The following propositions concern the fixed representation and aggregation operations in PMS-Mamba, not the unknown data-generating process or the nonlinear learned branches.
 
-Four non-neural references address the strong persistence of financial levels.
-Last-value repeats $Y_t$ for every lead.
-Random-walk-with-drift extrapolates the average change from the first available observation through origin $t$.
-ARIMA order $(p,d,q)$ is chosen on training data by minimum AIC over $d\in\{0,1\}$ and $p,q\in\{0,1,2,3\}$, excluding ARIMA$(0,0,0)$.
-For MS tasks only, VAR-difference selects a lag from 1 through 10 by training BIC, forecasts first differences of the complete panel, and accumulates the target differences back to levels.
-Orders and lags are selected using training data only.
-Coefficients are then estimated once from all pre-test training and validation observations; states are updated sequentially with newly observed test values without refitting coefficients at every origin.
+\begin{proposition}[Additive component preservation]
+\label{prop:additive}
+For every normalized input window $\mathbf{Z}$, the implemented decomposition satisfies
+\begin{equation}
+    \mathbf{Z}=\mathbf{T}+\mathbf{S}+\mathbf{R}.
+\end{equation}
+\end{proposition}
+
+\begin{proposition}[Stable pooling and bounded mean fusion]
+\label{prop:stable-fusion}
+For any two component tensors $\mathbf{U}$ and $\mathbf{V}$, every average-pooling operator used by PMS-Mamba satisfies
+\begin{equation}
+    \left\|\mathcal{P}_s(\mathbf{U})-\mathcal{P}_s(\mathbf{V})\right\|_{\infty}
+    \leq \left\|\mathbf{U}-\mathbf{V}\right\|_{\infty}.
+\end{equation}
+For fixed scale-specific forecasts, each coordinate of fixed mean fusion lies between the minimum and maximum of that coordinate over the scales.
+\end{proposition}
+
+Proofs appear in Appendix~\ref{app:theory}.
+The first property prevents information loss before learned component branches; the second shows that pooling and fixed fusion do not amplify a coordinatewise perturbation by themselves.
+Neither property establishes forecast accuracy, and both require empirical evaluation of the learned maps $g_s$.
+
+\subsection{Ablation Logic and Comparators}
+
+The implemented Mamba configurations isolate progressively richer representations: S-Mamba uses one inverted variable-token path; NS-Mamba-D adds the additive decomposition; MS-Mamba-MD adds multi-scale component tokens; and PMS-Mamba-PD replaces the variable-token encoder with temporal patch encoders.
+These comparisons do not constitute a complete factorial ablation because decomposition, scale construction, and tokenization change jointly in some transitions.
+The recomputed study will therefore add matched patch-only, decomposition-only, multi-scale-only, and full PMS-Mamba variants with parameter counts reported for every model.
+
+The external learned comparators are DLinear, NLinear, PatchTST, TimesNet, and iTransformer \cite{dlinear,patchtst,timesnet,itransformer}.
+Last-value, random-walk-with-drift, and ARIMA provide univariate references; VAR on first differences provides a multivariate reference.
+ARIMA orders $(p,d,q)$ are selected on training data by AIC over $d\in\{0,1\}$ and $p,q\in\{0,1,2,3\}$, excluding ARIMA$(0,0,0)$.
+For multivariate tasks, VAR lags from 1 through 10 are selected by training BIC and forecasts are accumulated from differences to levels.
+The statistical reference coefficients are estimated once from all pre-test training and validation observations and their states are updated sequentially with observed values; neural weights use training observations while validation controls early stopping.
 
 \subsection{Training Objective}
 
-All learned models minimize mean squared error on the scaled target channel:
+All learned models minimize target-channel mean squared error on the scaled representation,
 \begin{equation}
     \mathcal{L}=\frac{1}{BH}\sum_{b=1}^{B}\sum_{h=1}^{H}
     \left(\hat{Y}_{b,h}-Y_{b,h}\right)^2.
 \end{equation}
-Each column is standardized using training data only.
-Predictions and targets are transformed back to the target's original scale before evaluation.
+Forecasts and targets are transformed back to the target's original scale before evaluation.

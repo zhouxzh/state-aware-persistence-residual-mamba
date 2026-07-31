@@ -27,8 +27,8 @@
   },
   "venue_policy": {
     "checked": true,
-    "peer_review_model": "open",
-    "confidential_editor_notes_supported": false
+    "peer_review_model": "single_anonymized",
+    "confidential_editor_notes_supported": true
   },
   "ai_use": {
     "policy": "permitted_with_disclosure",

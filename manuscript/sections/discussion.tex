@@ -1,40 +1,26 @@
 \section{Discussion and Limitations}
 
-The selection-safe evidence confirms that the benchmark poses the intended problem: persistent financial levels are accompanied by substantial temporal changes in location, scale, volatility, and, for some panels, feature--target correlations.
-The size and direction of these changes vary sharply across panels.
-This heterogeneity is precisely why the study is organized around task-level estimates and paired comparisons rather than a single rank averaged across unrelated units.
+The model is motivated by an implementation fact and by observed data variation.
+In a target-only inverted Mamba encoder, the state-space block receives one variable token; PMS-Mamba instead applies its state-space scan to ordered temporal patches.
+The financial data analysis then shows that location, scale, difference volatility, and cross-series correlation can change materially between training and validation.
+Together these observations support studying a decomposition-aware multi-scale temporal representation, but they do not establish that it is optimal or economically structural.
 
-Several outcome interpretations are fixed in advance.
-First, a neural model is not considered useful merely because it outperforms another neural architecture; performance relative to last-value and other statistical references is central.
-Second, a favorable result on one panel or horizon does not establish general Mamba superiority.
-Third, an MS advantage indicates predictive value from the supplied panel histories under this protocol, not a causal cross-market mechanism.
-Fourth, level-forecast accuracy is not evidence of profitable trading, market inefficiency, directional accuracy, calibrated risk, or robustness to transaction costs.
+The theory is deliberately limited.
+Additive component preservation ensures that the fixed decomposition itself does not discard the normalized input, and non-expansive pooling plus mean fusion constrain only the preprocessing and aggregation stages.
+The learned patch embeddings, Mamba branches, and projection heads are nonlinear and their forecast error, stability, and calibration require empirical measurement.
+The components should therefore not be interpreted as an identified trend, seasonal process, or market factor.
 
-The benchmark improves on the legacy development experiments by using a newly frozen final period, fixed task definitions, equal trial counts, five neural seeds, explicit statistical references, and dependence-aware paired resampling.
-The protocol and processed-data hashes are checked at every transition, and final manuscript generation is blocked until the complete matrix is available.
-These controls reduce opportunities for selective reporting, but they do not eliminate all researcher degrees of freedom.
-The model families and their search spaces reflect prior development, and the proposed Mamba variants are not accompanied by a full factorial ablation that isolates tokenization, decomposition, scale construction, and parameter count.
+The redesigned empirical analysis must distinguish model mechanisms.
+The present four Mamba configurations do not isolate every change in tokenization, decomposition, scale construction, and parameter count.
+A new calculation cycle is required to run a factorial ablation with matched capacities, fixed data splits, and equal selection budgets.
+The central result should report when the patch representation helps, when decomposition or pooling helps, and when none helps, rather than collapse all tasks into a single rank.
 
-The data design also has limitations.
-Four panels cannot represent all financial markets, frequencies, or institutional regimes.
-Complete-case intersection removes imputation assumptions but changes each panel's observation calendar and may privilege dates on which every constituent market reports.
-The study uses one fixed final interval rather than multiple historical backtests, and the shortest cryptoasset training segment contains 973 observations.
-The final period may therefore provide a demanding distribution shift without supporting broad temporal generalization.
+The data scope also remains limited.
+Four daily panels cannot represent every market, sampling frequency, or institutional regime.
+Complete-case alignment avoids imputing targets but creates an irregular observation calendar governed by common market availability.
+The shortest cryptoasset training segment contains 973 observations, and one final period cannot establish temporal generalization across all historical regimes.
+Rolling-origin sensitivity analysis is therefore desirable after the primary held-out calculation.
 
-Statistical uncertainty remains conditional on the implemented resampling design.
-Forecast origins overlap, losses at different horizons are related, and five neural seeds quantify only part of optimization variability.
-The moving-block bootstrap preserves local origin dependence approximately; its block-length rule is prespecified rather than estimated for each series.
-Holm adjustment is applied within each task--proposal--comparator horizon family, not across every exploratory quantity in the paper.
-Regime estimates are secondary and may have unequal origin counts.
-
-The statistical references are intentionally practical rather than exhaustive.
-ARIMA and VAR orders are selected on the training period; coefficients are estimated once from the full pre-test history, remain fixed during final evaluation, and observed values update the forecasting state sequentially.
-In contrast, neural weights are estimated from training observations while validation controls early stopping.
-This asymmetric use of validation values gives the statistical references a conservative information advantage and must be retained when interpreting neural-to-statistical differences.
-More elaborate financial-econometric specifications, probabilistic forecasts, and models of conditional variance are outside the primary comparison.
-Specialist financial-econometrics review is therefore warranted before submission, particularly for any interpretation beyond point-forecast accuracy.
-
-Finally, this interim version has no confirmatory performance result.
-Validation scores are model-selection evidence and will not be substituted for test outcomes.
-The discussion must be revised after the final matrix is complete, including explicit reporting of negative or null results.
-Dataset redistribution terms, a citable code archive, author contributions, funding, competing interests, and venue-specific AI-use disclosure also require accountable author confirmation before submission.
+Finally, point-forecast accuracy is not evidence of profitable trading, market inefficiency, directional accuracy, calibrated risk, or robustness to transaction costs.
+Final claims must be anchored to last-value, drift, ARIMA, and VAR-on-differences references; use task-specific metrics; account for overlapping forecast origins; and preserve null or unfavorable results.
+Dataset redistribution terms, a citable code archive, author contributions, funding, competing interests, and venue-specific AI-use disclosure still require accountable author confirmation before submission.

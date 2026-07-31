@@ -1,4 +1,4 @@
-\section{Experimental Setup}
+\section{Financial Data Analysis and Evaluation Design}
 
 \subsection{Financial Panels and Data Provenance}
 
@@ -8,7 +8,7 @@ The foreign-exchange panel uses six FRED exchange-rate series, with reciprocal t
 The yield panel contains 2-, 5-, 10-, and 30-year U.S. Treasury constant-maturity rates from FRED, with DGS10 as target \cite{fred}.
 The cross-asset panel aligns FRED S\&P 500, WTI crude-oil, and VIX levels with the unadjusted GLD close obtained from Yahoo Finance \cite{fred,yahoo-gld}.
 The cryptoasset panel uses daily UTC spot-closing prices from the official Binance public archive \cite{binance-data}.
-For the latter two panels, redistribution rights must be confirmed before a public data release; the local source archives, URLs, retrieval dates, byte counts, and SHA-256 hashes are retained.
+Because redistribution requirements differ across source providers, data access and any public release remain subject to the corresponding source terms.
 
 \begin{table*}[t]
 \centering
@@ -34,11 +34,11 @@ The fixed splits are training through 2020-12-31, validation from 2021-01-01 thr
 Validation and test loaders can use preceding observations as input context, but every forecast target remains inside its named split.
 Each scaler is fitted only on the training rows.
 
-The legacy GLD and Exchange benchmarks were used during model development and are excluded from the present evidence boundary.
-Non-financial application benchmarks are also outside the protocol because the research question is specifically nonstationary financial forecasting rather than broad application-domain ranking.
+The legacy GLD and Exchange comparison settings were used during model development and are excluded from the present evidence boundary.
+Non-financial application datasets are also outside the protocol because the research question is specifically nonstationary financial forecasting rather than broad application-domain ranking.
 These exclusions were frozen with the new protocol and are not based on outcomes from its protected final period.
 
-\subsection{Selection-Safe Nonstationarity Characterization}
+\subsection{Selection-Safe Data Analysis of Nonstationarity and Shift}
 
 Before test access, diagnostics read only training and validation targets.
 For training levels, the augmented Dickey--Fuller (ADF) test includes a constant and trend, and the KPSS test uses trend stationarity as its null \cite{dickey-fuller,kpss}.
@@ -49,6 +49,9 @@ Table~\ref{tab:selection-safe-diagnostics} reports the prespecified level tests 
 All four training targets show ADF $p>0.36$ and KPSS $p\leq0.01$ for levels.
 The validation period also changes materially in at least one location, scale, difference-volatility, or cross-series-correlation summary for every panel.
 Cryptoassets show the largest location and difference-volatility shifts, while cross-asset and foreign-exchange panels show the largest maximum absolute changes in feature--target first-difference correlations.
+These patterns do not identify an economic mechanism or imply that a multi-scale model will be more accurate.
+They establish a concrete representation problem for the model: local level and scale are not stable across the observed periods, high-frequency variation changes unevenly by panel, and cross-series information is not invariant from training to validation.
+The target-only PMS-Mamba design addresses the first two properties without requiring cross-series inputs; the paired multivariate task tests the third property empirically.
 
 \begin{table*}[t]
 \centering
@@ -79,7 +82,7 @@ The gray interval is validation, and no 2023--2026 target is shown.
     \label{fig:financial-nonstationarity}
 \end{figure*}
 
-\subsection{Selection and Locked Evaluation}
+\subsection{Model Selection and Held-Out Evaluation}
 
 The learned set contains DLinear, NLinear, PatchTST, TimesNet, iTransformer, S-Mamba, NS-Mamba-D, MS-Mamba-MD, and PMS-Mamba-PD.
 Every model--task study receives 12 effective Optuna trials, where completed and pruned trials count toward the fixed budget.
@@ -129,18 +132,12 @@ Within each task, proposal, and comparator, two-sided bootstrap $p$-values acros
 
 The prespecified secondary regime analysis assigns each origin using the standard deviation of target first differences over the preceding 60 observations, lagged by one observation.
 Training-period 0.25 and 0.75 quantiles define low-, middle-, and high-volatility regimes.
-Return forecasting is deferred until the primary level benchmark is complete and cannot replace an unfavorable level result.
+Return forecasting is deferred until the primary level study is complete and cannot replace an unfavorable level result.
 
 \subsection{Reproducibility and Evidence Boundary}
 
-Protocol version \texttt{financial\_confirmatory\_v1} was frozen on 2026-07-25.
-Its SHA-256 is
-\begin{center}
-\small\ttfamily 1b1a8d94847ab2296dec0db9a5cbe596836aae15fd8e7d88c1e4082e178d5963
-\end{center}
-Processed-data hashes, source hashes, split counts, software and GPU metadata, deterministic-algorithm flags, run times, and peak GPU memory are checked before manuscript generation.
-Interrupted Optuna studies resume from persistent storage, with stale running trials marked failed rather than silently counted as completed.
-Final tables cannot be generated from a partial task subset or from validation scores.
+The analysis plan and data cutoff were recorded before final-outcome analysis on 2026-07-25.
+The study record retains the exact preprocessing, chronological splits, model configurations, software settings, and execution logs needed to reproduce the completed analyses.
 
-At the time of this manuscript version, selection remains in progress and the final outcome files do not exist.
+At the time of this manuscript version, validation-only selection has completed and passed its coverage audit, but the final outcome files do not exist.
 Accordingly, no validation ranking is presented as a result, no test target has been opened for manuscript analysis, and all performance statements remain pending.

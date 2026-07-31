@@ -2,142 +2,123 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{m4}
-\citation{m5}
-\citation{finance-dl-survey}
-\citation{dlinear}
-\citation{patchtst}
-\citation{timesnet}
-\citation{itransformer}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \citation{mamba}
 \citation{smamba}
-\citation{bimamba}
-\citation{mambats}
-\citation{timemachine}
-\citation{msmamba}
-\citation{karma}
-\citation{dmamba}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
-\citation{informer}
-\citation{reformer}
-\citation{autoformer}
-\citation{fedformer}
-\citation{dlinear}
-\citation{patchtst}
-\citation{timesnet}
 \citation{itransformer}
-\citation{nbeats}
-\citation{nhits}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Long-Horizon Forecasting}{2}{subsection.2.1}\protected@file@percent }
 \citation{revin}
 \citation{nonstationary-transformer}
 \citation{autoformer}
 \citation{fedformer}
 \citation{dlinear}
+\citation{patchtst}
+\citation{nbeats}
+\citation{nhits}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Nonstationary Representations for Forecasting}{2}{subsection.2.1}\protected@file@percent }
 \citation{mamba}
 \citation{smamba}
 \citation{bimamba}
 \citation{mambats}
 \citation{timemachine}
-\citation{tsmamba}
+\citation{itransformer}
 \citation{msmamba}
 \citation{karma}
 \citation{dmamba}
 \citation{finance-dl-survey}
 \citation{m4}
 \citation{m5}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Nonstationarity and Distribution Shift}{3}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Mamba for Time Series}{3}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Financial Forecast Evaluation}{3}{subsection.2.4}\protected@file@percent }
 \citation{mamba}
 \citation{smamba}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Forecasting Models}{4}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Paired Forecasting Tasks}{4}{subsection.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Selective State-Space Backbone}{4}{subsection.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}S-Mamba}{4}{subsection.3.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Conceptual bidirectional Mamba block used by the forecasting encoders. The diagram describes the implemented information flow; it does not imply a causal interpretation of the learned state.}}{5}{figure.1}\protected@file@percent }
-\newlabel{fig:mamba-arch}{{1}{5}{Conceptual bidirectional Mamba block used by the forecasting encoders. The diagram describes the implemented information flow; it does not imply a causal interpretation of the learned state}{figure.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Decomposition and Multi-Scale Variants}{5}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Mamba Tokenization for Time Series}{3}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Financial Data Analysis and Evaluation}{3}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}PMS-Mamba}{3}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Forecasting Task and Notation}{3}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Why Temporal Patches Are Needed}{3}{subsection.3.2}\protected@file@percent }
+\newlabel{prop:single-token}{{1}{4}{Single-token limitation}{proposition.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Decomposition-Aware Multi-Scale Patch Encoder}{4}{subsection.3.3}\protected@file@percent }
 \citation{dlinear}
 \citation{patchtst}
 \citation{timesnet}
 \citation{itransformer}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces S-Mamba forecasting encoder with reversible normalization, variable-token embedding, bidirectional encoding, horizon projection, and inverse normalization.}}{6}{figure.2}\protected@file@percent }
-\newlabel{fig:s-mamba-encoder}{{2}{6}{S-Mamba forecasting encoder with reversible normalization, variable-token embedding, bidirectional encoding, horizon projection, and inverse normalization}{figure.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Learned and Statistical Comparators}{6}{subsection.3.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces PMS-Mamba-PD. A normalized input window is decomposed, pooled at multiple temporal resolutions, converted into ordered patches, and processed by a bidirectional Mamba encoder at each scale. Component forecasts are summed and scale forecasts are mean fused before inverse normalization.}}{5}{figure.1}\protected@file@percent }
+\newlabel{fig:pms-mamba}{{1}{5}{PMS-Mamba-PD. A normalized input window is decomposed, pooled at multiple temporal resolutions, converted into ordered patches, and processed by a bidirectional Mamba encoder at each scale. Component forecasts are summed and scale forecasts are mean fused before inverse normalization}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Representation Properties}{5}{subsection.3.4}\protected@file@percent }
+\newlabel{prop:additive}{{2}{5}{Additive component preservation}{proposition.2}{}}
+\newlabel{prop:stable-fusion}{{3}{5}{Stable pooling and bounded mean fusion}{proposition.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Ablation Logic and Comparators}{5}{subsection.3.5}\protected@file@percent }
 \citation{fred}
 \citation{fred}
 \citation{fred}
 \citation{yahoo-gld}
 \citation{binance-data}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Mamba configurations in the frozen benchmark.}}{7}{table.1}\protected@file@percent }
-\newlabel{tab:mamba-variant-meaning}{{1}{7}{Mamba configurations in the frozen benchmark}{table.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Training Objective}{7}{subsection.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Experimental Setup}{7}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Financial Panels and Data Provenance}{7}{subsection.4.1}\protected@file@percent }
 \citation{dickey-fuller}
 \citation{kpss}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Frozen financial panels. Counts refer to target observations within each calendar split. Each panel defines a target-only S task and a complete-panel MS task.}}{8}{table.2}\protected@file@percent }
-\newlabel{tab:financial-panels}{{2}{8}{Frozen financial panels. Counts refer to target observations within each calendar split. Each panel defines a target-only S task and a complete-panel MS task}{table.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Selection-safe diagnostics computed without reading final-period targets. Mean shift is measured in training standard deviations; standard-deviation and difference-volatility columns are validation-to-training ratios. Correlation shift is the largest absolute change in a feature--target first-difference correlation.}}{8}{table.3}\protected@file@percent }
-\newlabel{tab:selection-safe-diagnostics}{{3}{8}{Selection-safe diagnostics computed without reading final-period targets. Mean shift is measured in training standard deviations; standard-deviation and difference-volatility columns are validation-to-training ratios. Correlation shift is the largest absolute change in a feature--target first-difference correlation}{table.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Selection-Safe Nonstationarity Characterization}{8}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Selection and Locked Evaluation}{8}{subsection.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Frozen financial panels. Counts refer to target observations within each calendar split. Each panel defines a target-only S task and a complete-panel MS task.}}{6}{table.1}\protected@file@percent }
+\newlabel{tab:financial-panels}{{1}{6}{Frozen financial panels. Counts refer to target observations within each calendar split. Each panel defines a target-only S task and a complete-panel MS task}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Training Objective}{6}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Financial Data Analysis and Evaluation Design}{6}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Financial Panels and Data Provenance}{6}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Selection-Safe Data Analysis of Nonstationarity and Shift}{6}{subsection.4.2}\protected@file@percent }
 \citation{m5}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Selection-safe financial data characterization. Dashed vertical lines mark the start of validation, and gray regions denote validation observations. The left column shows target levels standardized using training data only. The right column shows lagged trailing 60-observation first-difference volatility relative to its training median. Test targets are neither read nor plotted.}}{9}{figure.3}\protected@file@percent }
-\newlabel{fig:financial-nonstationarity}{{3}{9}{Selection-safe financial data characterization. Dashed vertical lines mark the start of validation, and gray regions denote validation observations. The left column shows target levels standardized using training data only. The right column shows lagged trailing 60-observation first-difference volatility relative to its training median. Test targets are neither read nor plotted}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Metrics and Prespecified Analysis}{10}{subsection.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Reproducibility and Evidence Boundary}{10}{subsection.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Interim Results}{11}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Selection-Safe Evidence}{11}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Locked Outcome Status}{11}{subsection.5.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Evidence status for the interim manuscript. ``Locked'' means that the workflow requires an explicit gate and preceding completeness audit before reading final-period targets.}}{11}{table.4}\protected@file@percent }
-\newlabel{tab:evidence-status}{{4}{11}{Evidence status for the interim manuscript. ``Locked'' means that the workflow requires an explicit gate and preceding completeness audit before reading final-period targets}{table.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Prespecified Final Reporting}{11}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and Limitations}{12}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{13}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Frozen Protocol and Reproducibility Details}{14}{appendix.A}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Frozen protocol}{14}{subsection.A.1}\protected@file@percent }
-\newlabel{app:frozen-protocol}{{A.1}{14}{Frozen protocol}{subsection.A.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Controlling protocol fields.}}{14}{table.5}\protected@file@percent }
-\newlabel{tab:frozen-protocol}{{5}{14}{Controlling protocol fields}{table.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Paired task identifiers.}}{14}{table.6}\protected@file@percent }
-\newlabel{tab:task-identifiers}{{6}{14}{Paired task identifiers}{table.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Neural search spaces}{14}{subsection.A.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Selection-safe diagnostics computed without reading final-period targets. Mean shift is measured in training standard deviations; standard-deviation and difference-volatility columns are validation-to-training ratios. Correlation shift is the largest absolute change in a feature--target first-difference correlation.}}{7}{table.2}\protected@file@percent }
+\newlabel{tab:selection-safe-diagnostics}{{2}{7}{Selection-safe diagnostics computed without reading final-period targets. Mean shift is measured in training standard deviations; standard-deviation and difference-volatility columns are validation-to-training ratios. Correlation shift is the largest absolute change in a feature--target first-difference correlation}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Model Selection and Held-Out Evaluation}{7}{subsection.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Selection-safe financial data characterization. Dashed vertical lines mark the start of validation, and gray regions denote validation observations. The left column shows target levels standardized using training data only. The right column shows lagged trailing 60-observation first-difference volatility relative to its training median. Test targets are neither read nor plotted.}}{8}{figure.2}\protected@file@percent }
+\newlabel{fig:financial-nonstationarity}{{2}{8}{Selection-safe financial data characterization. Dashed vertical lines mark the start of validation, and gray regions denote validation observations. The left column shows target levels standardized using training data only. The right column shows lagged trailing 60-observation first-difference volatility relative to its training median. Test targets are neither read nor plotted}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Metrics and Prespecified Analysis}{8}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Reproducibility and Evidence Boundary}{9}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Financial Data Analysis and Current Empirical Status}{9}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Observed Representation Shift}{9}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Mechanism-Oriented Evaluation Status}{10}{subsection.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Evidence status for the current manuscript. ``Locked'' means that the workflow requires an explicit gate and a preceding completeness audit before reading final-period targets.}}{10}{table.3}\protected@file@percent }
+\newlabel{tab:evidence-status}{{3}{10}{Evidence status for the current manuscript. ``Locked'' means that the workflow requires an explicit gate and a preceding completeness audit before reading final-period targets}{table.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Recomputation Plan for the Model Claims}{10}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and Limitations}{10}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{11}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Theoretical Properties}{12}{appendix.A}\protected@file@percent }
+\newlabel{app:theory}{{A}{12}{Theoretical Properties}{appendix.A}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Proof of Proposition~\ref {prop:single-token}}{12}{subsection.A.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Proof of Proposition~\ref {prop:additive}}{12}{subsection.A.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Proof of Proposition~\ref {prop:stable-fusion}}{12}{subsection.A.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B}Frozen Protocol and Reproducibility Details}{12}{appendix.B}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.1}Frozen protocol}{12}{subsection.B.1}\protected@file@percent }
+\newlabel{app:frozen-protocol}{{B.1}{12}{Frozen protocol}{subsection.B.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Controlling protocol fields.}}{12}{table.4}\protected@file@percent }
+\newlabel{tab:frozen-protocol}{{4}{12}{Controlling protocol fields}{table.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Non-Mamba categorical search spaces. ``LR'' denotes learning rate and ``BS'' batch size.}}{13}{table.6}\protected@file@percent }
+\newlabel{tab:baseline-search-spaces}{{6}{13}{Non-Mamba categorical search spaces. ``LR'' denotes learning rate and ``BS'' batch size}{table.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Paired task identifiers.}}{13}{table.5}\protected@file@percent }
+\newlabel{tab:task-identifiers}{{5}{13}{Paired task identifiers}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.2}Neural search spaces}{13}{subsection.B.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.3}Reference-model specification}{13}{subsection.B.3}\protected@file@percent }
 \bibstyle{unsrt}
 \bibdata{references}
-\bibcite{m4}{1}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Non-Mamba categorical search spaces. ``LR'' denotes learning rate and ``BS'' batch size.}}{15}{table.7}\protected@file@percent }
-\newlabel{tab:baseline-search-spaces}{{7}{15}{Non-Mamba categorical search spaces. ``LR'' denotes learning rate and ``BS'' batch size}{table.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Reference-model specification}{15}{subsection.A.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.4}Artifact gates and regeneration}{15}{subsection.A.4}\protected@file@percent }
-\bibcite{m5}{2}
-\bibcite{finance-dl-survey}{3}
-\bibcite{dlinear}{4}
-\bibcite{patchtst}{5}
-\bibcite{timesnet}{6}
-\bibcite{itransformer}{7}
-\bibcite{mamba}{8}
-\bibcite{smamba}{9}
-\bibcite{bimamba}{10}
-\bibcite{mambats}{11}
-\bibcite{timemachine}{12}
-\bibcite{msmamba}{13}
-\bibcite{karma}{14}
-\bibcite{dmamba}{15}
-\bibcite{informer}{16}
-\bibcite{reformer}{17}
-\bibcite{autoformer}{18}
-\bibcite{fedformer}{19}
-\bibcite{nbeats}{20}
-\bibcite{nhits}{21}
-\bibcite{revin}{22}
-\bibcite{nonstationary-transformer}{23}
-\bibcite{tsmamba}{24}
-\bibcite{fred}{25}
-\bibcite{yahoo-gld}{26}
-\bibcite{binance-data}{27}
-\bibcite{dickey-fuller}{28}
-\bibcite{kpss}{29}
-\gdef \@abspage@last{18}
+\bibcite{mamba}{1}
+\bibcite{smamba}{2}
+\bibcite{itransformer}{3}
+\bibcite{revin}{4}
+\bibcite{nonstationary-transformer}{5}
+\bibcite{autoformer}{6}
+\bibcite{fedformer}{7}
+\bibcite{dlinear}{8}
+\bibcite{patchtst}{9}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.4}Artifact Gates and Regeneration}{14}{subsection.B.4}\protected@file@percent }
+\bibcite{nbeats}{10}
+\bibcite{nhits}{11}
+\bibcite{bimamba}{12}
+\bibcite{mambats}{13}
+\bibcite{timemachine}{14}
+\bibcite{msmamba}{15}
+\bibcite{karma}{16}
+\bibcite{dmamba}{17}
+\bibcite{finance-dl-survey}{18}
+\bibcite{m4}{19}
+\bibcite{m5}{20}
+\bibcite{timesnet}{21}
+\bibcite{fred}{22}
+\bibcite{yahoo-gld}{23}
+\bibcite{binance-data}{24}
+\bibcite{dickey-fuller}{25}
+\bibcite{kpss}{26}
+\gdef \@abspage@last{16}

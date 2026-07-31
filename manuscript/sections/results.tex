@@ -1,54 +1,56 @@
-\section{Interim Results}
+\section{Financial Data Analysis and Current Empirical Status}
 
-\subsection{Selection-Safe Evidence}
+\subsection{Observed Representation Shift}
 
-The evidence presently available supports the intended nonstationary setting but not a forecasting-performance conclusion.
-Across all four training targets, the level ADF test fails to reject a unit root while the level KPSS test rejects trend stationarity at its reported lower $p$-value bound (Table~\ref{tab:selection-safe-diagnostics}).
-This concordance is not treated as proof that every series follows an integrated process; it establishes that a stationary-level assumption is not an adequate common description of the training panels.
+The available evidence describes the modeling problem targeted by PMS-Mamba but does not yield a conclusion about forecast accuracy.
+Across the four training targets, the level ADF test fails to reject a unit root while the level KPSS test rejects trend stationarity at its reported lower $p$-value bound (Table~\ref{tab:selection-safe-diagnostics}).
+This pattern does not prove that the series share one integrated data-generating process; it shows that a common stationary-level representation is not adequate for these observed histories.
 
-The held-out validation interval differs visibly from training (Figure~\ref{fig:financial-nonstationarity}).
-Foreign exchange and Treasury yields shift downward by 1.294 and 0.512 training standard deviations, respectively, whereas GLD shifts upward by 1.708 standard deviations.
-BTCUSDT exhibits the largest shift: its validation mean is 7.750 training standard deviations above the training mean, its level standard deviation is 3.669 times the training value, and its first-difference standard deviation is 4.521 times the training value.
-These quantities justify evaluating distribution-shift-sensitive designs, but they do not predict which model will perform best in the untouched final period.
+The validation period differs materially from training (Figure~\ref{fig:financial-nonstationarity}).
+Foreign exchange and Treasury yields shift downward by 1.294 and 0.512 training standard deviations, whereas GLD shifts upward by 1.708 training standard deviations.
+BTCUSDT exhibits the largest changes: its validation mean is 7.750 training standard deviations above the training mean, its level standard deviation is 3.669 times the training value, and its first-difference standard deviation is 4.521 times the training value.
+The range of volatility changes is therefore not reducible to one global rescaling rule.
 
-The MS tasks also face changing cross-series structure.
-The maximum absolute change from training to validation in a feature--target first-difference correlation is 0.268 for foreign exchange, 0.026 for yields, 0.323 for cross assets, and 0.106 for cryptoassets.
-Consequently, an MS improvement cannot be assumed merely because additional histories are supplied; the paired S/MS comparison is required.
+Cross-series structure also changes between training and validation.
+The largest absolute change in a feature--target first-difference correlation is 0.268 for foreign exchange, 0.026 for yields, 0.323 for cross assets, and 0.106 for cryptoassets.
+This variation supports evaluating target-only and multivariate inputs separately: additional variables may be informative in one panel or period but cannot be assumed to help uniformly.
 
-\subsection{Locked Outcome Status}
+\subsection{Mechanism-Oriented Evaluation Status}
 
-Table~\ref{tab:evidence-status} records the evidence boundary for this manuscript version.
-Source retrieval, preprocessing, checksums, fixed splits, selection-safe diagnostics, and validation-only hyperparameter selection are complete.
-The frozen selection audit has passed; the final neural matrix, statistical-reference forecasts, bootstrap contrasts, and full-period diagnostics have not been generated because the protected final period has not been opened.
-The result generator is designed to fail unless all required artifacts match the frozen protocol and data hashes.
+The current study has completed source retrieval, preprocessing, checksums, selection-safe data analysis, and validation-only hyperparameter selection.
+The selection audit passed for every task and model.
+The protected 2023--2026 neural matrix, statistical-reference forecasts, paired loss contrasts, and final-period diagnostics have not yet been generated.
+Table~\ref{tab:evidence-status} records this boundary.
 
 \begin{table}[H]
 \centering
-\caption{Evidence status for the interim manuscript. ``Locked'' means that the workflow requires an explicit gate and preceding completeness audit before reading final-period targets.}
+\caption{Evidence status for the current manuscript. ``Locked'' means that the workflow requires an explicit gate and a preceding completeness audit before reading final-period targets.}
 \label{tab:evidence-status}
 {\small
 \begin{tabular}{>{\raggedright\arraybackslash}p{0.29\linewidth}>{\raggedright\arraybackslash}p{0.23\linewidth}>{\raggedright\arraybackslash}p{0.38\linewidth}}
 \toprule
 Evidence component & Status & Admissible use in this version \\
 \midrule
-Source and processed-data manifests & Complete & Dataset provenance and counts \\
-Training/validation diagnostics & Complete & Selection-safe characterization \\
+Source and processed-data manifests & Complete & Data provenance and descriptive analysis \\
+Training/validation diagnostics & Complete & Representation motivation \\
 Validation-only model selection & Complete (audit passed) & Configuration freeze only; no ranking claim \\
 2023--2026 neural evaluation & Locked & None \\
-Statistical-reference evaluation & Blocked by neural matrix & None \\
+Statistical-reference evaluation & Not generated & None \\
 Bootstrap and regime outcome analysis & Not generated & None \\
 \bottomrule
 \end{tabular}
 }
 \end{table}
 
-\subsection{Prespecified Final Reporting}
+The correct empirical question is not whether one Mamba label has the smallest isolated point estimate.
+It is whether temporal patching, decomposition, and multi-scale pooling each contribute beyond matched alternatives, and whether any contribution persists against last-value and statistical references across panels, horizons, and volatility regimes.
+No such conclusion is possible from the current evidence.
 
-After the protected evaluation is unlocked and validated, the final paper will report every task separately.
-The primary table will contain balanced path RMSSE for last-value, the validation-selected non-Mamba comparator, S-Mamba, and the three proposed Mamba variants; neural entries will be mean $\pm$ standard deviation over five seeds.
-Horizon-specific path and terminal metrics, random-walk-with-drift, ARIMA, and VAR-difference estimates will be retained in generated supplementary tables rather than selectively omitted.
+\subsection{Recomputation Plan for the Model Claims}
 
-Claims of improvement will require more than the smallest point estimate.
-They will be based on paired origin-level loss differences, 95\% moving-block bootstrap intervals, and Holm-adjusted $p$-values for the prespecified contrasts.
-The S/MS analysis will report signed differences for the same panel, model, and horizon.
-Regime results will remain secondary, and return forecasts will be labeled robustness analyses performed only after completion of the level benchmark.
+The next calculation cycle will preserve the chronological splits and final-period gate, but will replace the current partial comparison with a mechanism-oriented ablation matrix.
+It will include a target-only variable-token base, a patch-only model, a decomposition-only model, a multi-scale-only model, decomposition-plus-multi-scale variants, and full PMS-Mamba with matched parameter counts and the same selection budget.
+For each task and horizon, the final report will include path and terminal RMSSE, last-value skill, five-seed uncertainty, origin-level moving-block bootstrap intervals, and panel-specific failures as well as improvements.
+
+The paired S/MS analysis will remain separate from the architectural ablation: it tests the incremental predictive value of the supplied panel histories, not the mechanism of PMS-Mamba.
+Return forecasting, if later added, will be labelled as a robustness analysis and cannot replace a level-forecast result.

@@ -4,6 +4,7 @@
 
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
+\usepackage{amsthm}
 \usepackage{array}
 \usepackage{authblk}
 \usepackage{booktabs}
@@ -20,12 +21,14 @@
     linkcolor=blue,
     citecolor=blue,
     urlcolor=blue,
-    pdftitle={Evaluating Mamba Models for Nonstationary Financial Forecasting: A Locked Multi-Panel Benchmark},
+    pdftitle={A Decomposition-Aware Multi-Scale Mamba Model for Nonstationary Financial Forecasting},
     pdfauthor={Bing Mo, Wei Zhang, Xianzhong Zhou, Qi Zheng, Feng Yang},
-    pdfkeywords={time-series forecasting, Mamba, financial time series, nonstationarity, locked evaluation}
+    pdfkeywords={financial forecasting, nonstationary time series, Mamba, state-space models, multi-scale analysis}
 }
 
-\title{Evaluating Mamba Models for Nonstationary Financial Forecasting: A Locked Multi-Panel Benchmark}
+\newtheorem{proposition}{Proposition}
+\newcommand{\runningtitle}{Multi-Scale Mamba Forecasting}
+\title{A Decomposition-Aware Multi-Scale Mamba Model for Nonstationary Financial Forecasting}
 \author[1]{Bing Mo\thanks{Corresponding author: \href{mailto:hitmbzq@126.com}{hitmbzq@126.com}}}
 \author[1]{Wei Zhang}
 \author[2]{Xianzhong Zhou\thanks{Corresponding author: \href{mailto:zhouxzh@gdut.edu.cn}{zhouxzh@gdut.edu.cn}}}
@@ -42,7 +45,11 @@
 \maketitle
 
 \begin{center}
-\small\textbf{Interim protocol-aligned manuscript. Confirmatory test outcomes remain locked and are not reported in this version.}
+\small\textit{Running title: \runningtitle}
+\end{center}
+
+\begin{center}
+\small\textbf{Internal draft. The theory and data analysis are complete; final out-of-sample model results are pending.}
 \end{center}
 
 \input{sections/abstract}
@@ -54,6 +61,9 @@
 \input{sections/discussion}
 \input{sections/conclusion}
 \appendix
+\section{Theoretical Properties}
+\label{app:theory}
+\input{sections/appendix/theoretical_properties}
 \section{Frozen Protocol and Reproducibility Details}
 \input{sections/appendix/sweep_configurations}
 \bibliographystyle{unsrt}

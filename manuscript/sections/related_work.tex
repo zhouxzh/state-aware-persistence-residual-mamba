@@ -1,39 +1,29 @@
 \section{Related Work}
 
-\subsection{Long-Horizon Forecasting}
+\subsection{Nonstationary Representations for Forecasting}
 
-Neural forecasting architectures encode temporal structure in substantially different ways.
-Informer and Reformer reduce the computational cost of attention \cite{informer,reformer}; Autoformer and FEDformer incorporate decomposition \cite{autoformer,fedformer}; and DLinear shows that a small decomposition-based linear model can remain competitive \cite{dlinear}.
-PatchTST uses temporal patches, TimesNet maps temporal variation into two-dimensional representations, and iTransformer represents variables rather than time points as tokens \cite{patchtst,timesnet,itransformer}.
-N-BEATS and N-HiTS provide further examples of basis expansion and explicit multi-rate structure without attention \cite{nbeats,nhits}.
-These alternatives motivate a diverse comparison rather than one restricted to Transformer variants.
+Forecasting under distribution shift has motivated both reversible normalization and architecture-level responses.
+RevIN normalizes each input instance and reverses the transformation at the output \cite{revin}; Non-stationary Transformers add a learned de-stationary mechanism because normalization can also remove predictive information \cite{nonstationary-transformer}.
+Decomposition methods separate slow and residual structure so that a single representation need not explain every temporal scale \cite{autoformer,fedformer,dlinear}.
+PatchTST, N-BEATS, and N-HiTS provide complementary examples of patching, basis expansion, and explicit multi-rate temporal structure \cite{patchtst,nbeats,nhits}.
+PMS-Mamba uses these ideas as representation choices and does not interpret its components as uniquely identified financial processes.
 
-\subsection{Nonstationarity and Distribution Shift}
-
-Forecasting under distribution shift has motivated both normalization and architecture-level responses.
-RevIN normalizes each input instance and reverses the transformation at the output \cite{revin}.
-Non-stationary Transformers argue that normalization can remove predictive information and introduce a learned de-stationary mechanism \cite{nonstationary-transformer}.
-Decomposition methods separate trend-like and residual structure so that one representation need not explain all temporal scales \cite{autoformer,fedformer,dlinear}.
-The variants evaluated here combine reversible window normalization with decomposition, multiple downsampling rates, or temporal patches, but their component labels denote architectural constructions rather than uniquely identified financial processes.
-
-\subsection{Mamba for Time Series}
+\subsection{Mamba Tokenization for Time Series}
 
 Mamba replaces self-attention with an input-selective state-space recurrence \cite{mamba}.
-S-Mamba applies bidirectional Mamba blocks over variable tokens for forecasting \cite{smamba}; Bi-Mamba+ studies bidirectionality and token relations \cite{bimamba}; MambaTS examines temporal and variable scan strategies \cite{mambats}; and TimeMachine combines multiple Mamba pathways under channel-mixing and channel-independent settings \cite{timemachine}.
-TSMamba further explores transfer through a bidirectional time-series foundation model \cite{tsmamba}.
+S-Mamba applies bidirectional Mamba blocks over variable tokens \cite{smamba}; Bi-Mamba+, MambaTS, and TimeMachine study bidirectionality, scan directions, and multiple Mamba pathways \cite{bimamba,mambats,timemachine}.
+The distinction between variable tokens and temporal tokens is central in the present work.
+Inverted representations can capture cross-variable relations when several variables are available \cite{itransformer}, but they reduce a target-only input to one token.
+PMS-Mamba instead makes its selective state-space encoder operate on temporal patch sequences at each scale.
 
-Several later studies overlap directly with the decomposition and multi-scale ideas considered in this repository.
-ms-Mamba uses Mamba blocks operating at multiple temporal sampling rates \cite{msmamba}; KARMA combines multilevel decomposition with multi-scale Mamba blocks for multivariate forecasting \cite{karma}; and DMamba assigns different forecasting modules to decomposed components \cite{dmamba}.
-The present study does not claim priority for decomposition or multi-scale Mamba as general principles.
-Its narrower purpose is to compare four implemented configurations under a prospectively frozen financial protocol.
+Several recent studies also combine Mamba with multiple scales or decomposition.
+ms-Mamba uses several temporal sampling rates \cite{msmamba}; KARMA combines multilevel decomposition with multi-scale Mamba blocks \cite{karma}; and DMamba assigns different modules to decomposed components \cite{dmamba}.
+The contribution here is not a priority claim for these individual ideas.
+It is a specific patch-based composition, a direct account of why it is needed for univariate Mamba inputs, and an evaluation focused on nonstationary financial levels.
 
-\subsection{Financial Forecast Evaluation}
+\subsection{Financial Data Analysis and Evaluation}
 
 Financial time-series studies are sensitive to the definition of the target, temporal split, regime coverage, and reference forecast \cite{finance-dl-survey}.
-For persistent levels, a last-value forecast is an essential benchmark; drift and classical univariate or multivariate models provide additional checks that apparent neural gains are not consequences of an undemanding comparator.
-Forecasting competitions likewise show that rankings vary by series and horizon and that simple methods remain competitive \cite{m4,m5}.
-
-The present benchmark therefore reports each task and horizon rather than pooling raw errors across targets with different units.
-It uses a fixed future period, repeated neural training, and paired loss comparisons over common forecast origins.
-Overlapping origins are handled with moving-block resampling rather than treated as independent observations.
-These choices estimate performance within the frozen panels and dates; they do not identify a stable market mechanism or establish economic value.
+For persistent levels, last-value, drift, and classical univariate or multivariate forecasts are necessary references; forecasting competitions also show that simple methods can remain competitive across horizons \cite{m4,m5}.
+The empirical design therefore reports results by target and horizon rather than pooling raw errors with different units.
+Repeated neural fits and paired loss comparisons over common forecast origins quantify uncertainty, but they do not establish a stable market mechanism, economic value, or trading profitability.

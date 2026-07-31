@@ -1,0 +1,80 @@
+{
+  "channel_separation": {
+    "author_before_editor": true,
+    "author_heading_count": 1,
+    "editor_heading_count": 1
+  },
+  "comments": [
+    {
+      "comment_id": "M1",
+      "empty_fields": [],
+      "heading_line": 43,
+      "kind": "major",
+      "missing_fields": []
+    },
+    {
+      "comment_id": "M2",
+      "empty_fields": [],
+      "heading_line": 51,
+      "kind": "major",
+      "missing_fields": []
+    },
+    {
+      "comment_id": "M3",
+      "empty_fields": [],
+      "heading_line": 59,
+      "kind": "major",
+      "missing_fields": []
+    },
+    {
+      "comment_id": "M4",
+      "empty_fields": [],
+      "heading_line": 67,
+      "kind": "major",
+      "missing_fields": []
+    },
+    {
+      "comment_id": "M5",
+      "empty_fields": [],
+      "heading_line": 75,
+      "kind": "major",
+      "missing_fields": []
+    },
+    {
+      "comment_id": "M6",
+      "empty_fields": [],
+      "heading_line": 83,
+      "kind": "major",
+      "missing_fields": []
+    },
+    {
+      "comment_id": "m1",
+      "empty_fields": [],
+      "heading_line": 93,
+      "kind": "minor",
+      "missing_fields": []
+    },
+    {
+      "comment_id": "m2",
+      "empty_fields": [],
+      "heading_line": 101,
+      "kind": "minor",
+      "missing_fields": []
+    },
+    {
+      "comment_id": "m3",
+      "empty_fields": [],
+      "heading_line": 109,
+      "kind": "minor",
+      "missing_fields": []
+    }
+  ],
+  "errors": [],
+  "line_count": 155,
+  "notice": "This deterministic lint uses structural and lexical rules. It does not judge scientific validity, verify whether statements are true, or replace accountable human review. Findings contain line numbers and rule IDs, not review or manuscript text.",
+  "schema_version": "2.0",
+  "status": "READY_FOR_HUMAN_REVIEW",
+  "structured_comment_count": 9,
+  "valid": true,
+  "warnings": []
+}

@@ -85,22 +85,10 @@ VAR-difference is available only for MS tasks and selects lags 1--10 by minimum 
 After order or lag selection, coefficients are estimated once using all observations before the test boundary.
 At each final origin, ARIMA state and VAR lagged differences use observations available up to that origin, while fitted coefficients remain fixed.
 
-\subsection{Artifact gates and regeneration}
+\subsection{Artifact Gates and Regeneration}
 
-The complete workflow is executed in the Anaconda environment with:
-\begin{verbatim}
-conda run --no-capture-output -n mamba python \
-  scripts/financial/run_financial_benchmark.py --stage hpo
-conda run --no-capture-output -n mamba python \
-  scripts/financial/run_financial_benchmark.py --stage selection
-conda run --no-capture-output -n mamba python \
-  scripts/financial/run_financial_benchmark.py --stage final --unlock-test
-conda run --no-capture-output -n mamba python \
-  scripts/financial/run_statistical_baselines.py --unlock-test
-conda run --no-capture-output -n mamba python \
-  scripts/financial/analyze_financial_results.py
-make -C manuscript financial-assets
-\end{verbatim}
+The repository workflow runs hyperparameter selection, selection audit, protected final evaluation, statistical-reference evaluation, and result analysis as separate stages in the Anaconda \texttt{mamba} environment.
+The exact commands, configuration hashes, and machine-readable outputs are retained with the code release rather than embedded in the manuscript.
 The selection command refuses missing models, wrong hashes or horizons, non-validation selection, and prior test access.
 The final runner records task, model, seed, horizon, origin dates, predictions, targets, run time, peak GPU memory, software versions, GPU identity, and deterministic-algorithm settings.
 Completed cells are written atomically and skipped on restart.
@@ -110,6 +98,6 @@ The analysis script then verifies forecast shapes, origin dates, saved metrics, 
 The manuscript generator additionally requires full-period diagnostics marked \texttt{test\_targets\_read=true} and exactly 10,000 bootstrap replicates.
 No partial task selection can produce the final result section.
 
-The current interim paper instead uses only the selection-safe diagnostics manifest.
+The current draft instead uses only the selection-safe diagnostics manifest.
 That manifest records a training/validation scope and confirms that test targets were not read.
 The final generated tables and copied machine-readable supplements will be added only after the protected workflow completes.
