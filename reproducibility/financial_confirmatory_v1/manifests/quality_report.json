@@ -1,0 +1,113 @@
+{
+  "data_cutoff": "2026-06-30",
+  "datasets": [
+    {
+      "columns": [
+        "EURUSD",
+        "CADUSD",
+        "JPYUSD",
+        "CHFUSD",
+        "AUDUSD",
+        "GBPUSD"
+      ],
+      "dataset": "fx",
+      "duplicate_dates": 0,
+      "end": "2026-06-30",
+      "maximum_calendar_gap_days": 5,
+      "missing_cells": 0,
+      "rows": 6894,
+      "split_counts": {
+        "test": 874,
+        "train": 5521,
+        "validation": 499
+      },
+      "start": "1999-01-04",
+      "target": "GBPUSD",
+      "target_first_difference_std": 0.008781570770774818,
+      "target_max": 2.1104,
+      "target_mean": 1.5198220626631853,
+      "target_min": 1.0703,
+      "target_std": 0.21897505943313653
+    },
+    {
+      "columns": [
+        "DGS2",
+        "DGS5",
+        "DGS30",
+        "DGS10"
+      ],
+      "dataset": "yields",
+      "duplicate_dates": 0,
+      "end": "2026-06-30",
+      "maximum_calendar_gap_days": 4,
+      "missing_cells": 0,
+      "rows": 5101,
+      "split_counts": {
+        "test": 873,
+        "train": 3728,
+        "validation": 500
+      },
+      "start": "2006-02-09",
+      "target": "DGS10",
+      "target_first_difference_std": 0.0570174535184595,
+      "target_max": 5.26,
+      "target_mean": 2.9333346402666143,
+      "target_min": 0.52,
+      "target_std": 1.128378880341961
+    },
+    {
+      "columns": [
+        "SP500",
+        "WTI",
+        "VIX",
+        "GLD"
+      ],
+      "dataset": "cross_asset",
+      "duplicate_dates": 0,
+      "end": "2026-06-30",
+      "maximum_calendar_gap_days": 5,
+      "missing_cells": 0,
+      "rows": 2483,
+      "split_counts": {
+        "test": 869,
+        "train": 1112,
+        "validation": 502
+      },
+      "start": "2016-07-25",
+      "target": "GLD",
+      "target_first_difference_std": 2.8651509357214833,
+      "target_max": 495.8999939,
+      "target_mean": 186.9735117593717,
+      "target_min": 107.33999634,
+      "target_std": 81.32935297810921
+    },
+    {
+      "columns": [
+        "ETHUSDT",
+        "BNBUSDT",
+        "XRPUSDT",
+        "BTCUSDT"
+      ],
+      "dataset": "crypto",
+      "duplicate_dates": 0,
+      "end": "2026-06-30",
+      "maximum_calendar_gap_days": 1,
+      "missing_cells": 0,
+      "rows": 2980,
+      "split_counts": {
+        "test": 1277,
+        "train": 973,
+        "validation": 730
+      },
+      "start": "2018-05-04",
+      "target": "BTCUSDT",
+      "target_first_difference_std": 1360.8656752432425,
+      "target_max": 124658.54,
+      "target_mean": 40626.698788590606,
+      "target_min": 3211.72,
+      "target_std": 32601.689199351018
+    }
+  ],
+  "protocol_sha256": "1b1a8d94847ab2296dec0db9a5cbe596836aae15fd8e7d88c1e4082e178d5963",
+  "protocol_version": "financial_confirmatory_v1"
+}
