@@ -3,8 +3,8 @@ Financial level series exhibit persistent levels, changing volatility, and evolv
 We define a prospectively frozen benchmark of four daily financial panels: foreign exchange, U.S. Treasury yields, cross-asset indicators, and cryptoassets.
 Each panel yields a univariate-input task and a multivariate-input, single-target task.
 Nine learned models---five non-Mamba baselines, S-Mamba, and three decomposition or multi-scale Mamba variants---are compared with last-value, random-walk-with-drift, ARIMA, and, for multivariate tasks, VAR-on-differences references at horizons of 1, 5, 20, 60, 120, and 252 observations.
-Hyperparameters are selected using 2021--2022 validation data after training through 2020; the 2023--2026 final period remains inaccessible until the complete selection audit passes.
+Hyperparameters are selected using 2021--2022 validation data after training through 2020; the complete validation-selection audit has passed, while the 2023--2026 final period remains locked.
 Selection-safe diagnostics show that all four training targets are consistent with nonstationary levels under the prespecified ADF/KPSS diagnostic pair, while validation-period mean shifts range from 0.51 to 7.75 training standard deviations in magnitude and first-difference volatility ratios range from 0.82 to 4.52.
 Final neural estimates will average five seeds, and paired loss contrasts will use a moving-block bootstrap with multiplicity adjustment.
-Because the locked evaluation is still running, this interim manuscript reports the protocol and data characterization but makes no performance claim.
+Because the locked evaluation has not been opened, this interim manuscript reports the protocol and data characterization but makes no performance claim.
 \end{abstract}

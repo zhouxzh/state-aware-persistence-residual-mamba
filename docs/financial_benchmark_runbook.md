@@ -20,6 +20,12 @@ nine learned models, six horizons, and five final seeds. Weather, ETT, Electrici
 Traffic are outside this manuscript's confirmatory scope. Legacy GLD and Exchange runs
 remain development evidence only.
 
+As of 2026-07-31, all eight validation-selection records have passed the frozen audit.
+The final test period has not been opened, and no final neural, statistical, or analysis
+artifacts exist. The processed-data and source checksums passed the financial pipeline
+tests on the same date. Do not rerun HPO merely after a reboot: it would repeat
+validation replays without adding confirmatory evidence.
+
 Before any new or resumed formal run, require the first preflight command below to return
 success. The HPO command is resumable and must not be replaced with a fresh study after an
 interruption.
@@ -59,23 +65,24 @@ Run all commands from the repository root, `/data/zhong/mamba`.
    conda run --no-capture-output -n mamba python scripts/financial/run_financial_benchmark.py --stage smoke
    ```
 
-4. Run validation-only hyperparameter selection. Optuna studies are persisted in
-   `results/optuna/`, so rerunning the same command resumes interrupted studies:
-
-   ```bash
-   conda run --no-capture-output -n mamba python scripts/financial/run_financial_benchmark.py --stage hpo
-   ```
-
-5. Audit the complete frozen selection before any test evaluation:
+4. Re-audit the already frozen validation selection. This must pass before any final
+   evaluation, and it does not open the test split:
 
    ```bash
    conda run --no-capture-output -n mamba python scripts/financial/run_financial_benchmark.py --stage selection
    ```
 
-   This checks model coverage, protocol version, data hashes, horizons, and that every
-   selection record still has `final_eval_flag=not_opened`.
+5. Run validation-only hyperparameter selection only if the preceding audit reports a
+   missing or damaged selection artifact. Optuna studies are persisted in
+   `results/optuna/`, so this command resumes the study, but it can repeat validation
+   replays and is not part of the normal post-outage path:
 
-6. Run the five-seed final neural evaluation. `--unlock-test` is deliberately required.
+   ```bash
+   conda run --no-capture-output -n mamba python scripts/financial/run_financial_benchmark.py --stage hpo
+   ```
+
+6. Run the five-seed final neural evaluation only after explicit authorization to open
+   the protected test period. `--unlock-test` is deliberately required.
    Completed task/model/seed cells are recorded atomically and skipped on restart:
 
    ```bash

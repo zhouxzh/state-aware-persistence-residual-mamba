@@ -18,8 +18,8 @@ Consequently, an MS improvement cannot be assumed merely because additional hist
 \subsection{Locked Outcome Status}
 
 Table~\ref{tab:evidence-status} records the evidence boundary for this manuscript version.
-Source retrieval, preprocessing, checksums, fixed splits, and selection-safe diagnostics are complete.
-Validation-only hyperparameter selection is still running, and the final neural matrix, statistical-reference forecasts, bootstrap contrasts, and full-period diagnostics have not been generated.
+Source retrieval, preprocessing, checksums, fixed splits, selection-safe diagnostics, and validation-only hyperparameter selection are complete.
+The frozen selection audit has passed; the final neural matrix, statistical-reference forecasts, bootstrap contrasts, and full-period diagnostics have not been generated because the protected final period has not been opened.
 The result generator is designed to fail unless all required artifacts match the frozen protocol and data hashes.
 
 \begin{table}[H]
@@ -33,7 +33,7 @@ Evidence component & Status & Admissible use in this version \\
 \midrule
 Source and processed-data manifests & Complete & Dataset provenance and counts \\
 Training/validation diagnostics & Complete & Selection-safe characterization \\
-Validation-only model selection & In progress & Methods only; no ranking claim \\
+Validation-only model selection & Complete (audit passed) & Configuration freeze only; no ranking claim \\
 2023--2026 neural evaluation & Locked & None \\
 Statistical-reference evaluation & Blocked by neural matrix & None \\
 Bootstrap and regime outcome analysis & Not generated & None \\
