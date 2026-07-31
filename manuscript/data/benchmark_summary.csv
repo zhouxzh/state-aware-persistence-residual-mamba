@@ -1,3 +1,0 @@
-dataset,last_value_rmsse,best_baseline,baseline_rmsse,best_mamba,mamba_rmsse,lowest_observed_model,lowest_observed_rmsse
-gld,17.070306037129715,TimesNet,15.6615170613477,PMS_Mamba-PD,14.738669346484789,PMS_Mamba-PD,14.738669346484789
-exchange,6.2565374516437755,PatchTST,6.369013029924518,S_Mamba,6.292870052886232,Last-value,6.2565374516437755

@@ -227,6 +227,12 @@ results/
 test_results/
 checkpoints/
 backups/
+tensorboard/
+logs/
+result_long_term_forecast.txt
+
+# Manuscript source is maintained in a separate repository
+manuscript/
 
 # Reproduced experiment artifacts
 scripts/gld_baseline_optuna_bundle/reproduced_artifacts/
