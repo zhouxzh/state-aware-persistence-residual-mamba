@@ -8,9 +8,10 @@ import tempfile
 import time
 from datetime import date
 from pathlib import Path
-from typing import Iterable
+from typing import TYPE_CHECKING, Iterable
 
-import requests
+if TYPE_CHECKING:
+    import requests
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -79,6 +80,8 @@ def _request_attempts(
     attempts: int,
     proxies: dict[str, str] | None,
 ) -> requests.Response:
+    import requests
+
     last_error: Exception | None = None
     session = requests.Session()
     session.trust_env = False
@@ -105,6 +108,8 @@ def fetch_with_proxy_fallback(
     proxy_config: dict,
     proxy_first: bool = False,
 ) -> tuple[bytes, dict]:
+    import requests
+
     timeout = (
         int(proxy_config["connect_timeout_seconds"]),
         int(proxy_config["read_timeout_seconds"]),

@@ -8,6 +8,7 @@ import importlib.metadata
 import json
 import math
 import sys
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -160,6 +161,14 @@ def task_is_complete(task: str, config: dict, protocol: dict, rows: list[dict]) 
         }
         if any(metadata.get(field) != expected_value for field, expected_value in checks.items()):
             return False
+        if row["model"] == "ARIMA":
+            selection = metadata.get("arima_selection", {})
+            if (
+                metadata.get("coefficient_fit_converged") is not True
+                or selection.get("selected_converged") is not True
+                or int(selection.get("converged_candidate_count", 0)) <= 0
+            ):
+                return False
     return True
 
 
@@ -197,29 +206,47 @@ def rolling_naive(
     return np.asarray(predictions), np.asarray(truths), np.asarray(origin_dates)
 
 
-def select_arima_order(train_target: np.ndarray) -> tuple[int, int, int]:
+def select_arima_order(train_target: np.ndarray) -> tuple[tuple[int, int, int], dict]:
     from statsmodels.tsa.arima.model import ARIMA
+    from statsmodels.tools.sm_exceptions import ConvergenceWarning
 
     candidates = []
+    attempted = 0
+    failed = 0
+    nonconverged = 0
     for d in (0, 1):
         for p in range(4):
             for q in range(4):
                 if p == q == 0 and d == 0:
                     continue
+                attempted += 1
                 try:
-                    fit = ARIMA(
-                        train_target,
-                        order=(p, d, q),
-                        trend="t" if d == 1 else "ct",
-                    ).fit()
-                    if np.isfinite(fit.aic):
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore", ConvergenceWarning)
+                        fit = ARIMA(
+                            train_target,
+                            order=(p, d, q),
+                            trend="t" if d == 1 else "ct",
+                        ).fit()
+                    converged = bool(fit.mle_retvals.get("converged", False))
+                    if converged and np.isfinite(fit.aic):
                         candidates.append((float(fit.aic), p, d, q))
+                    else:
+                        nonconverged += 1
                 except Exception:
+                    failed += 1
                     continue
     if not candidates:
         raise RuntimeError("No ARIMA candidate converged")
-    _, p, d, q = min(candidates)
-    return p, d, q
+    selected_aic, p, d, q = min(candidates)
+    return (p, d, q), {
+        "attempted_candidate_count": attempted,
+        "converged_candidate_count": len(candidates),
+        "nonconverged_candidate_count": nonconverged,
+        "failed_candidate_count": failed,
+        "selected_converged": True,
+        "selected_aic": selected_aic,
+    }
 
 
 def rolling_arima(
@@ -234,6 +261,8 @@ def rolling_arima(
 
     history = values[:test_start]
     result = ARIMA(history, order=order, trend="t" if order[1] == 1 else "ct").fit()
+    if not bool(result.mle_retvals.get("converged", False)):
+        raise RuntimeError(f"Pre-test ARIMA fit did not converge for order {order}")
     predictions, truths, origin_dates = [], [], []
     for origin in range(test_start, len(values) - horizon + 1):
         predictions.append(np.asarray(result.forecast(horizon), dtype=float))
@@ -330,7 +359,7 @@ def main() -> None:
         date_index = pd.Index(dates)
         train_end = int(date_index.searchsorted(protocol["splits"]["train_end"], side="right"))
         test_start = int(date_index.searchsorted(protocol["splits"]["test_start"], side="left"))
-        arima_order = select_arima_order(target[:train_end])
+        arima_order, arima_selection = select_arima_order(target[:train_end])
         var_lag = select_var_lag(values[:train_end]) if config["features"] == "MS" else None
         pretest_end = str(dates[test_start - 1])
 
@@ -359,6 +388,8 @@ def main() -> None:
                         "horizon": horizon,
                         "target": config["target"],
                         "arima_order": list(arima_order) if model == "ARIMA" else None,
+                        "arima_selection": arima_selection if model == "ARIMA" else None,
+                        "coefficient_fit_converged": True if model == "ARIMA" else None,
                         "var_lag": var_lag if model == "VAR-difference" else None,
                         "order_selection_end": (
                             protocol["splits"]["train_end"]

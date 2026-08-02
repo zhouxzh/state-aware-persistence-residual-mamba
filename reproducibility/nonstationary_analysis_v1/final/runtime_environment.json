@@ -1,0 +1,10 @@
+{
+  "cuda_version": "12.8",
+  "cudnn_version": 91002,
+  "deterministic_algorithms": true,
+  "gpu_name": "NVIDIA GeForce RTX 5090 D",
+  "horizon_specific_run_count": 2160,
+  "mamba_ssm_version": "2.3.1",
+  "summed_runtime_seconds": 41132.44061598624,
+  "torch_version": "2.8.0+cu128"
+}

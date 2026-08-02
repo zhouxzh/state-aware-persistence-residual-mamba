@@ -7,22 +7,22 @@ from model import Transformer, Informer, Reformer, \
 
 try:
     from model import S_Mamba
-except RuntimeError:
+except (ImportError, RuntimeError):
     S_Mamba = None
 
 try:
     from model import NS_Mamba
-except RuntimeError:
+except (ImportError, RuntimeError):
     NS_Mamba = None
 
 try:
     from model import MS_Mamba
-except RuntimeError:
+except (ImportError, RuntimeError):
     MS_Mamba = None
 
 try:
     from model import PMS_Mamba
-except RuntimeError:
+except (ImportError, RuntimeError):
     PMS_Mamba = None
 
 

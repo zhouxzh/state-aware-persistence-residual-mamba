@@ -1,0 +1,7 @@
+proposal,comparator_group,contrast_count,favorable_mean_count,favorable_holm_count,unfavorable_holm_count,non_significant_count
+MS_Mamba-MD,S_Mamba,48,12,5,16,27
+MS_Mamba-MD,validation-selected non-Mamba,48,23,13,13,22
+NS_Mamba-D,S_Mamba,48,30,11,10,27
+NS_Mamba-D,validation-selected non-Mamba,48,25,17,7,24
+PMS_Mamba-PD,S_Mamba,48,19,9,13,26
+PMS_Mamba-PD,validation-selected non-Mamba,48,30,15,6,27

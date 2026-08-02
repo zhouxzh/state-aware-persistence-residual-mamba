@@ -1,0 +1,9 @@
+task,panel,mode,model,family,validation_balanced_rmsse
+financial_cross_asset_ms,cross_asset,MS,S_Mamba,mamba baseline,4.730202226219208
+financial_cross_asset_s,cross_asset,S,S_Mamba,mamba baseline,4.72565878060086
+financial_crypto_ms,crypto,MS,S_Mamba,mamba baseline,23.01354789305596
+financial_crypto_s,crypto,S,NLinear,linear,23.019766640402896
+financial_fx_ms,fx,MS,PatchTST,transformer,3.5748315488286466
+financial_fx_s,fx,S,PatchTST,transformer,3.604444665807641
+financial_yields_ms,yields,MS,DLinear,linear,6.141960857112248
+financial_yields_s,yields,S,DLinear,linear,6.1419611044766755

@@ -27,6 +27,22 @@ NON_MAMBA = ("DLinear", "NLinear", "PatchTST", "TimesNet", "iTransformer")
 STATISTICAL_COMMON = ("Last-value", "Random-walk-drift", "ARIMA")
 
 
+def latex_escape(value: object) -> str:
+    replacements = {
+        "\\": r"\textbackslash{}",
+        "&": r"\&",
+        "%": r"\%",
+        "$": r"\$",
+        "#": r"\#",
+        "_": r"\_",
+        "{": r"\{",
+        "}": r"\}",
+        "~": r"\textasciitilde{}",
+        "^": r"\textasciicircum{}",
+    }
+    return "".join(replacements.get(character, character) for character in str(value))
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Aggregate the frozen financial benchmark.")
     parser.add_argument("--protocol", type=Path, default=DEFAULT_PROTOCOL)
@@ -229,6 +245,14 @@ def load_statistical(protocol: dict, manifest: dict, scales: dict) -> tuple[pd.D
                 )
         if not metadata.get("statsmodels_version") or not metadata.get("python_version"):
             raise ValueError(f"Missing statistical software metadata for {task}/{record['model']}/h{horizon}")
+        if record["model"] == "ARIMA":
+            selection = metadata.get("arima_selection", {})
+            if (
+                metadata.get("coefficient_fit_converged") is not True
+                or selection.get("selected_converged") is not True
+                or int(selection.get("converged_candidate_count", 0)) <= 0
+            ):
+                raise ValueError(f"Missing converged ARIMA audit for {task}/h{horizon}")
         if prediction.shape != truth.shape or prediction.ndim != 2 or prediction.shape[1] != horizon:
             raise ValueError(f"Statistical prediction shape mismatch for {task}/{record['model']}/h{horizon}")
         if not np.array_equal(origin_dates, origins_expected[(task, horizon)]):
@@ -352,8 +376,6 @@ def regime_metrics(protocol: dict, manifest: dict, *stores: dict) -> pd.DataFram
             origin_regimes = np.asarray([assignments[task][str(date)] for date in origins])
             for label in labels:
                 selected = losses[origin_regimes == label]
-                if len(selected) == 0:
-                    raise ValueError(f"No {label} regime origins for {task}/{model}/h{horizon}")
                 rows.append(
                     {
                         "dataset": task,
@@ -362,7 +384,7 @@ def regime_metrics(protocol: dict, manifest: dict, *stores: dict) -> pd.DataFram
                         "seed": seed,
                         "regime": label,
                         "origin_count": int(len(selected)),
-                        "origin_mse": float(np.mean(selected)),
+                        "origin_mse": float(np.mean(selected)) if len(selected) else float("nan"),
                     }
                 )
     detailed = pd.DataFrame(rows)

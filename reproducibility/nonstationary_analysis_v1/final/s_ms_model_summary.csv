@@ -1,0 +1,5 @@
+model,paired_family_horizons,ms_lower_rmsse_count,mean_ms_minus_s_rmsse
+MS_Mamba-MD,24,2,0.3013831203620591
+NS_Mamba-D,24,9,0.14366719755509622
+PMS_Mamba-PD,24,14,-0.07252931850719564
+S_Mamba,24,6,0.27196806139260454

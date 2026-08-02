@@ -1,0 +1,11 @@
+{
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 20260725,
+  "contrast_count": 288,
+  "neural_run_count": 2160,
+  "protocol_sha256": "1b1a8d94847ab2296dec0db9a5cbe596836aae15fd8e7d88c1e4082e178d5963",
+  "protocol_version": "financial_confirmatory_v1",
+  "regime_metric_count": 1800,
+  "s_ms_pair_count": 288,
+  "statistical_run_count": 168
+}
