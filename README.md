@@ -1,16 +1,34 @@
-# PMS-Mamba for Nonstationary Financial Forecasting
+# PMS-Mamba for Forecasting Under Nonstationarity
 
-Reference implementation for the paper *A Decomposition-Aware Multi-Scale Mamba Model for Nonstationary Financial Forecasting*.
+Reference implementation and frozen experiment evidence for PMS-Mamba, a
+decomposition-aware multi-scale state-space model for nonstationary time-series
+forecasting.
 
-PMS-Mamba applies reversible window normalization, additive moving-average decomposition, multi-scale temporal pooling, and bidirectional Mamba encoders over ordered temporal patches.  The implementation is designed for nonstationary daily financial level series.
+PMS-Mamba applies reversible window normalization, additive moving-average
+decomposition, multi-scale temporal pooling, and bidirectional Mamba encoders over
+ordered temporal patches. The current experiments use daily financial panels as
+reference datasets; the research question is broader forecasting under
+nonstationarity.
 
 ## Scope and Status
 
-The current study uses four financial panels: foreign exchange, U.S. Treasury yields, cross-asset prices, and cryptoassets.  Each panel has a target-only task and a multivariate task.
+The current study uses four financial reference panels: foreign exchange, U.S.
+Treasury yields, cross-asset prices, and cryptoassets. Each panel has a target-only
+task and a multivariate task.
 
-The data-preparation and validation-selection stages have completed under the versioned financial evaluation protocol.  The protected final 2023--2026 test period has not been analyzed in this repository version.  Consequently, this repository does not claim that PMS-Mamba outperforms any comparator.
+V1 final evaluation and V2 validation-only optimization are complete. On the frozen
+2023-01-01 through 2026-06-30 V1 test period, PMS-Mamba wins 0 of 48 primary
+task-horizon path-RMSSE cells. It is most competitive on cross-asset tasks and middle
+horizons; persistence and statistical references remain stronger overall. Neither V2
+finalist met the prespecified 2% validation replacement threshold, so the existing F04
+configuration was retained and the V1 test was not reopened.
 
 Historical GLD, Exchange, Weather, ETT, Electricity, and Traffic artifacts are not part of the current study and are deliberately excluded from the working tree.
+
+Start with the [documentation index](docs/README.md), then see the
+[current result report](docs/current_results.md),
+[next optimization plan](docs/next_optimization_plan.md), and
+[paper writing direction](docs/paper_writing_direction.md).
 
 ## Models
 
@@ -35,7 +53,7 @@ PMS-Mamba experiments require a CUDA-capable PyTorch installation and `mamba-ssm
 conda run --no-capture-output -n mamba python scripts/financial/preflight.py
 ```
 
-## Financial Data Workflow
+## Reference Data Workflow
 
 Downloaded source data and derived panels are local, ignored files under `data/financial/`.  Their availability and redistribution conditions remain subject to the original data providers.
 
@@ -49,7 +67,7 @@ conda run --no-capture-output -n mamba python -m unittest tests.test_financial_p
 
 The downloader can use a locally running Clash proxy at `http://127.0.0.1:7890` when direct access fails.  Do not use `--refresh` to overwrite a frozen dataset snapshot without creating and documenting a new protocol version.
 
-## Evaluation Workflow
+## Development Workflow
 
 Run a small GPU validation smoke test over the financial tasks:
 
@@ -57,19 +75,15 @@ Run a small GPU validation smoke test over the financial tasks:
 conda run --no-capture-output -n mamba python scripts/financial/run_financial_benchmark.py --stage smoke
 ```
 
-Re-audit the frozen validation-selection records without opening final targets:
+Re-audit the frozen validation-selection records:
 
 ```bash
 conda run --no-capture-output -n mamba python scripts/financial/run_financial_benchmark.py --stage selection
 ```
 
-The final evaluation has an explicit `--unlock-test` guard.  It must only be run after the authors approve opening the final period:
-
-```bash
-conda run --no-capture-output -n mamba python scripts/financial/run_financial_benchmark.py --stage final --unlock-test
-```
-
-`docs/financial_benchmark_runbook.md` records the full recovery, analysis, and manuscript-generation sequence.
+The V1 final period has already been analyzed. Do not rerun it to select or revise a
+model. New model development must follow the prospective evaluation boundary in
+`docs/next_optimization_plan.md`.
 
 ## Repository Layout
 
@@ -79,11 +93,18 @@ layers/                normalization, decomposition, and encoder layers
 scripts/financial/     data, protocol, training, and analysis entry points
 configs/               versioned financial evaluation configuration
 tests/                 financial data and protocol checks
-docs/                  evaluation and data-management notes
+docs/                  current results, optimization, and writing direction
+reproducibility/       frozen V1/V2 metrics, manifests, figures, and checksums
 ```
 
-The manuscript source of record is maintained in a separate repository.  Generated datasets, checkpoints, intermediate predictions, TensorBoard traces, and local backups are ignored by Git.  Keep them outside commits and regenerate them from the recorded configuration when needed.
+The manuscript source of record is maintained in a separate repository. Generated
+datasets, checkpoints, intermediate predictions, TensorBoard traces, and local backups
+are ignored by Git. Keep them outside commits and regenerate them from the recorded
+configuration when needed.
 
 ## Reproducibility Boundary
 
-The repository contains code and configuration, not redistributed market-data archives or trained checkpoints.  Any release of data, final metrics, or manuscript tables must use the completed protocol records and respect each source provider's terms.
+The repository contains code, frozen metrics, manifests, figures, and configuration,
+but not redistributed market-data archives or trained checkpoints. Manuscript tables
+and claims must use the completed protocol records and respect each source provider's
+terms.

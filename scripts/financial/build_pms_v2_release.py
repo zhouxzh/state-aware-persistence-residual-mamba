@@ -48,7 +48,7 @@ SOURCE_FILES = (
     "scripts/financial/freeze_pms_v2_selection.py",
     "scripts/financial/analyze_pms_v2_validation.py",
     "scripts/financial/build_pms_v2_release.py",
-    "docs/pms_mamba_optimization_plan.md",
+    "reproducibility/nonstationary_analysis_v2/protocol/executed_pms_mamba_optimization_plan.md",
     "configs/financial_benchmark.json",
     "data/financial/manifests/training_datasets.json",
 )

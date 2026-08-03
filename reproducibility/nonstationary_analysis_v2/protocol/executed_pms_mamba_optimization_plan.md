@@ -1,4 +1,7 @@
-# PMS-Mamba Optimization and Paper Analysis Plan
+# Executed PMS-Mamba V2 Optimization Protocol
+
+Historical record: this protocol was executed on 2026-08-02 through 2026-08-03.
+Current results and prospective work are documented under `docs/`.
 
 Updated: 2026-08-03
 
@@ -154,4 +157,5 @@ requires human scientific approval before use.
   PMS diagnostic report;
 - `reproducibility/nonstationary_analysis_v2/` for the frozen V2 manifests, selected
   parameters, final metrics, bootstrap contrasts, figures, and checksums;
-- `docs/pms_mamba_optimization_plan.md` (this document) as the protocol record.
+- `reproducibility/nonstationary_analysis_v2/protocol/executed_pms_mamba_optimization_plan.md`
+  (this document) as the historical protocol record.

@@ -1,0 +1,4 @@
+term,cells,mean_gap_to_winner_pct,median_gap_to_winner_pct,within_5pct_of_winner,top3_cells
+Short,16,9.34336378923776,7.720619602398325,4,0
+Middle,16,4.486419644837549,3.3587335515509653,14,3
+Long,16,14.693340439606402,12.815291471046388,4,0

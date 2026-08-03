@@ -21,7 +21,8 @@ project.
 ## Dataset Expansion
 
 - Continue expanding evaluation beyond the current financial reference panels.
-  Follow `docs/dataset_expansion_plan.md` when proposing new task families.
+  Follow `docs/next_optimization_plan.md` when proposing new task families or a V3
+  evaluation.
 - Prioritize diverse nonstationary mechanisms and domains, such as realized-volatility,
   macroeconomic, and external collection benchmarks, instead of adding many near-
   duplicate financial tickers.
@@ -37,3 +38,13 @@ project.
   records, and provenance artifacts unless the user explicitly requests a new version.
 - Keep raw and processed data subject to source redistribution terms. Publish manifests,
   checksums, and reproducibility parameters rather than restricted source data.
+
+## Documentation and Paper Direction
+
+- Treat `docs/current_results.md` as the current human-readable result summary and
+  verify numeric claims against the frozen `reproducibility/` artifacts.
+- Follow `docs/paper_writing_direction.md` for positioning, evidence boundaries, and
+  supported claims. The present evidence supports a bounded mixed-result paper, not a
+  state-of-the-art superiority claim.
+- Keep executed protocols with their matching reproducibility release. Put only active,
+  prospective plans under `docs/`.
