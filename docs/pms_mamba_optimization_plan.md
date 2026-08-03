@@ -1,6 +1,6 @@
 # PMS-Mamba Optimization and Paper Analysis Plan
 
-Updated: 2026-08-02
+Updated: 2026-08-03
 
 ## Objective
 
@@ -46,7 +46,7 @@ Acceptance: the report is generated from the frozen final snapshot, all expected
 are present and finite where estimable, and zero-origin regime cells remain explicit
 NA rather than being imputed.
 
-### 2. Validation-only PMS screening (next)
+### 2. Validation-only PMS screening (complete)
 
 Run a seeded resolution-IV fractional factorial screen over four prespecified factors:
 
@@ -55,9 +55,11 @@ Run a seeded resolution-IV fractional factorial screen over four prespecified fa
 | Forecast target | direct level | residual from the last observed value |
 | Training loss | MSE | scale-normalized or baseline-relative MSE |
 | Multi-scale fusion | fixed mean | learnable/volatility-conditioned gate |
-| Selection calibration | balanced horizons [5, 60, 252] | long-horizon [60, 120, 252] |
+| Training-step weighting | uniform across forecast steps | increasing weight for later steps |
 
 - Use the same temporal splits, origins, input windows, and data hashes as V1.
+- Evaluate every configuration on all six validation horizons; the fourth factor changes
+  the training loss weights, not the evaluation horizon set.
 - Archive the exact 8-run design matrix, seed list, commands, and validation outputs.
 - Use three fixed training seeds for screening; do not inspect test predictions.
 - Keep `S_Mamba` unchanged as the implementation baseline.
@@ -69,7 +71,12 @@ stability. The screen is exploratory and does not create confirmatory p-values.
 Acceptance: every run has complete validation metrics and finite outputs; the chosen
 candidate is selected by the predeclared objective, not by a favorable test result.
 
-### 3. Validation confirmation and implementation audit
+Outcome: all 1,152 horizon-level validation cells completed (8 configurations x 8
+tasks x 3 seeds x 6 horizons). F01 ranked first with mean balanced RMSSE 9.854,
+followed by F03 at 9.877 and the current configuration F04 at 10.027. The protected
+test targets were not read.
+
+### 3. Validation confirmation and implementation audit (complete)
 
 - Refit the two best screening configurations with five seeds on all eight tasks.
 - Check residual-target inverse scaling, gated-fusion shape invariants, loss scale
@@ -84,7 +91,13 @@ Acceptance: selected parameters and replay scores are frozen in a V2 selection
 manifest; the implementation passes smoke tests, unit tests, and finite forward/
 backward checks in the `mamba` conda environment.
 
-### 4. Locked test evaluation (only after V2 selection is frozen)
+Outcome: F01, F03, and F04 were compared on 720 complete horizon-level validation
+cells (3 configurations x 8 tasks x 5 seeds x 6 horizons). Relative to F04, F01
+improved mean balanced RMSSE by 1.79% and F03 by 1.68%. Neither met the frozen 2%
+practical-effect threshold; neither violated the 5% term guardrail. F04 was retained.
+The implementation audit passed 20 financial pipeline and analysis tests.
+
+### 4. Locked test evaluation (not opened)
 
 - Evaluate the selected PMS candidate with five seeds on the unchanged test period.
 - Compare it against all existing V1 models using the same path-RMSSE primary ranking
@@ -98,7 +111,11 @@ If the protocol or primary metric changes, create a separately labeled protocol
 amendment and rerun the complete comparison matrix. Do not silently mix V1 and V2
 claims.
 
-### 5. Manuscript and release integration
+Outcome: no new candidate met the validation success rule, so no V2 locked-test run
+was opened. The existing immutable V1 test analysis remains the final confirmatory
+evidence. This prevents an unnecessary second look at the protected test period.
+
+### 5. Manuscript and release integration (release complete)
 
 - Describe the study as forecasting under nonstationarity with financial reference
   panels.
@@ -115,6 +132,13 @@ claims.
 - Generate SHA-256 sums and rerun repository tests, metric-suite checks, manuscript
   consistency checks, and `git diff --check`.
 
+Outcome: `reproducibility/nonstationary_analysis_v2/` contains the complete validation
+tables, frozen selection, per-task parameters, factor and paired analyses, a general
+manuscript figure, a LaTeX results fragment, provenance manifests, and release-wide
+SHA-256 sums. The repository has no manuscript source tree, so the fragment is not yet
+integrated into or compiled as a full paper; it passes standalone `chktex` checks and
+requires human scientific approval before use.
+
 ## Stop and reporting rules
 
 - Do not cherry-pick horizons, datasets, seeds, or metrics after seeing test results.
@@ -124,7 +148,7 @@ claims.
 - If no V2 candidate improves the validation objective, keep V1 as the final result and
   document the optimization attempt as a negative ablation.
 
-## Planned artifacts
+## Generated artifacts
 
 - `results/nonstationary_metric_suite/` for local exploratory metric tables and the
   PMS diagnostic report;

@@ -1,0 +1,71 @@
+{
+  "complete_rows": 720,
+  "config_ids": [
+    "PMSV2_F01",
+    "PMSV2_F03",
+    "PMSV2_F04"
+  ],
+  "design_sha256": "1c4b1b41dd16aa0eff0e1bdc849122034bcc3dfcab7d10c2b7cecac9b613ceba",
+  "expected_rows": 720,
+  "horizons": [
+    1,
+    5,
+    20,
+    60,
+    120,
+    252
+  ],
+  "objective_metric": "mean_balanced_rmsse",
+  "ranked_config_ids": [
+    "PMSV2_F01",
+    "PMSV2_F03",
+    "PMSV2_F04"
+  ],
+  "results_sha256": "f62bbf79a1a352c83a706e4e91cfe9f0027880ccfd0b3717cbca9ef263dba414",
+  "seeds": [
+    2023,
+    2024,
+    2025,
+    2026,
+    2027
+  ],
+  "selection_eval_flag": "val",
+  "source_results": [
+    {
+      "complete_rows": 1152,
+      "discarded_rows": 0,
+      "path": "results/nonstationary_analysis_v2/screen_merged/screen_results.csv",
+      "sha256": "9ead279282b346c79bae888f527b548b119f2f7e73b278369fd186377202b0f1"
+    },
+    {
+      "complete_rows": 96,
+      "discarded_rows": 0,
+      "path": "results/nonstationary_analysis_v2/confirmation_f01/screen_results.csv",
+      "sha256": "4024515446b3a853aab1061b8525f178addc63ec329a591e191f3f2f3bb3bb82"
+    },
+    {
+      "complete_rows": 96,
+      "discarded_rows": 0,
+      "path": "results/nonstationary_analysis_v2/confirmation_f03/screen_results.csv",
+      "sha256": "a410ba3c4a8a8c9d0619b191d81230bd3a392377c5cb225c8e6efd0e7213fd28"
+    },
+    {
+      "complete_rows": 96,
+      "discarded_rows": 0,
+      "path": "results/nonstationary_analysis_v2/confirmation_f04/screen_results.csv",
+      "sha256": "a7fccaa9f1e5b7a23593b9d272fad60f11cfc468e44986ade1633c6a52724264"
+    }
+  ],
+  "stage": "validation_confirmation",
+  "tasks": [
+    "financial_cross_asset_ms",
+    "financial_cross_asset_s",
+    "financial_crypto_ms",
+    "financial_crypto_s",
+    "financial_fx_ms",
+    "financial_fx_s",
+    "financial_yields_ms",
+    "financial_yields_s"
+  ],
+  "test_targets_read": false
+}

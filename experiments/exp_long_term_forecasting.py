@@ -17,6 +17,35 @@ import numpy as np
 warnings.filterwarnings('ignore')
 
 
+class HorizonWeightedMSELoss(nn.Module):
+    """MSE with optional per-step weighting and local scale normalization."""
+
+    def __init__(self, normalized=False, horizon_weighting='balanced', eps=1e-4):
+        super().__init__()
+        if horizon_weighting not in ('balanced', 'long'):
+            raise ValueError("horizon_weighting must be 'balanced' or 'long'")
+        self.normalized = bool(normalized)
+        self.horizon_weighting = horizon_weighting
+        self.eps = float(eps)
+        self.requires_scale = self.normalized
+
+    def forward(self, prediction, target, scale=None):
+        error = prediction - target
+        if self.normalized:
+            if scale is None:
+                scale = target.std(dim=1, keepdim=True, unbiased=False)
+            error = error / scale.detach().clamp_min(self.eps)
+
+        if self.horizon_weighting == 'long' and prediction.size(1) > 1:
+            steps = torch.arange(
+                1, prediction.size(1) + 1, device=prediction.device, dtype=prediction.dtype
+            )
+            weights = 0.5 + 1.5 * steps / float(prediction.size(1))
+            weights = weights / weights.mean()
+            error = error * weights.view(1, -1, 1)
+        return error.square().mean()
+
+
 class Exp_Long_Term_Forecast(Exp_Basic):
     def __init__(self, args):
         super(Exp_Long_Term_Forecast, self).__init__(args)
@@ -107,8 +136,23 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         return model_optim
 
     def _select_criterion(self):
-        criterion = nn.MSELoss()
-        return criterion
+        loss_name = str(getattr(self.args, 'loss', 'MSE')).strip().lower()
+        horizon_weighting = str(getattr(self.args, 'horizon_weighting', 'balanced')).strip().lower()
+        if loss_name == 'mse' and horizon_weighting == 'balanced':
+            return nn.MSELoss()
+        if loss_name not in {'mse', 'scale_mse', 'scaled_mse'}:
+            raise ValueError("loss must be MSE or SCALE_MSE")
+        return HorizonWeightedMSELoss(
+            normalized=loss_name in {'scale_mse', 'scaled_mse'},
+            horizon_weighting=horizon_weighting,
+        )
+
+    def _compute_loss(self, criterion, prediction, target, batch_x):
+        if getattr(criterion, 'requires_scale', False):
+            scale_source = self._metric_feature_slice(batch_x)
+            scale = scale_source.std(dim=1, keepdim=True, unbiased=False)
+            return criterion(prediction, target, scale=scale)
+        return criterion(prediction, target)
 
     def _forward_batch(self, batch_x, batch_y, batch_x_mark, batch_y_mark):
         batch_x = batch_x.float().to(self.device)
@@ -325,12 +369,8 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                 outputs = outputs[:, -self.args.pred_len:, f_dim:]
                 batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
 
-                pred = outputs.detach().cpu()
-                true = batch_y.detach().cpu()
-
-                loss = criterion(pred, true)
-
-                total_loss.append(loss)
+                loss = self._compute_loss(criterion, outputs, batch_y, batch_x)
+                total_loss.append(loss.item())
         total_loss = np.average(total_loss)
         self.model.train()
         return total_loss
@@ -389,7 +429,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         f_dim = -1 if self.args.features == 'MS' else 0
                         outputs = outputs[:, -self.args.pred_len:, f_dim:]
                         batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
-                        loss = criterion(outputs, batch_y)
+                        loss = self._compute_loss(criterion, outputs, batch_y, batch_x)
                         train_loss.append(loss.item())
                 else:
                     if self.args.output_attention:
@@ -400,7 +440,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     f_dim = -1 if self.args.features == 'MS' else 0
                     outputs = outputs[:, -self.args.pred_len:, f_dim:]
                     batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
-                    loss = criterion(outputs, batch_y)
+                    loss = self._compute_loss(criterion, outputs, batch_y, batch_x)
                     train_loss.append(loss.item())
 
                 if writer is not None:

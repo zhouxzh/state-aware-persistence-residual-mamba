@@ -93,6 +93,7 @@ class Model(nn.Module):
         self.pred_len = configs.pred_len
         self.output_attention = configs.output_attention
         self.use_norm = bool(configs.use_norm)
+        self.residual_target = bool(getattr(configs, "residual_target", 0))
         self.ms_use_decomp = bool(getattr(configs, "ms_use_decomp", 1))
         self.ms_fusion = getattr(configs, "ms_fusion", "gate")
         self.ms_scales = self._parse_scales(getattr(configs, "ms_scales", [1, 2, 4]))
@@ -202,7 +203,12 @@ class Model(nn.Module):
 
         dec_out = self._fuse_scales(scale_outputs, raw_x, num_vars).permute(0, 2, 1)
 
-        if self.use_norm:
+        if self.residual_target:
+            if self.use_norm:
+                dec_out = self._standard_denormalize(dec_out, raw_x[:, -1:, :], stdev)
+            else:
+                dec_out = dec_out + raw_x[:, -1:, :]
+        elif self.use_norm:
             dec_out = self._standard_denormalize(dec_out, means, stdev)
 
         return dec_out, None

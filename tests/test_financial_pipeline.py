@@ -11,7 +11,12 @@ import numpy as np
 import pandas as pd
 
 from data_provider.data_loader import Dataset_Custom
-from experiments.exp_long_term_forecasting import Exp_Long_Term_Forecast
+from experiments.exp_long_term_forecasting import (
+    Exp_Long_Term_Forecast,
+    HorizonWeightedMSELoss,
+)
+from layers.NonStationaryGate import NonStationaryGate
+from model.PMS_Mamba import Model as PMSMambaModel
 from scripts.optuna.run_dataset_optuna import (
     model_params_feasibility_error,
     prepare_study_resume,
@@ -130,6 +135,87 @@ class FinancialPipelineTests(unittest.TestCase):
         )
         self.assertIsNone(model_params_feasibility_error("PMS_Mamba-PD", valid))
         self.assertIsNone(model_params_feasibility_error("S_Mamba", invalid))
+
+    def test_horizon_weighted_mse_is_scale_invariant_when_normalized(self) -> None:
+        import torch
+
+        prediction = torch.tensor([[[1.0], [2.0], [4.0]]])
+        target = torch.zeros_like(prediction)
+        scale = torch.tensor([[[2.0]]])
+        criterion = HorizonWeightedMSELoss(normalized=True, horizon_weighting="balanced")
+
+        first = criterion(prediction, target, scale=scale)
+        second = criterion(prediction * 5.0, target, scale=scale * 5.0)
+
+        self.assertAlmostEqual(float(first), float(second), places=7)
+
+    def test_long_horizon_weighting_penalizes_late_errors_more(self) -> None:
+        import torch
+
+        target = torch.zeros((1, 3, 1))
+        early_error = torch.tensor([[[1.0], [0.0], [0.0]]])
+        late_error = torch.tensor([[[0.0], [0.0], [1.0]]])
+        criterion = HorizonWeightedMSELoss(normalized=False, horizon_weighting="long")
+
+        self.assertGreater(
+            float(criterion(late_error, target)),
+            float(criterion(early_error, target)),
+        )
+
+    def test_pms_residual_target_anchors_last_observation_after_denormalization(self) -> None:
+        import torch
+        import torch.nn as nn
+
+        class ZeroBranch(nn.Module):
+            def __init__(self, pred_len: int) -> None:
+                super().__init__()
+                self.pred_len = pred_len
+
+            def forward(self, value: torch.Tensor) -> torch.Tensor:
+                return torch.zeros(
+                    value.size(0), value.size(2), self.pred_len,
+                    dtype=value.dtype, device=value.device,
+                )
+
+        model = PMSMambaModel.__new__(PMSMambaModel)
+        nn.Module.__init__(model)
+        model.pred_len = 3
+        model.use_norm = True
+        model.residual_target = True
+        model.ms_use_decomp = False
+        model.ms_scales = [1]
+        model.component_count = 1
+        model.decomp = None
+        model.branches = nn.ModuleList([ZeroBranch(model.pred_len)])
+        model.scale_gate = None
+        model.register_parameter("scale_logits", None)
+        inputs = torch.tensor([[[1.0], [2.0], [4.0], [7.0]]])
+
+        output, _ = model.forecast(inputs, None, None, None)
+
+        expected = inputs[:, -1:, :].expand(-1, model.pred_len, -1)
+        torch.testing.assert_close(output, expected)
+
+    def test_nonstationary_gate_shape_normalization_and_replay(self) -> None:
+        import torch
+
+        torch.manual_seed(20260725)
+        gate = NonStationaryGate(
+            d_model=8,
+            hidden_dim=16,
+            gate_dim=6,
+            num_gates=4,
+            dropout=0.0,
+            activation="softmax",
+        ).eval()
+        inputs = torch.randn(2, 16, 3)
+
+        first = gate(inputs, target_tokens=3)
+        second = gate(inputs, target_tokens=3)
+
+        self.assertEqual(tuple(first.shape), (2, 3, 4, 6))
+        torch.testing.assert_close(first.sum(dim=2), torch.ones(2, 3, 6))
+        torch.testing.assert_close(first, second)
 
     def test_interrupted_optuna_trial_does_not_consume_budget(self) -> None:
         import optuna

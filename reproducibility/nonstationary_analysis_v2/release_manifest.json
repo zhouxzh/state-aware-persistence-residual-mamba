@@ -1,0 +1,64 @@
+{
+  "git_head": "4dc85b18ee52b4a6d53dfa615c55cbe8ca4dd2b9",
+  "git_worktree_dirty": true,
+  "locked_test_action": "not_opened_no_candidate_met_rule",
+  "manuscript_integration": {
+    "claim_evidence": "analysis/claim_evidence.json",
+    "fragment": "analysis/pms_v2_results.tex",
+    "human_verification_required": true,
+    "status": "fragment_only_no_manuscript_source_present"
+  },
+  "release": "nonstationary_analysis_v2_validation",
+  "release_inputs": {
+    "analysis/REPORT.md": "bce9a610d15c517aee1cd8315ebbacc15247c537e9c11248cc3add94c5b2db90",
+    "analysis/analysis_manifest.json": "a07c05693fb5c110ddd6e0790b77e8dae753b861fd1de3465bfc9e6787b2f137",
+    "analysis/confirmation_paired_summary.csv": "e22f3b3826a37126ed2d3134cb7251fa04004e6dff3aa169d76528d854b036ad",
+    "analysis/confirmation_task_summary.csv": "574c3425ba032a1c66ab02f4dc968319dc9dafa5c5a0af7b53f9f52df03f8808",
+    "analysis/pms_v2_validation_effects.pdf": "7606c6cfbf999133057ca23005878a8ce9c8fd305f0c79726aecfbb4383da093",
+    "analysis/pms_v2_validation_effects.png": "cc164bd90e35c71365245cf679de5a4343d919773894929fc3382b9bb8e939c2",
+    "analysis/screen_factor_effects.csv": "3ad910a51f443a517e4b2645247540c7c715e1d061f7dad95be427d44cf5300f",
+    "validation/confirmation_config_summary.csv": "b28a0ecbb2cebe3fdd5dc9050fd450ac4f24cab5a8c6fcb6a90502a3ae0ed141",
+    "validation/confirmation_manifest.json": "2b2661579850119e057fc19376e152f1bf37bb8a303c3c54a387ea025c3d44e6",
+    "validation/confirmation_results.csv": "f62bbf79a1a352c83a706e4e91cfe9f0027880ccfd0b3717cbca9ef263dba414",
+    "validation/confirmation_run_summary.csv": "522c48e8bae8503f03d24a3df47d90806517aa89f992ebb5eca935418fe6a730",
+    "validation/screen_config_summary.csv": "93b4622225a0e50da13b7af3bd32af6b3b843747aa8375724be0bd7071780545",
+    "validation/screen_design.csv": "3ed82a0330c22a47cc98431de7f75aa2718dc2345e65b032bc5d0f43c64d0f85",
+    "validation/screen_manifest.json": "06233c9e16aee10c60c1656f7aad04050d27e7b7ee03da7c6ff8c34125ef3193",
+    "validation/screen_results.csv": "9ead279282b346c79bae888f527b548b119f2f7e73b278369fd186377202b0f1",
+    "validation/screen_run_summary.csv": "3b9130f96aa3c0cd4a292f5963a571cf961de51d3ca933bd0633e250be4ad441"
+  },
+  "row_counts": {
+    "confirmation_horizon_rows": 720,
+    "confirmation_task_seed_rows": 120,
+    "screen_horizon_rows": 1152,
+    "screen_task_seed_rows": 192
+  },
+  "runtime": {
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 5090 D",
+    "mamba_ssm": "2.3.1",
+    "numpy": "1.23.5",
+    "pandas": "2.3.3",
+    "python_environment": "mamba conda environment",
+    "torch": "2.8.0+cu128",
+    "torch_cuda": "12.8"
+  },
+  "scope": "validation-only PMS-Mamba optimization and negative ablation",
+  "selected_config_id": "PMSV2_F04",
+  "selection_status": "baseline_retained",
+  "source_files": {
+    "configs/financial_benchmark.json": "1b1a8d94847ab2296dec0db9a5cbe596836aae15fd8e7d88c1e4082e178d5963",
+    "data/financial/manifests/training_datasets.json": "c95f823a3f6c823247efef182873cef9ee29d329629f326f54b33564ba8b76ea",
+    "docs/pms_mamba_optimization_plan.md": "2a0e212f94d8fbaa251bac0f6dbfbee2be93ce67a3b963ad4c8f741357ad87a8",
+    "experiments/exp_long_term_forecasting.py": "bf1bde0310eccc39551c6ab7e3fb1973ddc86f75e10d974e8c0c5f55b78ad5dc",
+    "model/PMS_Mamba.py": "439931be3ec868d968edc756c417d5725f4e22f1c5e89fbaea952e7e11e3efc3",
+    "run.py": "fa82532fec493eef629384e86d581a148cc9a8dcfce7b87a14163bbe7795c8a2",
+    "scripts/financial/analyze_pms_v2_validation.py": "5a93d6e3a51a784a924a3407d750c20cc901389f6ef54ea35cfb17a2128af3f2",
+    "scripts/financial/build_pms_v2_release.py": "cb875d9e58455d55600c24fa87e10b73f01b0e61688328b6bebd78fae1e5657b",
+    "scripts/financial/freeze_pms_v2_selection.py": "1a3ec1ce2631eced175ebf130b82d75cea0e4ee95900536923ab086f74c75869",
+    "scripts/financial/merge_pms_v2_validation.py": "b4a439af1f0d1addb605deaec067d604feb1c57d91e8b97135c1edbcba7abb82",
+    "scripts/financial/run_pms_v2_screen.py": "9293fa6aec7149fedb8e291f95ed647533d2e71942bc93ea4be5b74c43c16535",
+    "scripts/optuna/run_dataset_optuna.py": "3b790748921db453d33d39e3975343416cc0228e7d86fdc97ab34a24f3e60998"
+  },
+  "test_targets_read": false
+}

@@ -264,7 +264,8 @@ def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_
         patience=int(cli_args.patience),
         learning_rate=float(params.get("learning_rate", 1e-4)),
         des=f"optuna_{cli_args.phase}_{stage_tag}",
-        loss="MSE",
+        loss=str(params.get("loss", "MSE")),
+        horizon_weighting=str(params.get("horizon_weighting", "balanced")),
         lradj="type1",
         use_amp=False,
         tensorboard_dir=cli_args.tensorboard_dir,
@@ -292,6 +293,7 @@ def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_
         ms_fusion=str(params.get("ms_fusion", "gate")),
         ms_use_decomp=int(params.get("ms_use_decomp", 1)),
         ms_use_linear_skip=int(params.get("ms_use_linear_skip", 0)),
+        residual_target=int(params.get("residual_target", 0)),
         channel_independence=False,
         disable_tensorboard=True,
     )

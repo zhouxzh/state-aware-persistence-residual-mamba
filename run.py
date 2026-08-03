@@ -78,6 +78,8 @@ if __name__ == '__main__':
     parser.add_argument('--learning_rate', type=float, default=0.0001, help='optimizer learning rate')
     parser.add_argument('--des', type=str, default='test', help='exp description')
     parser.add_argument('--loss', type=str, default='MSE', help='loss function')
+    parser.add_argument('--horizon_weighting', type=str, choices=['balanced', 'long'], default='balanced',
+                        help='training-step weighting: uniform or increasing weight for later forecast steps')
     parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
     parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
     parser.add_argument('--tensorboard_dir', type=str, default='./tensorboard/', help='tensorboard log directory')
@@ -127,6 +129,8 @@ if __name__ == '__main__':
                         help='use trend/seasonal/residual component tokens in MS_Mamba')
     parser.add_argument('--ms_use_linear_skip', type=int, default=0,
                         help='blend an NLinear-style last-value skip forecast into MS_Mamba')
+    parser.add_argument('--residual_target', type=int, default=0,
+                        help='anchor PMS-Mamba forecasts around the last observed value')
 
     args = parser.parse_args()
     random.seed(args.seed)

@@ -1,0 +1,9 @@
+config_id,design_row,generator,factor_a_code,factor_b_code,factor_c_code,factor_d_code,residual_target,loss,ms_fusion,horizon_weighting
+PMSV2_F01,1,D=ABC,1,-1,-1,1,1,MSE,mean,long
+PMSV2_F02,2,D=ABC,-1,1,1,-1,0,SCALE_MSE,gate,balanced
+PMSV2_F03,3,D=ABC,1,-1,1,-1,1,MSE,gate,balanced
+PMSV2_F04,4,D=ABC,-1,-1,-1,-1,0,MSE,mean,balanced
+PMSV2_F05,5,D=ABC,-1,-1,1,1,0,MSE,gate,long
+PMSV2_F06,6,D=ABC,1,1,1,1,1,SCALE_MSE,gate,long
+PMSV2_F07,7,D=ABC,-1,1,-1,1,0,SCALE_MSE,mean,long
+PMSV2_F08,8,D=ABC,1,1,-1,-1,1,SCALE_MSE,mean,balanced
