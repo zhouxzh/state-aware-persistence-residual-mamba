@@ -1,0 +1,711 @@
+{
+  "generated_without_reading_target_values": true,
+  "missing_configured_datasets": {
+    "gld": {
+      "path": "data/GLD/GLD.csv",
+      "reason": "configured source file is unavailable"
+    }
+  },
+  "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+  "protocol_version": "pms_mamba_v3_20260804a",
+  "source_config_sha256": "da0de7cd3dd66d98563ab90470ed00f390fd6514c4e608214bc44ba38eb364de",
+  "task_count": 16,
+  "tasks": {
+    "electricity_m": {
+      "c_out": 321,
+      "data_path": "electricity.csv",
+      "data_sha256": "7e45845d54c5219bad0ae6bc1b5316cf8ff9cead5d33fa998a5a51c2e4a497ad",
+      "dec_in": 321,
+      "enc_in": 321,
+      "evidence_status": "untouched_confirmatory",
+      "features": "M",
+      "freq": "h",
+      "horizons": [
+        24,
+        48,
+        96,
+        168,
+        336,
+        720
+      ],
+      "input_mode": "M",
+      "physical_dataset": "electricity",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/Electricity",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "chronological 70/10/20 row split",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          168
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 321
+    },
+    "electricity_s": {
+      "c_out": 1,
+      "data_path": "electricity.csv",
+      "data_sha256": "7e45845d54c5219bad0ae6bc1b5316cf8ff9cead5d33fa998a5a51c2e4a497ad",
+      "dec_in": 1,
+      "enc_in": 1,
+      "evidence_status": "untouched_confirmatory",
+      "features": "S",
+      "freq": "h",
+      "horizons": [
+        24,
+        48,
+        96,
+        168,
+        336,
+        720
+      ],
+      "input_mode": "S",
+      "physical_dataset": "electricity",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/Electricity",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "chronological 70/10/20 row split",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          168
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 321
+    },
+    "etth1_m": {
+      "c_out": 7,
+      "data": "ETTh1",
+      "data_path": "ETTh1.csv",
+      "data_sha256": "f18de3ad269cef59bb07b5438d79bb3042d3be49bdeecf01c1cd6d29695ee066",
+      "dec_in": 7,
+      "enc_in": 7,
+      "evidence_status": "untouched_confirmatory",
+      "features": "M",
+      "freq": "h",
+      "horizons": [
+        24,
+        48,
+        96,
+        168,
+        336,
+        720
+      ],
+      "input_mode": "M",
+      "physical_dataset": "etth1",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/ETT",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "TSLib fixed ETT train/validation/test boundaries",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          168
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 7
+    },
+    "etth1_s": {
+      "c_out": 1,
+      "data": "ETTh1",
+      "data_path": "ETTh1.csv",
+      "data_sha256": "f18de3ad269cef59bb07b5438d79bb3042d3be49bdeecf01c1cd6d29695ee066",
+      "dec_in": 1,
+      "enc_in": 1,
+      "evidence_status": "untouched_confirmatory",
+      "features": "S",
+      "freq": "h",
+      "horizons": [
+        24,
+        48,
+        96,
+        168,
+        336,
+        720
+      ],
+      "input_mode": "S",
+      "physical_dataset": "etth1",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/ETT",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "TSLib fixed ETT train/validation/test boundaries",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          168
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 7
+    },
+    "etth2_m": {
+      "c_out": 7,
+      "data": "ETTh2",
+      "data_path": "ETTh2.csv",
+      "data_sha256": "a3dc2c597b9218c7ce1cd55eb77b283fd459a1d09d753063f944967dd6b9218b",
+      "dec_in": 7,
+      "enc_in": 7,
+      "evidence_status": "untouched_confirmatory",
+      "features": "M",
+      "freq": "h",
+      "horizons": [
+        24,
+        48,
+        96,
+        168,
+        336,
+        720
+      ],
+      "input_mode": "M",
+      "physical_dataset": "etth2",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/ETT",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "TSLib fixed ETT train/validation/test boundaries",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          168
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 7
+    },
+    "etth2_s": {
+      "c_out": 1,
+      "data": "ETTh2",
+      "data_path": "ETTh2.csv",
+      "data_sha256": "a3dc2c597b9218c7ce1cd55eb77b283fd459a1d09d753063f944967dd6b9218b",
+      "dec_in": 1,
+      "enc_in": 1,
+      "evidence_status": "untouched_confirmatory",
+      "features": "S",
+      "freq": "h",
+      "horizons": [
+        24,
+        48,
+        96,
+        168,
+        336,
+        720
+      ],
+      "input_mode": "S",
+      "physical_dataset": "etth2",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/ETT",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "TSLib fixed ETT train/validation/test boundaries",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          168
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 7
+    },
+    "ettm1_m": {
+      "c_out": 7,
+      "data": "ETTm1",
+      "data_path": "ETTm1.csv",
+      "data_sha256": "6ce1759b1a18e3328421d5d75fadcb316c449fcd7cec32820c8dafda71986c9e",
+      "dec_in": 7,
+      "enc_in": 7,
+      "evidence_status": "untouched_confirmatory",
+      "features": "M",
+      "freq": "t",
+      "horizons": [
+        24,
+        48,
+        96,
+        192,
+        336,
+        720
+      ],
+      "input_mode": "M",
+      "physical_dataset": "ettm1",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/ETT",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "TSLib fixed ETT train/validation/test boundaries",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          192
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 7
+    },
+    "ettm1_s": {
+      "c_out": 1,
+      "data": "ETTm1",
+      "data_path": "ETTm1.csv",
+      "data_sha256": "6ce1759b1a18e3328421d5d75fadcb316c449fcd7cec32820c8dafda71986c9e",
+      "dec_in": 1,
+      "enc_in": 1,
+      "evidence_status": "untouched_confirmatory",
+      "features": "S",
+      "freq": "t",
+      "horizons": [
+        24,
+        48,
+        96,
+        192,
+        336,
+        720
+      ],
+      "input_mode": "S",
+      "physical_dataset": "ettm1",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/ETT",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "TSLib fixed ETT train/validation/test boundaries",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          192
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 7
+    },
+    "ettm2_m": {
+      "c_out": 7,
+      "data": "ETTm2",
+      "data_path": "ETTm2.csv",
+      "data_sha256": "db973ca252c6410a30d0469b13d696cf919648d0f3fd588c60f03fdbdbadd1fd",
+      "dec_in": 7,
+      "enc_in": 7,
+      "evidence_status": "untouched_confirmatory",
+      "features": "M",
+      "freq": "t",
+      "horizons": [
+        24,
+        48,
+        96,
+        192,
+        336,
+        720
+      ],
+      "input_mode": "M",
+      "physical_dataset": "ettm2",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/ETT",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "TSLib fixed ETT train/validation/test boundaries",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          192
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 7
+    },
+    "ettm2_s": {
+      "c_out": 1,
+      "data": "ETTm2",
+      "data_path": "ETTm2.csv",
+      "data_sha256": "db973ca252c6410a30d0469b13d696cf919648d0f3fd588c60f03fdbdbadd1fd",
+      "dec_in": 1,
+      "enc_in": 1,
+      "evidence_status": "untouched_confirmatory",
+      "features": "S",
+      "freq": "t",
+      "horizons": [
+        24,
+        48,
+        96,
+        192,
+        336,
+        720
+      ],
+      "input_mode": "S",
+      "physical_dataset": "ettm2",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/ETT",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "TSLib fixed ETT train/validation/test boundaries",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          192
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 7
+    },
+    "exchange_m": {
+      "c_out": 8,
+      "data_path": "exchange_rate.csv",
+      "data_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+      "dec_in": 8,
+      "enc_in": 8,
+      "evidence_status": "previously_opened_robustness",
+      "features": "M",
+      "freq": "d",
+      "horizons": [
+        1,
+        3,
+        5,
+        7,
+        14,
+        30,
+        60,
+        90,
+        120,
+        180,
+        270,
+        360
+      ],
+      "input_mode": "M",
+      "physical_dataset": "exchange",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/Exchange",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "chronological 70/10/20 row split",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          120,
+          180,
+          270,
+          360
+        ],
+        "middle": [
+          14,
+          30,
+          60,
+          90
+        ],
+        "short": [
+          1,
+          3,
+          5,
+          7
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 8
+    },
+    "exchange_s": {
+      "c_out": 1,
+      "data_path": "exchange_rate.csv",
+      "data_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+      "dec_in": 1,
+      "enc_in": 1,
+      "evidence_status": "previously_opened_robustness",
+      "features": "S",
+      "freq": "d",
+      "horizons": [
+        1,
+        3,
+        5,
+        7,
+        14,
+        30,
+        60,
+        90,
+        120,
+        180,
+        270,
+        360
+      ],
+      "input_mode": "S",
+      "physical_dataset": "exchange",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/Exchange",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "chronological 70/10/20 row split",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          120,
+          180,
+          270,
+          360
+        ],
+        "middle": [
+          14,
+          30,
+          60,
+          90
+        ],
+        "short": [
+          1,
+          3,
+          5,
+          7
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 8
+    },
+    "traffic_m": {
+      "c_out": 862,
+      "data_path": "traffic.csv",
+      "data_sha256": "cb06463d56fa17d87f47027cd9389ceae82a69eddee51cdb61480e120dab0b16",
+      "dec_in": 862,
+      "enc_in": 862,
+      "evidence_status": "untouched_confirmatory",
+      "features": "M",
+      "freq": "h",
+      "horizons": [
+        24,
+        48,
+        96,
+        168,
+        336,
+        720
+      ],
+      "input_mode": "M",
+      "physical_dataset": "traffic",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/Traffic",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "chronological 70/10/20 row split",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          168
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 862
+    },
+    "traffic_s": {
+      "c_out": 1,
+      "data_path": "traffic.csv",
+      "data_sha256": "cb06463d56fa17d87f47027cd9389ceae82a69eddee51cdb61480e120dab0b16",
+      "dec_in": 1,
+      "enc_in": 1,
+      "evidence_status": "untouched_confirmatory",
+      "features": "S",
+      "freq": "h",
+      "horizons": [
+        24,
+        48,
+        96,
+        168,
+        336,
+        720
+      ],
+      "input_mode": "S",
+      "physical_dataset": "traffic",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/Traffic",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "chronological 70/10/20 row split",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          336,
+          720
+        ],
+        "middle": [
+          96,
+          168
+        ],
+        "short": [
+          24,
+          48
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 862
+    },
+    "weather_m": {
+      "c_out": 21,
+      "data_path": "weather.csv",
+      "data_sha256": "34ee981d07313e51da2a50bb600072c8ae4a69cb4b0651f4cb93a069d7a2ba63",
+      "dec_in": 21,
+      "enc_in": 21,
+      "evidence_status": "previously_opened_robustness",
+      "features": "M",
+      "freq": "t",
+      "horizons": [
+        96,
+        192,
+        336,
+        720
+      ],
+      "input_mode": "M",
+      "physical_dataset": "weather",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/Weather",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "chronological 70/10/20 row split",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          720
+        ],
+        "middle": [
+          192,
+          336
+        ],
+        "short": [
+          96
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 21
+    },
+    "weather_s": {
+      "c_out": 1,
+      "data_path": "weather.csv",
+      "data_sha256": "34ee981d07313e51da2a50bb600072c8ae4a69cb4b0651f4cb93a069d7a2ba63",
+      "dec_in": 1,
+      "enc_in": 1,
+      "evidence_status": "previously_opened_robustness",
+      "features": "S",
+      "freq": "t",
+      "horizons": [
+        96,
+        192,
+        336,
+        720
+      ],
+      "input_mode": "S",
+      "physical_dataset": "weather",
+      "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+      "protocol_version": "pms_mamba_v3_20260804a",
+      "root_path": "data/Weather",
+      "source_manifest": "data/benchmark_download_manifest.json",
+      "split_policy": "chronological 70/10/20 row split",
+      "target": "OT",
+      "term_groups": {
+        "long": [
+          720
+        ],
+        "middle": [
+          192,
+          336
+        ],
+        "short": [
+          96
+        ]
+      },
+      "test_targets_read": false,
+      "variable_count": 21
+    }
+  }
+}

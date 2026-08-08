@@ -7,12 +7,14 @@ from utils.metrics import metric
 import torch
 import torch.nn as nn
 from torch import optim
+import math
 import os
 import subprocess
 import time
 import warnings
 import json
 import numpy as np
+from pathlib import Path
 
 warnings.filterwarnings('ignore')
 
@@ -151,8 +153,13 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         if getattr(criterion, 'requires_scale', False):
             scale_source = self._metric_feature_slice(batch_x)
             scale = scale_source.std(dim=1, keepdim=True, unbiased=False)
-            return criterion(prediction, target, scale=scale)
-        return criterion(prediction, target)
+            loss = criterion(prediction, target, scale=scale)
+        else:
+            loss = criterion(prediction, target)
+        model = self.model.module if isinstance(self.model, nn.DataParallel) else self.model
+        if hasattr(model, 'auxiliary_loss'):
+            loss = loss + model.auxiliary_loss(prediction, target, batch_x)
+        return loss
 
     def _forward_batch(self, batch_x, batch_y, batch_x_mark, batch_y_mark):
         batch_x = batch_x.float().to(self.device)
@@ -334,6 +341,129 @@ class Exp_Long_Term_Forecast(Exp_Basic):
             'trues': trues,
         }
 
+    def evaluate_streaming(self, setting=None, load_checkpoint=False, save_artifacts=False,
+                           flag='test'):
+        """Evaluate without retaining the full origin-by-horizon prediction tensor."""
+        data_set, data_loader = self._get_data(flag=flag)
+        if load_checkpoint:
+            if setting is None:
+                raise ValueError('setting is required when load_checkpoint=True')
+            checkpoint_path = os.path.join(self.args.checkpoints, setting, 'checkpoint.pth')
+            self.model.load_state_dict(torch.load(checkpoint_path))
+
+        insample = np.asarray(self._rmsse_insample(), dtype=np.float64)
+        naive_diff = insample[1:] - insample[:-1]
+        rmsse_scale = np.maximum(np.mean(np.square(naive_diff), axis=0), 1e-12)
+        totals = {
+            'absolute': 0.0,
+            'squared': 0.0,
+            'scaled_squared': 0.0,
+            'absolute_percentage': 0.0,
+            'squared_percentage': 0.0,
+            'count': 0,
+            'terminal_absolute': 0.0,
+            'terminal_squared': 0.0,
+            'terminal_scaled_squared': 0.0,
+            'terminal_count': 0,
+        }
+        origin_path_mse = []
+        origin_path_scaled_mse = []
+        origin_terminal_mse = []
+        origin_dates = (
+            data_set.forecast_origin_dates()
+            if hasattr(data_set, 'forecast_origin_dates')
+            else None
+        )
+        self.model.eval()
+        with torch.no_grad():
+            for batch_index, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(data_loader):
+                self._maybe_wait_for_thermal_resume(batch_index)
+                outputs, targets, _ = self._forward_batch(
+                    batch_x, batch_y, batch_x_mark, batch_y_mark
+                )
+                prediction = outputs.detach().cpu().numpy()
+                truth = targets.detach().cpu().numpy()
+                if data_set.scale and self.args.inverse:
+                    prediction = self._inverse_transform_batch(data_set, prediction)
+                    truth = self._inverse_transform_batch(data_set, truth)
+
+                error = prediction.astype(np.float64) - truth.astype(np.float64)
+                squared = np.square(error)
+                scaled_squared = squared / rmsse_scale.reshape(1, 1, -1)
+                with np.errstate(divide='ignore', invalid='ignore'):
+                    percentage = error / truth
+                totals['absolute'] += float(np.abs(error).sum())
+                totals['squared'] += float(squared.sum())
+                totals['scaled_squared'] += float(scaled_squared.sum())
+                totals['absolute_percentage'] += float(np.abs(percentage).sum())
+                totals['squared_percentage'] += float(np.square(percentage).sum())
+                totals['count'] += int(error.size)
+
+                terminal_squared = squared[:, -1, :]
+                terminal_scaled = scaled_squared[:, -1, :]
+                totals['terminal_absolute'] += float(np.abs(error[:, -1, :]).sum())
+                totals['terminal_squared'] += float(terminal_squared.sum())
+                totals['terminal_scaled_squared'] += float(terminal_scaled.sum())
+                totals['terminal_count'] += int(terminal_squared.size)
+                origin_path_mse.extend(squared.mean(axis=(1, 2)).tolist())
+                origin_path_scaled_mse.extend(scaled_squared.mean(axis=(1, 2)).tolist())
+                origin_terminal_mse.extend(terminal_squared.mean(axis=1).tolist())
+
+        if totals['count'] == 0:
+            raise ValueError('streaming evaluation produced no forecast values')
+        metrics = {
+            'mae': totals['absolute'] / totals['count'],
+            'mse': totals['squared'] / totals['count'],
+            'mape': totals['absolute_percentage'] / totals['count'],
+            'mspe': totals['squared_percentage'] / totals['count'],
+            'rmsse': math.sqrt(totals['scaled_squared'] / totals['count']),
+            'terminal_mae': totals['terminal_absolute'] / totals['terminal_count'],
+            'terminal_mse': totals['terminal_squared'] / totals['terminal_count'],
+            'terminal_rmsse': math.sqrt(
+                totals['terminal_scaled_squared'] / totals['terminal_count']
+            ),
+        }
+        metrics['rmse'] = math.sqrt(metrics['mse'])
+        metrics['terminal_rmse'] = math.sqrt(metrics['terminal_mse'])
+
+        if save_artifacts:
+            if setting is None:
+                raise ValueError('setting is required when save_artifacts=True')
+            folder = Path(getattr(self.args, 'results_root', './results/')) / setting
+            folder.mkdir(parents=True, exist_ok=True)
+            origin_count = len(origin_path_mse)
+            if origin_dates is not None and len(origin_dates) != origin_count:
+                raise ValueError(
+                    f'Origin-date count {len(origin_dates)} does not match {origin_count} losses'
+                )
+            np.savez_compressed(
+                folder / 'origin_losses.npz',
+                origin_dates=(origin_dates if origin_dates is not None else np.arange(origin_count)),
+                path_mse=np.asarray(origin_path_mse, dtype=np.float64),
+                path_scaled_mse=np.asarray(origin_path_scaled_mse, dtype=np.float64),
+                terminal_mse=np.asarray(origin_terminal_mse, dtype=np.float64),
+            )
+            metadata = {
+                'streaming_evaluation': True,
+                'raw_predictions_saved': False,
+                'evaluation_split': flag,
+                'model': self.args.model,
+                'model_id': self.args.model_id,
+                'prediction_horizon': int(self.args.pred_len),
+                'features': self.args.features,
+                'target': self.args.target,
+                'seed': int(getattr(self.args, 'seed', 2023)),
+                'metrics': metrics,
+                'origin_losses_file': 'origin_losses.npz',
+                'protocol_version': getattr(self.args, 'protocol_version', ''),
+                'protocol_sha256': getattr(self.args, 'protocol_sha256', ''),
+                'dataset_sha256': getattr(self.args, 'data_sha256', ''),
+            }
+            (folder / 'meta.json').write_text(
+                json.dumps(metadata, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+            )
+        return metrics
+
     def vali(self, vali_data, vali_loader, criterion):
         total_loss = []
         self.model.eval()
@@ -377,7 +507,12 @@ class Exp_Long_Term_Forecast(Exp_Basic):
 
     def train(self, setting):
         train_data, train_loader = self._get_data(flag='train')
-        vali_data, vali_loader = self._get_data(flag='val')
+        fixed_train_epochs = bool(getattr(self.args, 'fixed_train_epochs', False))
+        if fixed_train_epochs:
+            vali_data = None
+            vali_loader = None
+        else:
+            vali_data, vali_loader = self._get_data(flag='val')
         writer = self._get_writer(setting)
 
         path = os.path.join(self.args.checkpoints, setting)
@@ -462,7 +597,10 @@ class Exp_Long_Term_Forecast(Exp_Basic):
             epoch_time_sec = time.time() - epoch_time
             train_loss = np.average(train_loss)
             self._wait_for_thermal_resume()
-            vali_loss = self.vali(vali_data, vali_loader, criterion)
+            vali_loss = (
+                float('nan') if fixed_train_epochs
+                else self.vali(vali_data, vali_loader, criterion)
+            )
             self._wait_for_thermal_resume()
             current_lr = model_optim.param_groups[0]['lr']
             if writer is not None:
@@ -470,10 +608,13 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                 writer.add_scalar('val/loss', vali_loss, epoch + 1)
                 writer.add_scalar('train/learning_rate', current_lr, epoch + 1)
                 writer.add_scalar('train/epoch_time_sec', epoch_time_sec, epoch + 1)
-            early_stopping(vali_loss, self.model, path)
-            if early_stopping.early_stop:
-                print("Early stopping")
-                break
+            if fixed_train_epochs:
+                torch.save(self.model.state_dict(), os.path.join(path, 'checkpoint.pth'))
+            else:
+                early_stopping(vali_loss, self.model, path)
+                if early_stopping.early_stop:
+                    print("Early stopping")
+                    break
 
             adjust_learning_rate(model_optim, epoch + 1, self.args)
 

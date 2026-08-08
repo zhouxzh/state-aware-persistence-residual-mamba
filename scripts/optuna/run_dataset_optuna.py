@@ -62,14 +62,19 @@ DEFAULT_MAMBA_MODELS = [
 ]
 
 OPTUNA_SEARCH_SPACE_VERSION = "narrow_v2"
+V3_SEARCH_SPACE_VERSION = "pms_v3"
 
 
 def study_version(cli_args):
+    base_version = str(
+        getattr(cli_args, "search_space_version", OPTUNA_SEARCH_SPACE_VERSION)
+        or OPTUNA_SEARCH_SPACE_VERSION
+    )
     suffix = str(getattr(cli_args, "study_suffix", "") or "").strip()
     if not suffix:
-        return OPTUNA_SEARCH_SPACE_VERSION
+        return base_version
     safe_suffix = suffix.replace(" ", "_")
-    return f"{OPTUNA_SEARCH_SPACE_VERSION}_{safe_suffix}"
+    return f"{base_version}_{safe_suffix}"
 
 
 def parse_args():
@@ -113,7 +118,19 @@ def parse_args():
     parser.add_argument("--tensorboard-dir", type=str, default="./tensorboard/optuna")
     parser.add_argument("--checkpoints", type=str, default="./checkpoints/")
     parser.add_argument("--results-root", type=str, default="./results/")
+    parser.add_argument(
+        "--optuna-root",
+        type=Path,
+        default=REPO_ROOT / "results" / "optuna",
+        help="Root for Optuna databases and selection files.",
+    )
     parser.add_argument("--startup-trials", type=int, default=4)
+    parser.add_argument(
+        "--search-space-version",
+        choices=[OPTUNA_SEARCH_SPACE_VERSION, V3_SEARCH_SPACE_VERSION],
+        default=OPTUNA_SEARCH_SPACE_VERSION,
+        help="Versioned parameter space; the default preserves frozen V1/V2 reproduction.",
+    )
     parser.add_argument("--warmup-steps", type=int, default=1)
     parser.add_argument("--interval-steps", type=int, default=1)
     parser.add_argument("--no-save-final-artifacts", action="store_true")
@@ -252,7 +269,7 @@ def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_
         stride=int(params.get("stride", 8)),
         factor=int(params.get("factor", 1)),
         distil=True,
-        dropout=0.1,
+        dropout=float(params.get("dropout", 0.1)),
         embed="timeF",
         activation="gelu",
         output_attention=False,
@@ -294,6 +311,17 @@ def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_
         ms_use_decomp=int(params.get("ms_use_decomp", 1)),
         ms_use_linear_skip=int(params.get("ms_use_linear_skip", 0)),
         residual_target=int(params.get("residual_target", 0)),
+        forecast_head=str(params.get("forecast_head", "auto")),
+        increment_loss_weight=float(params.get("increment_loss_weight", 0.1)),
+        change_gate_regularization=float(params.get("change_gate_regularization", 0.01)),
+        pms_branch_mode=str(params.get("pms_branch_mode", "multiscale")),
+        pms_fine_patch_len=int(params.get("pms_fine_patch_len", 8)),
+        pms_fine_stride=int(params.get("pms_fine_stride", 4)),
+        pms_coarse_patch_len=int(params.get("pms_coarse_patch_len", 32)),
+        pms_coarse_stride=int(params.get("pms_coarse_stride", 16)),
+        pms_min_patch_tokens=int(params.get("pms_min_patch_tokens", 1)),
+        fixed_train_epochs=bool(params.get("fixed_train_epochs", False)),
+        evaluation_batch_size=int(params.get("evaluation_batch_size", 1)),
         channel_independence=False,
         disable_tensorboard=True,
     )
@@ -371,19 +399,105 @@ def model_params_feasibility_error(model_label, params):
         return None
 
     seq_len = int(params["seq_len"])
-    patch_len = int(params["patch_len"])
-    stride = int(params["stride"])
-    scales = [int(scale) for scale in params["ms_scales"]]
-    shortest_branch = max(1, (seq_len + max(scales) - 1) // max(scales))
-    if shortest_branch + stride < patch_len:
-        return (
-            "infeasible PMS patch layout: shortest scaled branch "
-            f"has length {shortest_branch}, but patch_len={patch_len} and stride padding={stride}"
-        )
+    branch_mode = str(params.get("pms_branch_mode", "multiscale"))
+    if branch_mode == "dual_resolution":
+        layouts = [
+            (seq_len, int(params.get("pms_fine_patch_len", 8)), int(params.get("pms_fine_stride", 4))),
+            (seq_len, int(params.get("pms_coarse_patch_len", 32)), int(params.get("pms_coarse_stride", 16))),
+        ]
+    else:
+        patch_len = int(params["patch_len"])
+        stride = int(params["stride"])
+        scales = [int(scale) for scale in params["ms_scales"]]
+        layouts = [
+            (max(1, (seq_len + scale - 1) // scale), patch_len, stride)
+            for scale in scales
+        ]
+    minimum_tokens = int(params.get("pms_min_patch_tokens", 1))
+    for input_len, patch_len, stride in layouts:
+        if input_len + stride < patch_len:
+            return (
+                "infeasible PMS patch layout: shortest scaled branch "
+                f"has length {input_len}, but patch_len={patch_len} and stride padding={stride}"
+            )
+        patch_tokens = (input_len + stride - patch_len) // stride + 1
+        if patch_tokens < minimum_tokens:
+            return (
+                "infeasible PMS patch layout: branch produces "
+                f"{patch_tokens} patch tokens, below pms_min_patch_tokens={minimum_tokens}"
+            )
     return None
 
 
-def sample_params(trial, phase, model_label):
+def sample_v3_mamba_params(trial, model_label):
+    params = {
+        "factor": 1,
+        "d_model": trial.suggest_categorical("d_model", [64, 128]),
+        "d_ff": trial.suggest_categorical("d_ff", [128, 256]),
+        "d_state": trial.suggest_categorical("d_state", [16, 32]),
+        "e_layers": trial.suggest_categorical("e_layers", [1, 2]),
+        "dropout": trial.suggest_categorical("dropout", [0.0, 0.1, 0.2]),
+        "batch_size": 16,
+        "learning_rate": trial.suggest_categorical(
+            "learning_rate", [0.00005, 0.0001, 0.0002, 0.0003]
+        ),
+        "use_norm": 1,
+    }
+    if model_label == "PMS_Mamba-PD":
+        valid_layouts = []
+        for seq_len in (64, 128, 192, 256, 384):
+            for scale_tag in ("1,2", "1,2,4"):
+                scales = [int(piece) for piece in scale_tag.split(",")]
+                shortest = (seq_len + max(scales) - 1) // max(scales)
+                for patch_len, stride in ((8, 4), (16, 8), (32, 16)):
+                    patch_tokens = (shortest + stride - patch_len) // stride + 1
+                    if patch_tokens >= 4:
+                        valid_layouts.append(
+                            f"sl{seq_len}_sc{scale_tag}_p{patch_len}_s{stride}"
+                        )
+        layout = trial.suggest_categorical("pms_temporal_layout", valid_layouts)
+        seq_tag, scale_tag, patch_tag, stride_tag = layout.split("_")
+        params.update(
+            seq_len=int(seq_tag.removeprefix("sl")),
+            ms_scales=[int(piece) for piece in scale_tag.removeprefix("sc").split(",")],
+            patch_len=int(patch_tag.removeprefix("p")),
+            stride=int(stride_tag.removeprefix("s")),
+        )
+    else:
+        params["seq_len"] = int(
+            trial.suggest_categorical("seq_len", [64, 128, 192, 256, 384])
+        )
+    if model_label == "S_Mamba":
+        return normalize_params(params)
+    params["moving_avg"] = trial.suggest_categorical("moving_avg", [13, 25, 49])
+    if model_label == "NS_Mamba-D":
+        params.update(use_adaptive_norm=0, use_decomp=1, use_shift_gate=0)
+    elif model_label == "MS_Mamba-MD":
+        scale_tag = trial.suggest_categorical("ms_scales", ["1,2", "1,2,4", "1,3,6"])
+        params.update(
+            ms_scales=[int(piece) for piece in scale_tag.split(",")],
+            ms_fusion="mean",
+            ms_use_decomp=1,
+            ms_use_linear_skip=0,
+        )
+    elif model_label == "PMS_Mamba-PD":
+        params.update(
+            ms_fusion="mean",
+            ms_use_decomp=1,
+            pms_min_patch_tokens=4,
+            pms_branch_mode="multiscale",
+            forecast_head="level",
+        )
+    else:
+        raise ValueError(f"Unsupported V3 Mamba model: {model_label}")
+    return normalize_params(params)
+
+
+def sample_params(trial, phase, model_label, search_space_version=OPTUNA_SEARCH_SPACE_VERSION):
+    if search_space_version == V3_SEARCH_SPACE_VERSION:
+        if phase != "mamba":
+            raise ValueError("pms_v3 search space is defined only for the mamba phase")
+        return sample_v3_mamba_params(trial, model_label)
     params = {}
     if phase == "baseline":
         if model_label == "iTransformer":
@@ -547,7 +661,7 @@ def sample_params(trial, phase, model_label):
 
 
 def run_horizon(cli_args, dataset_cfg, model_label, params, pred_len, stage_tag, save_artifacts,
-                eval_flag='val'):
+                eval_flag='val', streaming=False):
     require_torch()
     from experiments.exp_long_term_forecasting import Exp_Long_Term_Forecast
 
@@ -562,15 +676,29 @@ def run_horizon(cli_args, dataset_cfg, model_label, params, pred_len, stage_tag,
         exp = Exp_Long_Term_Forecast(args)
         setting = format_setting(args)
         exp.train(setting)
-        evaluation = exp.evaluate(
-            setting=setting,
-            save_artifacts=save_artifacts,
-            save_visuals=False,
-            write_result_log=save_artifacts,
-            write_tensorboard=False,
-            flag=eval_flag,
-        )
-        metrics = {metric: float(evaluation[metric]) for metric in METRIC_FIELDS}
+        if streaming:
+            evaluation = exp.evaluate_streaming(
+                setting=setting,
+                save_artifacts=save_artifacts,
+                flag=eval_flag,
+            )
+        else:
+            evaluation = exp.evaluate(
+                setting=setting,
+                save_artifacts=save_artifacts,
+                save_visuals=False,
+                write_result_log=save_artifacts,
+                write_tensorboard=False,
+                flag=eval_flag,
+            )
+        scalar_metrics = set(METRIC_FIELDS) | {
+            "terminal_mae", "terminal_mse", "terminal_rmse", "terminal_rmsse"
+        }
+        metrics = {
+            metric: float(evaluation[metric])
+            for metric in scalar_metrics
+            if metric in evaluation
+        }
         runtime_seconds = time.perf_counter() - started
         peak_gpu_memory_mb = (
             float(torch.cuda.max_memory_allocated() / (1024 ** 2))
@@ -714,7 +842,7 @@ def prepare_study_resume(study, optuna_mod, trials_target):
 
 
 def optimize_model(optuna_mod, cli_args, dataset_cfg, model_label, trials_target, calibration_horizons, full_horizons):
-    output_dir = REPO_ROOT / "results" / "optuna" / dataset_cfg["slug"]
+    output_dir = Path(cli_args.optuna_root).resolve() / dataset_cfg["slug"]
     output_dir.mkdir(parents=True, exist_ok=True)
     storage_path = output_dir / "studies.db"
     study_name = f"{dataset_cfg['slug']}_{cli_args.phase}_{model_label}_{study_version(cli_args)}"
@@ -736,7 +864,14 @@ def optimize_model(optuna_mod, cli_args, dataset_cfg, model_label, trials_target
     )
 
     def objective(trial):
-        params = sample_params(trial, cli_args.phase, model_label)
+        params = sample_params(
+            trial,
+            cli_args.phase,
+            model_label,
+            search_space_version=str(
+                getattr(cli_args, "search_space_version", OPTUNA_SEARCH_SPACE_VERSION)
+            ),
+        )
         trial.set_user_attr("resolved_params", params)
         feasibility_error = model_params_feasibility_error(model_label, params)
         if feasibility_error:
@@ -1033,7 +1168,7 @@ def main():
     models = selected_models(cli_args.phase, cli_args.models)
     trials_target = cli_args.trials or default_trials_for_phase(cli_args.phase)
 
-    output_dir = REPO_ROOT / "results" / "optuna" / dataset_cfg["slug"]
+    output_dir = cli_args.optuna_root.resolve() / dataset_cfg["slug"]
     output_dir.mkdir(parents=True, exist_ok=True)
 
     all_trial_rows = []

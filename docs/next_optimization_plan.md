@@ -2,13 +2,14 @@
 
 Status: prospective V3 protocol draft
 
-Updated: 2026-08-03
+Updated: 2026-08-04
 
 ## Objective
 
 The next cycle should not perform a broad hyperparameter search. It should answer one
-specific question: can residual-anchored PMS-Mamba retain its short-horizon validation
-gain while producing a material improvement at 120 and 252 steps?
+specific question: can residual-anchored PMS-Mamba reduce the cross-asset horizon-252,
+long-horizon yields, and persistence-dominated FX errors without losing its competitive
+crypto and middle-horizon performance?
 
 Financial panels remain the development reference case. Cross-domain claims require
 new datasets selected for their nonstationary mechanisms before model outcomes are
@@ -16,8 +17,25 @@ inspected.
 
 ## Diagnosis carried forward
 
-- Current PMS-Mamba is strongest at 20 and 60 steps and weakest at 120 and 252 steps.
-- FX and yields are dominated by persistence; cross-asset is the strongest model family.
+- Current PMS-Mamba is strongest overall at 20 and 60 steps, but the term average hides
+  important task differences.
+- Cross-asset is the strongest task-balanced family, yet its RMSE/RMSSE gap grows to
+  36.6-36.8% at horizon 252. This is the most severe long-horizon cell failure.
+- Crypto improves with horizon and is only 1.6-2.3% behind at horizon 252. Do not apply
+  a global long-horizon correction that sacrifices this behavior.
+- FX is dominated by persistence and is weak at horizon 1 and from horizon 60 onward.
+- Yields is closest at horizons 5-60 and degrades at horizons 120 and 252.
+- Across all cells PMS-Mamba ranks 7/12 among full-coverage models and 4/9 among learned
+  models by average RMSE/RMSSE rank. It is near NLinear and MS-Mamba, slightly behind
+  S-Mamba/NS-Mamba, and materially behind persistence/statistical references.
+- The comparator relationship changes with horizon. PMS beats NLinear in only 2/16
+  short cells but 14/16 long cells; it beats ARIMA in 0/16 short cells and 8/16 long
+  cells. V3 must target short-horizon persistence without erasing this relative
+  long-horizon advantage.
+- PMS is already broadly better than TimesNet, iTransformer, DLinear, and PatchTST.
+  Those models remain necessary references, but further gains over them are less
+  informative than closing the gap to Last-value, random-walk drift, NLinear, and
+  NS-Mamba.
 - V2 residual anchoring was favorable, especially at short horizons.
 - V2 `SCALE_MSE` was materially unfavorable and must not be reused unchanged.
 - The current volatility gate and late-step weighting did not solve long-horizon error.
@@ -44,6 +62,11 @@ forecast_h = last_value + alpha_h * predicted_change_h
 `alpha_h` may depend on the input window and horizon, but it must be bounded and
 regularized toward persistence. The intent is to avoid unnecessary movement at short
 horizons while allowing larger cumulative change at long horizons.
+
+Report this mechanism separately for FX/yields and cross-asset. FX/yields primarily
+test whether the model can avoid over-moving relative to Last-value. Cross-asset at 252
+tests whether the change component can represent a long cumulative path. These are not
+the same failure mode.
 
 ### 3. Cumulative increment head
 
@@ -119,6 +142,12 @@ A V3 candidate is eligible for external evaluation only if all conditions hold:
 5. median seed RMSSE coefficient of variation no greater than 1%;
 6. median runtime no greater than 1.5 times B0 unless the accuracy gain exceeds 5%.
 
+In addition to the aggregate rule, report the prespecified diagnostic cells as a fixed
+panel: cross-asset at 252, FX at 1/60/120/252, yields at 120/252, and crypto at 252.
+These diagnostics do not replace the success rule and cannot be used to cherry-pick a
+candidate, but they reveal whether an aggregate improvement addresses the known failure
+or merely shifts error to crypto.
+
 If no candidate meets every rule, retain B0 and report another negative ablation.
 
 ## Evaluation boundary
@@ -137,6 +166,8 @@ unchanged and must not be overwritten.
 ## Dataset expansion
 
 Select datasets by nonstationary mechanism rather than by domain label or model score.
+Use [the current data record](current_data.md) as the minimum metadata and diagnostic
+standard for every added dataset.
 The minimum next portfolio should add at least three non-financial families:
 
 | Mechanism | Candidate domain | Required property |
@@ -163,6 +194,7 @@ weak neural baselines.
 - versioned V3 protocol and data manifests;
 - exact configuration matrix and source hashes;
 - horizon-level MAE, MSE, RMSE, RMSSE, and runtime;
+- all-model metric-versus-horizon figures for every dataset and input mode;
 - task-seed-term summaries and paired validation comparisons;
 - selection manifest with an explicit test-access flag;
 - implementation tests for every new head;
@@ -177,4 +209,3 @@ weak neural baselines.
 - Do not inspect an external final period until the candidate and protocol are frozen.
 - Preserve failed, null, and unfavorable tasks in every summary.
 - Do not describe validation improvements as final generalization.
-

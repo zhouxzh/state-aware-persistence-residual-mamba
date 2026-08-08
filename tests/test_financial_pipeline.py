@@ -16,11 +16,12 @@ from experiments.exp_long_term_forecasting import (
     HorizonWeightedMSELoss,
 )
 from layers.NonStationaryGate import NonStationaryGate
-from model.PMS_Mamba import Model as PMSMambaModel
+from model.PMS_Mamba import Model as PMSMambaModel, PersistenceChangeGate
 from scripts.optuna.run_dataset_optuna import (
     model_params_feasibility_error,
     prepare_study_resume,
 )
+from scripts.financial.run_pms_v3 import adaptive_external_batch_size
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -30,6 +31,14 @@ TRAINING_MANIFEST = DATA_ROOT / "manifests" / "training_datasets.json"
 QUALITY_REPORT = DATA_ROOT / "manifests" / "quality_report.json"
 DOWNLOAD_MANIFEST = DATA_ROOT / "manifests" / "download_manifest.json"
 SELECTION_DIAGNOSTICS = DATA_ROOT / "manifests" / "nonstationarity_diagnostics_selection_safe.json"
+V3_PROTOCOL_PATH = REPO_ROOT / "configs" / "pms_mamba_v3.json"
+V3_EXTERNAL_TASKS = (
+    REPO_ROOT
+    / "reproducibility"
+    / "nonstationary_analysis_v3"
+    / "protocol"
+    / "external_tasks.json"
+)
 
 
 def sha256(path: Path) -> str:
@@ -195,6 +204,107 @@ class FinancialPipelineTests(unittest.TestCase):
 
         expected = inputs[:, -1:, :].expand(-1, model.pred_len, -1)
         torch.testing.assert_close(output, expected)
+
+    def test_pms_cumulative_head_reconstructs_level_path(self) -> None:
+        import torch
+        import torch.nn as nn
+
+        model = PMSMambaModel.__new__(PMSMambaModel)
+        nn.Module.__init__(model)
+        model.forecast_head = "cumulative"
+        model.use_norm = False
+        encoded_increments = torch.tensor([[[1.0], [2.0], [-0.5]]])
+        inputs = torch.tensor([[[3.0], [5.0]]])
+
+        output = model._apply_forecast_head(
+            encoded_increments,
+            inputs,
+            means=None,
+            stdev=None,
+        )
+
+        torch.testing.assert_close(output, torch.tensor([[[6.0], [8.0], [7.5]]]))
+
+    def test_pms_cumulative_auxiliary_loss_uses_step_increments(self) -> None:
+        import torch
+        import torch.nn as nn
+
+        model = PMSMambaModel.__new__(PMSMambaModel)
+        nn.Module.__init__(model)
+        model.forecast_head = "cumulative"
+        model.increment_loss_weight = 0.1
+        model.change_gate_regularization = 0.0
+        prediction = torch.tensor([[[3.0], [5.0], [8.0]]])
+        target = torch.tensor([[[3.0], [4.0], [6.0]]])
+        inputs = torch.tensor([[[1.0], [2.0]]])
+
+        loss = model.auxiliary_loss(prediction, target, inputs)
+
+        expected = 0.1 * torch.tensor((0.0 ** 2 + 1.0 ** 2 + 1.0 ** 2) / 3.0)
+        torch.testing.assert_close(loss, expected)
+
+    def test_persistence_change_gate_is_bounded_and_encoder_only(self) -> None:
+        import torch
+
+        torch.manual_seed(20260804)
+        gate = PersistenceChangeGate(
+            pred_len=6,
+            hidden_dim=8,
+            recent_ratio=0.25,
+            dropout=0.0,
+        ).eval()
+        encoder = torch.randn(2, 32, 3)
+
+        first = gate(encoder)
+        second = gate(encoder.clone())
+
+        self.assertEqual(tuple(first.shape), (2, 3, 6))
+        self.assertTrue(torch.all((first >= 0.0) & (first <= 1.0)))
+        torch.testing.assert_close(first, second)
+
+    def test_v3_patch_layout_requires_four_tokens_per_branch(self) -> None:
+        params = {
+            "seq_len": 64,
+            "ms_scales": [1, 2, 4],
+            "patch_len": 32,
+            "stride": 16,
+            "pms_min_patch_tokens": 4,
+        }
+        self.assertIn(
+            "below pms_min_patch_tokens=4",
+            model_params_feasibility_error("PMS_Mamba-PD", params),
+        )
+        params.update(seq_len=256)
+        self.assertIsNone(model_params_feasibility_error("PMS_Mamba-PD", params))
+
+    def test_v3_horizon_amendment_preserves_pretest_chronology(self) -> None:
+        protocol = json.loads(V3_PROTOCOL_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(protocol["selection_horizons"], [1, 5, 20, 60, 120])
+        self.assertEqual(protocol["deferred_financial_diagnostic_horizons"], [252])
+        self.assertEqual(protocol["merge_gate_splits"]["validation_start"], "2022-01-01")
+        self.assertEqual(protocol["merge_gate_splits"]["validation_end"], "2022-12-31")
+        self.assertEqual(protocol["evidence_boundary"]["prohibited_for_selection"],
+                         "financial 2023-01-01 through 2026-06-30")
+
+    def test_v3_external_manifest_freezes_s_and_m_without_test_access(self) -> None:
+        payload = json.loads(V3_EXTERNAL_TASKS.read_text(encoding="utf-8"))
+        tasks = payload["tasks"]
+        self.assertEqual(payload["task_count"], 16)
+        self.assertTrue(payload["generated_without_reading_target_values"])
+        self.assertEqual(sum(
+            config["evidence_status"] == "untouched_confirmatory"
+            for config in tasks.values()
+        ), 12)
+        for config in tasks.values():
+            self.assertIn(config["input_mode"], {"S", "M"})
+            self.assertFalse(config["test_targets_read"])
+            path = REPO_ROOT / config["root_path"] / config["data_path"]
+            self.assertEqual(sha256(path), config["data_sha256"])
+
+    def test_external_batch_rule_bounds_high_dimensional_tasks(self) -> None:
+        self.assertEqual(adaptive_external_batch_size(16, 862), 2)
+        self.assertEqual(adaptive_external_batch_size(16, 321), 6)
+        self.assertEqual(adaptive_external_batch_size(16, 7), 16)
 
     def test_nonstationary_gate_shape_normalization_and_replay(self) -> None:
         import torch

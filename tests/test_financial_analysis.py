@@ -18,6 +18,15 @@ from scripts.financial.analyze_financial_results import (
     s_ms_comparison,
 )
 from scripts.financial.run_statistical_baselines import select_arima_order
+from scripts.financial.generate_docs_figures import (
+    add_dimensions,
+    build_computational_profile_model_summary,
+    build_dataset_reference_summary,
+    build_model_metric_summary,
+    build_all_model_cell_gaps,
+    build_pms_rmse_advantage_by_term,
+    validate_profile_source,
+)
 
 
 METRIC_COLUMNS = [
@@ -33,6 +42,60 @@ METRIC_COLUMNS = [
 
 
 class FinancialAnalysisTests(unittest.TestCase):
+    def test_documented_computational_profile_matches_frozen_runs(self) -> None:
+        repo_root = Path(__file__).resolve().parents[1]
+        final_root = repo_root / "reproducibility" / "nonstationary_analysis_v1" / "final"
+        profile = pd.read_csv(final_root / "neural_metrics_by_seed.csv")
+        aggregate = add_dimensions(pd.read_csv(final_root / "aggregate_metrics.csv"))
+
+        validate_profile_source(profile)
+        metric_summary = build_model_metric_summary(build_all_model_cell_gaps(aggregate))
+        summary = build_computational_profile_model_summary(profile, metric_summary).set_index(
+            "model"
+        )
+
+        self.assertEqual(int(summary.loc["PMS_Mamba-PD", "run_count"]), 240)
+        self.assertAlmostEqual(
+            float(summary.loc["PMS_Mamba-PD", "median_runtime_seconds"]),
+            19.569858603994362,
+        )
+        self.assertGreater(
+            float(summary.loc["PMS_Mamba-PD", "median_runtime_seconds"]),
+            float(summary.loc["PatchTST", "median_runtime_seconds"]),
+        )
+        self.assertLess(
+            float(summary.loc["PMS_Mamba-PD", "median_runtime_seconds"]),
+            float(summary.loc["TimesNet", "median_runtime_seconds"]),
+        )
+
+    def test_documented_dataset_summary_matches_frozen_manifests(self) -> None:
+        summary = build_dataset_reference_summary().set_index("dataset")
+
+        self.assertEqual(set(summary.index), {"cross_asset", "crypto", "fx", "yields"})
+        self.assertEqual(int(summary.loc["fx", "rows"]), 6894)
+        self.assertEqual(int(summary["missing_cells"].sum()), 0)
+        self.assertAlmostEqual(
+            float(summary.loc["crypto", "test_mean_shift_train_sd"]),
+            15.406617621315409,
+        )
+
+    def test_documented_pms_nlinear_horizon_reversal(self) -> None:
+        repo_root = Path(__file__).resolve().parents[1]
+        aggregate = pd.read_csv(
+            repo_root
+            / "reproducibility"
+            / "nonstationary_analysis_v1"
+            / "final"
+            / "aggregate_metrics.csv"
+        )
+        summary = build_pms_rmse_advantage_by_term(add_dimensions(aggregate))
+        nlinear = summary[summary["comparator"] == "NLinear"].set_index("term")
+
+        self.assertEqual(int(nlinear.loc["Short", "pms_lower_cells"]), 2)
+        self.assertEqual(int(nlinear.loc["Long", "pms_lower_cells"]), 14)
+        self.assertGreater(float(nlinear.loc["Short", "median_pms_vs_comparator_pct"]), 0)
+        self.assertLess(float(nlinear.loc["Long", "median_pms_vs_comparator_pct"]), 0)
+
     def test_arima_selection_excludes_nonconverged_candidates(self) -> None:
         class FakeFit:
             def __init__(self, order: tuple[int, int, int]) -> None:

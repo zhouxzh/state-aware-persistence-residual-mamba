@@ -17,9 +17,14 @@ Dataset groups:
 """
 
 import argparse
+import hashlib
+import json
 import os
 import shutil
 import sys
+import tempfile
+import urllib.parse
+import urllib.request
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -28,6 +33,7 @@ os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
 
 REPO_ID = "thuml/Time-Series-Library"
 REPO_TYPE = "dataset"
+DIRECT_BASE_URL = "https://huggingface.co/datasets/thuml/Time-Series-Library/resolve/main"
 
 DATASET_GROUPS = {
     "Exchange": [
@@ -89,15 +95,65 @@ def download_file(repo_id, repo_type, repo_file, local_path, dry_run):
 
     dest.parent.mkdir(parents=True, exist_ok=True)
 
-    temp_path = hf_hub_download(
-        repo_id=repo_id,
-        repo_type=repo_type,
-        filename=repo_file,
-        cache_dir=REPO_ROOT / "data" / ".hf_cache",
-    )
-
-    shutil.copy2(temp_path, dest)
+    try:
+        temp_path = hf_hub_download(
+            repo_id=repo_id,
+            repo_type=repo_type,
+            filename=repo_file,
+            cache_dir=REPO_ROOT / "data" / ".hf_cache",
+        )
+        shutil.copy2(temp_path, dest)
+    except Exception as exc:
+        quoted_path = urllib.parse.quote(repo_file, safe="/")
+        direct_url = f"{DIRECT_BASE_URL}/{quoted_path}?download=true"
+        print(f"  [fallback] Hub client failed ({type(exc).__name__}); using direct resolve URL")
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                prefix=f".{dest.name}.", suffix=".part", dir=dest.parent, delete=False
+            ) as handle:
+                temporary = Path(handle.name)
+                with urllib.request.urlopen(direct_url, timeout=180) as response:
+                    shutil.copyfileobj(response, handle)
+            temporary.replace(dest)
+        finally:
+            if temporary is not None and temporary.exists():
+                temporary.unlink()
     print(f"  [done] {local_path}")
+
+
+def sha256(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def write_manifest(selected):
+    records = []
+    for group_name in selected:
+        for repo_file, local_path in DATASET_GROUPS[group_name]:
+            path = REPO_ROOT / local_path
+            if not path.is_file():
+                continue
+            records.append({
+                "group": group_name,
+                "source_repo": REPO_ID,
+                "source_revision": "main",
+                "source_path": repo_file,
+                "local_path": local_path,
+                "bytes": path.stat().st_size,
+                "sha256": sha256(path),
+            })
+    output = REPO_ROOT / "data" / "benchmark_download_manifest.json"
+    temporary = output.with_suffix(".tmp")
+    temporary.write_text(
+        json.dumps({"record_count": len(records), "records": records}, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(output)
+    print(f"Manifest: {output.relative_to(REPO_ROOT)} ({len(records)} files)")
 
 
 def main():
@@ -124,6 +180,9 @@ def main():
         for repo_file, local_path in DATASET_GROUPS[group_name]:
             download_file(REPO_ID, REPO_TYPE, repo_file, local_path, args.dry_run)
         print()
+
+    if not args.dry_run:
+        write_manifest(selected)
 
     print("Done.")
 

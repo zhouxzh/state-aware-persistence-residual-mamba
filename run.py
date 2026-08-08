@@ -131,6 +131,24 @@ if __name__ == '__main__':
                         help='blend an NLinear-style last-value skip forecast into MS_Mamba')
     parser.add_argument('--residual_target', type=int, default=0,
                         help='anchor PMS-Mamba forecasts around the last observed value')
+    parser.add_argument('--forecast_head', type=str, default='auto',
+                        choices=['auto', 'level', 'residual', 'cumulative', 'persistence_change'],
+                        help='PMS-Mamba output parameterization; auto preserves legacy residual_target behavior')
+    parser.add_argument('--increment_loss_weight', type=float, default=0.1,
+                        help='auxiliary increment-MSE coefficient for the cumulative PMS head')
+    parser.add_argument('--change_gate_regularization', type=float, default=0.01,
+                        help='horizon-prior regularization for the PMS persistence-change gate')
+    parser.add_argument('--pms_branch_mode', type=str, default='multiscale',
+                        choices=['multiscale', 'dual_resolution'],
+                        help='PMS patch branch layout')
+    parser.add_argument('--pms_fine_patch_len', type=int, default=8)
+    parser.add_argument('--pms_fine_stride', type=int, default=4)
+    parser.add_argument('--pms_coarse_patch_len', type=int, default=32)
+    parser.add_argument('--pms_coarse_stride', type=int, default=16)
+    parser.add_argument('--pms_min_patch_tokens', type=int, default=1,
+                        help='minimum patch-token count accepted by V3 parameter validation')
+    parser.add_argument('--fixed_train_epochs', action='store_true',
+                        help='train for exactly train_epochs without reading validation data')
 
     args = parser.parse_args()
     random.seed(args.seed)

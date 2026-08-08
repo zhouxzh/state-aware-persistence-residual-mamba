@@ -1,6 +1,6 @@
 # Documentation Index
 
-Updated: 2026-08-03
+Updated: 2026-08-04
 
 This directory contains only current project documentation. Completed protocols and
 immutable result evidence live under `reproducibility/`; local runtime outputs remain
@@ -8,8 +8,14 @@ under ignored `results/` directories.
 
 ## Current documents
 
-- [Current results](current_results.md): exact V1 test results, V2 validation
-  optimization, model strengths, failure modes, and result figures.
+- [Current reference data](current_data.md): exact datasets, variables, targets, dates,
+  splits, quality checks, hashes, distribution shifts, and publication constraints.
+- [Current results](current_results.md): direct PMS-Mamba advantage and non-advantage
+  statement, every-model comparison, term-specific results, exact V1 test evidence,
+  V2 validation optimization, stability, compute cost, and figures.
+- [Computational profile](computational_profile.md): all 2,160 learned-model runtime
+  and GPU-memory records summarized by model, horizon, and task, with measurement
+  limits and exact PMS-Mamba efficiency comparisons.
 - [Next optimization plan](next_optimization_plan.md): prospective V3 architecture,
   dataset-expansion, validation, stopping, and release protocol.
 - [Paper writing direction](paper_writing_direction.md): paper positioning, evidence
@@ -34,4 +40,3 @@ financial reference datasets" rather than the generic phrase "financial results"
 The frozen internal identifier `financial_confirmatory_v1` must not be renamed because
 it is bound to published hashes. New protocols and outputs use
 `nonstationary_analysis_vN` terminology.
-
