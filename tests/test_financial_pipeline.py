@@ -20,8 +20,9 @@ from model.PMS_Mamba import Model as PMSMambaModel, PersistenceChangeGate
 from scripts.optuna.run_dataset_optuna import (
     model_params_feasibility_error,
     prepare_study_resume,
+    sample_v4_fast_mamba_params,
 )
-from scripts.financial.run_pms_v3 import adaptive_external_batch_size
+from scripts.financial.run_pms_v3 import adaptive_external_batch_size, evaluate_runtime_gate
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -262,6 +263,219 @@ class FinancialPipelineTests(unittest.TestCase):
         self.assertTrue(torch.all((first >= 0.0) & (first <= 1.0)))
         torch.testing.assert_close(first, second)
 
+    def test_fast_single_pms_branch_returns_a_forecast_path(self) -> None:
+        import torch
+
+        if not torch.cuda.is_available():
+            self.skipTest("the installed mamba_ssm selective-scan kernel requires CUDA")
+
+        config = SimpleNamespace(
+            seq_len=32,
+            pred_len=6,
+            output_attention=False,
+            use_norm=1,
+            residual_target=0,
+            forecast_head="persistence_change",
+            increment_loss_weight=0.0,
+            change_gate_regularization=0.01,
+            pms_branch_mode="fast_single",
+            pms_fast_patch_len=8,
+            pms_fast_stride=4,
+            pms_fast_linear_skip=1,
+            ms_use_decomp=0,
+            ms_fusion="mean",
+            ms_scales=[1],
+            moving_avg=5,
+            d_model=16,
+            d_state=8,
+            d_ff=32,
+            e_layers=1,
+            dropout=0.0,
+            activation="gelu",
+            ns_recent_ratio=0.25,
+            patch_len=8,
+            stride=4,
+        )
+        model = PMSMambaModel(config).cuda().eval()
+        output = model(torch.randn(2, 32, 3, device="cuda"), None, None, None)
+
+        self.assertEqual(tuple(output.shape), (2, 6, 3))
+        self.assertTrue(torch.isfinite(output).all())
+
+    def test_regime_linear_pms_branch_returns_a_forecast_path(self) -> None:
+        import torch
+
+        if not torch.cuda.is_available():
+            self.skipTest("the installed mamba_ssm selective-scan kernel requires CUDA")
+        config = SimpleNamespace(
+            seq_len=32,
+            pred_len=6,
+            output_attention=False,
+            use_norm=1,
+            residual_target=0,
+            forecast_head="persistence_change",
+            increment_loss_weight=0.0,
+            change_gate_regularization=0.01,
+            pms_change_scale=1.0,
+            pms_branch_mode="regime_linear",
+            pms_regime_channel_gate=1,
+            pms_regime_decomp=1,
+            ms_use_decomp=0,
+            ms_fusion="mean",
+            ms_scales=[1],
+            moving_avg=5,
+            d_model=32,
+            d_state=8,
+            d_ff=64,
+            e_layers=1,
+            dropout=0.0,
+            activation="gelu",
+            ns_recent_ratio=0.25,
+            patch_len=8,
+            stride=4,
+        )
+        model = PMSMambaModel(config).cuda().eval()
+        output = model(torch.randn(2, 32, 3, device="cuda"), None, None, None)
+
+        self.assertEqual(tuple(output.shape), (2, 6, 3))
+        self.assertTrue(torch.isfinite(output).all())
+
+    def test_inverted_single_pms_branch_returns_a_forecast_path(self) -> None:
+        import torch
+
+        if not torch.cuda.is_available():
+            self.skipTest("the installed mamba_ssm selective-scan kernel requires CUDA")
+        config = SimpleNamespace(
+            seq_len=32,
+            pred_len=6,
+            output_attention=False,
+            use_norm=1,
+            residual_target=0,
+            forecast_head="level",
+            increment_loss_weight=0.0,
+            change_gate_regularization=0.0,
+            pms_change_scale=1.0,
+            pms_branch_mode="inverted_single",
+            pms_inverted_decomp=1,
+            ms_use_decomp=0,
+            ms_fusion="mean",
+            ms_scales=[1],
+            moving_avg=5,
+            d_model=32,
+            d_state=8,
+            d_ff=64,
+            e_layers=1,
+            dropout=0.0,
+            activation="gelu",
+            ns_recent_ratio=0.25,
+            patch_len=8,
+            stride=4,
+        )
+        model = PMSMambaModel(config).cuda().eval()
+        output = model(torch.randn(2, 32, 3, device="cuda"), None, None, None)
+
+        self.assertEqual(tuple(output.shape), (2, 6, 3))
+        self.assertTrue(torch.isfinite(output).all())
+
+    def test_fused_dual_pms_branch_returns_a_forecast_path(self) -> None:
+        import torch
+
+        if not torch.cuda.is_available():
+            self.skipTest("the installed mamba_ssm selective-scan kernel requires CUDA")
+        config = SimpleNamespace(
+            seq_len=64,
+            pred_len=6,
+            output_attention=False,
+            use_norm=1,
+            residual_target=0,
+            forecast_head="persistence_change",
+            increment_loss_weight=0.0,
+            change_gate_regularization=0.0,
+            pms_change_scale=1.0,
+            pms_branch_mode="fused_dual",
+            pms_fine_patch_len=8,
+            pms_fine_stride=4,
+            pms_coarse_patch_len=16,
+            pms_coarse_stride=8,
+            ms_use_decomp=1,
+            ms_fusion="mean",
+            ms_scales=[1, 2],
+            moving_avg=5,
+            d_model=16,
+            d_state=8,
+            d_ff=32,
+            e_layers=1,
+            dropout=0.0,
+            activation="gelu",
+            ns_recent_ratio=0.25,
+            patch_len=8,
+            stride=4,
+        )
+        model = PMSMambaModel(config).cuda().eval()
+        output = model(torch.randn(2, 64, 3, device="cuda"), None, None, None)
+
+        self.assertEqual(tuple(output.shape), (2, 6, 3))
+        self.assertTrue(torch.isfinite(output).all())
+
+    def test_shared_multiscale_pms_branch_returns_a_forecast_path(self) -> None:
+        import torch
+
+        if not torch.cuda.is_available():
+            self.skipTest("the installed mamba_ssm selective-scan kernel requires CUDA")
+        config = SimpleNamespace(
+            seq_len=64,
+            pred_len=6,
+            output_attention=False,
+            use_norm=1,
+            residual_target=0,
+            forecast_head="persistence_change",
+            increment_loss_weight=0.0,
+            change_gate_regularization=0.0,
+            pms_change_scale=1.0,
+            pms_branch_mode="shared_multiscale",
+            ms_use_decomp=1,
+            ms_fusion="mean",
+            ms_scales=[1, 2, 4],
+            moving_avg=5,
+            d_model=16,
+            d_state=8,
+            d_ff=32,
+            e_layers=1,
+            dropout=0.0,
+            activation="gelu",
+            ns_recent_ratio=0.25,
+            patch_len=8,
+            stride=4,
+        )
+        model = PMSMambaModel(config).cuda().eval()
+        output = model(torch.randn(2, 64, 3, device="cuda"), None, None, None)
+
+        self.assertEqual(tuple(output.shape), (2, 6, 3))
+        self.assertTrue(torch.isfinite(output).all())
+
+    def test_persistence_change_scale_shrinks_predicted_changes(self) -> None:
+        import torch
+        import torch.nn as nn
+
+        class FixedGate(nn.Module):
+            def forward(self, x):
+                return torch.ones(x.size(0), x.size(2), 2, device=x.device)
+
+        model = PMSMambaModel.__new__(PMSMambaModel)
+        nn.Module.__init__(model)
+        model.pred_len = 2
+        model.forecast_head = "persistence_change"
+        model.use_norm = False
+        model.pms_change_scale = 0.25
+        model.change_gate = FixedGate()
+        model._last_change_gate = None
+        path = torch.tensor([[[4.0], [8.0]]])
+        raw = torch.tensor([[[10.0]]])
+
+        output = model._apply_forecast_head(path, raw, means=None, stdev=None)
+
+        torch.testing.assert_close(output, torch.tensor([[[11.0], [12.0]]]))
+
     def test_v3_patch_layout_requires_four_tokens_per_branch(self) -> None:
         params = {
             "seq_len": 64,
@@ -275,6 +489,18 @@ class FinancialPipelineTests(unittest.TestCase):
             model_params_feasibility_error("PMS_Mamba-PD", params),
         )
         params.update(seq_len=256)
+        self.assertIsNone(model_params_feasibility_error("PMS_Mamba-PD", params))
+
+    def test_v4_fast_search_space_keeps_a_single_latency_compatible_branch(self) -> None:
+        import optuna
+
+        trial = optuna.create_study(direction="minimize").ask()
+        params = sample_v4_fast_mamba_params(trial, "PMS_Mamba-PD")
+
+        self.assertEqual(params["pms_branch_mode"], "fast_single")
+        self.assertEqual(params["e_layers"], 1)
+        self.assertEqual(params["ms_use_decomp"], 0)
+        self.assertEqual(params["pms_fast_linear_skip"], 0)
         self.assertIsNone(model_params_feasibility_error("PMS_Mamba-PD", params))
 
     def test_v3_horizon_amendment_preserves_pretest_chronology(self) -> None:
@@ -305,6 +531,18 @@ class FinancialPipelineTests(unittest.TestCase):
         self.assertEqual(adaptive_external_batch_size(16, 862), 2)
         self.assertEqual(adaptive_external_batch_size(16, 321), 6)
         self.assertEqual(adaptive_external_batch_size(16, 7), 16)
+
+    def test_v3_runtime_gate_requires_both_deep_references(self) -> None:
+        passed, comparisons = evaluate_runtime_gate(
+            {"PMS_Mamba-V3": 3.0, "TimesNet": 12.0, "PatchTST": 2.0},
+            "PMS_Mamba-V3",
+            ["TimesNet", "PatchTST"],
+        )
+
+        self.assertFalse(passed)
+        self.assertTrue(comparisons["TimesNet"]["candidate_is_faster"])
+        self.assertFalse(comparisons["PatchTST"]["candidate_is_faster"])
+        self.assertEqual(comparisons["TimesNet"]["candidate_speedup"], 4.0)
 
     def test_nonstationary_gate_shape_normalization_and_replay(self) -> None:
         import torch

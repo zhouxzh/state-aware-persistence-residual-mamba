@@ -231,8 +231,8 @@ tensorboard/
 logs/
 result_long_term_forecast.txt
 
-# Manuscript source is maintained in a separate repository
-manuscript/
+# Keep publication figure sources in this repository; ignore only local builds.
+manuscript/build/
 
 # Reproduced experiment artifacts
 scripts/gld_baseline_optuna_bundle/reproduced_artifacts/

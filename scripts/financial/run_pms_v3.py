@@ -335,18 +335,28 @@ def execute_matrix(
         for task in tasks:
             dataset_cfg = runner.load_dataset_manifest(manifest_path, task, REPO_ROOT)
             model = config.get("model", "PMS_Mamba-PD")
-            params = load_hpo_params(task, model)
+            hpo_params = load_hpo_params(task, model)
+            params = dict(hpo_params)
             params.update(config.get("parameter_overrides", {}))
             if model == "PMS_Mamba-PD":
                 params.update({key: value for key, value in config.items() if key not in {
-                    "config_id", "parent_config", "model", "parameter_overrides", "parent_selection"
+                    "config_id", "parent_config", "model", "parameter_overrides",
+                    "horizon_overrides", "training_overrides", "parent_selection"
                 }})
             params.update(loss="MSE", horizon_weighting="balanced")
-            if fixed_train_epochs:
-                params["fixed_train_epochs"] = True
+            params.update(config.get("training_overrides", {}))
             for seed in seeds:
                 cli.seed = int(seed)
                 for horizon in protocol["selection_horizons"]:
+                    run_params = dict(params)
+                    horizon_overrides = config.get("horizon_overrides", {})
+                    overrides = horizon_overrides.get(
+                        str(horizon), horizon_overrides.get(int(horizon), {})
+                    )
+                    for key, value in overrides.items():
+                        run_params[key] = hpo_params[key] if value == "__hpo__" else value
+                    if fixed_train_epochs and "fixed_train_epochs" not in overrides:
+                        run_params["fixed_train_epochs"] = True
                     key = (config["config_id"], task, int(seed), int(horizon))
                     if key in complete:
                         continue
@@ -360,10 +370,10 @@ def execute_matrix(
                         "model": model,
                         "seed": int(seed),
                         "horizon": int(horizon),
-                        "forecast_head": params.get("forecast_head", "auto"),
-                        "pms_branch_mode": params.get("pms_branch_mode", ""),
+                        "forecast_head": run_params.get("forecast_head", "auto"),
+                        "pms_branch_mode": run_params.get("pms_branch_mode", ""),
                         "parent_config": config.get("parent_config", ""),
-                        "params_json": json.dumps(params, sort_keys=True),
+                        "params_json": json.dumps(run_params, sort_keys=True),
                         "evaluation_split": evaluation_split,
                         "status": "failed",
                         "error": "",
@@ -382,7 +392,7 @@ def execute_matrix(
                                 cli_args=cli,
                                 dataset_cfg=dataset_cfg,
                                 model_label=model,
-                                params=params,
+                                params=run_params,
                                 pred_len=int(horizon),
                                 stage_tag=(
                                     f"{config['config_id'].lower()}_seed{seed}_h{horizon}"
@@ -556,6 +566,23 @@ def run_gate(
         print(json.dumps(decision, indent=2, sort_keys=True))
 
 
+def evaluate_runtime_gate(
+    median_latencies: dict[str, float],
+    candidate: str,
+    references: list[str],
+) -> tuple[bool, dict[str, dict[str, float | bool]]]:
+    candidate_latency = float(median_latencies[candidate])
+    comparisons = {
+        reference: {
+            "reference_median_latency_ms": float(median_latencies[reference]),
+            "candidate_speedup": float(median_latencies[reference] / candidate_latency),
+            "candidate_is_faster": bool(candidate_latency < median_latencies[reference]),
+        }
+        for reference in references
+    }
+    return all(item["candidate_is_faster"] for item in comparisons.values()), comparisons
+
+
 def run_profile(args: argparse.Namespace, protocol: dict, tasks: list[str], manifest_path: Path) -> None:
     import pandas as pd
     import torch
@@ -575,17 +602,23 @@ def run_profile(args: argparse.Namespace, protocol: dict, tasks: list[str], mani
 
     rows = []
     profile = protocol["profiling"]
+    runtime_references = protocol["promotion"].get(
+        "runtime_references", [protocol["promotion"]["runtime_reference"]]
+    )
     for task in tasks:
         dataset_cfg = runner.load_dataset_manifest(manifest_path, task, REPO_ROOT)
+        baseline_selection = json.loads(
+            (REPO_ROOT / "results" / "optuna" / task / "baseline_best_params.json").read_text()
+        )["models"]
         for horizon in protocol["selection_horizons"]:
-            for label, model, params in (
-                ("PMS_Mamba-V3", "PMS_Mamba-PD", load_hpo_params(task, "PMS_Mamba-PD")),
-                (
-                    "TimesNet",
-                    "TimesNet",
-                    json.loads((REPO_ROOT / "results" / "optuna" / task / "baseline_best_params.json").read_text())["models"]["TimesNet"]["params"],
-                ),
-            ):
+            profile_models = [
+                ("PMS_Mamba-V3", "PMS_Mamba-PD", load_hpo_params(task, "PMS_Mamba-PD"))
+            ]
+            profile_models.extend(
+                (reference, reference, dict(baseline_selection[reference]["params"]))
+                for reference in runtime_references
+            )
+            for label, model, params in profile_models:
                 if label == "PMS_Mamba-V3":
                     params.update({key: value for key, value in candidate.items() if key not in {
                         "config_id", "parent_config", "parent_selection"
@@ -633,9 +666,13 @@ def run_profile(args: argparse.Namespace, protocol: dict, tasks: list[str], mani
     frame = pd.DataFrame(rows)
     frame.to_csv(PROFILE_ROOT / "matched_inference_profile.csv", index=False)
     medians = frame.groupby("model")["latency_ms"].median()
-    runtime_pass = bool(medians["PMS_Mamba-V3"] < medians["TimesNet"])
+    runtime_pass, runtime_comparisons = evaluate_runtime_gate(
+        medians.to_dict(), "PMS_Mamba-V3", runtime_references
+    )
     decision["runtime_pass"] = runtime_pass
     decision["eligible_for_external"] = bool(decision["accuracy_pass"] and runtime_pass)
+    decision["runtime_references"] = runtime_references
+    decision["runtime_comparisons"] = runtime_comparisons
     decision["median_inference_latency_ms"] = {
         model: float(value) for model, value in medians.items()
     }

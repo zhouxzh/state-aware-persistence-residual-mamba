@@ -138,13 +138,37 @@ if __name__ == '__main__':
                         help='auxiliary increment-MSE coefficient for the cumulative PMS head')
     parser.add_argument('--change_gate_regularization', type=float, default=0.01,
                         help='horizon-prior regularization for the PMS persistence-change gate')
+    parser.add_argument('--pms_change_scale', type=float, default=1.0,
+                        help='fixed multiplier for the PMS predicted change path')
     parser.add_argument('--pms_branch_mode', type=str, default='multiscale',
-                        choices=['multiscale', 'dual_resolution'],
+                        choices=['multiscale', 'shared_multiscale', 'dual_resolution', 'fast_single', 'temporal_single', 'regime_linear', 'inverted_single', 'fused_dual'],
                         help='PMS patch branch layout')
     parser.add_argument('--pms_fine_patch_len', type=int, default=8)
     parser.add_argument('--pms_fine_stride', type=int, default=4)
     parser.add_argument('--pms_coarse_patch_len', type=int, default=32)
     parser.add_argument('--pms_coarse_stride', type=int, default=16)
+    parser.add_argument('--pms_fast_patch_len', type=int, default=16)
+    parser.add_argument('--pms_fast_stride', type=int, default=8)
+    parser.add_argument('--pms_fast_linear_skip', type=int, default=0,
+                        help='blend a last-value-anchored linear change path into fast PMS-Mamba')
+    parser.add_argument('--pms_ssm_backend', type=str, default='mamba', choices=['mamba', 'mamba2'],
+                        help='selective state-space backend for opt-in one-scan PMS branches')
+    parser.add_argument('--pms_regime_channel_gate', type=int, default=1,
+                        help='use an encoder-only per-channel persistence gate in regime_linear mode')
+    parser.add_argument('--pms_regime_gate_bias', type=float, default=2.0,
+                        help='initial logit bias for the regime_linear change gate')
+    parser.add_argument('--pms_regime_gate_stride', type=int, default=1,
+                        help='temporal pooling stride before the regime Mamba gate')
+    parser.add_argument('--pms_regime_decomp', type=int, default=0,
+                        help='use trend/seasonal linear paths in regime_linear mode')
+    parser.add_argument('--pms_regime_individual_linear', type=int, default=0,
+                        help='use an independent NLinear-style forecast map for each input channel')
+    parser.add_argument('--pms_regime_multiscale_linear', type=int, default=0,
+                        help='fuse channelwise raw/coarse linear paths with one Mamba-derived horizon gate')
+    parser.add_argument('--pms_regime_linear_scales', type=int, nargs='+', default=[1, 2, 4],
+                        help='temporal scales for the regime multiscale linear head')
+    parser.add_argument('--pms_inverted_decomp', type=int, default=0,
+                        help='use trend/seasonal/residual variable tokens in inverted_single mode')
     parser.add_argument('--pms_min_patch_tokens', type=int, default=1,
                         help='minimum patch-token count accepted by V3 parameter validation')
     parser.add_argument('--fixed_train_epochs', action='store_true',

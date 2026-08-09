@@ -1,0 +1,141 @@
+digraph AllModelArchitectureGallery {
+  graph [
+    rankdir=LR,
+    newrank=true,
+    compound=true,
+    bgcolor="white",
+    pad="0.22",
+    nodesep="0.28",
+    ranksep="0.55",
+    splines=ortho,
+    fontname="Arial",
+    fontsize=17,
+    labelloc=t,
+    label="Architecture gallery: all models in the financial comparison"
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=9,
+    color="#263238",
+    penwidth=1.1,
+    margin="0.10,0.06"
+  ];
+  edge [color="#455A64", penwidth=1.15, arrowsize=0.62];
+
+  subgraph cluster_mamba {
+    label="Mamba family";
+    color="#C47A2C";
+    penwidth=1.4;
+    style="rounded,dashed";
+    fontname="Arial";
+    fontsize=13;
+
+    r6_in [label=<<B>PMSV5_R6</B><BR/>window norm>, fillcolor="#DCEBFA", color="#1F4E79"];
+    r6_gate [label="regime statistics\n+ one Mamba scan\n+ horizon gate", fillcolor="#FCE4D6", color="#A64B00"];
+    r6_change [label="channelwise linear\nchange forecast", fillcolor="#E2F0D9", color="#3A6B35"];
+    r6_out [label="gate * change\n+ last value", fillcolor="#E8E0F0", color="#5A3D75"];
+    r6_in -> r6_gate -> r6_out;
+    r6_in -> r6_change -> r6_out;
+
+    b0_in [label=<<B>PMSV3_B0</B><BR/>window norm>, fillcolor="#DCEBFA", color="#1F4E79"];
+    b0_scales [label="multiple temporal scales\ntrend / seasonal / residual", fillcolor="#FCE4D6", color="#A64B00"];
+    b0_enc [label="inverted embedding\nindependent Mamba branches", fillcolor="#FCE4D6", color="#A64B00"];
+    b0_out [label="scale fusion\nlevel projection + denorm", fillcolor="#E8E0F0", color="#5A3D75"];
+    b0_in -> b0_scales -> b0_enc -> b0_out;
+
+    pd_in [label=<<B>Earlier PMS_Mamba-PD</B><BR/>historical>, fillcolor="#DCEBFA", color="#1F4E79"];
+    pd_core [label="multiscale patch Mamba\nregime-aware scale fusion", fillcolor="#FCE4D6", color="#A64B00"];
+    pd_out [label="forecast head\n+ denorm", fillcolor="#E8E0F0", color="#5A3D75"];
+    pd_in -> pd_core -> pd_out;
+
+    ns_in [label=<<B>NS-Mamba-D</B><BR/>nonstationary decomposition>, fillcolor="#DCEBFA", color="#1F4E79"];
+    ns_split [label="trend / seasonal / residual", fillcolor="#FCE4D6", color="#A64B00"];
+    ns_enc [label="three inverted Mamba\nencoders", fillcolor="#FCE4D6", color="#A64B00"];
+    ns_out [label="sum branches\nprojection + denorm", fillcolor="#E8E0F0", color="#5A3D75"];
+    ns_in -> ns_split -> ns_enc -> ns_out;
+
+    ms_in [label=<<B>MS-Mamba-MD</B><BR/>multi-scale + decomposition>, fillcolor="#DCEBFA", color="#1F4E79"];
+    ms_scales [label="downsampled temporal\nscales", fillcolor="#FCE4D6", color="#A64B00"];
+    ms_enc [label="independent inverted\nMamba branches", fillcolor="#FCE4D6", color="#A64B00"];
+    ms_out [label="shift-aware scale fusion\nprojection + denorm", fillcolor="#E8E0F0", color="#5A3D75"];
+    ms_in -> ms_scales -> ms_enc -> ms_out;
+
+    s_in [label=<<B>S-Mamba</B><BR/>baseline>, fillcolor="#DCEBFA", color="#1F4E79"];
+    s_enc [label="inverted variable tokens\nbidirectional Mamba encoder", fillcolor="#FCE4D6", color="#A64B00"];
+    s_out [label="linear projection\n+ denorm", fillcolor="#E8E0F0", color="#5A3D75"];
+    s_in -> s_enc -> s_out;
+  }
+
+  subgraph cluster_neural {
+    label="Transformer and periodic neural baselines";
+    color="#3978A8";
+    penwidth=1.4;
+    style="rounded,dashed";
+    fontname="Arial";
+    fontsize=13;
+
+    patch_in [label=<<B>PatchTST</B><BR/>channel-independent patches>, fillcolor="#DCEBFA", color="#1F4E79"];
+    patch_core [label="patch embedding\nself-attention encoder", fillcolor="#D9EAF7", color="#286090"];
+    patch_out [label="flattened prediction head\n+ denorm", fillcolor="#E8E0F0", color="#5A3D75"];
+    patch_in -> patch_core -> patch_out;
+
+    itr_in [label=<<B>iTransformer</B><BR/>inverted tokens>, fillcolor="#DCEBFA", color="#1F4E79"];
+    itr_core [label="variables as tokens\nself-attention encoder", fillcolor="#D9EAF7", color="#286090"];
+    itr_out [label="token projection\n+ denorm", fillcolor="#E8E0F0", color="#5A3D75"];
+    itr_in -> itr_core -> itr_out;
+
+    times_in [label=<<B>TimesNet</B><BR/>normalized series>, fillcolor="#DCEBFA", color="#1F4E79"];
+    times_fft [label="FFT top-k periods\n2D period reshaping", fillcolor="#D9EAF7", color="#286090"];
+    times_conv [label="Inception 2D convolutions\nsoftmax period fusion", fillcolor="#D9EAF7", color="#286090"];
+    times_out [label="projection\n+ denorm", fillcolor="#E8E0F0", color="#5A3D75"];
+    times_in -> times_fft -> times_conv -> times_out;
+  }
+
+  subgraph cluster_linear {
+    label="Linear baselines";
+    color="#4E8B57";
+    penwidth=1.4;
+    style="rounded,dashed";
+    fontname="Arial";
+    fontsize=13;
+
+    nlin_in [label=<<B>NLinear</B><BR/>last-value centered>, fillcolor="#E2F0D9", color="#3A6B35"];
+    nlin_map [label="shared or individual\naffine history map", fillcolor="#EAF4E5", color="#3A6B35"];
+    nlin_out [label="add last value", fillcolor="#E8E0F0", color="#5A3D75"];
+    nlin_in -> nlin_map -> nlin_out;
+
+    dlin_in [label=<<B>DLinear</B><BR/>moving-average split>, fillcolor="#E2F0D9", color="#3A6B35"];
+    dlin_map [label="seasonal linear map\ntrend linear map", fillcolor="#EAF4E5", color="#3A6B35"];
+    dlin_out [label="sum components", fillcolor="#E8E0F0", color="#5A3D75"];
+    dlin_in -> dlin_map -> dlin_out;
+  }
+
+  subgraph cluster_statistical {
+    label="Statistical and persistence procedures (no neural architecture)";
+    color="#7A7A7A";
+    penwidth=1.4;
+    style="rounded,dashed";
+    fontname="Arial";
+    fontsize=13;
+
+    last_in [label=<<B>Last-value</B><BR/>last observed level>, fillcolor="#F2F2F2", color="#666666"];
+    last_out [label="repeat across horizon", fillcolor="#FFFFFF", color="#666666"];
+    last_in -> last_out;
+
+    drift_in [label=<<B>Random-walk drift</B><BR/>last level + estimated drift>, fillcolor="#F2F2F2", color="#666666"];
+    drift_out [label="recursive drift path", fillcolor="#FFFFFF", color="#666666"];
+    drift_in -> drift_out;
+
+    arima_in [label=<<B>ARIMA</B><BR/>fit univariate history>, fillcolor="#F2F2F2", color="#666666"];
+    arima_out [label="recursive forecast", fillcolor="#FFFFFF", color="#666666"];
+    arima_in -> arima_out;
+
+    var_in [label=<<B>VAR-difference</B><BR/>difference multivariate history>, fillcolor="#F2F2F2", color="#666666"];
+    var_fit [label="fit VAR on differences", fillcolor="#FFFFFF", color="#666666"];
+    var_out [label="recursive differences\n+ inverse differencing", fillcolor="#FFFFFF", color="#666666"];
+    var_in -> var_fit -> var_out;
+  }
+}

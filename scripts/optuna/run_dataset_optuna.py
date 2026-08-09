@@ -63,6 +63,7 @@ DEFAULT_MAMBA_MODELS = [
 
 OPTUNA_SEARCH_SPACE_VERSION = "narrow_v2"
 V3_SEARCH_SPACE_VERSION = "pms_v3"
+V4_FAST_SEARCH_SPACE_VERSION = "pms_v4_fast"
 
 
 def study_version(cli_args):
@@ -127,7 +128,7 @@ def parse_args():
     parser.add_argument("--startup-trials", type=int, default=4)
     parser.add_argument(
         "--search-space-version",
-        choices=[OPTUNA_SEARCH_SPACE_VERSION, V3_SEARCH_SPACE_VERSION],
+        choices=[OPTUNA_SEARCH_SPACE_VERSION, V3_SEARCH_SPACE_VERSION, V4_FAST_SEARCH_SPACE_VERSION],
         default=OPTUNA_SEARCH_SPACE_VERSION,
         help="Versioned parameter space; the default preserves frozen V1/V2 reproduction.",
     )
@@ -314,11 +315,24 @@ def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_
         forecast_head=str(params.get("forecast_head", "auto")),
         increment_loss_weight=float(params.get("increment_loss_weight", 0.1)),
         change_gate_regularization=float(params.get("change_gate_regularization", 0.01)),
+        pms_change_scale=float(params.get("pms_change_scale", 1.0)),
         pms_branch_mode=str(params.get("pms_branch_mode", "multiscale")),
         pms_fine_patch_len=int(params.get("pms_fine_patch_len", 8)),
         pms_fine_stride=int(params.get("pms_fine_stride", 4)),
         pms_coarse_patch_len=int(params.get("pms_coarse_patch_len", 32)),
         pms_coarse_stride=int(params.get("pms_coarse_stride", 16)),
+        pms_fast_patch_len=int(params.get("pms_fast_patch_len", 16)),
+        pms_fast_stride=int(params.get("pms_fast_stride", 8)),
+        pms_fast_linear_skip=int(params.get("pms_fast_linear_skip", 0)),
+        pms_regime_channel_gate=int(params.get("pms_regime_channel_gate", 1)),
+        pms_regime_gate_bias=float(params.get("pms_regime_gate_bias", 2.0)),
+        pms_regime_gate_stride=int(params.get("pms_regime_gate_stride", 1)),
+        pms_regime_decomp=int(params.get("pms_regime_decomp", 0)),
+        pms_regime_individual_linear=int(params.get("pms_regime_individual_linear", 0)),
+        pms_regime_multiscale_linear=int(params.get("pms_regime_multiscale_linear", 0)),
+        pms_regime_linear_scales=params.get("pms_regime_linear_scales", [1, 2, 4]),
+        pms_ssm_backend=str(params.get("pms_ssm_backend", "mamba")),
+        pms_inverted_decomp=int(params.get("pms_inverted_decomp", 0)),
         pms_min_patch_tokens=int(params.get("pms_min_patch_tokens", 1)),
         fixed_train_epochs=bool(params.get("fixed_train_epochs", False)),
         evaluation_batch_size=int(params.get("evaluation_batch_size", 1)),
@@ -400,10 +414,16 @@ def model_params_feasibility_error(model_label, params):
 
     seq_len = int(params["seq_len"])
     branch_mode = str(params.get("pms_branch_mode", "multiscale"))
+    if branch_mode in {"regime_linear", "inverted_single"}:
+        return None
     if branch_mode == "dual_resolution":
         layouts = [
             (seq_len, int(params.get("pms_fine_patch_len", 8)), int(params.get("pms_fine_stride", 4))),
             (seq_len, int(params.get("pms_coarse_patch_len", 32)), int(params.get("pms_coarse_stride", 16))),
+        ]
+    elif branch_mode == "fast_single":
+        layouts = [
+            (seq_len, int(params.get("pms_fast_patch_len", 16)), int(params.get("pms_fast_stride", 8))),
         ]
     else:
         patch_len = int(params["patch_len"])
@@ -493,11 +513,54 @@ def sample_v3_mamba_params(trial, model_label):
     return normalize_params(params)
 
 
+def sample_v4_fast_mamba_params(trial, model_label):
+    if model_label != "PMS_Mamba-PD":
+        raise ValueError("pms_v4_fast is defined only for PMS_Mamba-PD")
+    patch_len, stride = suggest_patch_stride_pair(
+        trial,
+        "fast_patch_stride_pair",
+        [(8, 4), (16, 8), (32, 16)],
+    )
+    return normalize_params({
+        "factor": 1,
+        "seq_len": trial.suggest_categorical("seq_len", [64, 128, 192, 256]),
+        "d_model": trial.suggest_categorical("d_model", [32, 64]),
+        "d_ff": trial.suggest_categorical("d_ff", [64, 128]),
+        "d_state": trial.suggest_categorical("d_state", [4, 8, 16]),
+        "e_layers": 1,
+        "dropout": trial.suggest_categorical("dropout", [0.0, 0.1]),
+        "batch_size": 16,
+        "learning_rate": trial.suggest_categorical(
+            "learning_rate", [0.00005, 0.0001, 0.0002, 0.0003, 0.0005]
+        ),
+        "use_norm": 1,
+        "moving_avg": 25,
+        "ms_fusion": "mean",
+        "ms_use_decomp": 0,
+        "pms_branch_mode": "fast_single",
+        "pms_fast_patch_len": patch_len,
+        "pms_fast_stride": stride,
+        "pms_fast_linear_skip": 0,
+        "forecast_head": "persistence_change",
+        "change_gate_regularization": trial.suggest_categorical(
+            "change_gate_regularization", [0.0, 0.001, 0.01]
+        ),
+        "pms_change_scale": trial.suggest_categorical(
+            "pms_change_scale", [0.5, 0.75, 1.0]
+        ),
+        "pms_min_patch_tokens": 4,
+    })
+
+
 def sample_params(trial, phase, model_label, search_space_version=OPTUNA_SEARCH_SPACE_VERSION):
     if search_space_version == V3_SEARCH_SPACE_VERSION:
         if phase != "mamba":
             raise ValueError("pms_v3 search space is defined only for the mamba phase")
         return sample_v3_mamba_params(trial, model_label)
+    if search_space_version == V4_FAST_SEARCH_SPACE_VERSION:
+        if phase != "mamba":
+            raise ValueError("pms_v4_fast search space is defined only for the mamba phase")
+        return sample_v4_fast_mamba_params(trial, model_label)
     params = {}
     if phase == "baseline":
         if model_label == "iTransformer":
