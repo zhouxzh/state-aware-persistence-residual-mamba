@@ -14,6 +14,7 @@ manuscript material.
 | [final_evaluation_record.md](final_evaluation_record.md) | Frozen evaluation protocol and status. |
 | [evidence_registry.md](evidence_registry.md) | Files that substantiate technical statements. |
 | [reproducibility.md](reproducibility.md) | Environment setup, workflow, and validation commands. |
+| [results_inventory.md](results_inventory.md) | Retained manuscript evidence versus archived local workspaces. |
 
 | Canonical ID | Reader-facing name | Role |
 | --- | --- | --- |

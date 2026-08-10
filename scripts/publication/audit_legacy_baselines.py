@@ -28,8 +28,8 @@ DEFAULT_PROTOCOL = (
     / "financial_confirmatory_source.json"
 )
 DEFAULT_MANIFEST = REPO_ROOT / "data" / "financial" / "manifests" / "training_datasets.json"
-DEFAULT_SUMMARY = REPO_ROOT / "results" / "financial_confirmatory" / "final_runs.json"
-DEFAULT_RUN_ROOT = REPO_ROOT / "results" / "financial_confirmatory" / "runs"
+DEFAULT_SUMMARY = REPO_ROOT / "backup" / "results" / "financial_confirmatory" / "final_runs.json"
+DEFAULT_RUN_ROOT = REPO_ROOT / "backup" / "results" / "financial_confirmatory" / "runs"
 DEFAULT_OUTPUT = REPO_ROOT / "reproducibility" / "financial_reference_evaluation_v1" / "audit" / "legacy_baseline_audit.json"
 
 

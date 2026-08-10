@@ -12,8 +12,8 @@
     "protocol_version": "financial_confirmatory_v1",
     "protocol_sha256": "1b1a8d94847ab2296dec0db9a5cbe596836aae15fd8e7d88c1e4082e178d5963",
     "training_manifest": "data/financial/manifests/training_datasets.json",
-    "legacy_final_summary": "results/financial_confirmatory/final_runs.json",
-    "legacy_run_root": "results/financial_confirmatory/runs",
+    "legacy_final_summary": "backup/results/financial_confirmatory/final_runs.json",
+    "legacy_run_root": "backup/results/financial_confirmatory/runs",
     "horizons": [1, 5, 20, 60, 120, 252],
     "seeds": [2023, 2024, 2025, 2026, 2027]
   },
