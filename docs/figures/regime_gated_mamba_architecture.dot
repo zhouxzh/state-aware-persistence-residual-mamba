@@ -1,0 +1,144 @@
+digraph RegimeGatedMamba {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    pad="0.18",
+    nodesep="0.42",
+    ranksep="0.72",
+    splines=ortho,
+    fontname="Arial",
+    fontsize=16,
+    labelloc=t,
+    label="Regime-Gated Mamba: persistence-change forecasting"
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=11,
+    color="#263238",
+    penwidth=1.2,
+    margin="0.12,0.08"
+  ];
+
+  edge [
+    color="#455A64",
+    penwidth=1.4,
+    arrowsize=0.7,
+    fontname="Arial",
+    fontsize=9
+  ];
+
+  input [
+    label=<<B>Financial input window</B><BR/>X: [batch, history, channels]<BR/>GLD, BTCUSDT, GBPUSD, or DGS10>,
+    fillcolor="#DCEBFA",
+    color="#1F4E79"
+  ];
+
+  norm [
+    label=<<B>Window normalization</B><BR/>per-window mean and standard deviation<BR/>statistics cached for reversal>,
+    fillcolor="#EAF2F8",
+    color="#1F4E79"
+  ];
+
+  subgraph cluster_regime {
+    label="Global regime path (shared across channels)";
+    color="#C47A2C";
+    penwidth=1.4;
+    style="rounded,dashed";
+    fontname="Arial";
+    fontsize=12;
+
+    stats [
+      label=<<B>Regime statistics</B><BR/>level mean and SD<BR/>difference mean and SD>,
+      fillcolor="#FCE4D6",
+      color="#A64B00"
+    ];
+    proj [
+      label=<<B>Feature projection</B><BR/>4 -&gt; d_model = 64>,
+      fillcolor="#FCE4D6",
+      color="#A64B00"
+    ];
+    mamba [
+      label=<<B>Selective Mamba scan</B><BR/>one layer, d_state = 8<BR/>d_conv = 2, expand = 1>,
+      fillcolor="#F8D7C0",
+      color="#A64B00"
+    ];
+    gate [
+      label=<<B>Regime gate G</B><BR/>last state -&gt; horizon logits<BR/>sigmoid, broadcast over channels>,
+      fillcolor="#FCE4D6",
+      color="#A64B00"
+    ];
+    stats -> proj -> mamba -> gate;
+  }
+
+  subgraph cluster_change {
+    label="Channelwise change path (series-specific)";
+    color="#4E8B57";
+    penwidth=1.4;
+    style="rounded,dashed";
+    fontname="Arial";
+    fontsize=12;
+
+    center [
+      label=<<B>Last-value centering</B><BR/>x_t - x_last for each channel>,
+      fillcolor="#E2F0D9",
+      color="#3A6B35"
+    ];
+    linear [
+      label=<<B>Individual linear forecast</B><BR/>one affine map per channel<BR/>history -&gt; horizon>,
+      fillcolor="#E2F0D9",
+      color="#3A6B35"
+    ];
+    delta [
+      label=<<B>Candidate change path</B><BR/>Delta [batch, horizon, channels]>,
+      fillcolor="#EEF7E9",
+      color="#3A6B35"
+    ];
+    center -> linear -> delta;
+  }
+
+  gated [
+    label=<<B>Regime modulation</B><BR/>G * Delta>,
+    shape=ellipse,
+    fillcolor="#FFF2CC",
+    color="#9C6500"
+  ];
+  rescale [
+    label=<<B>Reverse scale</B><BR/>multiply by cached standard deviation>,
+    fillcolor="#EAF2F8",
+    color="#1F4E79"
+  ];
+  add [
+    label=<<B>Persistence anchor</B><BR/>last raw value + scaled change>,
+    shape=ellipse,
+    fillcolor="#E8E0F0",
+    color="#5A3D75"
+  ];
+  output [
+    label=<<B>Forecast</B><BR/>Y_hat: [batch, horizon, channels]>,
+    fillcolor="#D9EAD3",
+    color="#2F6B35",
+    penwidth=1.6
+  ];
+  legacy [
+    label=<<B>Excluded in R6</B><BR/>multiscale patches<BR/>decomposition<BR/>per-channel neural gate>,
+    fillcolor="#F2F2F2",
+    color="#7A7A7A",
+    fontcolor="#666666",
+    style="rounded,dashed,filled"
+  ];
+
+  input -> norm;
+  norm -> stats;
+  norm -> center;
+  stats -> gate [style=invis];
+  gate -> gated;
+  delta -> gated;
+  gated -> rescale;
+  input -> add [style=dashed, xlabel="last raw level"];
+  rescale -> add;
+  add -> output;
+  legacy -> output [style=dotted, arrowhead=none, color="#9E9E9E"];
+}

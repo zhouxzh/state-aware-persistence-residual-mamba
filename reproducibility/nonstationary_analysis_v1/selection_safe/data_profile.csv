@@ -1,5 +1,0 @@
-dataset,target,rows,start,end,train_rows,validation_rows,protected_test_rows,missing_cells,duplicate_dates,maximum_calendar_gap_days,variable_count
-cross_asset,GLD,2483,2016-07-25,2026-06-30,1112,502,869,0,0,5,4
-crypto,BTCUSDT,2980,2018-05-04,2026-06-30,973,730,1277,0,0,1,4
-fx,GBPUSD,6894,1999-01-04,2026-06-30,5521,499,874,0,0,5,6
-yields,DGS10,5101,2006-02-09,2026-06-30,3728,500,873,0,0,4,4

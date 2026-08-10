@@ -1,4 +1,0 @@
-interface:
-  display_name: "Nonstationary Mamba"
-  short_description: "Build and test Mamba forecasting models"
-  default_prompt: "Use $nonstationary-mamba to implement or test a nonstationary Mamba forecasting experiment."

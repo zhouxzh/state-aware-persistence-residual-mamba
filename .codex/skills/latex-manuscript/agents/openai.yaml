@@ -1,4 +1,0 @@
-interface:
-  display_name: "Evidence-First LaTeX Manuscript"
-  short_description: "Traceable scientific writing, review, figures, and PDF builds"
-  default_prompt: "Use $latex-manuscript to revise manuscript/main.tex, trace claims to completed experiments, preserve generated artifacts, and rebuild the PDF."

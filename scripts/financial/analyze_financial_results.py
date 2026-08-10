@@ -22,7 +22,7 @@ FINAL_SUMMARY = REPO_ROOT / "results" / "financial_confirmatory" / "final_runs.j
 RUN_ROOT = REPO_ROOT / "results" / "financial_confirmatory" / "runs"
 STATISTICAL_METRICS = REPO_ROOT / "results" / "financial_confirmatory" / "statistical" / "metrics.csv"
 ANALYSIS_ROOT = REPO_ROOT / "results" / "financial_confirmatory" / "analysis"
-MAMBA_PROPOSALS = ("NS_Mamba-D", "MS_Mamba-MD", "PMS_Mamba-PD")
+MAMBA_PROPOSALS = ("DecompositionMamba", "MultiScaleDecompositionMamba", "MultiScalePatchMamba")
 NON_MAMBA = ("DLinear", "NLinear", "PatchTST", "TimesNet", "iTransformer")
 STATISTICAL_COMMON = ("Last-value", "Random-walk-drift", "ARIMA")
 
@@ -462,7 +462,7 @@ def bootstrap_contrasts(protocol: dict, neural_store: dict, replicates: int, see
     rows = []
     for task in tasks:
         for proposal in MAMBA_PROPOSALS:
-            for comparator in ("S_Mamba", best_baseline[task]):
+            for comparator in ("InvertedMamba", best_baseline[task]):
                 for horizon in protocol["horizons"]:
                     proposal_loss, proposal_dates = mean_seed_loss(
                         neural_store, task, proposal, horizon, protocol["final_seeds"]

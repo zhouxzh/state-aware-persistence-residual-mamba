@@ -73,7 +73,13 @@ def main() -> int:
         "packages": {},
         "runtime_imports": {
             module_name: import_result(module_name)
-            for module_name in ("mamba_ssm", "model.S_Mamba", "model.NS_Mamba", "model.MS_Mamba", "model.PMS_Mamba")
+            for module_name in (
+                "mamba_ssm",
+                "model.InvertedMamba",
+                "model.DecompositionMamba",
+                "model.MultiScaleDecompositionMamba",
+                "model.RegimeGatedMamba",
+            )
         },
         "git": {
             "head": command_result(["git", "rev-parse", "HEAD"]),

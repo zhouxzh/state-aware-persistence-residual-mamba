@@ -1,0 +1,19 @@
+candidate_id,candidate,reference_id,reference,matched_cells,mean_path_rmsse_difference,candidate_win_fraction,candidate_source_model_id,reference_source_model_id
+RegimeGatedMamba,Regime-Gated Mamba,DLinear,DLinear,240,-6.983982153924819,0.825,PMSV5_R6,DLinear
+RegimeGatedMamba,Regime-Gated Mamba,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,240,-0.0541244106497671,0.7333333333333333,PMSV5_R6,MS_Mamba-MD
+RegimeGatedMamba,Regime-Gated Mamba,NLinear,NLinear,240,0.2506620446229924,0.5875,PMSV5_R6,NLinear
+RegimeGatedMamba,Regime-Gated Mamba,DecompositionMamba,Decomposition Mamba,240,0.3573181829291345,0.6708333333333333,PMSV5_R6,NS_Mamba-D
+RegimeGatedMamba,Regime-Gated Mamba,LegacyPatchDecompositionMamba,Legacy Patch-Decomposition Mamba,240,0.4418450494044765,0.7041666666666667,PMSV5_R6,PMS_Mamba-PD
+RegimeGatedMamba,Regime-Gated Mamba,PatchTST,PatchTST,240,-0.1868055280087687,0.8708333333333333,PMSV5_R6,PatchTST
+RegimeGatedMamba,Regime-Gated Mamba,InvertedMamba,Inverted Mamba,240,0.0832244194503815,0.6416666666666667,PMSV5_R6,S_Mamba
+RegimeGatedMamba,Regime-Gated Mamba,TimesNet,TimesNet,240,-2.97884125216141,0.875,PMSV5_R6,TimesNet
+RegimeGatedMamba,Regime-Gated Mamba,iTransformer,iTransformer,240,-2.332245374344909,0.9625,PMSV5_R6,iTransformer
+MultiScalePatchMamba,Multi-Scale Patch Mamba,DLinear,DLinear,240,-7.38410630133834,0.675,PMSV3_B0,DLinear
+MultiScalePatchMamba,Multi-Scale Patch Mamba,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,240,-0.4542485580632879,0.4666666666666667,PMSV3_B0,MS_Mamba-MD
+MultiScalePatchMamba,Multi-Scale Patch Mamba,NLinear,NLinear,240,-0.1494621027905283,0.3833333333333333,PMSV3_B0,NLinear
+MultiScalePatchMamba,Multi-Scale Patch Mamba,DecompositionMamba,Decomposition Mamba,240,-0.0428059644843862,0.425,PMSV3_B0,NS_Mamba-D
+MultiScalePatchMamba,Multi-Scale Patch Mamba,LegacyPatchDecompositionMamba,Legacy Patch-Decomposition Mamba,240,0.0417209019909557,0.3833333333333333,PMSV3_B0,PMS_Mamba-PD
+MultiScalePatchMamba,Multi-Scale Patch Mamba,PatchTST,PatchTST,240,-0.5869296754222896,0.6,PMSV3_B0,PatchTST
+MultiScalePatchMamba,Multi-Scale Patch Mamba,InvertedMamba,Inverted Mamba,240,-0.3168997279631392,0.4208333333333333,PMSV3_B0,S_Mamba
+MultiScalePatchMamba,Multi-Scale Patch Mamba,TimesNet,TimesNet,240,-3.3789653995749305,0.8833333333333333,PMSV3_B0,TimesNet
+MultiScalePatchMamba,Multi-Scale Patch Mamba,iTransformer,iTransformer,240,-2.7323695217584305,0.7958333333333333,PMSV3_B0,iTransformer

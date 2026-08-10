@@ -1,0 +1,4 @@
+model_id,source_model_id,model,task,horizon,seq_len,batch_size,warmup_iterations,iterations_per_repeat,repeats,precision,median_latency_ms,p10_latency_ms,p90_latency_ms,throughput_samples_per_second,peak_allocated_memory_mb,parameter_count,gpu,torch,cuda
+RegimeGatedMamba,PMSV5_R6,Regime-Gated Mamba,financial_cross_asset_ms,60,96,32,20,100,5,float32,0.2623000997118652,0.26170158106833696,0.26636428758502007,121997.6661661653,38.23291015625,48104,NVIDIA GeForce RTX 5090 D,2.13.0+cu130,13.0
+PatchTST,PatchTST,PatchTST,financial_cross_asset_ms,60,96,32,20,100,5,float32,0.38877376122400165,0.3877848647534847,0.3911349936388433,82310.08157354119,47.43701171875,1155132,NVIDIA GeForce RTX 5090 D,2.13.0+cu130,13.0
+TimesNet,TimesNet,TimesNet,financial_cross_asset_ms,60,96,32,20,100,5,float32,41.451052750926465,41.44321871455759,41.455023650079966,771.9948680744851,205.87548828125,22302656,NVIDIA GeForce RTX 5090 D,2.13.0+cu130,13.0

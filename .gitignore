@@ -228,12 +228,16 @@ test_results/
 checkpoints/
 backups/
 tensorboard/
+
+# Private inventory outputs used to preserve local research archives.
+**/archive_manifest.json
+**/release_export_preview.json
 logs/
 result_long_term_forecast.txt
-
-# Keep publication figure sources in this repository; ignore only local builds.
-manuscript/build/
 
 # Reproduced experiment artifacts
 scripts/gld_baseline_optuna_bundle/reproduced_artifacts/
 scripts/gld_mamba_optuna_bundle/reproduced_artifacts/
+
+# Local agent tooling is not part of the public research implementation.
+.codex/

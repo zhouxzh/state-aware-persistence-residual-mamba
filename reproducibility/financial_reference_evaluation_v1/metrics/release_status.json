@@ -1,0 +1,10 @@
+{
+  "candidate_matrix_complete": true,
+  "candidate_problems": [],
+  "candidate_row_count": 480,
+  "claim_boundary": "Candidate comparisons are retrospective and protocol-matched; they are not an untouched test claim.",
+  "combined_row_count": 2640,
+  "legacy_baselines_audited": true,
+  "legacy_row_count": 2160,
+  "publication_protocol_version": "financial_reference_evaluation_v1"
+}

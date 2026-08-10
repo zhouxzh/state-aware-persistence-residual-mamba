@@ -1,0 +1,137 @@
+{
+  "calibration_horizons": [
+    5,
+    60,
+    120
+  ],
+  "data_sha256": "fe3a40628180007f64e92a98a20932b45af8bdbdcbb43e166d9a55d2b770c68b",
+  "dataset": "financial_cross_asset_ms",
+  "full_horizons": [
+    1,
+    5,
+    20,
+    60,
+    120
+  ],
+  "models": {
+    "MS_Mamba-MD": {
+      "best_calibration_objective": 5.325369237136249,
+      "best_calibration_trial": 13,
+      "best_validation_replay_balanced_rmsse": 4.867200909445624,
+      "best_validation_replay_trial": 13,
+      "final_eval_flag": "not_opened",
+      "final_test_balanced_rmsse": null,
+      "params": {
+        "batch_size": 16,
+        "d_ff": 256,
+        "d_model": 128,
+        "d_state": 16,
+        "dropout": 0.1,
+        "e_layers": 1,
+        "factor": 1,
+        "learning_rate": 0.0001,
+        "moving_avg": 25,
+        "ms_fusion": "mean",
+        "ms_scales": [
+          1,
+          3,
+          6
+        ],
+        "ms_use_decomp": 1,
+        "ms_use_linear_skip": 0,
+        "seq_len": 64,
+        "use_norm": 1
+      },
+      "selection_eval_flag": "val",
+      "study_name": "financial_cross_asset_ms_mamba_MS_Mamba-MD_pms_v3_pms_mamba_v3_20260804a"
+    },
+    "NS_Mamba-D": {
+      "best_calibration_objective": 4.882633378033039,
+      "best_calibration_trial": 7,
+      "best_validation_replay_balanced_rmsse": 4.423539412270944,
+      "best_validation_replay_trial": 7,
+      "final_eval_flag": "not_opened",
+      "final_test_balanced_rmsse": null,
+      "params": {
+        "batch_size": 16,
+        "d_ff": 128,
+        "d_model": 64,
+        "d_state": 32,
+        "dropout": 0.0,
+        "e_layers": 1,
+        "factor": 1,
+        "learning_rate": 0.0001,
+        "moving_avg": 49,
+        "seq_len": 64,
+        "use_adaptive_norm": 0,
+        "use_decomp": 1,
+        "use_norm": 1,
+        "use_shift_gate": 0
+      },
+      "selection_eval_flag": "val",
+      "study_name": "financial_cross_asset_ms_mamba_NS_Mamba-D_pms_v3_pms_mamba_v3_20260804a"
+    },
+    "PMS_Mamba-PD": {
+      "best_calibration_objective": 5.240090620094448,
+      "best_calibration_trial": 9,
+      "best_validation_replay_balanced_rmsse": 4.836324155056084,
+      "best_validation_replay_trial": 9,
+      "final_eval_flag": "not_opened",
+      "final_test_balanced_rmsse": null,
+      "params": {
+        "batch_size": 16,
+        "d_ff": 128,
+        "d_model": 128,
+        "d_state": 16,
+        "dropout": 0.0,
+        "e_layers": 2,
+        "factor": 1,
+        "forecast_head": "level",
+        "learning_rate": 0.0002,
+        "moving_avg": 13,
+        "ms_fusion": "mean",
+        "ms_scales": [
+          1,
+          2,
+          4
+        ],
+        "ms_use_decomp": 1,
+        "patch_len": 8,
+        "pms_branch_mode": "multiscale",
+        "pms_min_patch_tokens": 4,
+        "seq_len": 64,
+        "stride": 4,
+        "use_norm": 1
+      },
+      "selection_eval_flag": "val",
+      "study_name": "financial_cross_asset_ms_mamba_PMS_Mamba-PD_pms_v3_pms_mamba_v3_20260804a"
+    },
+    "S_Mamba": {
+      "best_calibration_objective": 4.883899361420475,
+      "best_calibration_trial": 17,
+      "best_validation_replay_balanced_rmsse": 4.4396665941160665,
+      "best_validation_replay_trial": 17,
+      "final_eval_flag": "not_opened",
+      "final_test_balanced_rmsse": null,
+      "params": {
+        "batch_size": 16,
+        "d_ff": 128,
+        "d_model": 128,
+        "d_state": 16,
+        "dropout": 0.0,
+        "e_layers": 1,
+        "factor": 1,
+        "learning_rate": 0.0003,
+        "seq_len": 64,
+        "use_norm": 1
+      },
+      "selection_eval_flag": "val",
+      "study_name": "financial_cross_asset_ms_mamba_S_Mamba_pms_v3_pms_mamba_v3_20260804a"
+    }
+  },
+  "objective_metric": "balanced_rmsse",
+  "phase": "mamba",
+  "protocol_sha256": "45af19b05928205570183b968c5bdd2c01ff4b6905cdb7653f9d523dacc27c53",
+  "protocol_version": "pms_mamba_v3_20260804a",
+  "search_space_version": "pms_v3_pms_mamba_v3_20260804a"
+}

@@ -15,7 +15,13 @@ if TYPE_CHECKING:
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_PROTOCOL = REPO_ROOT / "configs" / "financial_benchmark.json"
+DEFAULT_PROTOCOL = (
+    REPO_ROOT
+    / "reproducibility"
+    / "financial_reference_evaluation_v1"
+    / "protocol"
+    / "financial_confirmatory_source.json"
+)
 FINANCIAL_DATA = REPO_ROOT / "data" / "financial"
 RAW_DIR = FINANCIAL_DATA / "raw"
 PROCESSED_DIR = FINANCIAL_DATA / "processed"

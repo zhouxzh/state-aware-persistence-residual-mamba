@@ -1,29 +1,22 @@
 import os
+
 import torch
-from model import Transformer, Informer, Reformer, \
-    iTransformer, Autoformer, \
-    Nonstationary_Transformer, \
-    DLinear, NLinear, PatchTST, TimesNet
+from model import DLinear, NLinear, PatchTST, TimesNet, iTransformer
 
 try:
-    from model import S_Mamba
+    from model import (
+        DecompositionMamba,
+        InvertedMamba,
+        MultiScaleDecompositionMamba,
+        MultiScalePatchMamba,
+        RegimeGatedMamba,
+    )
 except (ImportError, RuntimeError):
-    S_Mamba = None
-
-try:
-    from model import NS_Mamba
-except (ImportError, RuntimeError):
-    NS_Mamba = None
-
-try:
-    from model import MS_Mamba
-except (ImportError, RuntimeError):
-    MS_Mamba = None
-
-try:
-    from model import PMS_Mamba
-except (ImportError, RuntimeError):
-    PMS_Mamba = None
+    DecompositionMamba = None
+    InvertedMamba = None
+    MultiScaleDecompositionMamba = None
+    MultiScalePatchMamba = None
+    RegimeGatedMamba = None
 
 
 class Exp_Basic(object):
@@ -32,20 +25,11 @@ class Exp_Basic(object):
         self.writer = None
         self.model_dict = {
             'iTransformer': iTransformer,
-
-            'Transformer': Transformer,
-
-            'Informer': Informer,
-
-            'Reformer': Reformer,
-
-            'Autoformer': Autoformer,
-
-            'S_Mamba': S_Mamba,
-            'NS_Mamba': NS_Mamba,
-            'MS_Mamba': MS_Mamba,
-            'PMS_Mamba': PMS_Mamba,
-            'Nonstationary_Transformer': Nonstationary_Transformer,
+            'InvertedMamba': InvertedMamba,
+            'DecompositionMamba': DecompositionMamba,
+            'MultiScaleDecompositionMamba': MultiScaleDecompositionMamba,
+            'MultiScalePatchMamba': MultiScalePatchMamba,
+            'RegimeGatedMamba': RegimeGatedMamba,
             'DLinear': DLinear,
             'NLinear': NLinear,
             'PatchTST': PatchTST,

@@ -11,13 +11,13 @@ if __name__ == '__main__':
     torch.manual_seed(fix_seed)
     np.random.seed(fix_seed)
 
-    parser = argparse.ArgumentParser(description='iTransformer')
+    parser = argparse.ArgumentParser(description='Nonstationary time-series forecasting')
 
     # basic config
     parser.add_argument('--is_training', type=int, required=True, default=1, help='status')
     parser.add_argument('--model_id', type=str, required=True, default='test', help='model id')
-    parser.add_argument('--model', type=str, required=True, default='S_Mamba',
-                        help='model name, options include: S_Mamba, NS_Mamba, MS_Mamba, PMS_Mamba, Nonstationary_Transformer, DLinear, NLinear, PatchTST, TimesNet, iTransformer, Transformer, Informer, Reformer, Autoformer')
+    parser.add_argument('--model', type=str, required=True, default='RegimeGatedMamba',
+                        help='model name: RegimeGatedMamba, MultiScalePatchMamba, InvertedMamba, DecompositionMamba, MultiScaleDecompositionMamba, DLinear, NLinear, PatchTST, TimesNet, or iTransformer')
     parser.add_argument('--task_name', type=str, default='long_term_forecast',
                         help='task name for imported TSLib-style models')
 
@@ -140,9 +140,9 @@ if __name__ == '__main__':
                         help='horizon-prior regularization for the PMS persistence-change gate')
     parser.add_argument('--pms_change_scale', type=float, default=1.0,
                         help='fixed multiplier for the PMS predicted change path')
-    parser.add_argument('--pms_branch_mode', type=str, default='multiscale',
-                        choices=['multiscale', 'shared_multiscale', 'dual_resolution', 'fast_single', 'temporal_single', 'regime_linear', 'inverted_single', 'fused_dual'],
-                        help='PMS patch branch layout')
+    parser.add_argument('--pms_branch_mode', type=str, default='regime_linear',
+                        choices=['multiscale', 'regime_linear'],
+                        help='selected Regime-Gated Mamba or Multi-Scale Patch Mamba branch layout')
     parser.add_argument('--pms_fine_patch_len', type=int, default=8)
     parser.add_argument('--pms_fine_stride', type=int, default=4)
     parser.add_argument('--pms_coarse_patch_len', type=int, default=32)

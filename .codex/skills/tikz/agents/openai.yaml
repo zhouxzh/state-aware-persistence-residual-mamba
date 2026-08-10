@@ -1,4 +1,0 @@
-interface:
-  display_name: "TikZ Figures"
-  short_description: "Create LaTeX-native architecture diagrams"
-  default_prompt: "Use $tikz to create or revise publication-quality TikZ figures with native LaTeX math, then rebuild the manuscript PDF."

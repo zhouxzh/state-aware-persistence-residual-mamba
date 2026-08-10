@@ -1,3 +1,0 @@
-config_id,baseline_config_id,mean_balanced_rmsse,baseline_mean_balanced_rmsse,overall_improvement_pct,short_change_pct,middle_change_pct,long_change_pct,meets_overall_threshold,meets_term_guardrail,meets_practical_success_rule
-PMSV2_F01,PMSV2_F04,9.848954410000342,10.028231535237614,1.7877242324064881,-7.058099979623688,-2.035129472198227,-0.8431409266187014,False,True,False
-PMSV2_F03,PMSV2_F04,9.85926425568947,10.028231535237614,1.6849160188854908,-7.2878815643256525,-1.9160363853407547,-0.696260268739166,False,True,False
