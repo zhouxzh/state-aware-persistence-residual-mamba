@@ -22,7 +22,7 @@ benchmark; the structure supports adding other nonstationary datasets later.
 python scripts/data.py {download,prepare,preflight,diagnose}
 python scripts/evaluate.py --stage {preflight,dry-run,smoke,final}
 python scripts/analyze.py {audit,metrics,normalize,profile,report,runtime}
-python scripts/reproduce.py --mode {train,replay,verify}
+python scripts/reproduce.py [--workflow {reference,mamba-rerun}] --mode {train,replay,verify}
 ```
 
 `run.py` remains available for a manually specified single experiment. The historical

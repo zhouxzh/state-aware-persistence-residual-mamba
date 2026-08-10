@@ -14,7 +14,9 @@ sys.path.insert(0, str(REPO_ROOT))
 COMMANDS = {
     "audit": "utils.financial.audit",
     "metrics": "utils.financial.results",
+    "mamba-report": "utils.financial.mamba_rerun_report",
     "normalize": "utils.financial.identifiers",
+    "forecast-plots": "utils.financial.forecast_plots",
     "profile": "utils.financial.profile",
     "report": "utils.financial.report",
     "runtime": "utils.financial.runtime",

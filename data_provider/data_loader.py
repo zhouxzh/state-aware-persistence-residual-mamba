@@ -65,11 +65,11 @@ class Dataset_ETT_hour(Dataset):
         df_stamp = df_raw[['date']][border1:border2]
         df_stamp['date'] = pd.to_datetime(df_stamp.date)
         if self.timeenc == 0:
-            df_stamp['month'] = df_stamp.date.apply(lambda row: row.month, 1)
-            df_stamp['day'] = df_stamp.date.apply(lambda row: row.day, 1)
-            df_stamp['weekday'] = df_stamp.date.apply(lambda row: row.weekday(), 1)
-            df_stamp['hour'] = df_stamp.date.apply(lambda row: row.hour, 1)
-            data_stamp = df_stamp.drop(['date'], 1).values
+            df_stamp['month'] = df_stamp.date.dt.month
+            df_stamp['day'] = df_stamp.date.dt.day
+            df_stamp['weekday'] = df_stamp.date.dt.weekday
+            df_stamp['hour'] = df_stamp.date.dt.hour
+            data_stamp = df_stamp.drop(columns=['date']).values
         elif self.timeenc == 1:
             data_stamp = time_features(pd.to_datetime(df_stamp['date'].values), freq=self.freq)
             data_stamp = data_stamp.transpose(1, 0)
@@ -289,11 +289,11 @@ class Dataset_Custom(Dataset):
         df_stamp = df_raw[['date']][border1:border2]
         df_stamp['date'] = pd.to_datetime(df_stamp.date)
         if self.timeenc == 0:
-            df_stamp['month'] = df_stamp.date.apply(lambda row: row.month, 1)
-            df_stamp['day'] = df_stamp.date.apply(lambda row: row.day, 1)
-            df_stamp['weekday'] = df_stamp.date.apply(lambda row: row.weekday(), 1)
-            df_stamp['hour'] = df_stamp.date.apply(lambda row: row.hour, 1)
-            data_stamp = df_stamp.drop(['date'], 1).values
+            df_stamp['month'] = df_stamp.date.dt.month
+            df_stamp['day'] = df_stamp.date.dt.day
+            df_stamp['weekday'] = df_stamp.date.dt.weekday
+            df_stamp['hour'] = df_stamp.date.dt.hour
+            data_stamp = df_stamp.drop(columns=['date']).values
         elif self.timeenc == 1:
             data_stamp = time_features(pd.to_datetime(df_stamp['date'].values), freq=self.freq)
             data_stamp = data_stamp.transpose(1, 0)
@@ -331,6 +331,15 @@ class Dataset_Custom(Dataset):
         count = len(self)
         dates = self.data_dates.iloc[self.seq_len:self.seq_len + count]
         return np.asarray(dates.dt.strftime('%Y-%m-%d').tolist(), dtype='U10')
+
+    def forecast_target_dates(self):
+        """Return the observed target date for every forecast origin and step."""
+        count = len(self)
+        start_indices = np.arange(self.seq_len, self.seq_len + count)[:, None]
+        horizon_offsets = np.arange(self.pred_len)[None, :]
+        indices = start_indices + horizon_offsets
+        values = self.data_dates.iloc[indices.ravel()].dt.strftime('%Y-%m-%d').to_numpy()
+        return np.asarray(values.reshape(count, self.pred_len), dtype='U10')
 
 
 class Dataset_PEMS(Dataset):

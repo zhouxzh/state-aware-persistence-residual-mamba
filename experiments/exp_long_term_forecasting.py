@@ -303,6 +303,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
             np.save(folder_path + 'pred.npy', preds)
             np.save(folder_path + 'true.npy', trues)
             origin_dates = None
+            forecast_dates = None
             if hasattr(test_data, 'forecast_origin_dates'):
                 origin_dates = test_data.forecast_origin_dates()
                 if len(origin_dates) != len(preds):
@@ -310,6 +311,13 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         f'Origin-date count {len(origin_dates)} does not match predictions {len(preds)}'
                     )
                 np.save(folder_path + 'origin_dates.npy', origin_dates)
+            if hasattr(test_data, 'forecast_target_dates'):
+                forecast_dates = test_data.forecast_target_dates()
+                if forecast_dates.shape != preds.shape[:2]:
+                    raise ValueError(
+                        f'Forecast-date shape {forecast_dates.shape} does not match predictions {preds.shape[:2]}'
+                    )
+                np.save(folder_path + 'forecast_dates.npy', forecast_dates)
             with open(folder_path + 'meta.json', 'w') as f:
                 json.dump(
                     {
@@ -323,6 +331,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         'seed': int(getattr(self.args, 'seed', 2023)),
                         'split_dates': getattr(self.args, 'split_dates', None),
                         'origin_dates_file': 'origin_dates.npy' if origin_dates is not None else None,
+                        'forecast_dates_file': 'forecast_dates.npy' if forecast_dates is not None else None,
                         'model': self.args.model,
                         'model_id': self.args.model_id,
                         'prediction_horizon': int(self.args.pred_len),

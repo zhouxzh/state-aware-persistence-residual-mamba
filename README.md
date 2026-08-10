@@ -78,4 +78,9 @@ tests/                 Release-level validation
 See [docs/repository_structure.md](docs/repository_structure.md) for the ownership
 and command map.
 
+The complete retained five-model Mamba rerun is documented in
+[docs/reproducibility.md](docs/reproducibility.md). It writes local checkpoints,
+forecast arrays, and forecast-versus-observed figures to a separate ignored campaign
+directory without replacing frozen reference evidence.
+
 No manuscript source is included in this repository. It is restricted to software, documentation, configurations, and reproducibility artifacts.

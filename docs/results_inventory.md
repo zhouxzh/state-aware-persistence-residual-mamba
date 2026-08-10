@@ -17,6 +17,7 @@ trees are training and audit workspaces, not the primary source for manuscript t
 | `results/manuscript_evidence/profile/` | Horizon/task inference profile used during model selection. |
 | `results/manuscript_evidence/protocol_manifests/` | Development and merge-gate protocol manifests. |
 | `results/financial_reference_evaluation_v1/` | Empty active output directory for a future rerun of the canonical evaluation. |
+| `results/financial_mamba_rerun_v1/` | Local retained five-model Mamba rerun: checkpoints, raw forecasts, dates, metrics, and figures. It is separate from frozen manuscript evidence until independently reviewed. |
 
 For manuscript tables and figures, start with the frozen reproducibility metrics. Use
 the retained local evidence only to explain data nonstationarity, model selection, or
@@ -55,6 +56,10 @@ development screen, or obsolete model label as a final result.
 `results/`, `backup/`, checkpoints, TensorBoard logs, and raw data are ignored by Git.
 The reproducible public record is the code, configuration, technical documentation,
 figures, manifests, and compact metrics committed under `reproducibility/`.
+
+The `financial_mamba_rerun_v1` campaign is intentionally local: it preserves all
+forecast and checkpoint artifacts for audit and figure generation, but it must not
+replace the frozen reference metrics or be described as an untouched test evaluation.
 
 ## Checkpoint policy
 
