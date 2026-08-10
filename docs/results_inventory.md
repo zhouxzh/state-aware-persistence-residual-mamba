@@ -56,13 +56,13 @@ candidate training is run with checkpoint retention enabled. The current smoke-o
 weights were moved, without deletion, to `backup/checkpoints/financial_smoke/` and
 must not be cited as manuscript evidence.
 
-Use `scripts/publication/reproduce_checkpoint_forecasts.py` as the only checkpoint
+Use `scripts/reproducibility/reproduce_checkpoint_forecasts.py` as the only checkpoint
 workflow:
 
 ```bash
-conda run -n sci-agent python scripts/publication/reproduce_checkpoint_forecasts.py --mode train
-conda run -n sci-agent python scripts/publication/reproduce_checkpoint_forecasts.py --mode replay
-conda run -n sci-agent python scripts/publication/reproduce_checkpoint_forecasts.py --mode verify
+conda run -n sci-agent python scripts/reproducibility/reproduce_checkpoint_forecasts.py --mode train
+conda run -n sci-agent python scripts/reproducibility/reproduce_checkpoint_forecasts.py --mode replay
+conda run -n sci-agent python scripts/reproducibility/reproduce_checkpoint_forecasts.py --mode verify
 ```
 
 `train` creates `checkpoint.pth` files and a SHA-256 manifest for the two selected

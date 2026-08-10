@@ -51,6 +51,21 @@ The normalizer preserves `source_model_id` and writes canonical `model_id` and
 reader-facing `model` columns. It must run before the profile/report commands when
 evaluations have been regenerated.
 
+## Checkpoint replay
+
+Checkpoint-based reproduction is kept separate from publication analysis. The
+workflow below trains the selected candidate models with retained weights, hashes
+every checkpoint, and then replays forecasts without retraining:
+
+```bash
+conda run --no-capture-output -n sci-agent python scripts/reproducibility/reproduce_checkpoint_forecasts.py --mode train
+conda run --no-capture-output -n sci-agent python scripts/reproducibility/reproduce_checkpoint_forecasts.py --mode replay
+conda run --no-capture-output -n sci-agent python scripts/reproducibility/reproduce_checkpoint_forecasts.py --mode verify
+```
+
+The baseline results remain reproducible from the frozen prediction and metric
+snapshots; their historical training weights were not retained.
+
 ## Validation
 
 ```bash
