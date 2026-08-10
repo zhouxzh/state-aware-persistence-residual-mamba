@@ -7,7 +7,8 @@ from argparse import Namespace
 from pathlib import Path
 
 from data_provider.data_loader import Dataset_Custom
-from experiments.financial.mamba_rerun import campaign_plan, load_config, selection_params
+from experiments.financial.evaluation import build_base_args, format_setting
+from experiments.financial.mamba_rerun import campaign_plan, load_config, selection_params, storage_model_label
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,6 +45,26 @@ def test_every_model_uses_a_frozen_validation_selection() -> None:
         assert params["loss"] == "MSE"
         assert params["horizon_weighting"] == "balanced"
         assert params["seq_len"] > 0
+
+
+def test_compact_storage_label_avoids_long_multiscale_checkpoint_paths() -> None:
+    args = Namespace(
+        require_cuda=False, cpu=True, phase="mamba_rerun",
+        storage_model_label=storage_model_label("MultiScaleDecompositionMamba"),
+        checkpoints="checkpoints", results_root="results", num_workers=0, seed=2023,
+        train_epochs=1, patience=1, tensorboard_dir="tensorboard", gpu=0,
+    )
+    dataset = {
+        "slug": "financial_cross_asset_ms", "data": "custom", "root_path": "./data/financial",
+        "data_path": "x.csv", "features": "MS", "target": "target", "freq": "d",
+        "enc_in": 1, "dec_in": 1, "c_out": 1,
+    }
+    run_args = build_base_args(
+        args, dataset, "MultiScaleDecompositionMamba",
+        {"seq_len": 32, "d_model": 8, "d_ff": 256}, 252, "rerun_msd_s2023",
+    )
+    assert "_msd_pl252_" in run_args.model_id
+    assert len(format_setting(run_args)) < 255
 
 
 def test_custom_dataset_returns_exact_forecast_target_dates() -> None:

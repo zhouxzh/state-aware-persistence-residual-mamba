@@ -228,7 +228,10 @@ def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_
     seq_len = int(params["seq_len"])
     label_len = seq_len // 2
     config_hash = model_config_hash(params)
-    model_id = f"OPTUNA_{dataset_cfg['slug']}_{cli_args.phase}_{model_label}_pl{pred_len}_{stage_tag}_{config_hash}"
+    # A workflow can use a compact artifact-directory token when the canonical
+    # model label would exceed common filesystem filename limits.
+    storage_label = str(getattr(cli_args, "storage_model_label", model_label))
+    model_id = f"OPTUNA_{dataset_cfg['slug']}_{cli_args.phase}_{storage_label}_pl{pred_len}_{stage_tag}_{config_hash}"
     use_gpu = torch.cuda.is_available() and not cli_args.cpu
 
     return Namespace(

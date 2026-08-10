@@ -110,6 +110,17 @@ def stage_tag(model_id: str, seed: int) -> str:
     return f"rerun_{short_names[model_id]}_s{seed}"
 
 
+def storage_model_label(model_id: str) -> str:
+    """Return a compact, deterministic directory token for retained artifacts."""
+    return {
+        "RegimeGatedMamba": "rgm",
+        "MultiScalePatchMamba": "msp",
+        "InvertedMamba": "inv",
+        "DecompositionMamba": "dec",
+        "MultiScaleDecompositionMamba": "msd",
+    }[model_id]
+
+
 def runner_args(args: argparse.Namespace, config: dict, seed: int) -> Namespace:
     training = config["training"]
     return Namespace(
@@ -299,6 +310,7 @@ def train(args: argparse.Namespace) -> dict:
                     manifests = build_manifests(args.output_root, args.checkpoint_root, summary)
                     return {"status": "partial", "completed_horizon_runs": completed_now, **manifests}
                 cli = runner_args(args, config, seed)
+                cli.storage_model_label = storage_model_label(model_id)
                 metrics, aggregate, settings = evaluate_horizons(
                     cli,
                     dataset_cfg,
@@ -353,6 +365,7 @@ def replay(args: argparse.Namespace) -> dict:
                 for horizon in horizons:
                     setting = record["settings"][str(horizon)]
                     cli = runner_args(args, config, seed)
+                    cli.storage_model_label = storage_model_label(model_id)
                     cli.results_root = str(args.replay_output_root / "runs")
                     model_args = build_base_args(
                         cli,
