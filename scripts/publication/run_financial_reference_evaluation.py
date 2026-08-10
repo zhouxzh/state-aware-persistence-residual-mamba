@@ -201,11 +201,11 @@ def run(args: argparse.Namespace) -> dict:
             params.update(loss="MSE", horizon_weighting="balanced")
             for seed in seeds:
                 key = f"{task}|{candidate_id}|{seed}"
-                checkpoint_root = (
-                    Path(args.checkpoint_root).resolve()
-                    if getattr(args, "retain_final_checkpoints", False)
-                    else None
-                )
+                checkpoint_root = None
+                if getattr(args, "retain_final_checkpoints", False):
+                    checkpoint_root = Path(
+                        getattr(args, "checkpoint_root", None) or output_root / "checkpoints"
+                    ).resolve()
                 if complete_run(
                     summary["runs"].get(key, {}), horizons, output_root, checkpoint_root
                 ):
