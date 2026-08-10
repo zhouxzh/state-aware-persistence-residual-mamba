@@ -24,7 +24,7 @@ from scripts.publication.registry import canonical_model_id, public_name, source
 
 
 CONFIG_PATH = REPO_ROOT / "configs" / "financial_reference_evaluation_v1.json"
-LEGACY_METRICS = REPO_ROOT / "results" / "financial_confirmatory" / "analysis" / "neural_metrics_by_seed.csv"
+LEGACY_METRICS = REPO_ROOT / "backup" / "results" / "financial_confirmatory" / "analysis" / "neural_metrics_by_seed.csv"
 # Completed candidate run artifacts keep their historical local directory. New runs use
 # ``results/financial_reference_evaluation_v1`` through the financial reference runner.
 CANDIDATE_ROOT = REPO_ROOT / "results" / "financial_reference_evaluation_v1"

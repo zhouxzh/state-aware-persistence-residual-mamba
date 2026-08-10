@@ -66,6 +66,8 @@ def load_v3_params(config: dict, task: str) -> tuple[dict, Path]:
 
 
 def runner_args(args: argparse.Namespace, output_root: Path, seed: int) -> Namespace:
+    configured_checkpoint_root = getattr(args, "checkpoint_root", None)
+    checkpoint_root = Path(configured_checkpoint_root or output_root / "checkpoints").resolve()
     return Namespace(
         # ``format_setting`` embeds phase and stage tags twice. Keep publication
         # path components below the filesystem filename limit; full provenance is
@@ -79,10 +81,10 @@ def runner_args(args: argparse.Namespace, output_root: Path, seed: int) -> Names
         patience=int(args.patience),
         num_workers=int(args.num_workers),
         tensorboard_dir=str(output_root / "tensorboard"),
-        checkpoints=str(output_root / "checkpoints"),
+        checkpoints=str(checkpoint_root),
         results_root=str(output_root / "runs"),
         no_save_final_artifacts=False,
-        discard_final_checkpoints=True,
+        discard_final_checkpoints=not bool(getattr(args, "retain_final_checkpoints", False)),
     )
 
 
@@ -95,13 +97,22 @@ def compact_stage_tag(candidate_id: str, seed: int, smoke: bool = False) -> str:
     return f"{'smk' if smoke else 'pub'}_{short_candidate}_s{seed}"
 
 
-def complete_run(record: dict, horizons: list[int], output_root: Path) -> bool:
+def complete_run(
+    record: dict,
+    horizons: list[int],
+    output_root: Path,
+    checkpoint_root: Path | None = None,
+) -> bool:
     if record.get("status") != "complete":
         return False
     settings = record.get("settings", {})
     for horizon in horizons:
         setting = settings.get(str(horizon), settings.get(horizon))
         if not setting or not (output_root / "runs" / setting / "meta.json").is_file():
+            return False
+        if checkpoint_root is not None and not (
+            checkpoint_root / setting / "checkpoint.pth"
+        ).is_file():
             return False
     return True
 
@@ -190,7 +201,14 @@ def run(args: argparse.Namespace) -> dict:
             params.update(loss="MSE", horizon_weighting="balanced")
             for seed in seeds:
                 key = f"{task}|{candidate_id}|{seed}"
-                if complete_run(summary["runs"].get(key, {}), horizons, output_root):
+                checkpoint_root = (
+                    Path(args.checkpoint_root).resolve()
+                    if getattr(args, "retain_final_checkpoints", False)
+                    else None
+                )
+                if complete_run(
+                    summary["runs"].get(key, {}), horizons, output_root, checkpoint_root
+                ):
                     print(f"skip complete {key}", flush=True)
                     continue
                 if max_runs and completed_now >= max_runs:
@@ -240,6 +258,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--stage", choices=["preflight", "dry-run", "smoke", "final"], required=True)
     parser.add_argument("--config", type=Path, default=PUBLICATION_CONFIG)
     parser.add_argument("--output-root", type=Path, default=OUTPUT_ROOT)
+    parser.add_argument(
+        "--checkpoint-root",
+        type=Path,
+        default=None,
+        help="Checkpoint root. Defaults to <output-root>/checkpoints.",
+    )
     parser.add_argument("--tasks", nargs="+", default=["ALL"])
     parser.add_argument("--candidates", nargs="+", default=["ALL"])
     parser.add_argument("--seeds", nargs="+", type=int, default=[2023, 2024, 2025, 2026, 2027])
@@ -249,6 +273,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--patience", type=int, default=3)
     parser.add_argument("--max-runs", type=int, default=0)
     parser.add_argument("--unlock-retrospective-test", action="store_true")
+    parser.add_argument(
+        "--retain-final-checkpoints",
+        action="store_true",
+        help="Keep final checkpoint.pth files for later checkpoint-only replay.",
+    )
     return parser.parse_args()
 
 

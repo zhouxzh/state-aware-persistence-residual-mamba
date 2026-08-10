@@ -47,3 +47,27 @@ development screen, or obsolete model label as a final result.
 `results/`, `backup/`, checkpoints, TensorBoard logs, and raw data are ignored by Git.
 The reproducible public record is the code, configuration, technical documentation,
 figures, manifests, and compact metrics committed under `reproducibility/`.
+
+## Checkpoint policy
+
+The root `checkpoints/financial_reference_evaluation_v1/` is reserved for the
+protocol-matched final candidate bundle. It is intentionally empty until the final
+candidate training is run with checkpoint retention enabled. The current smoke-only
+weights were moved, without deletion, to `backup/checkpoints/financial_smoke/` and
+must not be cited as manuscript evidence.
+
+Use `scripts/publication/reproduce_checkpoint_forecasts.py` as the only checkpoint
+workflow:
+
+```bash
+conda run -n sci-agent python scripts/publication/reproduce_checkpoint_forecasts.py --mode train
+conda run -n sci-agent python scripts/publication/reproduce_checkpoint_forecasts.py --mode replay
+conda run -n sci-agent python scripts/publication/reproduce_checkpoint_forecasts.py --mode verify
+```
+
+`train` creates `checkpoint.pth` files and a SHA-256 manifest for the two selected
+candidate models across the eight financial tasks, six horizons, and five seeds
+(480 horizon checkpoints). `replay` loads those files directly and writes fresh
+prediction artifacts under `results/financial_reference_evaluation_v1/checkpoint_replay/`;
+it never calls `.train()`. Baseline model forecasts are represented by the frozen
+CSV metrics because their historical weights were not retained.
