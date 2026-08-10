@@ -25,8 +25,8 @@ if str(REPO_ROOT) not in sys.path:
 
 from scripts.evaluation.run_evaluation import build_base_args, format_setting, set_global_seed
 from scripts.financial.common import atomic_write_json, sha256_path
-from scripts.publication import run_financial_reference_evaluation as publication
-from scripts.publication.registry import public_name, runtime_model_name
+import scripts.run_financial_reference_evaluation as publication
+from scripts.registry import public_name, runtime_model_name
 
 
 DEFAULT_OUTPUT_ROOT = REPO_ROOT / "results" / "financial_reference_evaluation_v1"

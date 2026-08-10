@@ -12,15 +12,15 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from scripts.financial.analyze_financial_results import expected_origins, metrics, target_scales
 from scripts.financial.common import atomic_write_json
-from scripts.publication.audit_legacy_baselines import DEFAULT_OUTPUT as AUDIT_OUTPUT
-from scripts.publication.audit_legacy_baselines import audit
-from scripts.publication.registry import canonical_model_id, public_name, source_model_id
+from scripts.audit_legacy_baselines import DEFAULT_OUTPUT as AUDIT_OUTPUT
+from scripts.audit_legacy_baselines import audit
+from scripts.registry import canonical_model_id, public_name, source_model_id
 
 
 CONFIG_PATH = REPO_ROOT / "configs" / "financial_reference_evaluation_v1.json"

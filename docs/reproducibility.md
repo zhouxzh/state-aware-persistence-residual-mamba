@@ -32,19 +32,19 @@ version and manifest.
 Audit the supplied historical baseline evidence before invoking the candidate runner:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/publication/audit_legacy_baselines.py
-conda run --no-capture-output -n sci-agent python scripts/publication/run_financial_reference_evaluation.py --stage dry-run
+conda run --no-capture-output -n sci-agent python scripts/audit_legacy_baselines.py
+conda run --no-capture-output -n sci-agent python scripts/run_financial_reference_evaluation.py --stage dry-run
 ```
 
 The complete comparison is explicitly retrospective. Execute it only with that
 interpretation accepted:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/publication/run_financial_reference_evaluation.py --stage final --unlock-retrospective-test
-conda run --no-capture-output -n sci-agent python scripts/publication/analyze_publication_results.py --require-complete
-conda run --no-capture-output -n sci-agent python scripts/publication/normalize_release_identifiers.py
-conda run --no-capture-output -n sci-agent python scripts/publication/profile_final_models.py
-conda run --no-capture-output -n sci-agent python scripts/publication/build_final_evaluation_report.py
+conda run --no-capture-output -n sci-agent python scripts/run_financial_reference_evaluation.py --stage final --unlock-retrospective-test
+conda run --no-capture-output -n sci-agent python scripts/analyze_publication_results.py --require-complete
+conda run --no-capture-output -n sci-agent python scripts/normalize_release_identifiers.py
+conda run --no-capture-output -n sci-agent python scripts/profile_final_models.py
+conda run --no-capture-output -n sci-agent python scripts/build_final_evaluation_report.py
 ```
 
 The normalizer preserves `source_model_id` and writes canonical `model_id` and

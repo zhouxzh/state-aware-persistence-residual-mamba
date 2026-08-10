@@ -2,13 +2,13 @@ import json
 import unittest
 from pathlib import Path
 
-from scripts.publication.registry import (
+from scripts.registry import (
     canonical_model_id,
     public_name,
     runtime_model_name,
     source_model_id,
 )
-from scripts.publication.run_financial_reference_evaluation import compact_stage_tag
+from scripts.run_financial_reference_evaluation import compact_stage_tag
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]

@@ -44,18 +44,18 @@ Raw financial data, checkpoints, predictions, and TensorBoard logs remain local 
 ```bash
 conda run --no-capture-output -n sci-agent python scripts/financial/download_financial_data.py
 conda run --no-capture-output -n sci-agent python scripts/financial/prepare_financial_data.py
-conda run --no-capture-output -n sci-agent python scripts/publication/audit_legacy_baselines.py
-conda run --no-capture-output -n sci-agent python scripts/publication/run_financial_reference_evaluation.py --stage dry-run
+conda run --no-capture-output -n sci-agent python scripts/audit_legacy_baselines.py
+conda run --no-capture-output -n sci-agent python scripts/run_financial_reference_evaluation.py --stage dry-run
 ```
 
 The complete candidate comparison is retrospective because the baseline suite had already opened the 2023-2026 target period.
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/publication/run_financial_reference_evaluation.py --stage final --unlock-retrospective-test
-conda run --no-capture-output -n sci-agent python scripts/publication/analyze_publication_results.py --require-complete
-conda run --no-capture-output -n sci-agent python scripts/publication/normalize_release_identifiers.py
-conda run --no-capture-output -n sci-agent python scripts/publication/profile_final_models.py
-conda run --no-capture-output -n sci-agent python scripts/publication/build_final_evaluation_report.py
+conda run --no-capture-output -n sci-agent python scripts/run_financial_reference_evaluation.py --stage final --unlock-retrospective-test
+conda run --no-capture-output -n sci-agent python scripts/analyze_publication_results.py --require-complete
+conda run --no-capture-output -n sci-agent python scripts/normalize_release_identifiers.py
+conda run --no-capture-output -n sci-agent python scripts/profile_final_models.py
+conda run --no-capture-output -n sci-agent python scripts/build_final_evaluation_report.py
 conda run --no-capture-output -n sci-agent pytest -q
 ```
 
@@ -66,7 +66,7 @@ model/                 Active models and canonical model wrappers
 layers/                Normalization, decomposition, and encoder layers
 scripts/financial/     Data acquisition, preparation, and preflight checks
 scripts/evaluation/    Frozen task evaluator
-scripts/publication/   Audit, comparison, normalization, analysis, and profiling
+scripts/               Data, evaluation, audit, analysis, and reproduction entry points
 scripts/reproduce_forecasts.py  Checkpoint retention, hashing, and forecast replay
 configs/               Versioned evaluation configurations
 reproducibility/       Metrics, manifests, selection snapshots, and provenance
