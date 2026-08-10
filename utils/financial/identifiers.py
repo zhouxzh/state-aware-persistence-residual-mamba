@@ -8,11 +8,11 @@ from pathlib import Path
 
 import pandas as pd
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from scripts.registry import canonical_model_id, public_name
+from utils.financial.registry import canonical_model_id, public_name
 
 
 METRICS = REPO_ROOT / "reproducibility" / "financial_reference_evaluation_v1" / "metrics"

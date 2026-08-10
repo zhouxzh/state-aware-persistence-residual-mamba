@@ -1,1 +1,0 @@
-"""Financial confirmatory benchmark utilities."""

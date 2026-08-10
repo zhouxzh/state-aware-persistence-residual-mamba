@@ -160,8 +160,7 @@ def require_optuna():
     if optuna is None:
         raise SystemExit(
             "Optuna is not installed in the current environment.\n"
-            "Run this script inside the mamba environment:\n"
-            "  conda run -n sci-agent python scripts/evaluation/run_evaluation.py --dataset financial_fx_s"
+            "The historical Optuna workflow is archived because parameter selection is complete."
         )
     return optuna
 
@@ -170,8 +169,7 @@ def require_torch():
     if torch is None:
         raise SystemExit(
             "PyTorch is not installed in the current environment.\n"
-            "Run this script inside the mamba environment:\n"
-            "  conda run -n sci-agent python scripts/evaluation/run_evaluation.py --dataset financial_fx_s"
+            "Install the release dependencies in the sci-agent environment before running an evaluation."
         )
     return torch
 

@@ -12,13 +12,13 @@ from pathlib import Path
 import numpy as np
 import torch
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from scripts.evaluation import run_evaluation as runner
-from scripts.registry import public_name, runtime_model_name, source_model_id
-from scripts.run_financial_reference_evaluation import (
+import experiments.financial.evaluation as runner
+from utils.financial.registry import public_name, runtime_model_name, source_model_id
+from experiments.financial.reference import (
     load_config,
     load_v3_params,
     runner_args,

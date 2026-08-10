@@ -37,6 +37,14 @@ Git:
   generations.
 - `nonstationary_analysis`, `nonstationary_metric_suite`, `nsv4`, and `nsv5`: superseded
   analysis and profiling workspaces.
+- `backup/data/standard_benchmarks/`: local downloads of ETT, Electricity, Exchange,
+  Traffic, and Weather. They are retained for future non-financial benchmarking but
+  are outside the current financial reference evaluation.
+- `backup/tensorboard/financial_smoke/`: smoke-test TensorBoard logs with no
+  manuscript-evidence role.
+- `backup/code/optuna_tuning_legacy.py`: historical Optuna tuning entry point. The
+  selection process is complete; its selected parameter snapshots are frozen in
+  `reproducibility/financial_reference_evaluation_v1/candidate_selection/`.
 
 These archives are not evidence for a new claim unless a result is explicitly traced to
 the frozen protocol and canonical model identity. Do not cite an archived smoke run,
@@ -56,13 +64,13 @@ candidate training is run with checkpoint retention enabled. The current smoke-o
 weights were moved, without deletion, to `backup/checkpoints/financial_smoke/` and
 must not be cited as manuscript evidence.
 
-Use `scripts/reproduce_forecasts.py` as the only checkpoint
+Use `scripts/reproduce.py` as the only checkpoint
 workflow:
 
 ```bash
-conda run -n sci-agent python scripts/reproduce_forecasts.py --mode train
-conda run -n sci-agent python scripts/reproduce_forecasts.py --mode replay
-conda run -n sci-agent python scripts/reproduce_forecasts.py --mode verify
+conda run -n sci-agent python scripts/reproduce.py --mode train
+conda run -n sci-agent python scripts/reproduce.py --mode replay
+conda run -n sci-agent python scripts/reproduce.py --mode verify
 ```
 
 `train` creates `checkpoint.pth` files and a SHA-256 manifest for the two selected

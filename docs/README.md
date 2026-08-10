@@ -15,6 +15,7 @@ manuscript material.
 | [evidence_registry.md](evidence_registry.md) | Files that substantiate technical statements. |
 | [reproducibility.md](reproducibility.md) | Environment setup, workflow, and validation commands. |
 | [results_inventory.md](results_inventory.md) | Retained manuscript evidence versus archived local workspaces. |
+| [repository_structure.md](repository_structure.md) | Folder ownership and the supported command interface. |
 
 | Canonical ID | Reader-facing name | Role |
 | --- | --- | --- |

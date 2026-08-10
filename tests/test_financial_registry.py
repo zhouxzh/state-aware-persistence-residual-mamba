@@ -2,19 +2,19 @@ import json
 import unittest
 from pathlib import Path
 
-from scripts.registry import (
+from utils.financial.registry import (
     canonical_model_id,
     public_name,
     runtime_model_name,
     source_model_id,
 )
-from scripts.run_financial_reference_evaluation import compact_stage_tag
+from experiments.financial.reference import compact_stage_tag
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-class PublicationRegistryTests(unittest.TestCase):
+class FinancialRegistryTests(unittest.TestCase):
     def test_canonical_names_preserve_frozen_source_ids(self):
         self.assertEqual(canonical_model_id("PMSV5_R6"), "RegimeGatedMamba")
         self.assertEqual(canonical_model_id("PMSV3_B0"), "MultiScalePatchMamba")

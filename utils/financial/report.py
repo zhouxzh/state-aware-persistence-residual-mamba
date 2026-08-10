@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
@@ -19,7 +19,7 @@ METRICS = REPO_ROOT / "reproducibility" / "financial_reference_evaluation_v1" / 
 FIGURES = REPO_ROOT / "docs" / "figures"
 SEED = 20260809
 REPLICATES = 10_000
-from scripts.registry import public_name
+from utils.financial.registry import public_name
 
 CANDIDATE = "RegimeGatedMamba"
 

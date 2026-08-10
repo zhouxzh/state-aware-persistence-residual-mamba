@@ -11,7 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = REPO_ROOT / "reproducibility" / "financial_reference_evaluation_v1" / "runtime_environment.json"
 
 

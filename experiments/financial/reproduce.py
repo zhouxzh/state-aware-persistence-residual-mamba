@@ -19,14 +19,14 @@ from pathlib import Path
 
 import numpy as np
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from scripts.evaluation.run_evaluation import build_base_args, format_setting, set_global_seed
-from scripts.financial.common import atomic_write_json, sha256_path
-import scripts.run_financial_reference_evaluation as publication
-from scripts.registry import public_name, runtime_model_name
+from experiments.financial.evaluation import build_base_args, format_setting, set_global_seed
+from utils.financial.common import atomic_write_json, sha256_path
+import experiments.financial.reference as publication
+from utils.financial.registry import public_name, runtime_model_name
 
 
 DEFAULT_OUTPUT_ROOT = REPO_ROOT / "results" / "financial_reference_evaluation_v1"

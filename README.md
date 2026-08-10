@@ -32,7 +32,7 @@ The complete mapping is in [`model_identity_map.json`](reproducibility/financial
 ```bash
 conda env create -f environment.yml
 conda run --no-capture-output -n sci-agent python -m pip install -r requirements.txt
-conda run --no-capture-output -n sci-agent python scripts/financial/preflight.py
+conda run --no-capture-output -n sci-agent python scripts/data.py preflight
 ```
 
 The environment requires CUDA-compatible PyTorch and `mamba-ssm` for Mamba models.
@@ -42,36 +42,40 @@ The environment requires CUDA-compatible PyTorch and `mamba-ssm` for Mamba model
 Raw financial data, checkpoints, predictions, and TensorBoard logs remain local and are excluded from Git. Follow source-provider terms before downloading data.
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/financial/download_financial_data.py
-conda run --no-capture-output -n sci-agent python scripts/financial/prepare_financial_data.py
-conda run --no-capture-output -n sci-agent python scripts/audit_legacy_baselines.py
-conda run --no-capture-output -n sci-agent python scripts/run_financial_reference_evaluation.py --stage dry-run
+conda run --no-capture-output -n sci-agent python scripts/data.py download
+conda run --no-capture-output -n sci-agent python scripts/data.py prepare
+conda run --no-capture-output -n sci-agent python scripts/analyze.py audit
+conda run --no-capture-output -n sci-agent python scripts/evaluate.py --stage dry-run
 ```
 
 The complete candidate comparison is retrospective because the baseline suite had already opened the 2023-2026 target period.
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/run_financial_reference_evaluation.py --stage final --unlock-retrospective-test
-conda run --no-capture-output -n sci-agent python scripts/analyze_publication_results.py --require-complete
-conda run --no-capture-output -n sci-agent python scripts/normalize_release_identifiers.py
-conda run --no-capture-output -n sci-agent python scripts/profile_final_models.py
-conda run --no-capture-output -n sci-agent python scripts/build_final_evaluation_report.py
+conda run --no-capture-output -n sci-agent python scripts/evaluate.py --stage final --unlock-retrospective-test
+conda run --no-capture-output -n sci-agent python scripts/analyze.py metrics --require-complete
+conda run --no-capture-output -n sci-agent python scripts/analyze.py normalize
+conda run --no-capture-output -n sci-agent python scripts/analyze.py profile
+conda run --no-capture-output -n sci-agent python scripts/analyze.py report
 conda run --no-capture-output -n sci-agent pytest -q
 ```
 
 ## Repository layout
 
 ```text
-model/                 Active models and canonical model wrappers
-layers/                Normalization, decomposition, and encoder layers
-scripts/financial/     Data acquisition, preparation, and preflight checks
-scripts/evaluation/    Frozen task evaluator
-scripts/               Data, evaluation, audit, analysis, and reproduction entry points
-scripts/reproduce_forecasts.py  Checkpoint retention, hashing, and forecast replay
+data/                  Local financial reference data and manifests
+model/                 Forecasting model architectures and baselines
+layers/                Neural network layers and normalization components
+data_provider/         Dataset and DataLoader implementations
+experiments/           Training, evaluation, and checkpoint-replay workflows
+utils/                 Shared data, metrics, audit, and reporting utilities
+scripts/               Four user-facing commands: data, evaluate, analyze, reproduce
 configs/               Versioned evaluation configurations
-reproducibility/       Metrics, manifests, selection snapshots, and provenance
-docs/                  Technical data, model, evaluation, and reproduction record
+reproducibility/       Frozen metrics, manifests, selection snapshots, and provenance
+docs/                  Technical reference and repository structure guide
 tests/                 Release-level validation
 ```
+
+See [docs/repository_structure.md](docs/repository_structure.md) for the ownership
+and command map.
 
 No manuscript source is included in this repository. It is restricted to software, documentation, configurations, and reproducibility artifacts.

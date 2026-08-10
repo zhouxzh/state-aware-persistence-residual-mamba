@@ -12,12 +12,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from scripts.financial.analyze_financial_results import expected_origins
-from scripts.financial.common import atomic_write_json, load_protocol
+from utils.financial.metrics import expected_origins
+from utils.financial.common import atomic_write_json, load_protocol
 
 
 DEFAULT_PROTOCOL = (

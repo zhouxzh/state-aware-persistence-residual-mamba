@@ -7,7 +7,7 @@ Create the recorded Conda environment, then run every command through `sci-agent
 ```bash
 conda env create -f environment.yml
 conda run --no-capture-output -n sci-agent python -m pip install -r requirements.txt
-conda run --no-capture-output -n sci-agent python scripts/financial/preflight.py
+conda run --no-capture-output -n sci-agent python scripts/data.py preflight
 ```
 
 The environment must include a CUDA-compatible PyTorch build and `mamba-ssm`. The
@@ -19,9 +19,9 @@ Raw downloads are excluded from Git. On a machine permitted to retrieve the sour
 data, construct a local copy and validate its manifests:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/financial/download_financial_data.py
-conda run --no-capture-output -n sci-agent python scripts/financial/prepare_financial_data.py
-conda run --no-capture-output -n sci-agent python scripts/financial/preflight.py
+conda run --no-capture-output -n sci-agent python scripts/data.py download
+conda run --no-capture-output -n sci-agent python scripts/data.py prepare
+conda run --no-capture-output -n sci-agent python scripts/data.py preflight
 ```
 
 Do not overwrite a recorded local data snapshot without creating a new protocol
@@ -32,19 +32,19 @@ version and manifest.
 Audit the supplied historical baseline evidence before invoking the candidate runner:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/audit_legacy_baselines.py
-conda run --no-capture-output -n sci-agent python scripts/run_financial_reference_evaluation.py --stage dry-run
+conda run --no-capture-output -n sci-agent python scripts/analyze.py audit
+conda run --no-capture-output -n sci-agent python scripts/evaluate.py --stage dry-run
 ```
 
 The complete comparison is explicitly retrospective. Execute it only with that
 interpretation accepted:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/run_financial_reference_evaluation.py --stage final --unlock-retrospective-test
-conda run --no-capture-output -n sci-agent python scripts/analyze_publication_results.py --require-complete
-conda run --no-capture-output -n sci-agent python scripts/normalize_release_identifiers.py
-conda run --no-capture-output -n sci-agent python scripts/profile_final_models.py
-conda run --no-capture-output -n sci-agent python scripts/build_final_evaluation_report.py
+conda run --no-capture-output -n sci-agent python scripts/evaluate.py --stage final --unlock-retrospective-test
+conda run --no-capture-output -n sci-agent python scripts/analyze.py metrics --require-complete
+conda run --no-capture-output -n sci-agent python scripts/analyze.py normalize
+conda run --no-capture-output -n sci-agent python scripts/analyze.py profile
+conda run --no-capture-output -n sci-agent python scripts/analyze.py report
 ```
 
 The normalizer preserves `source_model_id` and writes canonical `model_id` and
@@ -58,9 +58,9 @@ workflow below trains the selected candidate models with retained weights, hashe
 every checkpoint, and then replays forecasts without retraining:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/reproduce_forecasts.py --mode train
-conda run --no-capture-output -n sci-agent python scripts/reproduce_forecasts.py --mode replay
-conda run --no-capture-output -n sci-agent python scripts/reproduce_forecasts.py --mode verify
+conda run --no-capture-output -n sci-agent python scripts/reproduce.py --mode train
+conda run --no-capture-output -n sci-agent python scripts/reproduce.py --mode replay
+conda run --no-capture-output -n sci-agent python scripts/reproduce.py --mode verify
 ```
 
 The baseline results remain reproducible from the frozen prediction and metric

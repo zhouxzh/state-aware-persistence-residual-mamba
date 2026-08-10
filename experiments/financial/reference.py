@@ -14,15 +14,15 @@ import sys
 from argparse import Namespace
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from scripts.financial.common import atomic_write_json, sha256_path
-from scripts.evaluation.run_evaluation import evaluate_horizons, load_dataset_manifest
-from scripts.audit_legacy_baselines import DEFAULT_OUTPUT as AUDIT_OUTPUT
-from scripts.audit_legacy_baselines import audit
-from scripts.registry import public_name, runtime_model_name
+from utils.financial.common import atomic_write_json, sha256_path
+from experiments.financial.evaluation import evaluate_horizons, load_dataset_manifest
+from utils.financial.audit import DEFAULT_OUTPUT as AUDIT_OUTPUT
+from utils.financial.audit import audit
+from utils.financial.registry import public_name, runtime_model_name
 
 
 PUBLICATION_CONFIG = REPO_ROOT / "configs" / "financial_reference_evaluation_v1.json"
