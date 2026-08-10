@@ -67,7 +67,7 @@ layers/                Normalization, decomposition, and encoder layers
 scripts/financial/     Data acquisition, preparation, and preflight checks
 scripts/evaluation/    Frozen task evaluator
 scripts/publication/   Audit, comparison, normalization, analysis, and profiling
-scripts/reproducibility/  Checkpoint retention, hashing, and forecast replay
+scripts/reproduce_forecasts.py  Checkpoint retention, hashing, and forecast replay
 configs/               Versioned evaluation configurations
 reproducibility/       Metrics, manifests, selection snapshots, and provenance
 docs/                  Technical data, model, evaluation, and reproduction record

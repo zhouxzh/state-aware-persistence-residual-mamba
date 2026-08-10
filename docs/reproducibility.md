@@ -58,9 +58,9 @@ workflow below trains the selected candidate models with retained weights, hashe
 every checkpoint, and then replays forecasts without retraining:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/reproducibility/reproduce_checkpoint_forecasts.py --mode train
-conda run --no-capture-output -n sci-agent python scripts/reproducibility/reproduce_checkpoint_forecasts.py --mode replay
-conda run --no-capture-output -n sci-agent python scripts/reproducibility/reproduce_checkpoint_forecasts.py --mode verify
+conda run --no-capture-output -n sci-agent python scripts/reproduce_forecasts.py --mode train
+conda run --no-capture-output -n sci-agent python scripts/reproduce_forecasts.py --mode replay
+conda run --no-capture-output -n sci-agent python scripts/reproduce_forecasts.py --mode verify
 ```
 
 The baseline results remain reproducible from the frozen prediction and metric
