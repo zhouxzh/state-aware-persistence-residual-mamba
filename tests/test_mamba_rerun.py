@@ -8,7 +8,7 @@ from pathlib import Path
 
 from data_provider.data_loader import Dataset_Custom
 from experiments.financial.evaluation import build_base_args, format_setting
-from experiments.financial.mamba_rerun import campaign_plan, load_config, selection_params, storage_model_label
+from experiments.financial.mamba_rerun import campaign_plan, load_config, selection_params, stage_tag, storage_model_label
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +54,7 @@ def test_baseline_configuration_has_all_retained_reference_models() -> None:
     assert path.name == "baseline_best_params.json"
     assert params["patch_len"] > 0
     assert storage_model_label("TimesNet") == "timesnet"
+    assert stage_tag("PatchTST", 2023) == "rerun_patchtst_s2023"
 
 
 def test_compact_storage_label_avoids_long_multiscale_checkpoint_paths() -> None:

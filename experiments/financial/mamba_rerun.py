@@ -107,6 +107,11 @@ def stage_tag(model_id: str, seed: int) -> str:
         "InvertedMamba": "inv",
         "DecompositionMamba": "dec",
         "MultiScaleDecompositionMamba": "msd",
+        "DLinear": "dlinear",
+        "NLinear": "nlinear",
+        "PatchTST": "patchtst",
+        "TimesNet": "timesnet",
+        "iTransformer": "itransformer",
     }
     return f"rerun_{short_names[model_id]}_s{seed}"
 
