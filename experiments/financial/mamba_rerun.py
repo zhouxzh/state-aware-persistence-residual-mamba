@@ -79,7 +79,8 @@ def resolve_scope(config: dict, args: argparse.Namespace) -> tuple[list[str], li
 
 def selection_params(config: dict, task: str, model_id: str) -> tuple[dict, Path]:
     model = config["models"][model_id]
-    path = REPO_ROOT / config["selection_snapshot"] / task / "mamba_best_params.json"
+    selection_file = config.get("selection_file", "mamba_best_params.json")
+    path = REPO_ROOT / config["selection_snapshot"] / task / selection_file
     if not path.is_file():
         raise FileNotFoundError(f"Missing selection snapshot: {path}")
     payload = json.loads(path.read_text(encoding="utf-8"))
@@ -118,6 +119,11 @@ def storage_model_label(model_id: str) -> str:
         "InvertedMamba": "inv",
         "DecompositionMamba": "dec",
         "MultiScaleDecompositionMamba": "msd",
+        "DLinear": "dlinear",
+        "NLinear": "nlinear",
+        "PatchTST": "patchtst",
+        "TimesNet": "timesnet",
+        "iTransformer": "itransformer",
     }[model_id]
 
 

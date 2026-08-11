@@ -47,6 +47,15 @@ def test_every_model_uses_a_frozen_validation_selection() -> None:
         assert params["seq_len"] > 0
 
 
+def test_baseline_configuration_has_all_retained_reference_models() -> None:
+    config = load_config(ROOT / "configs" / "financial_baseline_rerun_v1.json")
+    assert set(config["models"]) == {"DLinear", "NLinear", "PatchTST", "TimesNet", "iTransformer"}
+    params, path = selection_params(config, "financial_fx_ms", "PatchTST")
+    assert path.name == "baseline_best_params.json"
+    assert params["patch_len"] == 32
+    assert storage_model_label("TimesNet") == "timesnet"
+
+
 def test_compact_storage_label_avoids_long_multiscale_checkpoint_paths() -> None:
     args = Namespace(
         require_cuda=False, cpu=True, phase="mamba_rerun",
