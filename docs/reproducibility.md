@@ -2,99 +2,115 @@
 
 ## Environment
 
-Create the recorded Conda environment, then run every command through `sci-agent`.
+Use the existing `mamba` Conda environment for this repository's CUDA-dependent
+model code. It has a working `mamba-ssm` installation on this machine. `sci-agent`
+is not the runtime environment for the active Mamba workflow.
 
 ```bash
-conda env create -f environment.yml
-conda run --no-capture-output -n sci-agent python -m pip install -r requirements.txt
-conda run --no-capture-output -n sci-agent python scripts/data.py preflight
+conda run --no-capture-output -n mamba python scripts/data.py preflight
+conda run --no-capture-output -n sci-agent python -m pytest -q
 ```
 
-The environment must include a CUDA-compatible PyTorch build and `mamba-ssm`. The
-preflight command reports the locally detected runtime before any evaluation starts.
+The preflight records Python, package, CUDA, GPU, disk, and Git state. The current
+`mamba` environment is the validated training/profile environment; `sci-agent`
+contains the test runner. A reviewer needs a CUDA-compatible PyTorch build and
+`mamba-ssm` to run learned models; data and deterministic references can be checked
+without retraining neural models.
 
-## Data preparation
+## Data and Release Setup
 
-Raw downloads are excluded from Git. On a machine permitted to retrieve the source
-data, construct a local copy and validate its manifests:
+Raw provider data is local and ignored. After obtaining sources under their terms,
+build the two data views and release contracts:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/data.py download
-conda run --no-capture-output -n sci-agent python scripts/data.py prepare
-conda run --no-capture-output -n sci-agent python scripts/data.py preflight
+conda run --no-capture-output -n mamba python scripts/data.py download
+conda run --no-capture-output -n mamba python scripts/data.py prepare
+conda run --no-capture-output -n mamba python scripts/data.py materialize-targets
+conda run --no-capture-output -n mamba python scripts/data.py release-setup --release v1
+conda run --no-capture-output -n mamba python scripts/data.py release-setup --release v2
 ```
 
-Do not overwrite a recorded local data snapshot without creating a new protocol
-version and manifest.
+`prepare` creates the four v1 wide-source panels but emits only active `S` task
+entries. `materialize-targets` creates one independent target CSV for every v2 target.
+`release-setup` validates data hashes and release-local frozen parameter selections.
 
-## Audit and evaluation
+## Deterministic References
 
-Audit the supplied historical baseline evidence before invoking the candidate runner:
+The deterministic stage is resumable. It preserves compact CSV metrics in the tracked
+release and keeps prediction arrays in local ignored `results/` directories.
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/analyze.py audit
-conda run --no-capture-output -n sci-agent python scripts/evaluate.py --stage dry-run
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v1 --stage deterministic
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v2 --stage deterministic
 ```
 
-The complete comparison is explicitly retrospective. Execute it only with that
-interpretation accepted:
+## Learned Matrix
+
+Inspect the exact planned scope first:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/evaluate.py --stage final --unlock-retrospective-test
-conda run --no-capture-output -n sci-agent python scripts/analyze.py metrics --require-complete
-conda run --no-capture-output -n sci-agent python scripts/analyze.py normalize
-conda run --no-capture-output -n sci-agent python scripts/analyze.py profile
-conda run --no-capture-output -n sci-agent python scripts/analyze.py report
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v1 --stage plan
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v2 --stage plan
 ```
 
-The normalizer preserves `source_model_id` and writes canonical `model_id` and
-reader-facing `model` columns. It must run before the profile/report commands when
-evaluations have been regenerated.
-
-## Checkpoint replay
-
-Checkpoint-based reproduction is kept separate from publication analysis. The
-workflow below trains the selected candidate models with retained weights, hashes
-every checkpoint, and then replays forecasts without retraining:
+The training command is locked because it writes new retrospective test-result
+artifacts. The active configuration does not silently reuse historical mixed S/MS
+outputs.
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/reproduce.py --mode train
-conda run --no-capture-output -n sci-agent python scripts/reproduce.py --mode replay
-conda run --no-capture-output -n sci-agent python scripts/reproduce.py --mode verify
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v1 --stage train \
+  --unlock-retrospective-test
 ```
 
-The baseline results remain reproducible from the frozen prediction and metric
-snapshots; their historical training weights were not retained.
+Use `--release v2` for the independent-target expansion. Optional selectors such as
+`--tasks`, `--models`, `--horizons`, `--seeds`, and `--max-runs` support resumable,
+bounded execution; do not use partial output for final claims.
 
-## Retained Five-Model Mamba Rerun
+Each completed learned unit retains its checkpoint and prediction, truth, origin-date,
+forecast-date, metric, and metadata artifacts. The campaign summary and manifests
+verify them before report generation.
 
-The separate `financial_mamba_rerun_v1` workflow retrains Regime-Gated Mamba,
-Multi-Scale Patch Mamba, Inverted Mamba, Decomposition Mamba, and Multi-Scale
-Decomposition Mamba. It uses the same eight financial tasks, six horizons, and five
-fixed seeds, while keeping all checkpoints and raw forecasts in a new ignored local
-archive. It remains a retrospective, protocol-matched evaluation.
+## Replay, Profile, Report, Verify
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/reproduce.py --workflow mamba-rerun --mode train
-conda run --no-capture-output -n sci-agent python scripts/reproduce.py --workflow mamba-rerun --mode verify
-conda run --no-capture-output -n sci-agent python scripts/analyze.py mamba-report
-conda run --no-capture-output -n sci-agent python scripts/analyze.py forecast-plots
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v1 --stage replay
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v1 --stage profile
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v2 --stage profile
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v1 --stage report
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v1 --stage verify
 ```
 
-The full campaign creates 1,200 horizon-specific training/evaluation runs under
-`results/financial_mamba_rerun_v1/` and
-`checkpoints/financial_mamba_rerun_v1/`. Each saved run includes a checkpoint,
-prediction and target arrays, origin and target-date arrays, metrics, metadata, and
-SHA-256 manifests. The plotting command creates one seed-aggregated rolling
-forecast-versus-observed figure for each model/task/horizon combination plus summary
-comparison panels for horizons 60 and 252.
+`replay` reads retained checkpoints and writes a new local replay tree without
+training. `profile` performs a fixed S-only CUDA forward-pass microbenchmark.
+`report` is intentionally blocked until the full learned matrix validates. `verify`
+always writes a truthful release status and checks the deterministic matrix, required
+release files, and checksums when a completed report exists.
 
-## Validation
+Run `release-setup` only before report construction. A finalized release carries a
+checksum manifest and is intentionally immutable; create a new versioned release
+rather than rewriting its protocol, data manifest, or selection snapshot.
 
-```bash
-conda run --no-capture-output -n sci-agent pytest -q
+The four public script entry points are intentionally flat:
+
+```text
+scripts/data.py       data preparation and release setup
+scripts/evaluate.py   compatibility entry point for the S-only workflow
+scripts/reproduce.py  S-only training, replay, profile, report, and verification
+scripts/analyze.py    direct profile or report invocation
 ```
 
-Generated raw data, checkpoints, predictions, and TensorBoard traces remain local and
-ignored. Commit code, configuration, technical documentation, and frozen
-reproducibility artifacts only.
+## Archived Historical Material
+
+The inactive mixed S/MS local campaigns were moved intact to
+`backup/legacy_s_ms_20260812/`. That directory is ignored by Git and is not read by
+the active workflow. Its manifest records inventory hashes and restoration paths.

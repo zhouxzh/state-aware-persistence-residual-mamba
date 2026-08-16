@@ -1,0 +1,39 @@
+{
+  "complete_deterministic_rows": 324,
+  "complete_learned_horizon_rows": 0,
+  "evidence_status": "retrospective_protocol_matched",
+  "expected_deterministic_rows": 324,
+  "expected_learned_horizon_rows": 5940,
+  "problems": [
+    "missing_campaign_summary",
+    "missing_release:metrics/metrics_by_seed.csv",
+    "missing_release:metrics/metrics_aggregate.csv",
+    "missing_release:metrics/paired_contrasts.csv",
+    "missing_release:metrics/paired_block_bootstrap.csv",
+    "missing_release:runtime_environment.json",
+    "missing_release:claim_evidence_map.json",
+    "missing_release:SHA256SUMS.json"
+  ],
+  "protocol_version": "financial_s_only_retrospective_v2",
+  "status": "incomplete",
+  "tasks": [
+    "financial_cross_asset_gld_s",
+    "financial_cross_asset_sp500_s",
+    "financial_cross_asset_vix_s",
+    "financial_cross_asset_wti_s",
+    "financial_crypto_bnbusdt_s",
+    "financial_crypto_btcusdt_s",
+    "financial_crypto_ethusdt_s",
+    "financial_crypto_xrpusdt_s",
+    "financial_fx_audusd_s",
+    "financial_fx_cadusd_s",
+    "financial_fx_chfusd_s",
+    "financial_fx_eurusd_s",
+    "financial_fx_gbpusd_s",
+    "financial_fx_jpyusd_s",
+    "financial_yields_dgs10_s",
+    "financial_yields_dgs2_s",
+    "financial_yields_dgs30_s",
+    "financial_yields_dgs5_s"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "protocol_version": "financial_s_only_retrospective_v2",
+  "evidence_status": "retrospective_protocol_matched",
+  "data_cutoff": "2026-06-30",
+  "splits": {
+    "train_end": "2020-12-31",
+    "validation_start": "2021-01-01",
+    "validation_end": "2022-12-31",
+    "test_start": "2023-01-01",
+    "test_end": "2026-06-30"
+  },
+  "horizons": [1, 5, 20, 60, 120, 252],
+  "term_groups": {"short": [1, 5], "middle": [20, 60], "long": [120, 252]},
+  "seeds": [2023, 2024, 2025, 2026, 2027],
+  "target_roster": [
+    "financial_cross_asset_sp500_s", "financial_cross_asset_wti_s", "financial_cross_asset_vix_s", "financial_cross_asset_gld_s",
+    "financial_crypto_btcusdt_s", "financial_crypto_ethusdt_s", "financial_crypto_bnbusdt_s", "financial_crypto_xrpusdt_s",
+    "financial_fx_eurusd_s", "financial_fx_cadusd_s", "financial_fx_jpyusd_s", "financial_fx_chfusd_s", "financial_fx_audusd_s", "financial_fx_gbpusd_s",
+    "financial_yields_dgs2_s", "financial_yields_dgs5_s", "financial_yields_dgs10_s", "financial_yields_dgs30_s"
+  ],
+  "learned_models": [
+    "RegimeGatedMamba",
+    "UngatedRegimeLinearMamba",
+    "MultiScalePatchMamba",
+    "MultiScaleDecompositionMamba",
+    "InvertedMamba",
+    "DecompositionMamba",
+    "DLinear",
+    "NLinear",
+    "PatchTST",
+    "TimesNet",
+    "iTransformer"
+  ],
+  "deterministic_models": ["LastValue", "RandomWalkDrift", "ARIMA"],
+  "ablations": ["LastValue", "UngatedRegimeLinearMamba", "RegimeGatedMamba"],
+  "primary_metric": "path_rmsse",
+  "selection_policy": "reuse the frozen pre-2023 selection for each target's source family",
+  "target_file_policy": "one independent date plus target file per series; no complete-case intersection"
+}

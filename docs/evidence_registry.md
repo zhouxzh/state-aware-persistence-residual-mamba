@@ -1,26 +1,31 @@
 # Technical Evidence Registry
 
-This registry links each reader-facing technical statement to a versioned local
-artifact. It prevents completed metrics from being separated from their protocol and
-provenance.
+This registry binds current technical statements to active, inspectable artifacts.
+It does not treat archived mixed S/MS files as evidence for new manuscript claims.
 
-| ID | Statement supported | Primary artifact |
+| ID | Statement supported | Artifact |
 | --- | --- | --- |
-| E01 | Selected-model settings, data boundary, and retrospective status. | `configs/financial_reference_evaluation_v1.json` |
-| E02 | Regime-Gated Mamba implementation. | `model/RegimeGatedMamba.py` |
-| E03 | Data-task definitions and hashes. | `data/financial/manifests/training_datasets.json` |
-| E04 | Selected-model parameter snapshots. | `reproducibility/financial_reference_evaluation_v1/candidate_selection/` |
-| E05 | Imported baseline artifact audit. | `reproducibility/financial_reference_evaluation_v1/audit/legacy_baseline_audit.csv` |
-| E06 | Model, task, horizon, and seed metrics. | `reproducibility/financial_reference_evaluation_v1/metrics/all_model_metrics_by_seed.csv` |
-| E07 | Aggregated MAE, MSE, RMSE, RMSSE, runtime, and memory outputs. | `reproducibility/financial_reference_evaluation_v1/metrics/all_model_aggregate_metrics.csv` |
-| E08 | Descriptive uncertainty contrasts. | `reproducibility/financial_reference_evaluation_v1/metrics/regime_gated_mamba_paired_task_seed_bootstrap.csv` |
-| E09 | Matched inference profile. | `reproducibility/financial_reference_evaluation_v1/metrics/matched_cuda_microbenchmark.csv` |
-| E10 | Architecture figure source. | `docs/figures/regime_gated_mamba_architecture.dot` |
+| E01 | v1 S-only protocol, horizons, seeds, ablations, and retrospective label | `reproducibility/financial_s_only_v1/protocol.json` |
+| E02 | v2 independent-target roster and protocol | `reproducibility/financial_s_only_v2/protocol.json` |
+| E03 | Data paths, counts, split counts, and SHA-256 hashes | `reproducibility/financial_s_only_v1/training_datasets.json`, `financial_s_only_v2/training_datasets.json` |
+| E04 | Active model identities and role assignments | `model/RegimeGatedMamba.py`, each release `model_identity_map.json` |
+| E05 | Active proposed architecture and ungated ablation | `docs/figures/regime_gated_mamba_s_only.dot` |
+| E06 | Frozen pre-2023 model selections | each release `selection/` and `selection_manifest.json` |
+| E07 | Complete v1 deterministic references | `financial_s_only_v1/metrics/deterministic_metrics.csv` |
+| E08 | Complete v2 deterministic references | `financial_s_only_v2/metrics/deterministic_metrics.csv` |
+| E09 | Fixed-workload v1/v2 CUDA profiles | each release's `metrics/matched_cuda_microbenchmark.csv` and `.json` |
+| E10 | Current completion gap and acceptance state | each release `release_status.json` |
+| E11 | Historical local artifact archive inventory | ignored `backup/legacy_s_ms_20260812/archive_manifest.json` |
 
-Model translation is controlled by
-`reproducibility/financial_reference_evaluation_v1/model_identity_map.json`. Historical
-labels appear only in `source_model_id` fields, the mapping, and archived manifests.
+## Claim Boundaries
 
-The evidence does not support claims about investment performance, economic causality,
-universal long-horizon superiority, or generalization beyond the recorded reference
-tasks.
+At present, E07 and E08 support only deterministic-reference metrics. E09 supports
+only bounded forward-pass profiles recorded on a dirty working tree, not a final
+release-commit benchmark. No active artifact supports a learned-model
+accuracy ranking, a Regime-Gated Mamba advantage, a long-horizon advantage, a
+prospective-test claim, trading performance, or economic causality.
+
+After all learned artifacts validate, the report builder will create per-seed metrics,
+aggregates, contrasts, block-bootstrap tables, a runtime environment, a claim map,
+and SHA-256 checksums. Those new files, rather than narrative memory or historic
+tables, must support any manuscript number.

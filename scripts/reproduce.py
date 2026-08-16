@@ -11,14 +11,13 @@ sys.path.insert(0, str(REPO_ROOT))
 
 
 WORKFLOWS = {
-    "reference": "experiments.financial.reproduce",
-    "mamba-rerun": "experiments.financial.mamba_rerun",
+    "financial-s-only": "experiments.financial.s_only",
 }
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("--workflow", choices=sorted(WORKFLOWS), default="reference")
+    parser.add_argument("--workflow", choices=sorted(WORKFLOWS), default="financial-s-only")
     args, remainder = parser.parse_known_args()
     sys.argv = [sys.argv[0], *remainder]
     importlib.import_module(WORKFLOWS[args.workflow]).main()

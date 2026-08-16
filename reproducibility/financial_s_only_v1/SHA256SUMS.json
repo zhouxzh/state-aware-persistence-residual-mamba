@@ -1,0 +1,127 @@
+[
+  {
+    "bytes": 3649,
+    "path": "config.json",
+    "sha256": "d91e8d5b4364a8003b2d90d8eb59d8c96a531fcbd9969342d53ddbe3d136952f"
+  },
+  {
+    "bytes": 2723,
+    "path": "model_identity_map.json",
+    "sha256": "7887cc544f0544ffe658ea666d50dff2116b4c08ffc7e47cfda83f0e9b94fb08"
+  },
+  {
+    "bytes": 5266,
+    "path": "training_datasets.json",
+    "sha256": "e4f5796c10198a6c58a1a00b8f00e69d7d7464b4c00e91142f8df82c599b0674"
+  },
+  {
+    "bytes": 437,
+    "path": "release_status.json",
+    "sha256": "0e2ce0bb58494a2bd90343935cad0f27ef15d33d42bb650c2299ce72303158aa"
+  },
+  {
+    "bytes": 297,
+    "path": "claim_evidence_map.json",
+    "sha256": "63ee444b16bfe5beec32d5a01fff0588d6a99569a74ec5542a418ad7ffe25358"
+  },
+  {
+    "bytes": 7946,
+    "path": "runtime_environment.json",
+    "sha256": "03e29891665b6bd586672e0dd47b4e8dc473d026f47f04dac22bbfaac8b46beb"
+  },
+  {
+    "bytes": 421,
+    "path": "README.md",
+    "sha256": "729c5b6c176d4987d8c1faf84ab572eb7fd652f930d00370ce83e19667d4e943"
+  },
+  {
+    "bytes": 2456,
+    "path": "selection_manifest.json",
+    "sha256": "8f917c5a663f03c16952f1f5b2b214e81f0fc97384a2111cbc667dc877e1633c"
+  },
+  {
+    "bytes": 1391,
+    "path": "protocol.json",
+    "sha256": "bf6f4d2d06350f5515cdbddfff8dec515cce50a6d08e44218191de0689be750d"
+  },
+  {
+    "bytes": 138454,
+    "path": "metrics/metrics_aggregate.csv",
+    "sha256": "3ccec59f27a89efca1477c6d2601693cfe6c245eb12a48d53dd18fb0e46177e9"
+  },
+  {
+    "bytes": 368,
+    "path": "metrics/deterministic_manifest.json",
+    "sha256": "856d152dc4e59b6600f1c600a573076a929f0cdf5870472fb3dc2f86701504cb"
+  },
+  {
+    "bytes": 875,
+    "path": "metrics/matched_cuda_microbenchmark.json",
+    "sha256": "91fb6b0b155124bb66312daaac8fa24bb4ced9fe6f8c12e05ec554b96777da0f"
+  },
+  {
+    "bytes": 1585,
+    "path": "metrics/matched_cuda_microbenchmark.csv",
+    "sha256": "fc7821a8fa980075c3b1ad87ef13182ddc113f021be06a6b61cede6cb0f59d46"
+  },
+  {
+    "bytes": 666201,
+    "path": "metrics/metrics_by_seed.csv",
+    "sha256": "0e719711a7be455d4e582bbb1519017688c22b89b5374bf088e5750aa1aaf998"
+  },
+  {
+    "bytes": 29106,
+    "path": "metrics/deterministic_metrics.csv",
+    "sha256": "c1ae891c25c441cb8e14aa0b47af7e12d1dc9aabf5db28d2ac36ad09a9e7591a"
+  },
+  {
+    "bytes": 7788,
+    "path": "metrics/paired_block_bootstrap.csv",
+    "sha256": "e1456802a450821ed9f40a24758dbab88127bc211a5ec875e3049b2a1b733974"
+  },
+  {
+    "bytes": 54600,
+    "path": "metrics/paired_contrasts.csv",
+    "sha256": "bb2987897105a01a36a58965a1360047ce65b0c14b2d26a7969b2af89471310c"
+  },
+  {
+    "bytes": 3693,
+    "path": "selection/financial_crypto_s/baseline_best_params.json",
+    "sha256": "91d8ff59eea8a9c961c553eae2f321ac529ac92212cb5495a2b44071fec5f154"
+  },
+  {
+    "bytes": 3683,
+    "path": "selection/financial_crypto_s/mamba_best_params.json",
+    "sha256": "40fb2bf51ba23ab1d95e120e6954b0b4bd687b129c69287e33c2fdd5725a3dd6"
+  },
+  {
+    "bytes": 3719,
+    "path": "selection/financial_cross_asset_s/baseline_best_params.json",
+    "sha256": "2591a9625193b158e51d1e08b00974464f0b0cc0fd00f0a342fe9f58593a700c"
+  },
+  {
+    "bytes": 3727,
+    "path": "selection/financial_cross_asset_s/mamba_best_params.json",
+    "sha256": "73c9615137bc0b5d4e1fc0b5dcf349a66b1c35a97b150bf491228e2ec759f0b2"
+  },
+  {
+    "bytes": 3689,
+    "path": "selection/financial_yields_s/baseline_best_params.json",
+    "sha256": "682938d4e122bd49959ef21cbcfedb66e558d72a905a0212e534822c88ee2eae"
+  },
+  {
+    "bytes": 3693,
+    "path": "selection/financial_yields_s/mamba_best_params.json",
+    "sha256": "8183dae49514aeea1ace1b69a76b4bf6bd7681294989b78a72d086dab83cda00"
+  },
+  {
+    "bytes": 3664,
+    "path": "selection/financial_fx_s/baseline_best_params.json",
+    "sha256": "fb618f9118592d5c7cb94ca647eaec74c24d15975e6bcdae5795db20e3c23366"
+  },
+  {
+    "bytes": 3671,
+    "path": "selection/financial_fx_s/mamba_best_params.json",
+    "sha256": "f131da437b5f5189d8a90b358b36f947d846ce71b128bafe6f42e7843ed74696"
+  }
+]

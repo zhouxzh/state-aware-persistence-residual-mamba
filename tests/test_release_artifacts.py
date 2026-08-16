@@ -1,4 +1,4 @@
-"""Release-level checks that run without provider data or CUDA hardware."""
+"""Release-level checks that do not require raw provider data or CUDA."""
 
 from __future__ import annotations
 
@@ -6,54 +6,86 @@ import csv
 import json
 from pathlib import Path
 
+from utils.financial.s_only_report import checksum_problems, checksum_rows
+
 
 ROOT = Path(__file__).resolve().parents[1]
-RELEASE = ROOT / "reproducibility" / "financial_reference_evaluation_v1"
-METRICS = RELEASE / "metrics"
 
 
-def read_csv(name: str) -> list[dict[str, str]]:
-    with (METRICS / name).open(newline="", encoding="utf-8") as handle:
+def read_csv(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
 
 
-def test_release_configuration_uses_canonical_candidate_ids() -> None:
-    config = json.loads(
-        (ROOT / "configs" / "financial_reference_evaluation_v1.json").read_text(encoding="utf-8")
-    )
-    assert config["protocol_version"] == "financial_reference_evaluation_v1"
-    assert set(config["candidates"]) == {"RegimeGatedMamba", "MultiScalePatchMamba"}
-    assert config["candidates"]["RegimeGatedMamba"]["public_name"] == "Regime-Gated Mamba"
+def test_protocols_have_separate_s_only_rosters_and_expected_counts() -> None:
+    expectations = {"v1": (4, 72, 1320), "v2": (18, 324, 5940)}
+    for release, (task_count, deterministic_rows, learned_rows) in expectations.items():
+        root = ROOT / "reproducibility" / f"financial_s_only_{release}"
+        protocol = json.loads((root / "protocol.json").read_text())
+        manifest = json.loads((root / "training_datasets.json").read_text())
+        status = json.loads((root / "release_status.json").read_text())
+        tasks = protocol.get("tasks", protocol.get("target_roster"))
+        assert len(tasks) == task_count
+        assert set(tasks) == set(manifest)
+        assert all(task.endswith("_s") and value["features"] == "S" for task, value in manifest.items())
+        assert status["complete_deterministic_rows"] == deterministic_rows
+        assert status["expected_deterministic_rows"] == deterministic_rows
+        assert status["expected_learned_horizon_rows"] == learned_rows
+        complete_learned = status["complete_learned_horizon_rows"]
+        assert 0 <= complete_learned <= learned_rows
+        # A learned seed bundle is complete only after its six frozen horizons
+        # have checkpoints and forecast artifacts. The live release may be
+        # checked while its resumable campaign is running.
+        assert complete_learned % len(protocol["horizons"]) == 0
+        assert status["status"] == "incomplete"
 
 
-def test_metric_table_is_complete_and_has_provenance() -> None:
-    rows = read_csv("all_model_metrics_by_seed.csv")
-    assert len(rows) == 2640
-    assert {"source_model_id", "model_id", "model", "dataset", "seed", "horizon"} <= set(rows[0])
-    candidate_rows = [row for row in rows if row["model_id"] == "RegimeGatedMamba"]
-    assert len(candidate_rows) == 240
-    assert {row["horizon"] for row in candidate_rows} == {"1", "5", "20", "60", "120", "252"}
-    assert {row["seed"] for row in candidate_rows} == {"2023", "2024", "2025", "2026", "2027"}
-    assert {row["source_model_id"] for row in candidate_rows} == {"PMSV5_R6"}
+def test_deterministic_metric_tables_are_complete_and_have_local_bundle_provenance() -> None:
+    expectations = {"v1": 72, "v2": 324}
+    for release, expected_count in expectations.items():
+        root = ROOT / "reproducibility" / f"financial_s_only_{release}"
+        rows = read_csv(root / "metrics" / "deterministic_metrics.csv")
+        assert len(rows) == expected_count
+        assert {"dataset", "model_id", "horizon", "path_mae", "path_rmse", "path_rmsse", "bundle_sha256"} <= set(rows[0])
+        assert {row["model_id"] for row in rows} == {"LastValue", "RandomWalkDrift", "ARIMA"}
+        assert all(row["bundle"].startswith("results/financial_s_only_retrospective_") for row in rows)
+        assert all(len(row["bundle_sha256"]) == 64 for row in rows)
 
 
-def test_runtime_profile_supports_the_documented_inference_comparison() -> None:
-    rows = {row["model_id"]: row for row in read_csv("matched_cuda_microbenchmark.csv")}
-    selected = rows["RegimeGatedMamba"]
-    assert selected["model"] == "Regime-Gated Mamba"
-    assert float(selected["median_latency_ms"]) < float(rows["PatchTST"]["median_latency_ms"])
-    assert float(selected["median_latency_ms"]) < float(rows["TimesNet"]["median_latency_ms"])
-    assert int(selected["parameter_count"]) < int(rows["PatchTST"]["parameter_count"])
-
-
-def test_required_reproduction_artifacts_exist() -> None:
-    expected = {
-        "all_model_metrics_by_seed.csv",
-        "all_model_aggregate_metrics.csv",
-        "balanced_path_rmsse_by_task_seed.csv",
-        "candidate_models_metrics_by_seed.csv",
-        "regime_gated_mamba_paired_contrasts.csv",
-        "regime_gated_mamba_paired_task_seed_bootstrap.csv",
-        "matched_cuda_microbenchmark.csv",
+def test_recorded_profiles_are_s_only_and_compare_the_gate_ablation() -> None:
+    expected_tasks = {
+        "v1": "financial_cross_asset_s",
+        "v2": "financial_cross_asset_gld_s",
     }
-    assert expected <= {path.name for path in METRICS.iterdir() if path.is_file()}
+    for release, task in expected_tasks.items():
+        root = ROOT / "reproducibility" / f"financial_s_only_{release}" / "metrics"
+        rows = {row["model_id"]: row for row in read_csv(root / "matched_cuda_microbenchmark.csv")}
+        assert set(rows) == {"RegimeGatedMamba", "UngatedRegimeLinearMamba", "PatchTST", "TimesNet"}
+        assert rows["RegimeGatedMamba"]["task"] == task
+        assert float(rows["RegimeGatedMamba"]["median_latency_ms"]) < float(rows["PatchTST"]["median_latency_ms"])
+        assert float(rows["RegimeGatedMamba"]["median_latency_ms"]) < float(rows["TimesNet"]["median_latency_ms"])
+        assert int(rows["UngatedRegimeLinearMamba"]["parameter_count"]) < int(rows["RegimeGatedMamba"]["parameter_count"])
+
+
+def test_checksum_manifest_can_cover_the_final_release_status(tmp_path: Path) -> None:
+    artifact = tmp_path / "metrics" / "metrics_by_seed.csv"
+    artifact.parent.mkdir()
+    artifact.write_text("dataset,model\nexample,RegimeGatedMamba\n", encoding="utf-8")
+    status = tmp_path / "release_status.json"
+    status.write_text('{"status":"verified"}\n', encoding="utf-8")
+    rows = checksum_rows(tmp_path, [artifact, status])
+    (tmp_path / "SHA256SUMS.json").write_text(json.dumps(rows), encoding="utf-8")
+    assert checksum_problems(tmp_path) == []
+    status.write_text('{"status":"incomplete"}\n', encoding="utf-8")
+    assert checksum_problems(tmp_path) == ["checksum_mismatch:release_status.json"]
+
+
+def test_release_local_selections_and_model_map_cover_the_active_roster() -> None:
+    for release in ("v1", "v2"):
+        root = ROOT / "reproducibility" / f"financial_s_only_{release}"
+        model_map = json.loads((root / "model_identity_map.json").read_text())["models"]
+        assert len(model_map) == 14
+        assert {item["model_id"] for item in model_map} >= {"RegimeGatedMamba", "UngatedRegimeLinearMamba", "LastValue", "ARIMA"}
+        selections = json.loads((root / "selection_manifest.json").read_text())["entries"]
+        assert len(selections) == 8
+        assert all(item["source"] == "release-local frozen selection snapshot" for item in selections)

@@ -1,0 +1,226 @@
+{
+  "financial_cross_asset_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "cross_asset.csv",
+    "data_sha256": "fe3a40628180007f64e92a98a20932b45af8bdbdcbb43e166d9a55d2b770c68b",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "bf6f4d2d06350f5515cdbddfff8dec515cce50a6d08e44218191de0689be750d",
+    "protocol_version": "financial_s_only_retrospective_v1",
+    "root_path": "data/financial/processed",
+    "rows": 2483,
+    "selected_input_policy": "target_only_S",
+    "source_panel_manifest": "data/financial/manifests/training_datasets.json",
+    "split_counts": {
+      "test": 869,
+      "train": 1112,
+      "validation": 502
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "2016-07-25",
+    "target": "GLD",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    }
+  },
+  "financial_crypto_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "crypto.csv",
+    "data_sha256": "d3543c7945d212b766ede7f3ca184892bbefdb5d8262a0107af956c3550bf561",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 1,
+    "missing_cells": 0,
+    "protocol_sha256": "bf6f4d2d06350f5515cdbddfff8dec515cce50a6d08e44218191de0689be750d",
+    "protocol_version": "financial_s_only_retrospective_v1",
+    "root_path": "data/financial/processed",
+    "rows": 2980,
+    "selected_input_policy": "target_only_S",
+    "source_panel_manifest": "data/financial/manifests/training_datasets.json",
+    "split_counts": {
+      "test": 1277,
+      "train": 973,
+      "validation": 730
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "2018-05-04",
+    "target": "BTCUSDT",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    }
+  },
+  "financial_fx_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "fx.csv",
+    "data_sha256": "8da6208fa259ea10dc25a788b12e43d6e0b892c8ce7d0aa3530de593641637d3",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "bf6f4d2d06350f5515cdbddfff8dec515cce50a6d08e44218191de0689be750d",
+    "protocol_version": "financial_s_only_retrospective_v1",
+    "root_path": "data/financial/processed",
+    "rows": 6894,
+    "selected_input_policy": "target_only_S",
+    "source_panel_manifest": "data/financial/manifests/training_datasets.json",
+    "split_counts": {
+      "test": 874,
+      "train": 5521,
+      "validation": 499
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1999-01-04",
+    "target": "GBPUSD",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    }
+  },
+  "financial_yields_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "yields.csv",
+    "data_sha256": "1a30b8ed38e8587067ee59780a222380c97cae4bcd9267f926e297461554adaf",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 4,
+    "missing_cells": 0,
+    "protocol_sha256": "bf6f4d2d06350f5515cdbddfff8dec515cce50a6d08e44218191de0689be750d",
+    "protocol_version": "financial_s_only_retrospective_v1",
+    "root_path": "data/financial/processed",
+    "rows": 5101,
+    "selected_input_policy": "target_only_S",
+    "source_panel_manifest": "data/financial/manifests/training_datasets.json",
+    "split_counts": {
+      "test": 873,
+      "train": 3728,
+      "validation": 500
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "2006-02-09",
+    "target": "DGS10",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    }
+  }
+}

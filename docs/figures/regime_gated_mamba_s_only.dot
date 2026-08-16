@@ -1,0 +1,56 @@
+digraph RegimeGatedMambaSOnly {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    pad=0.18,
+    nodesep=0.38,
+    ranksep=0.52,
+    splines=ortho,
+    fontname="Arial"
+  ];
+  node [
+    shape=box,
+    style="rounded,filled",
+    color="#2B3A42",
+    penwidth=1.15,
+    fontname="Arial",
+    fontsize=11,
+    margin="0.12,0.08"
+  ];
+  edge [color="#475569", penwidth=1.25, arrowsize=0.72, fontname="Arial", fontsize=9];
+
+  input [label="Target history\n x in R^(L x 1)", fillcolor="#E8F1FA"];
+  normalize [label="Per-window standardization\n x_tilde = (x - mu) / sigma", fillcolor="#E8F1FA"];
+  anchor [label="Persistence anchor\n x_L", fillcolor="#FFF1D6"];
+  centered [label="Centered history\n x_tilde - x_tilde,L", fillcolor="#E8F1FA"];
+  linear [label="Channelwise linear change path\n L -> H", fillcolor="#E8F1FA"];
+  delta [label="Predicted normalized change\n delta_hat in R^(H x 1)", fillcolor="#E8F1FA"];
+
+  subgraph cluster_gate {
+    label="Learned regime gate (Regime-Gated Mamba only)";
+    color="#0F766E";
+    penwidth=1.25;
+    fontname="Arial";
+    fontsize=11;
+    style="rounded";
+    gate_features [label="Timewise summaries\n [mean_c(x_tilde), std_c(x_tilde),\n  mean_c(delta x_tilde), std_c(delta x_tilde)]\n S-only: [x_tilde, 0, delta x_tilde, 0]", fillcolor="#E3F4F1"];
+    gate_input [label="Linear 4 -> 64", fillcolor="#E3F4F1"];
+    gate_mamba [label="Selective state-space block\n Mamba(d_model=64, d_state=8)", fillcolor="#D2EEE9"];
+    gate_norm [label="Residual + LayerNorm", fillcolor="#E3F4F1"];
+    gate_head [label="Horizon head + sigmoid\n g in (0,1)^(H x 1)", fillcolor="#E3F4F1"];
+    gate_features -> gate_input -> gate_mamba -> gate_norm -> gate_head;
+  }
+
+  multiply [label="Gate the change\n g * delta_hat", fillcolor="#EAF5E7"];
+  restore [label="Restore change scale\n sigma * (g * delta_hat)", fillcolor="#EAF5E7"];
+  output [label="Forecast levels\n y_hat = x_L + sigma * (g * delta_hat)", fillcolor="#FFF1D6"];
+  ungated [label="Ungated ablation\n g = 1; no gate Linear/Mamba/Norm/Head modules", shape=note, fillcolor="#F5F5F5", color="#64748B", fontsize=10];
+
+  input -> normalize;
+  input -> anchor;
+  normalize -> centered -> linear -> delta -> multiply -> restore -> output;
+  normalize -> gate_features;
+  gate_head -> multiply;
+  anchor -> output;
+  ungated -> multiply [style=dashed, color="#64748B", label="replaces learned gate"];
+}

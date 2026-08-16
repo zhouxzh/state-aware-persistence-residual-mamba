@@ -8,33 +8,39 @@ from utils.financial.registry import (
     runtime_model_name,
     source_model_id,
 )
-from experiments.financial.reference import compact_stage_tag
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 class FinancialRegistryTests(unittest.TestCase):
-    def test_canonical_names_preserve_frozen_source_ids(self):
+    def test_canonical_names_preserve_provenance_without_exposing_legacy_ids(self):
         self.assertEqual(canonical_model_id("PMSV5_R6"), "RegimeGatedMamba")
-        self.assertEqual(canonical_model_id("PMSV3_B0"), "MultiScalePatchMamba")
-        self.assertEqual(public_name("PMS_Mamba-PD"), "Legacy Patch-Decomposition Mamba")
+        self.assertEqual(public_name("RegimeGatedMamba"), "Regime-Gated Mamba")
         self.assertEqual(source_model_id("RegimeGatedMamba"), "PMSV5_R6")
         self.assertEqual(runtime_model_name("RegimeGatedMamba"), "RegimeGatedMamba")
+        self.assertEqual(
+            public_name("UngatedRegimeLinearMamba"),
+            "Ungated Regime-Linear Mamba",
+        )
 
-    def test_publication_config_uses_tracked_selection_snapshots(self):
-        config = json.loads((REPO_ROOT / "configs" / "financial_reference_evaluation_v1.json").read_text())
-        root = REPO_ROOT / config["candidate_parameter_selection_snapshot"]
-        tasks = json.loads((REPO_ROOT / config["base_protocol"]["training_manifest"]).read_text())
-        for task in tasks:
-            self.assertTrue((root / task / "mamba_best_params.json").is_file())
-            self.assertTrue(
-                (REPO_ROOT / "reproducibility" / "financial_reference_evaluation_v1" / "selection" / task / "baseline_best_params.json").is_file()
+    def test_active_releases_use_release_local_selection_snapshots(self):
+        for release in ("v1", "v2"):
+            config = json.loads(
+                (REPO_ROOT / "configs" / f"financial_s_only_{release}.json").read_text()
             )
-
-    def test_publication_stage_tags_are_compact_and_deterministic(self):
-        self.assertEqual(compact_stage_tag("RegimeGatedMamba", 2023), "pub_rgm_s2023")
-        self.assertEqual(compact_stage_tag("MultiScalePatchMamba", 2027, smoke=True), "smk_msp_s2027")
+            root = REPO_ROOT / config["selection_snapshot"]
+            self.assertTrue(root.is_dir())
+            for task in json.loads(
+                (REPO_ROOT / config["base_protocol"]["training_manifest"]).read_text()
+            ):
+                selection_task = task
+                for family, mapped in config.get("selection_task_map", {}).items():
+                    if task.startswith(f"financial_{family}_"):
+                        selection_task = mapped
+                        break
+                self.assertTrue((root / selection_task / "mamba_best_params.json").is_file())
+                self.assertTrue((root / selection_task / "baseline_best_params.json").is_file())
 
 
 if __name__ == "__main__":

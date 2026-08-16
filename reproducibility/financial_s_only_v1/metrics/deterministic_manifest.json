@@ -1,0 +1,24 @@
+{
+  "expected_rows": 72,
+  "horizons": [
+    1,
+    5,
+    20,
+    60,
+    120,
+    252
+  ],
+  "models": [
+    "LastValue",
+    "RandomWalkDrift",
+    "ARIMA"
+  ],
+  "protocol_version": "financial_s_only_retrospective_v1",
+  "tasks": [
+    "financial_cross_asset_s",
+    "financial_crypto_s",
+    "financial_fx_s",
+    "financial_yields_s"
+  ],
+  "written_rows": 72
+}

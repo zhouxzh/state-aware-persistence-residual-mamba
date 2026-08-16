@@ -14,6 +14,12 @@ MODEL_REGISTRY = {
         "role": "proposed",
         "source_model_ids": ["PMSV5_R6"],
     },
+    "UngatedRegimeLinearMamba": {
+        "public_name": "Ungated Regime-Linear Mamba",
+        "runtime_model": "RegimeGatedMamba",
+        "role": "ablation",
+        "source_model_ids": ["PMSV5_R6"],
+    },
     "MultiScalePatchMamba": {
         "public_name": "Multi-Scale Patch Mamba",
         "runtime_model": "MultiScalePatchMamba",
@@ -51,11 +57,12 @@ MODEL_REGISTRY = {
     "iTransformer": {"public_name": "iTransformer", "runtime_model": "iTransformer", "role": "baseline", "source_model_ids": ["iTransformer"]},
 }
 
-SOURCE_TO_CANONICAL = {
-    source_id: canonical_id
-    for canonical_id, record in MODEL_REGISTRY.items()
-    for source_id in record["source_model_ids"]
-}
+SOURCE_TO_CANONICAL = {}
+for _canonical_id, _record in MODEL_REGISTRY.items():
+    for _source_id in _record["source_model_ids"]:
+        # A source recipe may also underpin an ablation.  Preserve the first
+        # (primary) canonical identity when resolving historical records.
+        SOURCE_TO_CANONICAL.setdefault(_source_id, _canonical_id)
 
 
 def canonical_model_id(model_id: str) -> str:

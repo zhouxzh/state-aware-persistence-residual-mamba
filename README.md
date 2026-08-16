@@ -1,86 +1,75 @@
-# Regime-Gated Mamba for Nonstationary Forecasting
+# Regime-Gated Mamba for Financial Time-Series Forecasting
 
-This repository is the reviewer-facing reference implementation for Regime-Gated Mamba, a state-space forecaster for nonstationary time series.
+This repository contains the software and evidence contracts for a target-only,
+univariate financial forecasting study. The proposed model is **Regime-Gated
+Mamba**. It predicts a linear change from the last observed level and uses a
+small selective state-space gate to attenuate or retain that change across the
+forecast horizon.
 
-The completed evidence uses daily financial panels as reference data: foreign exchange, Treasury yields, cross-asset prices, and cryptoassets.
+The public workflow is deliberately S-only: every active task supplies one target
+history and forecasts that same target. The repository does not contain manuscript
+source, raw provider data, trained weights, forecast arrays, TensorBoard logs, or
+trading code.
 
-Regime-Gated Mamba combines reversible normalization, moving-average decomposition, temporal patch encoding, bidirectional Mamba encoders, and a regime-gated change head.
+## Evidence Status
 
-The selected recipe emphasizes short-horizon path-RMSSE accuracy and low-latency inference. It is not presented as the leading model at every long horizon.
+The 2023-01-01 through 2026-06-30 evaluation interval has already been inspected.
+All active results are therefore **retrospective**, not untouched prospective-test
+evidence.
 
-The financial results do not support trading or economic claims.
+Two release contracts are tracked:
 
-Start with the [technical documentation](docs/README.md), then read the [data reference](docs/data_reference.md), [model reference](docs/model_reference.md), [evaluation record](docs/evaluation_record.md), and [reproducibility workflow](docs/reproducibility.md).
+| Release | Scope | Learned matrix | Deterministic references | Current state |
+| --- | --- | ---: | ---: | --- |
+| `financial_s_only_v1` | Four original target-only panels | 1,320 horizon rows planned | 72 / 72 complete | Learned matrix not run |
+| `financial_s_only_v2` | Eighteen independently materialized targets | 5,940 horizon rows planned | 324 / 324 complete | Learned matrix not run |
 
-## Canonical models
+The v1 CUDA microbenchmark is complete, but it is a fixed forward-pass workload
+and is not an accuracy result. No learned-model accuracy ranking or superiority
+claim is supported until the matching learned matrix is complete and verified.
 
-| Identifier | Reader-facing name | Role |
-| --- | --- | --- |
-| `RegimeGatedMamba` | Regime-Gated Mamba | Selected proposed model. |
-| `MultiScalePatchMamba` | Multi-Scale Patch Mamba | Architectural ablation. |
-| `InvertedMamba` | Inverted Mamba | Mamba baseline. |
-| `DecompositionMamba` | Decomposition Mamba | Mamba baseline. |
-| `MultiScaleDecompositionMamba` | Multi-Scale Decomposition Mamba | Mamba baseline. |
-| `PatchTST`, `TimesNet`, `DLinear`, `NLinear`, `iTransformer` | Unchanged | Audited external baselines. |
+## Active Workflow
 
-Historical result rows retain `source_model_id`, but active code, configuration, and documentation use the canonical identifiers above.
-
-The complete mapping is in [`model_identity_map.json`](reproducibility/financial_reference_evaluation_v1/model_identity_map.json).
-
-## Setup
-
-```bash
-conda env create -f environment.yml
-conda run --no-capture-output -n sci-agent python -m pip install -r requirements.txt
-conda run --no-capture-output -n sci-agent python scripts/data.py preflight
-```
-
-The environment requires CUDA-compatible PyTorch and `mamba-ssm` for Mamba models.
-
-## Reproduce the supplied record
-
-Raw financial data, checkpoints, predictions, and TensorBoard logs remain local and are excluded from Git. Follow source-provider terms before downloading data.
+Use the `mamba` Conda environment for training and profiling. It contains the
+working `mamba-ssm` installation for this machine.
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/data.py download
-conda run --no-capture-output -n sci-agent python scripts/data.py prepare
-conda run --no-capture-output -n sci-agent python scripts/analyze.py audit
-conda run --no-capture-output -n sci-agent python scripts/evaluate.py --stage dry-run
+conda run --no-capture-output -n mamba python scripts/data.py release-setup --release v1
+conda run --no-capture-output -n mamba python scripts/reproduce.py --workflow financial-s-only --release v1 --stage plan
+conda run --no-capture-output -n mamba python scripts/reproduce.py --workflow financial-s-only --release v1 --stage deterministic
 ```
 
-The complete candidate comparison is retrospective because the baseline suite had already opened the 2023-2026 target period.
+Training writes a retrospective test-result release and is deliberately locked:
 
 ```bash
-conda run --no-capture-output -n sci-agent python scripts/evaluate.py --stage final --unlock-retrospective-test
-conda run --no-capture-output -n sci-agent python scripts/analyze.py metrics --require-complete
-conda run --no-capture-output -n sci-agent python scripts/analyze.py normalize
-conda run --no-capture-output -n sci-agent python scripts/analyze.py profile
-conda run --no-capture-output -n sci-agent python scripts/analyze.py report
-conda run --no-capture-output -n sci-agent pytest -q
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v1 --stage train \
+  --unlock-retrospective-test
 ```
 
-## Repository layout
+After the full learned matrix is complete, run `profile`, `report`, and `verify`.
+The complete command sequence and acceptance criteria are in
+[docs/reproducibility.md](docs/reproducibility.md).
 
-```text
-data/                  Local financial reference data and manifests
-model/                 Forecasting model architectures and baselines
-layers/                Neural network layers and normalization components
-data_provider/         Dataset and DataLoader implementations
-experiments/           Training, evaluation, and checkpoint-replay workflows
-utils/                 Shared data, metrics, audit, and reporting utilities
-scripts/               Four user-facing commands: data, evaluate, analyze, reproduce
-configs/               Versioned evaluation configurations
-reproducibility/       Frozen metrics, manifests, selection snapshots, and provenance
-docs/                  Technical reference and repository structure guide
-tests/                 Release-level validation
-```
+## Repository Map
 
-See [docs/repository_structure.md](docs/repository_structure.md) for the ownership
-and command map.
+| Path | Role |
+| --- | --- |
+| `model/` | Regime-Gated Mamba and comparison architectures. |
+| `configs/` | Active source-data and v1/v2 release configurations. |
+| `data/financial/` | Local raw data, processed panels, and independent targets; ignored by Git. |
+| `experiments/financial/` | S-only deterministic, training, replay, and orchestration code. |
+| `utils/financial/` | Release setup, data preparation, reporting, profiling, and archive utilities. |
+| `reproducibility/financial_s_only_v1/` | Tracked v1 protocol, hashes, frozen parameters, and compact metrics. |
+| `reproducibility/financial_s_only_v2/` | Tracked v2 protocol, hashes, frozen parameters, and compact metrics. |
+| `docs/` | Technical documentation and evidence map. |
 
-The complete retained five-model Mamba rerun is documented in
-[docs/reproducibility.md](docs/reproducibility.md). It writes local checkpoints,
-forecast arrays, and forecast-versus-observed figures to a separate ignored campaign
-directory without replacing frozen reference evidence.
+Read [docs/README.md](docs/README.md) first. The active architecture is shown in
+[docs/figures/regime_gated_mamba_s_only.svg](docs/figures/regime_gated_mamba_s_only.svg).
 
-No manuscript source is included in this repository. It is restricted to software, documentation, configurations, and reproducibility artifacts.
+## License and Data
+
+The MIT license covers original contributions in this repository. Inherited source
+notices are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Source-data
+terms apply independently; provider data and derived levels remain local unless
+their redistribution rights have been checked.

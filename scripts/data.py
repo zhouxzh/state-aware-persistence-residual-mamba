@@ -15,7 +15,8 @@ COMMANDS = {
     "download": "utils.financial.download",
     "prepare": "utils.financial.prepare",
     "preflight": "utils.financial.preflight",
-    "diagnose": "utils.financial.diagnostics",
+    "materialize-targets": "utils.financial.targets",
+    "release-setup": "utils.financial.release_setup",
 }
 
 

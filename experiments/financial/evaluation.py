@@ -328,6 +328,7 @@ def build_base_args(cli_args, dataset_cfg, model_label, params, pred_len, stage_
         pms_regime_channel_gate=int(params.get("pms_regime_channel_gate", 1)),
         pms_regime_gate_bias=float(params.get("pms_regime_gate_bias", 2.0)),
         pms_regime_gate_stride=int(params.get("pms_regime_gate_stride", 1)),
+        pms_regime_disable_gate=int(params.get("pms_regime_disable_gate", 0)),
         pms_regime_decomp=int(params.get("pms_regime_decomp", 0)),
         pms_regime_individual_linear=int(params.get("pms_regime_individual_linear", 0)),
         pms_regime_multiscale_linear=int(params.get("pms_regime_multiscale_linear", 0)),

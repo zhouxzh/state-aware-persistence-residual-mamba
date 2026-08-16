@@ -1,69 +1,90 @@
-# Evaluation Record
+# Current Evaluation Record
 
-Updated: 2026-08-09
+Updated: 2026-08-12
 
-This is a completed retrospective, protocol-matched evaluation on the four financial
-reference panels. The 2023-2026 target period had already been opened by the earlier
-baseline suite, so these results are not an untouched prospective test. The selected
-Regime-Gated Mamba configuration was fixed using the separate 2022 merge gate before
-this comparison. This evidence supports descriptive model comparison only.
+## What Is Complete
 
-## Evaluation coverage
+The deterministic reference matrix has been generated using the exact release-local
+data manifests, rolling test origins, and training-window RMSSE denominators. It is
+the only complete accuracy evidence in the current active releases.
 
-Eight tasks, six horizons, and five seeds were evaluated. The canonical metric table
-contains 2,640 rows: 480 selected-model/ablation rows and 2,160 audited-baseline rows.
-The primary ranking metric is path RMSSE. MAE, MSE, RMSE, terminal-point metrics,
-runtime, and peak memory are preserved in
-[`all_model_aggregate_metrics.csv`](../reproducibility/financial_reference_evaluation_v1/metrics/all_model_aggregate_metrics.csv).
+| Release | Tasks | Deterministic models | Horizons | Completed rows | Planned learned rows |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `financial_s_only_v1` | 4 | 3 | 6 | 72 / 72 | 1,320 |
+| `financial_s_only_v2` | 18 | 3 | 6 | 324 / 324 | 5,940 |
 
-Regime-Gated Mamba had the lowest path RMSSE in 20 of 48 task-horizon cells and a
-mean rank of 3.31 across all cells. The rank profile is horizon dependent:
+The references are Last-value, Random-walk-with-drift, and ARIMA. ARIMA order is
+selected from a prespecified 31-member low-order grid using training data only,
+refit once through the validation endpoint, and then updated sequentially through
+the test interval without re-estimating coefficients.
 
-| Horizon | Mean path-RMSSE rank | Interpretation |
-| ---: | ---: | --- |
-| 1 | 1.38 | Strongest position. |
-| 5 | 1.63 | Strong position. |
-| 20 | 2.88 | Competitive. |
-| 60 | 4.00 | Middle of the comparison set. |
-| 120 | 4.38 | Below the leading long-horizon models. |
-| 252 | 5.63 | Weakest relative position. |
+The compact metric tables are tracked here:
 
-![Path-RMSSE rank by horizon](figures/regime_gated_mamba_rank_by_horizon.png)
+- [v1 deterministic metrics](../reproducibility/financial_s_only_v1/metrics/deterministic_metrics.csv)
+- [v2 deterministic metrics](../reproducibility/financial_s_only_v2/metrics/deterministic_metrics.csv)
 
-![Task and horizon rank matrix](figures/regime_gated_mamba_rank_by_task_horizon.png)
+Forecast arrays, exact origin dates, and ARIMA metadata remain in ignored local
+`results/financial_s_only_retrospective_v*/deterministic/` trees. The CSV rows carry
+their local bundle path and SHA-256 so a regenerating user can cross-check them.
 
-The figures use lower ranks as better. They show that the selected model's evidence is
-short-horizon accuracy and computational efficiency, not a general claim of superiority
-at long horizons.
+## Learned-Matrix Status
 
-## Merge-gate comparison
+The `financial_s_only_v1` learned campaign is in progress. Its live,
+restart-safe completion state is recorded in the ignored local
+`results/financial_s_only_retrospective_v1/campaign_summary.json`; every completed
+task-model-seed bundle retains all six horizon checkpoints, forecasts, truth arrays,
+origin dates, forecast dates, metadata, and SHA-256 records. The v2 learned campaign
+has not started.
 
-The 2022 merge gate was used to select the proposed configuration. Its balanced path
-RMSSE summary is retained as a selection record, not mixed with the retrospective
-evaluation above.
+Partial learned output is operational evidence only. It must not be used for a model
+ranking, a table, a figure, or a manuscript claim because the pre-specified five-seed
+matrix is incomplete. In particular, there is not yet a valid active comparison of
+Regime-Gated Mamba with PatchTST, TimesNet, linear models, other Mamba models, or the
+deterministic references.
 
-| Model | Cross-asset | Cryptoasset | Foreign exchange | Treasury yields |
-| --- | ---: | ---: | ---: | ---: |
-| Regime-Gated Mamba | 1.5993 | 5.3724 | 11.0567 | 6.0095 |
-| Multi-Scale Patch Mamba | 1.8890 | 5.5702 | 11.3262 | 6.4778 |
-| Decomposition Mamba | 1.9208 | 5.6919 | 11.7857 | 6.8692 |
+The release status files correctly report `incomplete`:
 
-The selection snapshot files are stored under
-`reproducibility/financial_reference_evaluation_v1/candidate_selection/`.
+- [v1 status](../reproducibility/financial_s_only_v1/release_status.json)
+- [v2 status](../reproducibility/financial_s_only_v2/release_status.json)
 
-## Uncertainty summary and limitations
+The expected learned rows are calculated as
+`tasks x 11 learned models x 5 seeds x 6 horizons`: 1,320 rows for v1 and 5,940 for
+v2. A result report may be built only after all expected checkpoints, forecasts,
+metadata, and origin arrays validate.
 
-Nested task-then-seed bootstrap contrasts use 10,000 replicates. Their intervals are
-descriptive because the `S` and `MS` views of each panel overlap and should not be
-treated as independent datasets.
+## Metrics
 
-![Descriptive bootstrap contrasts](figures/regime_gated_mamba_bootstrap_contrasts.png)
+For truth `y`, prediction `y_hat`, and the training-window scale
+`s = mean((y_t - y_(t-1))^2)`, the active report writes:
 
-The model is not the best-performing system for every task or horizon. In particular,
-PatchTST and TimesNet are stronger comparators at the longest horizons in parts of the
-reference suite. Financial levels, a small number of overlapping panels, and a
-retrospective evaluation boundary limit generalization claims and rule out trading or
-economic-inference claims.
+| Metric | Definition | Primary use |
+| --- | --- | --- |
+| MAE | `mean(abs(y - y_hat))` | Level-scale absolute error |
+| MSE | `mean((y - y_hat)^2)` | Squared level error |
+| RMSE | `sqrt(MSE)` | Level-scale comparison |
+| RMSSE | `sqrt(MSE / s)` | Scale-normalized comparison |
 
-All per-seed metrics, source identifiers, and generated summary inputs are located in
-[`reproducibility/financial_reference_evaluation_v1/metrics`](../reproducibility/financial_reference_evaluation_v1/metrics).
+Each metric is reported twice:
+
+- **Path**: all leads in every rolling forecast origin. `path_rmsse` is the primary
+  ranking metric.
+- **Terminal**: only the final lead at each horizon. It is secondary and must not
+  replace the path metric in the main ranking.
+
+When learned results are available, they will be summarized by task, horizon, model,
+and five-seed mean and standard deviation. Short, middle, and long horizons must be
+shown separately rather than collapsed into one unqualified average.
+
+## Planned Analysis After Training
+
+The report builder will write per-seed and aggregate MAE, RMSE, and RMSSE tables,
+cell ranks, Regime-Gated Mamba contrasts against the three deterministic references
+and its ungated ablation, and a nested task/seed moving-origin block bootstrap. The
+bootstrap uses 10,000 replicates, block length equal to the horizon, and Holm
+adjustment across the complete contrast family. It is descriptive: four v1 panels or
+eighteen related financial targets do not justify a claim of broad statistical
+generalization on their own.
+
+The 2023--2026 period has already been seen. Any completed report must be described
+as retrospective, protocol-matched evidence; it cannot establish prospective
+forecasting performance, trading value, or economic causality.

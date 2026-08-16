@@ -1,0 +1,26 @@
+{
+  "config_sha256": "a6b52a50cf3fd1d0639d842e78e4b199858800cd009009fb0da22677842a8ab3",
+  "git_commit": "f5a694d3f18565af2cd46a6f7005027d92c13a1f",
+  "git_status_at_profile": {
+    "changed_path_count": 108,
+    "dirty": true
+  },
+  "models": [
+    "RegimeGatedMamba",
+    "UngatedRegimeLinearMamba",
+    "PatchTST",
+    "TimesNet"
+  ],
+  "packages": {
+    "mamba-ssm": "2.3.1",
+    "numpy": "1.23.5",
+    "pandas": "2.3.3",
+    "torch": "2.8.0"
+  },
+  "platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+  "profile_policy": "fixed S-only single-target CUDA inference workload; no trained checkpoint is loaded",
+  "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+  "protocol_version": "financial_s_only_retrospective_v2",
+  "python": "3.9.25 (main, Nov  3 2025, 22:33:05) \n[GCC 11.2.0]",
+  "task": "financial_cross_asset_gld_s"
+}

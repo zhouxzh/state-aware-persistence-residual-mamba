@@ -1,0 +1,102 @@
+{
+  "models": [
+    {
+      "model_id": "RegimeGatedMamba",
+      "public_name": "Regime-Gated Mamba",
+      "role": "proposed",
+      "runtime_model": "RegimeGatedMamba",
+      "source_model_id": "PMSV5_R6"
+    },
+    {
+      "model_id": "UngatedRegimeLinearMamba",
+      "public_name": "Ungated Regime-Linear Mamba",
+      "role": "ablation",
+      "runtime_model": "RegimeGatedMamba",
+      "source_model_id": "PMSV5_R6"
+    },
+    {
+      "model_id": "MultiScalePatchMamba",
+      "public_name": "Multi-Scale Patch Mamba",
+      "role": "ablation",
+      "runtime_model": "MultiScalePatchMamba",
+      "source_model_id": "PMSV3_B0"
+    },
+    {
+      "model_id": "MultiScaleDecompositionMamba",
+      "public_name": "Multi-Scale Decomposition Mamba",
+      "role": "baseline",
+      "runtime_model": "MultiScaleDecompositionMamba",
+      "source_model_id": "MS_Mamba-MD"
+    },
+    {
+      "model_id": "InvertedMamba",
+      "public_name": "Inverted Mamba",
+      "role": "baseline",
+      "runtime_model": "InvertedMamba",
+      "source_model_id": "S_Mamba"
+    },
+    {
+      "model_id": "DecompositionMamba",
+      "public_name": "Decomposition Mamba",
+      "role": "baseline",
+      "runtime_model": "DecompositionMamba",
+      "source_model_id": "NS_Mamba-D"
+    },
+    {
+      "model_id": "DLinear",
+      "public_name": "DLinear",
+      "role": "baseline",
+      "runtime_model": "DLinear",
+      "source_model_id": "DLinear"
+    },
+    {
+      "model_id": "NLinear",
+      "public_name": "NLinear",
+      "role": "baseline",
+      "runtime_model": "NLinear",
+      "source_model_id": "NLinear"
+    },
+    {
+      "model_id": "PatchTST",
+      "public_name": "PatchTST",
+      "role": "baseline",
+      "runtime_model": "PatchTST",
+      "source_model_id": "PatchTST"
+    },
+    {
+      "model_id": "TimesNet",
+      "public_name": "TimesNet",
+      "role": "baseline",
+      "runtime_model": "TimesNet",
+      "source_model_id": "TimesNet"
+    },
+    {
+      "model_id": "iTransformer",
+      "public_name": "iTransformer",
+      "role": "baseline",
+      "runtime_model": "iTransformer",
+      "source_model_id": "iTransformer"
+    },
+    {
+      "model_id": "LastValue",
+      "public_name": "Last-value",
+      "role": "deterministic_reference",
+      "runtime_model": null,
+      "source_model_id": "LastValue"
+    },
+    {
+      "model_id": "RandomWalkDrift",
+      "public_name": "Random-walk-with-drift",
+      "role": "deterministic_reference",
+      "runtime_model": null,
+      "source_model_id": "RandomWalkDrift"
+    },
+    {
+      "model_id": "ARIMA",
+      "public_name": "ARIMA",
+      "role": "deterministic_reference",
+      "runtime_model": null,
+      "source_model_id": "ARIMA"
+    }
+  ]
+}

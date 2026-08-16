@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Retain full training and forecast artifacts for the five Mamba-family models."""
+"""Train the active S-only financial model matrix with retained artifacts."""
 
 from __future__ import annotations
 
@@ -22,9 +22,9 @@ from utils.financial.registry import public_name, runtime_model_name
 from utils.optuna_support import load_dataset_manifest
 
 
-CONFIG_PATH = REPO_ROOT / "configs" / "financial_mamba_rerun_v1.json"
-DEFAULT_OUTPUT_ROOT = REPO_ROOT / "results" / "financial_mamba_rerun_v1"
-DEFAULT_CHECKPOINT_ROOT = REPO_ROOT / "checkpoints" / "financial_mamba_rerun_v1"
+CONFIG_PATH = REPO_ROOT / "configs" / "financial_s_only_v1.json"
+DEFAULT_OUTPUT_ROOT = REPO_ROOT / "results" / "financial_s_only_retrospective_v1"
+DEFAULT_CHECKPOINT_ROOT = REPO_ROOT / "checkpoints" / "financial_s_only_retrospective_v1"
 SUMMARY_NAME = "campaign_summary.json"
 PLAN_NAME = "campaign_plan.json"
 CHECKPOINT_MANIFEST = "checkpoint_manifest.json"
@@ -68,6 +68,14 @@ def resolve_scope(config: dict, args: argparse.Namespace) -> tuple[list[str], li
     manifest_path = REPO_ROOT / config["base_protocol"]["training_manifest"]
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     tasks = select(args.tasks, sorted(manifest), "task IDs")
+    invalid_tasks = [task for task in tasks if not task.endswith("_s")]
+    if invalid_tasks:
+        raise ValueError(
+            "The active financial S-only workflow accepts only target-only tasks: "
+            + ", ".join(invalid_tasks)
+        )
+    if any(entry.get("features") != "S" for task, entry in manifest.items() if task in tasks):
+        raise ValueError("S-only manifest contains a non-S task")
     models = select(args.models, list(config["models"]), "model IDs")
     allowed_horizons = [int(value) for value in config["base_protocol"]["horizons"]]
     requested_horizons = [str(value) for value in (args.horizons or allowed_horizons)]
@@ -79,12 +87,20 @@ def resolve_scope(config: dict, args: argparse.Namespace) -> tuple[list[str], li
 
 def selection_params(config: dict, task: str, model_id: str) -> tuple[dict, Path]:
     model = config["models"][model_id]
-    selection_file = config.get("selection_file", "mamba_best_params.json")
-    path = REPO_ROOT / config["selection_snapshot"] / task / selection_file
+    selection_file = model.get("selection_file", config.get("selection_file", "mamba_best_params.json"))
+    selection_task = task
+    task_map = config.get("selection_task_map", {})
+    if task_map:
+        for family, mapped_task in task_map.items():
+            if task.startswith(f"financial_{family}_"):
+                selection_task = mapped_task
+                break
+    selection_root = model.get("selection_snapshot", config.get("selection_snapshot"))
+    path = REPO_ROOT / selection_root / selection_task / selection_file
     if not path.is_file():
         raise FileNotFoundError(f"Missing selection snapshot: {path}")
     payload = json.loads(path.read_text(encoding="utf-8"))
-    if payload.get("dataset") != task:
+    if payload.get("dataset") not in {task, selection_task}:
         raise ValueError(f"Selection snapshot dataset mismatch: {path}")
     if not str(payload.get("search_space_version", "")).startswith(config["selection_search_space_prefix"]):
         raise ValueError(f"Selection snapshot version mismatch: {path}")
@@ -103,6 +119,7 @@ def selection_params(config: dict, task: str, model_id: str) -> tuple[dict, Path
 def stage_tag(model_id: str, seed: int) -> str:
     short_names = {
         "RegimeGatedMamba": "rgm",
+        "UngatedRegimeLinearMamba": "urgm",
         "MultiScalePatchMamba": "msp",
         "InvertedMamba": "inv",
         "DecompositionMamba": "dec",
@@ -120,6 +137,7 @@ def storage_model_label(model_id: str) -> str:
     """Return a compact, deterministic directory token for retained artifacts."""
     return {
         "RegimeGatedMamba": "rgm",
+        "UngatedRegimeLinearMamba": "urgm",
         "MultiScalePatchMamba": "msp",
         "InvertedMamba": "inv",
         "DecompositionMamba": "dec",
@@ -273,13 +291,13 @@ def build_manifests(output_root: Path, checkpoint_root: Path, summary: dict) -> 
             })
             artifact_entries.append({**common, "files": files})
     checkpoint_payload = {
-        "manifest_version": "financial_mamba_rerun_checkpoint_v1",
+        "manifest_version": "financial_s_only_checkpoint_v1",
         "protocol_version": summary.get("protocol_version"),
         "entries": checkpoint_entries,
         "missing": missing,
     }
     artifact_payload = {
-        "manifest_version": "financial_mamba_rerun_artifact_v1",
+        "manifest_version": "financial_s_only_artifact_v1",
         "protocol_version": summary.get("protocol_version"),
         "entries": artifact_entries,
         "missing": missing,
@@ -290,6 +308,11 @@ def build_manifests(output_root: Path, checkpoint_root: Path, summary: dict) -> 
 
 
 def train(args: argparse.Namespace) -> dict:
+    if not getattr(args, "unlock_retrospective_test", False):
+        raise RuntimeError(
+            "Retrospective training writes a new test-result release; pass "
+            "--unlock-retrospective-test after reviewing the frozen protocol."
+        )
     config = load_config(args.config)
     tasks, models, horizons, seeds, manifest = resolve_scope(config, args)
     require_cuda()
@@ -450,6 +473,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--train-epochs", type=int, default=None)
     parser.add_argument("--patience", type=int, default=None)
     parser.add_argument("--max-runs", type=int, default=0, help="Maximum newly completed horizon runs before stopping.")
+    parser.add_argument(
+        "--unlock-retrospective-test",
+        action="store_true",
+        help="Authorize creation of a new retrospective test-result release.",
+    )
     return parser.parse_args()
 
 

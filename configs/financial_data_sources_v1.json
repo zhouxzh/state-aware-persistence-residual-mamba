@@ -1,0 +1,63 @@
+{
+  "protocol_version": "financial_data_sources_v1",
+  "data_cutoff": "2026-06-30",
+  "splits": {
+    "train_end": "2020-12-31",
+    "validation_start": "2021-01-01",
+    "validation_end": "2022-12-31",
+    "test_start": "2023-01-01",
+    "test_end": "2026-06-30"
+  },
+  "horizons": [1, 5, 20, 60, 120, 252],
+  "term_groups": {"short": [1, 5], "middle": [20, 60], "long": [120, 252]},
+  "proxy": {
+    "fallback_url": "http://127.0.0.1:7890",
+    "connect_timeout_seconds": 15,
+    "read_timeout_seconds": 90,
+    "direct_attempts": 2,
+    "proxy_attempts": 3
+  },
+  "datasets": {
+    "fx": {
+      "label": "Foreign exchange",
+      "target": "GBPUSD",
+      "source_series": ["DEXUSUK", "DEXUSEU", "DEXCAUS", "DEXJPUS", "DEXSZUS", "DEXUSAL"],
+      "columns": ["EURUSD", "CADUSD", "JPYUSD", "CHFUSD", "AUDUSD", "GBPUSD"],
+      "minimum_start": "1999-01-04",
+      "reciprocal_series": ["DEXCAUS", "DEXJPUS", "DEXSZUS"],
+      "calendar": "complete-case intersection",
+      "redistribution": "public-domain series; citation requested"
+    },
+    "yields": {
+      "label": "U.S. Treasury yield curve",
+      "target": "DGS10",
+      "source_series": ["DGS2", "DGS5", "DGS10", "DGS30"],
+      "columns": ["DGS2", "DGS5", "DGS30", "DGS10"],
+      "minimum_start": "2006-02-09",
+      "calendar": "complete-case intersection",
+      "redistribution": "public-domain series; citation requested"
+    },
+    "cross_asset": {
+      "label": "Cross-asset daily panel",
+      "target": "GLD",
+      "fred_series": ["SP500", "DCOILWTICO", "VIXCLS"],
+      "yahoo_symbol": "GLD",
+      "columns": ["SP500", "WTI", "VIX", "GLD"],
+      "minimum_start": "2016-07-25",
+      "calendar": "complete-case intersection",
+      "redistribution": "raw and processed levels remain local pending source-rights review"
+    },
+    "crypto": {
+      "label": "Cryptoasset spot panel",
+      "target": "BTCUSDT",
+      "symbols": ["BTCUSDT", "ETHUSDT", "BNBUSDT", "XRPUSDT"],
+      "archive_start": {"BTCUSDT": "2017-08", "ETHUSDT": "2017-08", "BNBUSDT": "2017-11", "XRPUSDT": "2018-05"},
+      "columns": ["ETHUSDT", "BNBUSDT", "XRPUSDT", "BTCUSDT"],
+      "minimum_start": "2018-05-04",
+      "interval": "1d",
+      "timezone": "UTC",
+      "calendar": "complete common UTC dates",
+      "redistribution": "verify Binance archive terms before public release"
+    }
+  }
+}

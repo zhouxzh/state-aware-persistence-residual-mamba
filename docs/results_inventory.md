@@ -1,86 +1,45 @@
 # Results Inventory
 
-Updated: 2026-08-10
+## Active Evidence
 
-The authoritative manuscript metrics are the frozen CSV files under
-`reproducibility/financial_reference_evaluation_v1/metrics/`. The large local result
-trees are training and audit workspaces, not the primary source for manuscript tables.
+| Location | Git status | Role |
+| --- | --- | --- |
+| `reproducibility/financial_s_only_v1/` | Tracked | v1 protocol, selections, data manifest, deterministic metrics, profile, and status. |
+| `reproducibility/financial_s_only_v2/` | Tracked | v2 protocol, selections, data manifest, deterministic metrics, profile, and status. |
+| `results/financial_s_only_retrospective_v1/` | Ignored local | Deterministic bundles plus the in-progress, restart-safe v1 learned campaign, retained forecasts, checkpoints, and summary. |
+| `results/financial_s_only_retrospective_v2/` | Ignored local | v2 deterministic forecast bundles now; later learned forecasts and reports. |
+| `checkpoints/financial_s_only_retrospective_v1/` | Ignored local | Retained checkpoints for completed v1 learned bundles. |
+| `checkpoints/financial_s_only_retrospective_v2/` | Ignored local | Reserved for the v2 learned campaign, which has not started. |
 
-## Retained local evidence
+The two tracked deterministic metric tables are compact release inputs. Their local
+bundle fields point to prediction arrays that are intentionally not committed.
 
-| Path | Use |
-| --- | --- |
-| `reproducibility/financial_reference_evaluation_v1/metrics/` | Authoritative MAE, MSE, RMSE, path RMSSE, seed, horizon, runtime, and memory tables. |
-| `reproducibility/financial_reference_evaluation_v1/candidate_selection/` | Frozen selected-model parameter snapshots. |
-| `results/manuscript_evidence/selection_safe/` | Data-shift diagnostics and selection-safe HPO summaries. |
-| `results/manuscript_evidence/merge_gate/` | Final merge-gate candidate comparison and promotion decision. |
-| `results/manuscript_evidence/profile/` | Horizon/task inference profile used during model selection. |
-| `results/manuscript_evidence/protocol_manifests/` | Development and merge-gate protocol manifests. |
-| `results/financial_reference_evaluation_v1/` | Empty active output directory for a future rerun of the canonical evaluation. |
-| `results/financial_mamba_rerun_v1/` | Local retained five-model Mamba rerun: checkpoints, raw forecasts, dates, metrics, and figures. It is separate from frozen manuscript evidence until independently reviewed. |
+## Archived Historical Material
 
-For manuscript tables and figures, start with the frozen reproducibility metrics. Use
-the retained local evidence only to explain data nonstationarity, model selection, or
-computational trade-offs.
+The mixed S/MS campaign roots and unused reference workspace were recoverably moved
+on 2026-08-12 into `backup/legacy_s_ms_20260812/`:
 
-## Archived local results
+| Original root | Files | Bytes |
+| --- | ---: | ---: |
+| `results/financial_mamba_rerun_v1` | 7,285 | 3,841,951,196 |
+| `results/financial_baseline_rerun_v1` | 7,203 | 3,839,240,640 |
+| `checkpoints/financial_mamba_rerun_v1` | 1,211 | 3,454,393,995 |
+| `checkpoints/financial_baseline_rerun_v1` | 1,201 | 17,255,178,813 |
+| `results/manuscript_evidence` | 23 | 771,323 |
 
-The following directories are recoverable under `backup/results/` and are ignored by
-Git:
+Two empty legacy roots were archived with the same manifest. The archive contains
+16,923 files totaling 28,391,535,967 bytes. Every root has an inventory SHA-256 and
+explicit restoration target in `archive_manifest.json`. The active workflow never
+reads it.
 
-- `financial_confirmatory`: raw historical baseline predictions and checkpoints used
-  by the audit.
-- `pms_mamba_publication_v1`: raw candidate predictions, checkpoints, and TensorBoard
-  outputs superseded by compact frozen metrics.
-- `optuna` and `legacy_optuna_csv`: raw studies and old dataset HPO summaries.
-- `nonstationary_analysis_v2`, `nonstationary_analysis_v3`, `nonstationary_analysis_v4`,
-  `nonstationary_analysis_v5_development`: intermediate screens and model-development
-  generations.
-- `nonstationary_analysis`, `nonstationary_metric_suite`, `nsv4`, and `nsv5`: superseded
-  analysis and profiling workspaces.
-- `backup/data/standard_benchmarks/`: local downloads of ETT, Electricity, Exchange,
-  Traffic, and Weather. They are retained for future non-financial benchmarking but
-  are outside the current financial reference evaluation.
-- `backup/tensorboard/financial_smoke/`: smoke-test TensorBoard logs with no
-  manuscript-evidence role.
-- `backup/code/optuna_tuning_legacy.py`: historical Optuna tuning entry point. The
-  selection process is complete; its selected parameter snapshots are frozen in
-  `reproducibility/financial_reference_evaluation_v1/candidate_selection/`.
+The historical source code, configurations, compact old results, and legacy figures
+were removed from the active repository head. Git history retains them, but they must
+not be reintroduced into a new S-only result table.
 
-These archives are not evidence for a new claim unless a result is explicitly traced to
-the frozen protocol and canonical model identity. Do not cite an archived smoke run,
-development screen, or obsolete model label as a final result.
+## Git Policy
 
-## Git policy
-
-`results/`, `backup/`, checkpoints, TensorBoard logs, and raw data are ignored by Git.
-The reproducible public record is the code, configuration, technical documentation,
-figures, manifests, and compact metrics committed under `reproducibility/`.
-
-The `financial_mamba_rerun_v1` campaign is intentionally local: it preserves all
-forecast and checkpoint artifacts for audit and figure generation, but it must not
-replace the frozen reference metrics or be described as an untouched test evaluation.
-
-## Checkpoint policy
-
-The root `checkpoints/financial_reference_evaluation_v1/` is reserved for the
-protocol-matched final candidate bundle. It is intentionally empty until the final
-candidate training is run with checkpoint retention enabled. The current smoke-only
-weights were moved, without deletion, to `backup/checkpoints/financial_smoke/` and
-must not be cited as manuscript evidence.
-
-Use `scripts/reproduce.py` as the only checkpoint
-workflow:
-
-```bash
-conda run -n sci-agent python scripts/reproduce.py --mode train
-conda run -n sci-agent python scripts/reproduce.py --mode replay
-conda run -n sci-agent python scripts/reproduce.py --mode verify
-```
-
-`train` creates `checkpoint.pth` files and a SHA-256 manifest for the two selected
-candidate models across the eight financial tasks, six horizons, and five seeds
-(480 horizon checkpoints). `replay` loads those files directly and writes fresh
-prediction artifacts under `results/financial_reference_evaluation_v1/checkpoint_replay/`;
-it never calls `.train()`. Baseline model forecasts are represented by the frozen
-CSV metrics because their historical weights were not retained.
+`data/`, `results/`, `checkpoints/`, `backup/`, TensorBoard output, and source-provider
+archives are ignored. Commit code, configurations, release contracts, compact metric
+tables, documentation, and generated architecture figures only. Do not commit raw
+financial series or bulk prediction/checkpoint artifacts without a separate rights and
+repository-size review.

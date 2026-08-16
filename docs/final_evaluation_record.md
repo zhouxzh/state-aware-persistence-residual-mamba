@@ -1,43 +1,48 @@
-# Financial Reference Evaluation Record
+# Final Evaluation Acceptance Record
 
-Status: complete on 2026-08-09.
+## Active Releases
 
-`financial_reference_evaluation_v1` is the frozen technical record for the selected
-Regime-Gated Mamba model and its Multi-Scale Patch Mamba ablation. It retains the
-original benchmark configuration, audits historical baseline artifacts, and makes the
-model-identity translation explicit.
+| Release | Purpose | Current status |
+| --- | --- | --- |
+| `financial_s_only_v1` | Four original target-only panels | Deterministic matrix complete; learned matrix in progress and not claim-eligible |
+| `financial_s_only_v2` | Eighteen independent financial targets | Deterministic matrix complete; learned matrix pending |
 
-## Protocol
+These releases are separate evidence records. v2 expands the target roster and
+maximizes per-series history; it does not replace v1 or permit pooled significance
+claims across all targets.
 
-- Eight tasks: `S` and `MS` views of cross-asset, cryptoasset, foreign exchange, and
-  Treasury-yield panels.
-- Six horizons: 1, 5, 20, 60, 120, and 252 retained observations.
-- Five seeds: 2023, 2024, 2025, 2026, and 2027.
-- Primary ranking metric: path RMSSE; secondary outputs include MAE, MSE, RMSE,
-  terminal-point metrics, runtime, and peak GPU memory.
-- Historical baseline recipes and data-split boundary:
-  `reproducibility/financial_reference_evaluation_v1/protocol/financial_confirmatory_source.json`.
-- Selected-model recipe and retrospective-evidence statement:
-  `configs/financial_reference_evaluation_v1.json`.
+## Frozen Protocol
 
-The selection snapshots were copied into the release; the active training path remains
-unchanged. The model identifier mapping is stored in
-`reproducibility/financial_reference_evaluation_v1/model_identity_map.json`.
+- Input policy: target-only `S` input for every task.
+- Splits: training through 2020-12-31; validation in 2021--2022; retrospective
+  evaluation in 2023-01-01 through 2026-06-30.
+- Horizons: 1, 5, 20, 60, 120, 252 retained observations.
+- Seeds: 2023, 2024, 2025, 2026, 2027 for learned models.
+- Learned roster: 11 models, including the full Regime-Gated Mamba and ungated
+  ablation.
+- Deterministic roster: Last-value, Random-walk-with-drift, ARIMA.
+- Primary metric: path RMSSE; path and terminal MAE/RMSE/RMSSE are retained.
+- Evidence label: `retrospective_protocol_matched`.
 
-## Released artifacts
+The authoritative protocol files are
+[v1 protocol](../reproducibility/financial_s_only_v1/protocol.json) and
+[v2 protocol](../reproducibility/financial_s_only_v2/protocol.json).
 
-| Artifact | Contents |
-| --- | --- |
-| `metrics/all_model_metrics_by_seed.csv` | Canonical metrics for all models, tasks, horizons, and seeds. |
-| `metrics/all_model_aggregate_metrics.csv` | Mean MAE, MSE, RMSE, path RMSSE, runtime, and memory. |
-| `metrics/regime_gated_mamba_paired_task_seed_bootstrap.csv` | 10,000-replicate descriptive bootstrap contrasts. |
-| `metrics/matched_cuda_microbenchmark.csv` | Matched forward-pass profile. |
-| `audit/legacy_baseline_audit.csv` | Audit of imported baseline evidence. |
-| `candidate_selection/` | Frozen selected-model parameter snapshots. |
+## Acceptance Criteria
 
-All release rows retain `source_model_id`, `model_id`, and `model`. This allows an
-auditor to trace prior experiment artifacts without making legacy naming part of the
-public interface.
+A release may move from `incomplete` to `verified` only when all of the following
+are true:
 
-The commands needed to rebuild or audit these outputs are in
-[reproducibility.md](reproducibility.md).
+1. Every expected task-model-seed-horizon learned unit is complete.
+2. Every checkpoint, prediction array, truth array, origin-date array, forecast-date
+   array, and metadata file matches its recorded SHA-256.
+3. The deterministic matrix matches every expected task-model-horizon cell.
+4. Learned and deterministic outputs use identical rolling origins and the same
+   training-window RMSSE denominator for each target.
+5. The report writes per-seed metrics, aggregates, contrasts, block-bootstrap output,
+   runtime environment, claim-evidence map, and valid `SHA256SUMS.json`.
+6. No task, model, seed, horizon, excluded failure, or protocol deviation is hidden.
+
+Only then may manuscript tables or figures use the released learned-model numbers.
+The result remains retrospective and must not be relabeled as a clean prospective
+test after completion.

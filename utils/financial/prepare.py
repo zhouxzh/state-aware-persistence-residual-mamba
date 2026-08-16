@@ -14,6 +14,7 @@ from utils.financial.common import (
     MANIFEST_DIR,
     PROCESSED_DIR,
     RAW_DIR,
+    REPO_ROOT,
     atomic_write_bytes,
     atomic_write_json,
     load_protocol,
@@ -41,6 +42,12 @@ KLINE_COLUMNS = [
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Prepare frozen financial benchmark panels.")
     parser.add_argument("--protocol", type=Path, default=DEFAULT_PROTOCOL)
+    parser.add_argument(
+        "--manifest-output",
+        type=Path,
+        default=MANIFEST_DIR / "training_datasets.json",
+        help="Manifest path relative to the repository unless absolute.",
+    )
     return parser.parse_args()
 
 
@@ -255,7 +262,7 @@ def training_entries(
         "protocol_sha256": protocol_sha256,
         "data_sha256": sha256_path(PROCESSED_DIR / f"{name}.csv"),
     }
-    return {
+    entries = {
         f"financial_{name}_s": {
             **common,
             "features": "S",
@@ -263,14 +270,8 @@ def training_entries(
             "dec_in": 1,
             "c_out": 1,
         },
-        f"financial_{name}_ms": {
-            **common,
-            "features": "MS",
-            "enc_in": int(panel.shape[1]),
-            "dec_in": int(panel.shape[1]),
-            "c_out": int(panel.shape[1]),
-        },
     }
+    return entries
 
 
 def write_panel(name: str, panel: pd.DataFrame) -> Path:
@@ -298,7 +299,9 @@ def main() -> None:
     quality = [quality_record(name, panel, protocol) for name, panel in panels.items()]
     training_manifest = {}
     for name, panel in panels.items():
-        training_manifest.update(training_entries(name, panel, protocol, protocol_sha256))
+        training_manifest.update(
+            training_entries(name, panel, protocol, protocol_sha256)
+        )
 
     atomic_write_json(
         MANIFEST_DIR / "quality_report.json",
@@ -309,13 +312,16 @@ def main() -> None:
             "datasets": quality,
         },
     )
-    atomic_write_json(MANIFEST_DIR / "training_datasets.json", training_manifest)
+    manifest_output = args.manifest_output
+    if not manifest_output.is_absolute():
+        manifest_output = REPO_ROOT / manifest_output
+    atomic_write_json(manifest_output, training_manifest)
     for record in quality:
         print(
             f"{record['dataset']}: rows={record['rows']} "
             f"range={record['start']}..{record['end']} splits={record['split_counts']}"
         )
-    print(f"Wrote training manifest: {MANIFEST_DIR / 'training_datasets.json'}")
+    print(f"Wrote training manifest: {manifest_output}")
 
 
 if __name__ == "__main__":

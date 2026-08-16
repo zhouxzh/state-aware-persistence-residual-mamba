@@ -1,0 +1,62 @@
+{
+  "entries": [
+    {
+      "bytes": 3727,
+      "file": "selection/financial_cross_asset_s/mamba_best_params.json",
+      "sha256": "73c9615137bc0b5d4e1fc0b5dcf349a66b1c35a97b150bf491228e2ec759f0b2",
+      "source": "release-local frozen selection snapshot",
+      "task": "financial_cross_asset_s"
+    },
+    {
+      "bytes": 3719,
+      "file": "selection/financial_cross_asset_s/baseline_best_params.json",
+      "sha256": "2591a9625193b158e51d1e08b00974464f0b0cc0fd00f0a342fe9f58593a700c",
+      "source": "release-local frozen selection snapshot",
+      "task": "financial_cross_asset_s"
+    },
+    {
+      "bytes": 3683,
+      "file": "selection/financial_crypto_s/mamba_best_params.json",
+      "sha256": "40fb2bf51ba23ab1d95e120e6954b0b4bd687b129c69287e33c2fdd5725a3dd6",
+      "source": "release-local frozen selection snapshot",
+      "task": "financial_crypto_s"
+    },
+    {
+      "bytes": 3693,
+      "file": "selection/financial_crypto_s/baseline_best_params.json",
+      "sha256": "91d8ff59eea8a9c961c553eae2f321ac529ac92212cb5495a2b44071fec5f154",
+      "source": "release-local frozen selection snapshot",
+      "task": "financial_crypto_s"
+    },
+    {
+      "bytes": 3671,
+      "file": "selection/financial_fx_s/mamba_best_params.json",
+      "sha256": "f131da437b5f5189d8a90b358b36f947d846ce71b128bafe6f42e7843ed74696",
+      "source": "release-local frozen selection snapshot",
+      "task": "financial_fx_s"
+    },
+    {
+      "bytes": 3664,
+      "file": "selection/financial_fx_s/baseline_best_params.json",
+      "sha256": "fb618f9118592d5c7cb94ca647eaec74c24d15975e6bcdae5795db20e3c23366",
+      "source": "release-local frozen selection snapshot",
+      "task": "financial_fx_s"
+    },
+    {
+      "bytes": 3693,
+      "file": "selection/financial_yields_s/mamba_best_params.json",
+      "sha256": "8183dae49514aeea1ace1b69a76b4bf6bd7681294989b78a72d086dab83cda00",
+      "source": "release-local frozen selection snapshot",
+      "task": "financial_yields_s"
+    },
+    {
+      "bytes": 3689,
+      "file": "selection/financial_yields_s/baseline_best_params.json",
+      "sha256": "682938d4e122bd49959ef21cbcfedb66e558d72a905a0212e534822c88ee2eae",
+      "source": "release-local frozen selection snapshot",
+      "task": "financial_yields_s"
+    }
+  ],
+  "protocol_version": "financial_s_only_retrospective_v2",
+  "selection_policy": "reuse the frozen pre-2023 selection for each target's source family"
+}

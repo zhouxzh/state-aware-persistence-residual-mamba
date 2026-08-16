@@ -12,6 +12,6 @@ third-party material remains subject to its own license and notice requirements.
 | Python dependencies | `requirements.txt` | Each package has its own license | Resolve in the distribution environment, not this source notice |
 
 Inherited source notices must remain attached to their corresponding files. Dataset
-provider terms are governed separately by the archived source protocol at
-`reproducibility/financial_reference_evaluation_v1/protocol/financial_confirmatory_source.json`
-and are not granted by this software license.
+provider terms are governed separately by
+`configs/financial_data_sources_v1.json` and are not granted by this software
+license.

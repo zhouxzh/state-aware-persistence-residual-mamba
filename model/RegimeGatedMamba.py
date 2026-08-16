@@ -535,15 +535,28 @@ class Model(nn.Module):
             self.decomp = None
             self.branch_scales = []
             self.branches = nn.ModuleList()
-            self.regime_input = nn.Linear(4, configs.d_model)
-            self.regime_mamba = Mamba(
-                d_model=configs.d_model,
-                d_state=configs.d_state,
-                d_conv=2,
-                expand=1,
+            self.regime_disable_gate = bool(
+                getattr(configs, "pms_regime_disable_gate", 0)
             )
-            self.regime_norm = nn.LayerNorm(configs.d_model)
-            self.regime_head = nn.Linear(configs.d_model, configs.pred_len)
+            # The ablation retains the normalized linear-change path while
+            # removing every learned gate component.  It is intentionally not
+            # a masked version of the full model, so its parameter count and
+            # runtime represent the no-gate architecture honestly.
+            if self.regime_disable_gate:
+                self.regime_input = None
+                self.regime_mamba = None
+                self.regime_norm = None
+                self.regime_head = None
+            else:
+                self.regime_input = nn.Linear(4, configs.d_model)
+                self.regime_mamba = Mamba(
+                    d_model=configs.d_model,
+                    d_state=configs.d_state,
+                    d_conv=2,
+                    expand=1,
+                )
+                self.regime_norm = nn.LayerNorm(configs.d_model)
+                self.regime_head = nn.Linear(configs.d_model, configs.pred_len)
             self.regime_gate_bias = float(getattr(configs, "pms_regime_gate_bias", 2.0))
             self.regime_gate_stride = max(
                 1, int(getattr(configs, "pms_regime_gate_stride", 1))
@@ -926,32 +939,39 @@ class Model(nn.Module):
         if self.use_norm:
             x_enc, means, stdev = self._standard_normalize(raw_x)
 
-        differences = torch.zeros_like(x_enc)
-        if x_enc.size(1) > 1:
-            differences[:, 1:] = x_enc[:, 1:] - x_enc[:, :-1]
-        features = torch.stack(
-            (
-                x_enc.mean(dim=-1),
-                x_enc.std(dim=-1, unbiased=False),
-                differences.mean(dim=-1),
-                differences.std(dim=-1, unbiased=False),
-            ),
-            dim=-1,
-        )
-        if self.regime_gate_stride > 1:
-            features = F.avg_pool1d(
-                features.transpose(1, 2),
-                kernel_size=self.regime_gate_stride,
-                stride=self.regime_gate_stride,
-                ceil_mode=True,
-            ).transpose(1, 2)
-        encoded = self.regime_input(features)
-        encoded = self.regime_norm(encoded + self.regime_mamba(encoded))
-        gate_logits = self.regime_head(encoded[:, -1, :]) + self.regime_gate_bias
-        gate = torch.sigmoid(gate_logits).unsqueeze(-1)
-        if self.regime_channel_gate is not None:
-            channel_gate = self.regime_channel_gate(raw_x).permute(0, 2, 1)
-            gate = gate * (0.5 + channel_gate)
+        if self.regime_disable_gate:
+            gate = torch.ones(
+                raw_x.size(0), raw_x.size(2), 1,
+                device=raw_x.device,
+                dtype=raw_x.dtype,
+            )
+        else:
+            differences = torch.zeros_like(x_enc)
+            if x_enc.size(1) > 1:
+                differences[:, 1:] = x_enc[:, 1:] - x_enc[:, :-1]
+            features = torch.stack(
+                (
+                    x_enc.mean(dim=-1),
+                    x_enc.std(dim=-1, unbiased=False),
+                    differences.mean(dim=-1),
+                    differences.std(dim=-1, unbiased=False),
+                ),
+                dim=-1,
+            )
+            if self.regime_gate_stride > 1:
+                features = F.avg_pool1d(
+                    features.transpose(1, 2),
+                    kernel_size=self.regime_gate_stride,
+                    stride=self.regime_gate_stride,
+                    ceil_mode=True,
+                ).transpose(1, 2)
+            encoded = self.regime_input(features)
+            encoded = self.regime_norm(encoded + self.regime_mamba(encoded))
+            gate_logits = self.regime_head(encoded[:, -1, :]) + self.regime_gate_bias
+            gate = torch.sigmoid(gate_logits).unsqueeze(-1)
+            if self.regime_channel_gate is not None:
+                channel_gate = self.regime_channel_gate(raw_x).permute(0, 2, 1)
+                gate = gate * (0.5 + channel_gate)
         self._last_regime_gate = gate
 
         seq_last = x_enc[:, -1:, :]

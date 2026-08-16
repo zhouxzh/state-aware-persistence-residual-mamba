@@ -1,0 +1,1010 @@
+{
+  "financial_cross_asset_gld_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "cross_asset_gld.csv",
+    "data_sha256": "863d96d8c2a96396cb82602c95ce06221ee553713cd6bd48bf525f4b20e192b9",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 5436,
+    "source_id": "Yahoo:GLD",
+    "split_counts": {
+      "test": 875,
+      "train": 4058,
+      "validation": 503
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "2004-11-18",
+    "target": "GLD",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_cross_asset_sp500_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "cross_asset_sp500.csv",
+    "data_sha256": "409009c0ca300fd7b54faf3f72be17d2e708e5c55fb48f342aaa7560f3c9bca0",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 4,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 2497,
+    "source_id": "FRED:SP500",
+    "split_counts": {
+      "test": 875,
+      "train": 1119,
+      "validation": 503
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "2016-07-25",
+    "target": "SP500",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_cross_asset_vix_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "cross_asset_vix.csv",
+    "data_sha256": "91a9d86fec5f6c0e83f66f4e63f89d68de347520c35d00e3bb409cdc9c696a44",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 7,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 9219,
+    "source_id": "FRED:VIXCLS",
+    "split_counts": {
+      "test": 901,
+      "train": 7810,
+      "validation": 508
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1990-01-02",
+    "target": "VIX",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_cross_asset_wti_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "cross_asset_wti.csv",
+    "data_sha256": "9fa1a058ac598ff2ebdb8f0807854e43dc53c7fd660cc670430cdaadfc801789",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 10192,
+    "source_id": "FRED:DCOILWTICO",
+    "split_counts": {
+      "test": 869,
+      "train": 8821,
+      "validation": 502
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1986-01-02",
+    "target": "WTI",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_crypto_bnbusdt_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "crypto_bnbusdt.csv",
+    "data_sha256": "888d7b0e38594cead1e7a27301678d6e675114efa25ee80e5f622c95a29bc7dc",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 1,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 3159,
+    "source_id": "Binance:BNBUSDT",
+    "split_counts": {
+      "test": 1277,
+      "train": 1152,
+      "validation": 730
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "2017-11-06",
+    "target": "BNBUSDT",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "close"
+  },
+  "financial_crypto_btcusdt_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "crypto_btcusdt.csv",
+    "data_sha256": "db7ece9328207289b6a0a7319846a76266c27040ed24103b97fe0ae0b24a6782",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 1,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 3240,
+    "source_id": "Binance:BTCUSDT",
+    "split_counts": {
+      "test": 1277,
+      "train": 1233,
+      "validation": 730
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "2017-08-17",
+    "target": "BTCUSDT",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "close"
+  },
+  "financial_crypto_ethusdt_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "crypto_ethusdt.csv",
+    "data_sha256": "351cf79929306e169e5f758c19eb764a3a86db1646380f0b05e4e904cf01af9d",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 1,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 3240,
+    "source_id": "Binance:ETHUSDT",
+    "split_counts": {
+      "test": 1277,
+      "train": 1233,
+      "validation": 730
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "2017-08-17",
+    "target": "ETHUSDT",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "close"
+  },
+  "financial_crypto_xrpusdt_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "crypto_xrpusdt.csv",
+    "data_sha256": "c55530938b39f7e607b8ca20da5420b12c15061cfc56a5b1c79b26448522b56b",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 1,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 2980,
+    "source_id": "Binance:XRPUSDT",
+    "split_counts": {
+      "test": 1277,
+      "train": 973,
+      "validation": 730
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "2018-05-04",
+    "target": "XRPUSDT",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "close"
+  },
+  "financial_fx_audusd_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "fx_audusd.csv",
+    "data_sha256": "0bbe94983160d6547afba3e205b5051c80074ffbd05befd20d0b7fd51ee1716d",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 10,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 13908,
+    "source_id": "FRED:DEXUSAL",
+    "split_counts": {
+      "test": 874,
+      "train": 12535,
+      "validation": 499
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1971-01-04",
+    "target": "AUDUSD",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_fx_cadusd_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "fx_cadusd.csv",
+    "data_sha256": "5e070b6d7d360dd33322d0519ca19ba1e747afac43e9ede3703ad63d0a92cb9d",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 13921,
+    "source_id": "FRED:DEXCAUS",
+    "split_counts": {
+      "test": 874,
+      "train": 12548,
+      "validation": 499
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1971-01-04",
+    "target": "CADUSD",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "reciprocal"
+  },
+  "financial_fx_chfusd_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "fx_chfusd.csv",
+    "data_sha256": "daf76b5680d31d86894045465024b1b7811a3580250ec2f0a0500f3634054dda",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 10,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 13915,
+    "source_id": "FRED:DEXSZUS",
+    "split_counts": {
+      "test": 874,
+      "train": 12542,
+      "validation": 499
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1971-01-04",
+    "target": "CHFUSD",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "reciprocal"
+  },
+  "financial_fx_eurusd_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "fx_eurusd.csv",
+    "data_sha256": "fa55c0fd705985a20d927233c39a0d06c6389b158f31c69ab34c40cb75901b8f",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 6894,
+    "source_id": "FRED:DEXUSEU",
+    "split_counts": {
+      "test": 874,
+      "train": 5521,
+      "validation": 499
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1999-01-04",
+    "target": "EURUSD",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_fx_gbpusd_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "fx_gbpusd.csv",
+    "data_sha256": "e59d40969bf6a1c3eee250108e592e0502deabe64b66ccc5470fa04206881254",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 10,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 13915,
+    "source_id": "FRED:DEXUSUK",
+    "split_counts": {
+      "test": 874,
+      "train": 12542,
+      "validation": 499
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1971-01-04",
+    "target": "GBPUSD",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_fx_jpyusd_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "fx_jpyusd.csv",
+    "data_sha256": "9f280b37a249e369d41093c2d86e2a01db00ef8f53f3a840b6601dd2ee91a25d",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 18,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 13909,
+    "source_id": "FRED:DEXJPUS",
+    "split_counts": {
+      "test": 874,
+      "train": 12536,
+      "validation": 499
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1971-01-04",
+    "target": "JPYUSD",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "reciprocal"
+  },
+  "financial_yields_dgs10_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "yields_dgs10.csv",
+    "data_sha256": "13d553b1003a354cf67069ae1886ed3b4ff5db56635e45cf03220a1dfcacc91e",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 16108,
+    "source_id": "FRED:DGS10",
+    "split_counts": {
+      "test": 873,
+      "train": 14735,
+      "validation": 500
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1962-01-02",
+    "target": "DGS10",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_yields_dgs2_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "yields_dgs2.csv",
+    "data_sha256": "6bfc7f572a3d8835af781f20b837029d0bebb3b2727563765fa75a499a05418d",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 12516,
+    "source_id": "FRED:DGS2",
+    "split_counts": {
+      "test": 873,
+      "train": 11143,
+      "validation": 500
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1976-06-01",
+    "target": "DGS2",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_yields_dgs30_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "yields_dgs30.csv",
+    "data_sha256": "2a627d84ff04d8c5404647639b7fa0a557bc063c4f67fdff1ad021f61804be6f",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 12338,
+    "source_id": "FRED:DGS30",
+    "split_counts": {
+      "test": 873,
+      "train": 10965,
+      "validation": 500
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1977-02-15",
+    "target": "DGS30",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  },
+  "financial_yields_dgs5_s": {
+    "c_out": 1,
+    "data": "custom",
+    "data_path": "yields_dgs5.csv",
+    "data_sha256": "168b464225547a917c315aa4696f5366102b5dc9e171e0c1f0d9eb110c5fc64c",
+    "dec_in": 1,
+    "duplicate_dates": 0,
+    "enc_in": 1,
+    "end": "2026-06-30",
+    "features": "S",
+    "freq": "d",
+    "horizons": [
+      1,
+      5,
+      20,
+      60,
+      120,
+      252
+    ],
+    "maximum_calendar_gap_days": 5,
+    "missing_cells": 0,
+    "protocol_sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa",
+    "protocol_version": "financial_s_only_retrospective_v2",
+    "root_path": "data/financial/targets",
+    "rows": 16108,
+    "source_id": "FRED:DGS5",
+    "split_counts": {
+      "test": 873,
+      "train": 14735,
+      "validation": 500
+    },
+    "split_dates": {
+      "test_end": "2026-06-30",
+      "test_start": "2023-01-01",
+      "train_end": "2020-12-31",
+      "validation_end": "2022-12-31",
+      "validation_start": "2021-01-01"
+    },
+    "start": "1962-01-02",
+    "target": "DGS5",
+    "term_groups": {
+      "long": [
+        120,
+        252
+      ],
+      "middle": [
+        20,
+        60
+      ],
+      "short": [
+        1,
+        5
+      ]
+    },
+    "transform": "level"
+  }
+}

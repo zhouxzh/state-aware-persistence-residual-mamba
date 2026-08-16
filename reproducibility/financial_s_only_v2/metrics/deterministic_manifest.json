@@ -1,0 +1,38 @@
+{
+  "expected_rows": 324,
+  "horizons": [
+    1,
+    5,
+    20,
+    60,
+    120,
+    252
+  ],
+  "models": [
+    "LastValue",
+    "RandomWalkDrift",
+    "ARIMA"
+  ],
+  "protocol_version": "financial_s_only_retrospective_v2",
+  "tasks": [
+    "financial_cross_asset_gld_s",
+    "financial_cross_asset_sp500_s",
+    "financial_cross_asset_vix_s",
+    "financial_cross_asset_wti_s",
+    "financial_crypto_bnbusdt_s",
+    "financial_crypto_btcusdt_s",
+    "financial_crypto_ethusdt_s",
+    "financial_crypto_xrpusdt_s",
+    "financial_fx_audusd_s",
+    "financial_fx_cadusd_s",
+    "financial_fx_chfusd_s",
+    "financial_fx_eurusd_s",
+    "financial_fx_gbpusd_s",
+    "financial_fx_jpyusd_s",
+    "financial_yields_dgs10_s",
+    "financial_yields_dgs2_s",
+    "financial_yields_dgs30_s",
+    "financial_yields_dgs5_s"
+  ],
+  "written_rows": 324
+}
