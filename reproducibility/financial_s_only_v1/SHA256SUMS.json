@@ -25,9 +25,9 @@
     "sha256": "63ee444b16bfe5beec32d5a01fff0588d6a99569a74ec5542a418ad7ffe25358"
   },
   {
-    "bytes": 7946,
+    "bytes": 6038,
     "path": "runtime_environment.json",
-    "sha256": "03e29891665b6bd586672e0dd47b4e8dc473d026f47f04dac22bbfaac8b46beb"
+    "sha256": "1328fd8126bbc7e46aa8a18f039aaef1d3d3a7d3beefc1be81944a11e34c1504"
   },
   {
     "bytes": 421,
@@ -75,14 +75,14 @@
     "sha256": "c1ae891c25c441cb8e14aa0b47af7e12d1dc9aabf5db28d2ac36ad09a9e7591a"
   },
   {
-    "bytes": 7788,
+    "bytes": 8262,
     "path": "metrics/paired_block_bootstrap.csv",
-    "sha256": "e1456802a450821ed9f40a24758dbab88127bc211a5ec875e3049b2a1b733974"
+    "sha256": "e43ab7bdbff41bbb0687424e029cd6aea76ed62bae3efe0e030311738d752f71"
   },
   {
-    "bytes": 54600,
+    "bytes": 63818,
     "path": "metrics/paired_contrasts.csv",
-    "sha256": "bb2987897105a01a36a58965a1360047ce65b0c14b2d26a7969b2af89471310c"
+    "sha256": "db12b81ac3e22513b2ad220c3aaf5452f9a650fcea7e25d604a265dad9ef1fae"
   },
   {
     "bytes": 3693,

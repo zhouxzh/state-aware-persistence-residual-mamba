@@ -100,6 +100,8 @@ def run(args: argparse.Namespace) -> dict:
         return mamba_rerun.train(campaign_args(args))
     if args.stage == "replay":
         return mamba_rerun.replay(campaign_args(args))
+    if args.stage == "replay-verify":
+        return mamba_rerun.verify_replay(campaign_args(args))
     if args.stage == "profile":
         return s_only_profile.run(profile_args(args))
     if args.stage == "report":
@@ -114,7 +116,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--release", choices=sorted(RELEASES), default="v1")
     parser.add_argument(
         "--stage",
-        choices=("setup", "plan", "deterministic", "train", "replay", "profile", "report", "verify"),
+        choices=("setup", "plan", "deterministic", "train", "replay", "replay-verify", "profile", "report", "verify"),
         required=True,
     )
     parser.add_argument("--tasks", nargs="+", default=["ALL"])

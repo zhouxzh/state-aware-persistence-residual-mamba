@@ -51,8 +51,9 @@ def expected_tasks(protocol: dict, manifest: dict) -> list[str]:
     return sorted(tasks)
 
 
-def _mean_loss(truth: np.ndarray, prediction: np.ndarray) -> np.ndarray:
-    return np.mean(np.square(truth - prediction), axis=(1, 2))
+def _mean_scaled_loss(truth: np.ndarray, prediction: np.ndarray, scale: float) -> np.ndarray:
+    """Return one training-scale-normalized squared loss per forecast origin."""
+    return np.mean(np.square(truth - prediction), axis=(1, 2)) / float(scale)
 
 
 def learned_rows(config: dict, protocol: dict, manifest: dict, output_root: Path, checkpoint_root: Path) -> tuple[list[dict], dict, list[str]]:
@@ -119,7 +120,10 @@ def learned_rows(config: dict, protocol: dict, manifest: dict, output_root: Path
                         **{f"terminal_{name}": value for name, value in terminal_values.items()},
                         "setting": setting,
                     })
-                    losses[(task, model_id, horizon, seed)] = (origins, _mean_loss(truth, prediction))
+                    losses[(task, model_id, horizon, seed)] = (
+                        origins,
+                        _mean_scaled_loss(truth, prediction, scales[task]),
+                    )
     return rows, losses, problems
 
 
@@ -131,6 +135,7 @@ def deterministic_rows(config: dict, protocol: dict, manifest: dict, output_root
     tasks = expected_tasks(protocol, manifest)
     models = list(config["deterministic_models"])
     horizons = [int(value) for value in config["base_protocol"]["horizons"]]
+    scales = target_scales({task: manifest[task] for task in tasks}, protocol)
     expected = {(task, model, horizon) for task in tasks for model in models for horizon in horizons}
     observed = {(str(row.dataset), str(row.model_id), int(row.horizon)) for row in table.itertuples()}
     problems = []
@@ -168,7 +173,10 @@ def deterministic_rows(config: dict, protocol: dict, manifest: dict, output_root
         if any(metadata.get(name) != value for name, value in expected_metadata.items()):
             problems.append(f"metadata_deterministic:{row['dataset']}:{row['model_id']}:h{row['horizon']}")
             continue
-        losses[(row["dataset"], row["model_id"], int(row["horizon"]), "deterministic")] = (origins, _mean_loss(truth, prediction))
+        losses[(row["dataset"], row["model_id"], int(row["horizon"]), "deterministic")] = (
+            origins,
+            _mean_scaled_loss(truth, prediction, scales[row["dataset"]]),
+        )
     return table.to_dict("records"), losses, problems
 
 
@@ -212,9 +220,9 @@ def contrasts(protocol: dict, learned_losses: dict, deterministic_losses: dict) 
                             reference_seed = seed
                         if not np.array_equal(origins, ref_origins):
                             raise ValueError(f"Origin mismatch for {task}/{model_id}/{reference}/h{horizon}")
-                        difference = loss - ref_loss
                         series_key = (task, model_id, reference, horizon, seed)
-                        loss_series[series_key] = difference
+                        loss_series[series_key] = (loss, ref_loss)
+                        difference = loss - ref_loss
                         rows.append({
                             "dataset": task,
                             "model_id": model_id,
@@ -223,21 +231,20 @@ def contrasts(protocol: dict, learned_losses: dict, deterministic_losses: dict) 
                             "reference_seed": reference_seed,
                             "horizon": horizon,
                             "origin_count": len(difference),
-                            "mean_path_mse_difference": float(np.mean(difference)),
+                            "mean_path_scaled_mse_difference": float(np.mean(difference)),
+                            "mean_path_rmsse_difference": float(np.sqrt(np.mean(loss)) - np.sqrt(np.mean(ref_loss))),
                             "win_fraction_vs_reference": float(np.mean(difference < 0.0)),
                         })
     return pd.DataFrame(rows), loss_series
 
 
-def _moving_block_sample(values: np.ndarray, block_length: int, rng: np.random.Generator) -> np.ndarray:
-    """Sample a series to its original length from circular moving blocks."""
-    values = np.asarray(values, dtype=float)
-    count = len(values)
+def _moving_block_indices(count: int, block_length: int, rng: np.random.Generator) -> np.ndarray:
+    """Sample paired forecast-origin indices from circular moving blocks."""
     if count == 0:
         raise ValueError("Cannot bootstrap an empty origin-level loss series")
     starts = rng.integers(0, count, size=int(np.ceil(count / block_length)))
     offsets = np.arange(block_length)
-    return values[(starts[:, None] + offsets[None, :]) % count].reshape(-1)[:count]
+    return ((starts[:, None] + offsets[None, :]) % count).reshape(-1)[:count]
 
 
 def _holm_adjust(p_values: list[float]) -> list[float]:
@@ -268,11 +275,17 @@ def block_bootstrap(contrasts_table: pd.DataFrame, loss_series: dict) -> pd.Data
             for task in rng.choice(tasks, size=len(tasks), replace=True):
                 seed_values = []
                 for seed in rng.choice(task_to_seeds[task], size=len(task_to_seeds[task]), replace=True):
-                    difference = loss_series[(task, model_id, reference, int(horizon), int(seed))]
-                    seed_values.append(float(np.mean(_moving_block_sample(difference, block_length, rng))))
+                    model_loss, reference_loss = loss_series[(task, model_id, reference, int(horizon), int(seed))]
+                    indices = _moving_block_indices(len(model_loss), block_length, rng)
+                    seed_values.append(
+                        float(
+                            np.sqrt(np.mean(model_loss[indices]))
+                            - np.sqrt(np.mean(reference_loss[indices]))
+                        )
+                    )
                 task_means.append(float(np.mean(seed_values)))
             samples[index] = float(np.mean(task_means))
-        observed = group["mean_path_mse_difference"].to_numpy(dtype=float)
+        observed = group["mean_path_rmsse_difference"].to_numpy(dtype=float)
         # Two-sided bootstrap sign probability is descriptive; Holm correction
         # covers the model/reference/horizon family in this release.
         p_value = 2.0 * min(float(np.mean(samples <= 0.0)), float(np.mean(samples >= 0.0)))
@@ -282,14 +295,14 @@ def block_bootstrap(contrasts_table: pd.DataFrame, loss_series: dict) -> pd.Data
             "horizon": int(horizon),
             "task_cluster_count": int(len(tasks)),
             "task_seed_cluster_count": int(len(group)),
-            "mean_path_mse_difference": float(np.mean(observed)),
+            "mean_path_rmsse_difference": float(np.mean(observed)),
             "bootstrap_ci_low": float(np.quantile(samples, 0.025)),
             "bootstrap_ci_high": float(np.quantile(samples, 0.975)),
             "bootstrap_replicates": BOOTSTRAP_REPLICATES,
             "bootstrap_seed": BOOTSTRAP_SEED,
             "origin_block_length": block_length,
             "p_value_descriptive": min(p_value, 1.0),
-            "interpretation": "negative favors the named model; task, seed, and overlapping forecast origins are resampled as dependent clusters",
+            "interpretation": "negative favors the named model; paired path-RMSSE differences are resampled over task, seed, and overlapping forecast-origin clusters",
         })
     table = pd.DataFrame(rows)
     table["p_value_holm"] = _holm_adjust(table["p_value_descriptive"].tolist())

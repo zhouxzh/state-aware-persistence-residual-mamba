@@ -1,0 +1,79 @@
+{
+  "figures": {
+    "financial_s_only_v1_accuracy_efficiency": {
+      "alt_text": "A log-runtime scatterplot of learned model accuracy rank, with lower rank better.",
+      "description": "Learned-model mean rank versus campaign runtime."
+    },
+    "financial_s_only_v1_illustrative_forecasts_h252": {
+      "alt_text": "Four time-series panels showing observed history and future alongside selected model forecasts at the latest h252 origin.",
+      "description": "Latest-origin h252 trajectory examples, seed 2023 for learned models."
+    },
+    "financial_s_only_v1_path_rmsse_by_task_horizon": {
+      "alt_text": "Four line charts, one per S-only task, with path RMSSE across six forecast horizons for all models.",
+      "description": "All model path-RMSSE trajectories within each v1 target-only task."
+    },
+    "financial_s_only_v1_path_rmsse_rank_heatmap": {
+      "alt_text": "A heatmap of ranks one through fourteen for every model across four task groups and six horizons.",
+      "description": "All model path-RMSSE ranks for every v1 task-horizon cell."
+    }
+  },
+  "notes": [
+    "All rank and metric figures use the checksum-covered release tables.",
+    "The forecast trajectory display is illustrative and is not used for aggregate performance claims.",
+    "Raw MAE and RMSE remain task-specific; only RMSSE ranks are compared across task families."
+  ],
+  "output_files": [
+    {
+      "path": "docs/figures/financial_s_only_v1_path_rmsse_rank_heatmap.pdf",
+      "sha256": "7e75e5790f6de15175aa15cc06fb0234cc5aa6b63f057e41b632b3cd0dcc0e54"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v1_path_rmsse_rank_heatmap.png",
+      "sha256": "2ab5f2685456de71b0e502bc7145320b49f69023a76635ef17715795b81b5e27"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v1_path_rmsse_by_task_horizon.pdf",
+      "sha256": "488f534d3f3db097119b0e9a311288e1e67b8edcc03284fd1e1c59248a117e6a"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v1_path_rmsse_by_task_horizon.png",
+      "sha256": "0e55f99416acb9c618c362023ac2939f048aa8ed307a15230d3f8e5556216a4d"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v1_accuracy_efficiency.pdf",
+      "sha256": "995f01333e084a1a878ac301e3f1c5db1c63ac278d7d20fd8024d772b23cf2e3"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v1_accuracy_efficiency.png",
+      "sha256": "b05b99adb1f0c688634c47a9d11c5bf43ed4df0780745a30cbc5a87068ef5dc5"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v1_illustrative_forecasts_h252.pdf",
+      "sha256": "59581b3dacb0346667c18879a5f372596d94dae7933e83805b122f8e4444138e"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v1_illustrative_forecasts_h252.png",
+      "sha256": "6d941d6ebbeb91bb7c0b46153961b5f9d5f8fc71d04176e838a61a577e7c4dbe"
+    }
+  ],
+  "release": "financial_s_only_v1",
+  "release_status": "verified",
+  "source_files": [
+    {
+      "path": "reproducibility/financial_s_only_v1/metrics/metrics_aggregate.csv",
+      "sha256": "3ccec59f27a89efca1477c6d2601693cfe6c245eb12a48d53dd18fb0e46177e9"
+    },
+    {
+      "path": "reproducibility/financial_s_only_v1/metrics/metrics_by_seed.csv",
+      "sha256": "0e719711a7be455d4e582bbb1519017688c22b89b5374bf088e5750aa1aaf998"
+    },
+    {
+      "path": "reproducibility/financial_s_only_v1/metrics/deterministic_metrics.csv",
+      "sha256": "c1ae891c25c441cb8e14aa0b47af7e12d1dc9aabf5db28d2ac36ad09a9e7591a"
+    },
+    {
+      "path": "reproducibility/financial_s_only_v1/release_status.json",
+      "sha256": "0e2ce0bb58494a2bd90343935cad0f27ef15d33d42bb650c2299ce72303158aa"
+    }
+  ]
+}

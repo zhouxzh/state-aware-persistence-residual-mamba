@@ -4,12 +4,37 @@
 
 | Release | Purpose | Current status |
 | --- | --- | --- |
-| `financial_s_only_v1` | Four original target-only panels | Deterministic matrix complete; learned matrix in progress and not claim-eligible |
+| `financial_s_only_v1` | Four original target-only panels | Verified retrospective release: 1,320 learned and 72 deterministic rows |
 | `financial_s_only_v2` | Eighteen independent financial targets | Deterministic matrix complete; learned matrix pending |
 
-These releases are separate evidence records. v2 expands the target roster and
-maximizes per-series history; it does not replace v1 or permit pooled significance
-claims across all targets.
+The releases are separate evidence records. v2 expands the target roster and does
+not replace v1, pool with v1, or permit pooled significance claims across targets.
+
+## Verified v1 Acceptance Checks
+
+The v1 release satisfies the result-release checks below:
+
+1. All 4 x 11 x 5 x 6 = 1,320 learned task-model-seed-horizon rows are complete.
+2. All 4 x 3 x 6 = 72 deterministic rows are complete.
+3. Every completed learned unit records a checkpoint, prediction, truth, origin
+   dates, forecast dates, metadata, and SHA-256 values; the release verifier reports
+   no missing or mismatched artifacts.
+4. Learned and deterministic outputs use the same rolling origins and the same
+   target-specific training-window RMSSE denominator.
+5. The release contains seed-level and aggregate metrics, paired contrasts,
+   scale-normalized block-bootstrap output, the runtime environment, claim map, and
+   a checksum manifest.
+6. The verifier result is `verified` with an empty `problems` list in
+   [release_status.json](../reproducibility/financial_s_only_v1/release_status.json).
+7. A complete checkpoint replay audit on 2026-08-14 regenerated all 1,320 learned
+   bundles. `--stage replay-verify` found zero problems: replayed predictions and
+   truths had maximum absolute differences of `0.0`, and all origin and forecast
+   date indices matched their source artifacts.
+
+The replay validation record is intentionally not committed because it contains
+bulk local replay paths. It remains available at
+`results/financial_s_only_retrospective_v1/replay/replay_validation.json` on this
+machine; the frozen compact release remains the citation source.
 
 ## Frozen Protocol
 
@@ -18,31 +43,19 @@ claims across all targets.
   evaluation in 2023-01-01 through 2026-06-30.
 - Horizons: 1, 5, 20, 60, 120, 252 retained observations.
 - Seeds: 2023, 2024, 2025, 2026, 2027 for learned models.
-- Learned roster: 11 models, including the full Regime-Gated Mamba and ungated
+- Learned roster: 11 models, including full Regime-Gated Mamba and its ungated
   ablation.
-- Deterministic roster: Last-value, Random-walk-with-drift, ARIMA.
+- Deterministic roster: Last-value, Random-walk-with-drift, and ARIMA.
 - Primary metric: path RMSSE; path and terminal MAE/RMSE/RMSSE are retained.
 - Evidence label: `retrospective_protocol_matched`.
 
-The authoritative protocol files are
-[v1 protocol](../reproducibility/financial_s_only_v1/protocol.json) and
-[v2 protocol](../reproducibility/financial_s_only_v2/protocol.json).
+The authoritative protocol files are the [v1 protocol](../reproducibility/financial_s_only_v1/protocol.json)
+and [v2 protocol](../reproducibility/financial_s_only_v2/protocol.json).
 
-## Acceptance Criteria
+## Manuscript Boundary
 
-A release may move from `incomplete` to `verified` only when all of the following
-are true:
-
-1. Every expected task-model-seed-horizon learned unit is complete.
-2. Every checkpoint, prediction array, truth array, origin-date array, forecast-date
-   array, and metadata file matches its recorded SHA-256.
-3. The deterministic matrix matches every expected task-model-horizon cell.
-4. Learned and deterministic outputs use identical rolling origins and the same
-   training-window RMSSE denominator for each target.
-5. The report writes per-seed metrics, aggregates, contrasts, block-bootstrap output,
-   runtime environment, claim-evidence map, and valid `SHA256SUMS.json`.
-6. No task, model, seed, horizon, excluded failure, or protocol deviation is hidden.
-
-Only then may manuscript tables or figures use the released learned-model numbers.
-The result remains retrospective and must not be relabeled as a clean prospective
-test after completion.
+Only v1 numbers cited from its checksum-covered aggregate tables are ready for a
+technical report or manuscript draft. They must retain the retrospective label and
+the four-series scope. v2 learned results, a redesigned non-degenerate gate, or a
+new untouched test period require a new versioned release rather than an update to
+this one.

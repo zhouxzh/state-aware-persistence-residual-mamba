@@ -1,13 +1,10 @@
 # Computational Profile
 
-## Recorded Inference Profiles
+## Fixed CUDA Forward Profile
 
-The following matched CUDA forward-pass profiles were recorded for the two active
-S-only releases. They are performance measurements, not trained-model accuracy
-results. The metadata records that the working tree was dirty at measurement time;
-rerun the profile from the release commit before making a final publication claim.
-
-### v1: Original Four-Panel Release
+The following matched CUDA forward-pass profile is recorded for the v1 S-only
+release. It is a model-forward workload, not an end-to-end training measurement or
+an accuracy result.
 
 | Model | Median latency (ms) | Throughput (samples/s) | Peak allocated memory (MB) | Parameters |
 | --- | ---: | ---: | ---: | ---: |
@@ -21,45 +18,39 @@ horizon 60, batch size 32, float32, 10 warm-up iterations, three repeats of 30
 timed iterations, PyTorch 2.8.0 with CUDA 12.8, `mamba-ssm` 2.3.1, and an NVIDIA
 GeForce RTX 5090 D.
 
-### v2: Independent-Target Expansion
+The recorded v2 profile uses the same workload except for the independent GLD
+target, and is kept as a data-expansion hardware reference only. Raw tables and
+machine metadata are tracked in the release:
 
-| Model | Median latency (ms) | Throughput (samples/s) | Peak allocated memory (MB) | Parameters |
-| --- | ---: | ---: | ---: | ---: |
-| Regime-Gated Mamba | 0.2709 | 118,125 | 14.15 | 30,644 |
-| Ungated Regime-Linear Mamba | 0.0590 | 542,483 | 8.24 | 11,640 |
-| PatchTST | 0.3987 | 80,263 | 19.76 | 1,155,132 |
-| TimesNet | 10.4823 | 3,053 | 123.47 | 11,159,101 |
-
-Conditions are identical except for the S-only task
-`financial_cross_asset_gld_s` from the independent-target roster.
-
-On both fixed workloads, Regime-Gated Mamba has lower measured median latency,
-lower allocated memory, and fewer parameters than PatchTST and TimesNet. The
-ungated ablation isolates the cost of the learned gate. These observations do not
-imply faster training, better energy use, portability to other hardware, or a
-universal accuracy-efficiency tradeoff.
-
-The raw table and machine metadata are tracked in:
-
-- [matched CUDA metrics](../reproducibility/financial_s_only_v1/metrics/matched_cuda_microbenchmark.csv)
-- [profile metadata](../reproducibility/financial_s_only_v1/metrics/matched_cuda_microbenchmark.json)
+- [v1 matched CUDA metrics](../reproducibility/financial_s_only_v1/metrics/matched_cuda_microbenchmark.csv)
+- [v1 profile metadata](../reproducibility/financial_s_only_v1/metrics/matched_cuda_microbenchmark.json)
 - [v2 matched CUDA metrics](../reproducibility/financial_s_only_v2/metrics/matched_cuda_microbenchmark.csv)
 - [v2 profile metadata](../reproducibility/financial_s_only_v2/metrics/matched_cuda_microbenchmark.json)
 
-## Required Interpretation
+## Observed Campaign Runtime
 
-No learned-model accuracy matrix currently exists in v1 or v2. The profile therefore
-supports only the bounded inference statement above. Any future paper statement
-linking speed and accuracy must wait for the completed S-only learned matrix and must
-identify this exact workload separately from end-to-end training time. Before the
-release is frozen, rerun the profile on the committed source tree and retain its new
-metadata alongside the final checksums.
+The completed v1 matrix provides a separate end-to-end runtime observation. Each
+learned task-horizon-seed unit includes training and evaluation time:
 
-Run the active profile with:
+| Model | Mean seconds per bundle | Mean path-RMSSE rank across 24 cells |
+| --- | ---: | ---: |
+| Regime-Gated Mamba | 3.09 | 7.42 |
+| Ungated Regime-Linear Mamba | 1.13 | 7.71 |
+| PatchTST | 3.58 | 10.54 |
+| TimesNet | 100.28 | 12.21 |
+| NLinear | 0.64 | 6.88 |
+| DLinear | 0.82 | 10.50 |
 
-```bash
-conda run --no-capture-output -n mamba python scripts/reproduce.py \
-  --workflow financial-s-only --release v1 --stage profile
-conda run --no-capture-output -n mamba python scripts/reproduce.py \
-  --workflow financial-s-only --release v2 --stage profile
-```
+Regime-Gated Mamba is 13.7% faster than PatchTST and 96.9% faster than TimesNet
+under this measured workflow. The proposed model is not the overall accuracy
+leader, so this is an observed speed-position tradeoff rather than a combined
+accuracy-and-efficiency victory. The full learned-model scatter is in
+[financial_s_only_v1_accuracy_efficiency.png](figures/financial_s_only_v1_accuracy_efficiency.png).
+
+## Interpretation Limits
+
+The fixed profile and campaign runtime are both bound to this GPU, batch shape,
+software state, retained-artifact policy, early-stopping behavior, and the v1
+series. They do not establish training-energy use, portability to other hardware,
+or a universal Mamba advantage. Rerun `--stage profile` from a clean release commit
+before using the microbenchmark in a submitted manuscript.

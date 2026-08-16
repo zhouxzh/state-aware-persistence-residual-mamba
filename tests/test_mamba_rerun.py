@@ -6,11 +6,13 @@ import json
 from argparse import Namespace
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from experiments.financial.evaluation import build_base_args, format_setting
 from experiments.financial.mamba_rerun import (
     campaign_plan,
+    compare_replay_artifacts,
     load_config,
     resolve_scope,
     selection_params,
@@ -101,3 +103,27 @@ def test_compact_storage_labels_cover_the_new_ablation() -> None:
     )
     assert "_urgm_pl252_" in run_args.model_id
     assert len(format_setting(run_args)) < 255
+
+
+def test_replay_comparison_requires_matching_forecasts_and_dates(tmp_path: Path) -> None:
+    setting = "example_setting"
+    source = tmp_path / "source" / "runs" / setting
+    replay = tmp_path / "replay" / "runs" / setting
+    source.mkdir(parents=True)
+    replay.mkdir(parents=True)
+    values = {
+        "pred.npy": np.array([[[1.0], [2.0]]]),
+        "true.npy": np.array([[[1.5], [2.5]]]),
+        "origin_dates.npy": np.array(["2024-01-01"]),
+        "forecast_dates.npy": np.array([["2024-01-02", "2024-01-03"]]),
+    }
+    for name, value in values.items():
+        np.save(source / name, value)
+        np.save(replay / name, value)
+    comparison = compare_replay_artifacts(tmp_path / "source", tmp_path / "replay", setting)
+    assert comparison["valid"] is True
+    assert comparison["prediction_max_abs_difference"] == 0.0
+    np.save(replay / "pred.npy", values["pred.npy"] + 1e-3)
+    comparison = compare_replay_artifacts(tmp_path / "source", tmp_path / "replay", setting)
+    assert comparison["valid"] is False
+    assert comparison["problems"] == ["value:pred.npy"]

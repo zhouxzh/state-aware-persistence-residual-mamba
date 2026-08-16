@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Build or verify evidence for the active S-only financial releases."""
+"""Build, profile, or visualize evidence for the active S-only financial releases."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
 COMMANDS = {
+    "figures": "utils.financial.figures",
     "report": "utils.financial.s_only_report",
     "profile": "utils.financial.s_only_profile",
 }

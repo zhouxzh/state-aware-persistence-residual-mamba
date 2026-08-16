@@ -6,7 +6,10 @@ import csv
 import json
 from pathlib import Path
 
-from utils.financial.s_only_report import checksum_problems, checksum_rows
+import numpy as np
+
+from utils.financial.s_only_report import checksum_problems, checksum_rows, contrasts
+from utils.financial.common import sha256_path
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,10 +37,11 @@ def test_protocols_have_separate_s_only_rosters_and_expected_counts() -> None:
         complete_learned = status["complete_learned_horizon_rows"]
         assert 0 <= complete_learned <= learned_rows
         # A learned seed bundle is complete only after its six frozen horizons
-        # have checkpoints and forecast artifacts. The live release may be
-        # checked while its resumable campaign is running.
+        # have checkpoints and forecast artifacts. A fully populated release
+        # can be verified; otherwise it remains a resumable incomplete record.
         assert complete_learned % len(protocol["horizons"]) == 0
-        assert status["status"] == "incomplete"
+        expected_status = "verified" if complete_learned == learned_rows else "incomplete"
+        assert status["status"] == expected_status
 
 
 def test_deterministic_metric_tables_are_complete_and_have_local_bundle_provenance() -> None:
@@ -89,3 +93,37 @@ def test_release_local_selections_and_model_map_cover_the_active_roster() -> Non
         selections = json.loads((root / "selection_manifest.json").read_text())["entries"]
         assert len(selections) == 8
         assert all(item["source"] == "release-local frozen selection snapshot" for item in selections)
+
+
+def test_paired_contrasts_use_scale_normalized_path_rmsse() -> None:
+    origins = np.array(["2024-01-01", "2024-01-02"])
+    proposed = (origins, np.array([1.0, 4.0]))
+    references = {
+        "LastValue": (origins, np.array([4.0, 9.0])),
+        "RandomWalkDrift": (origins, np.array([4.0, 9.0])),
+        "ARIMA": (origins, np.array([4.0, 9.0])),
+        "UngatedRegimeLinearMamba": (origins, np.array([4.0, 9.0])),
+    }
+    learned = {
+        ("financial_example_s", "RegimeGatedMamba", 1, 2023): proposed,
+        ("financial_example_s", "UngatedRegimeLinearMamba", 1, 2023): references["UngatedRegimeLinearMamba"],
+    }
+    deterministic = {
+        ("financial_example_s", model_id, 1, "deterministic"): values
+        for model_id, values in references.items()
+        if model_id != "UngatedRegimeLinearMamba"
+    }
+    table, _ = contrasts({"horizons": [1], "seeds": [2023]}, learned, deterministic)
+    assert set(table.columns) >= {"mean_path_scaled_mse_difference", "mean_path_rmsse_difference"}
+    expected = np.sqrt(np.mean(proposed[1])) - np.sqrt(np.mean(references["LastValue"][1]))
+    assert np.allclose(table["mean_path_rmsse_difference"].to_numpy(), expected)
+
+
+def test_v1_figure_manifest_binds_rendered_files_to_verified_inputs() -> None:
+    manifest = json.loads((ROOT / "docs" / "figures" / "financial_s_only_v1_figure_manifest.json").read_text())
+    assert manifest["release"] == "financial_s_only_v1"
+    assert manifest["release_status"] == "verified"
+    for entry in [*manifest["source_files"], *manifest["output_files"]]:
+        path = ROOT / entry["path"]
+        assert path.is_file()
+        assert sha256_path(path) == entry["sha256"]

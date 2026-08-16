@@ -37,6 +37,8 @@ RESULT_FILES = (
     "forecast_dates.npy",
     "meta.json",
 )
+REPLAY_VALIDATION_NAME = "replay_validation.json"
+REPLAY_COMPARISON_ATOL = 1e-6
 
 
 def load_config(path: Path) -> dict:
@@ -424,6 +426,13 @@ def replay(args: argparse.Namespace) -> dict:
                     finally:
                         if getattr(exp, "writer", None) is not None:
                             exp.writer.close()
+                    comparison = compare_replay_artifacts(
+                        args.output_root,
+                        args.replay_output_root,
+                        setting,
+                    )
+                    if not comparison["valid"]:
+                        raise RuntimeError(f"Checkpoint replay mismatch for {setting}: {comparison['problems']}")
                     rows.append({
                         "dataset": task,
                         "model_id": model_id,
@@ -433,9 +442,92 @@ def replay(args: argparse.Namespace) -> dict:
                         "mse": float(evaluation["mse"]),
                         "rmse": float(evaluation["rmse"]),
                         "rmsse": float(evaluation["rmsse"]),
+                        "prediction_max_abs_difference": comparison["prediction_max_abs_difference"],
+                        "truth_max_abs_difference": comparison["truth_max_abs_difference"],
                     })
     atomic_write_json(args.replay_output_root / "replay_summary.json", {"entries": rows})
     return {"status": "replayed", "entries": len(rows)}
+
+
+def compare_replay_artifacts(
+    output_root: Path,
+    replay_output_root: Path,
+    setting: str,
+    atol: float = REPLAY_COMPARISON_ATOL,
+) -> dict:
+    """Compare a replayed forecast bundle with its retained source bundle."""
+    source_root = output_root / "runs" / setting
+    replay_root = replay_output_root / "runs" / setting
+    result = {
+        "setting": setting,
+        "prediction_max_abs_difference": None,
+        "truth_max_abs_difference": None,
+        "origin_dates_match": False,
+        "forecast_dates_match": False,
+        "valid": False,
+        "problems": [],
+    }
+    numeric_files = (("pred.npy", "prediction_max_abs_difference"), ("true.npy", "truth_max_abs_difference"))
+    for filename, field in numeric_files:
+        source_path = source_root / filename
+        replay_path = replay_root / filename
+        if not source_path.is_file() or not replay_path.is_file():
+            result["problems"].append(f"missing:{filename}")
+            continue
+        source = np.load(source_path, allow_pickle=False)
+        replayed = np.load(replay_path, allow_pickle=False)
+        if source.shape != replayed.shape:
+            result["problems"].append(f"shape:{filename}")
+            continue
+        maximum = float(np.max(np.abs(np.asarray(source, dtype=float) - np.asarray(replayed, dtype=float))))
+        result[field] = maximum
+        if not np.allclose(source, replayed, rtol=0.0, atol=atol):
+            result["problems"].append(f"value:{filename}")
+    for filename, field in (("origin_dates.npy", "origin_dates_match"), ("forecast_dates.npy", "forecast_dates_match")):
+        source_path = source_root / filename
+        replay_path = replay_root / filename
+        if not source_path.is_file() or not replay_path.is_file():
+            result["problems"].append(f"missing:{filename}")
+            continue
+        result[field] = bool(np.array_equal(np.load(source_path, allow_pickle=False), np.load(replay_path, allow_pickle=False)))
+        if not result[field]:
+            result["problems"].append(f"value:{filename}")
+    result["valid"] = not result["problems"]
+    return result
+
+
+def verify_replay(args: argparse.Namespace) -> dict:
+    """Validate all existing replay bundles without loading models or using CUDA."""
+    config = load_config(args.config)
+    tasks, models, horizons, seeds, _ = resolve_scope(config, args)
+    summary = load_summary(args.output_root, config)
+    entries, problems = [], []
+    for task in tasks:
+        for model_id in models:
+            for seed in seeds:
+                key = f"{task}|{model_id}|{seed}"
+                record = summary.get("runs", {}).get(key, {})
+                if not record_is_complete(record, horizons, args.output_root, args.checkpoint_root):
+                    problems.append(f"incomplete_source:{key}")
+                    continue
+                for horizon in horizons:
+                    setting = record["settings"][str(horizon)]
+                    comparison = compare_replay_artifacts(args.output_root, args.replay_output_root, setting)
+                    comparison.update({"dataset": task, "model_id": model_id, "seed": seed, "horizon": horizon})
+                    entries.append(comparison)
+                    if not comparison["valid"]:
+                        problems.append(f"mismatch:{task}|{model_id}|{seed}|h{horizon}")
+    expected_entries = len(tasks) * len(models) * len(seeds) * len(horizons)
+    result = {
+        "status": "verified" if len(entries) == expected_entries and not problems else "incomplete",
+        "expected_entries": expected_entries,
+        "validated_entries": len(entries),
+        "problems": problems,
+        "atol": REPLAY_COMPARISON_ATOL,
+        "entries": entries,
+    }
+    atomic_write_json(args.replay_output_root / REPLAY_VALIDATION_NAME, result)
+    return result
 
 
 def verify(args: argparse.Namespace) -> dict:
@@ -459,7 +551,7 @@ def verify(args: argparse.Namespace) -> dict:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode", choices=["train", "replay", "verify"], required=True)
+    parser.add_argument("--mode", choices=["train", "replay", "replay-verify", "verify"], required=True)
     parser.add_argument("--config", type=Path, default=CONFIG_PATH)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument("--checkpoint-root", type=Path, default=DEFAULT_CHECKPOINT_ROOT)
@@ -487,7 +579,7 @@ def main() -> None:
     args.output_root = args.output_root.resolve()
     args.checkpoint_root = args.checkpoint_root.resolve()
     args.replay_output_root = args.replay_output_root.resolve()
-    outcome = {"train": train, "replay": replay, "verify": verify}[args.mode](args)
+    outcome = {"train": train, "replay": replay, "replay-verify": verify_replay, "verify": verify}[args.mode](args)
     print(json.dumps(outcome, indent=2, sort_keys=True))
 
 
