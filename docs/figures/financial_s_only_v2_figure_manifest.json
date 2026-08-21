@@ -1,0 +1,131 @@
+{
+  "figures": {
+    "financial_s_only_v2_accuracy_efficiency": {
+      "alt_text": "A log-runtime scatterplot of learned model accuracy rank across one hundred and eight cells, with lower rank better.",
+      "description": "Learned-model mean rank across 108 v2 cells versus campaign runtime."
+    },
+    "financial_s_only_v2_gate_ablation_bootstrap": {
+      "alt_text": "A point-and-interval plot of the gated-minus-ungated path RMSSE difference, with negative values favoring the gate.",
+      "description": "The prespecified Regime-Gated Mamba versus ungated ablation contrast by horizon."
+    },
+    "financial_s_only_v2_path_rmsse_rank_by_family": {
+      "alt_text": "Four heatmaps showing fourteen model ranks for each independent financial target and horizon in the v2 release.",
+      "description": "All model path-RMSSE ranks across every v2 target and horizon, separated by data family."
+    },
+    "financial_s_only_v2_path_rmsse_rank_by_horizon": {
+      "alt_text": "Four line-chart panels showing every model's mean path-RMSSE rank across six horizons for each target family.",
+      "description": "Equal-cell model rank trajectories by horizon and target family."
+    },
+    "financial_s_only_v2_regime_gated_delta_vs_baselines": {
+      "alt_text": "Three target-by-horizon heatmaps of proposed-model minus reference path RMSSE, with negative values favoring the proposed model.",
+      "description": "Signed Regime-Gated Mamba path-RMSSE deltas versus LastValue, PatchTST, and TimesNet."
+    },
+    "financial_s_only_v2_regime_gated_metric_ratios": {
+      "alt_text": "Three target-by-horizon heatmaps of log two ratios for path MAE, RMSE, and RMSSE, where zero means equal to LastValue.",
+      "description": "Target-level path MAE, RMSE, and RMSSE ratios relative to LastValue."
+    },
+    "financial_s_only_v2_regime_gated_rank_by_target": {
+      "alt_text": "An eighteen-by-six heatmap showing the proposed model's rank from one through fourteen for each target and horizon.",
+      "description": "Regime-Gated Mamba path-RMSSE rank across all 18 v2 targets and six horizons."
+    },
+    "financial_s_only_v2_regime_gated_seed_stability": {
+      "alt_text": "Four boxplot panels showing five-seed Regime-Gated Mamba to LastValue path-RMSSE ratios across target families and horizons.",
+      "description": "Five-seed normalized path-RMSSE distributions relative to LastValue by family and horizon."
+    }
+  },
+  "notes": [
+    "All rank and metric figures use the checksum-covered release tables.",
+    "The forecast trajectory display is illustrative and is not used for aggregate performance claims.",
+    "Raw MAE and RMSE remain task-specific; normalized ratio figures use an explicit named reference."
+  ],
+  "output_files": [
+    {
+      "path": "docs/figures/financial_s_only_v2_path_rmsse_rank_by_family.pdf",
+      "sha256": "093386638379a863a3684bc5d0d07ca8b384df6c359b06d6ce9e1a3191d6830d"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_path_rmsse_rank_by_family.png",
+      "sha256": "8538ab9b6544d81091f405dc284517f99c98af57fbfc9a6459b4f5d8baef9ae0"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_regime_gated_rank_by_target.pdf",
+      "sha256": "3260a546fa43cd699cc67443b72671a9c2fcf52f5686b3ea9cb283888b2bd8ad"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_regime_gated_rank_by_target.png",
+      "sha256": "019fa68265c94602721847d9cfd72066f8eec1b6809c5edb84590e381a545698"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_path_rmsse_rank_by_horizon.pdf",
+      "sha256": "7ca516ea9dc052a8f3665af6af445deb8f3ef9c0d014a5b9820b6922baf70649"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_path_rmsse_rank_by_horizon.png",
+      "sha256": "ff32503dc5c3d2880fdd26ac0ff2444c0836cbf6dd35ba6d2f78098123447b52"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_regime_gated_metric_ratios.pdf",
+      "sha256": "bfe5e701d08c21f23c4a679862114ccbcc59c126f938177907e5187119cf021b"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_regime_gated_metric_ratios.png",
+      "sha256": "9279a125261e4a079f461fa8744b495746533dde4918c12fdc300a3cbc197dd8"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_regime_gated_delta_vs_baselines.pdf",
+      "sha256": "c171d6b0fd7e9495be23e45d3d066df5b1b4938a269a5378a96ae9379c83b68f"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_regime_gated_delta_vs_baselines.png",
+      "sha256": "46770ab9a1f176b133f28ebae5410fb5f2aa9b727c3c4e61ae4bf86146f72171"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_regime_gated_seed_stability.pdf",
+      "sha256": "1d6f0dacd0f2743f07ed8bf3017e26d09f1ad85d4aa36a5bde151ad239b4cad9"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_regime_gated_seed_stability.png",
+      "sha256": "150a790ac4b86d92cd5b100b76c0b308a4a7d530e98bca59d5a658317c82ca26"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_accuracy_efficiency.pdf",
+      "sha256": "c94d900b2a8af4e93acf740a7fd42de2ab1a4282338f0a6df5c5a43515cdc7c1"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_accuracy_efficiency.png",
+      "sha256": "83c9ca09da306608e21ec6965b3cbfa52b834904fb760e75079dcd0dfba837b5"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_gate_ablation_bootstrap.pdf",
+      "sha256": "d088ec39a8dc8b1c38cf841f12670eb0a7d0833c826d6649af2290b0ebcd49c2"
+    },
+    {
+      "path": "docs/figures/financial_s_only_v2_gate_ablation_bootstrap.png",
+      "sha256": "6ad8bc8cda35909628a5b6e345245518a9284e0b9c467c05be8e424b26b43dc9"
+    }
+  ],
+  "release": "financial_s_only_v2",
+  "release_status": "verified",
+  "source_files": [
+    {
+      "path": "reproducibility/financial_s_only_v2/metrics/metrics_aggregate.csv",
+      "sha256": "6e9b1ac725eaa6a7a043b73b261c18a04283bd51f0765b10d1a71913d7f04dd8"
+    },
+    {
+      "path": "reproducibility/financial_s_only_v2/metrics/metrics_by_seed.csv",
+      "sha256": "00bafe3efdd669f4e9ec9450b8237579315a0b324c5ac3cb7c2d607117298ee3"
+    },
+    {
+      "path": "reproducibility/financial_s_only_v2/metrics/deterministic_metrics.csv",
+      "sha256": "259183adb649cddb5bbc21c78673564efc7c065e7b128eb5bd04939fd59188eb"
+    },
+    {
+      "path": "reproducibility/financial_s_only_v2/release_status.json",
+      "sha256": "989d0cb32074a336739bedd45a3b5cab4f70ae8d6474d9034790ccf405428fe6"
+    },
+    {
+      "path": "reproducibility/financial_s_only_v2/metrics/paired_block_bootstrap.csv",
+      "sha256": "7e2857b4b8696bfca428a0b945aa623f4250180fe6cfb7e5d2dd3d620c1e6822"
+    }
+  ]
+}

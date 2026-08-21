@@ -1,21 +1,12 @@
 {
   "complete_deterministic_rows": 324,
-  "complete_learned_horizon_rows": 0,
+  "complete_learned_horizon_rows": 5940,
   "evidence_status": "retrospective_protocol_matched",
   "expected_deterministic_rows": 324,
   "expected_learned_horizon_rows": 5940,
-  "problems": [
-    "missing_campaign_summary",
-    "missing_release:metrics/metrics_by_seed.csv",
-    "missing_release:metrics/metrics_aggregate.csv",
-    "missing_release:metrics/paired_contrasts.csv",
-    "missing_release:metrics/paired_block_bootstrap.csv",
-    "missing_release:runtime_environment.json",
-    "missing_release:claim_evidence_map.json",
-    "missing_release:SHA256SUMS.json"
-  ],
+  "problems": [],
   "protocol_version": "financial_s_only_retrospective_v2",
-  "status": "incomplete",
+  "status": "verified",
   "tasks": [
     "financial_cross_asset_gld_s",
     "financial_cross_asset_sp500_s",

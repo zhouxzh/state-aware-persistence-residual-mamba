@@ -1,0 +1,30 @@
+{
+  "cuda": {
+    "available": true,
+    "devices": [
+      "NVIDIA GeForce RTX 5090 D"
+    ],
+    "torch_cuda": "12.8"
+  },
+  "git_commit": "8f53a8925aff607afb4575ed93890d49d8523f8d",
+  "git_status_at_report": [
+    " M reproducibility/financial_s_only_v2/metrics/matched_cuda_microbenchmark.csv",
+    " M reproducibility/financial_s_only_v2/metrics/matched_cuda_microbenchmark.json",
+    "?? reproducibility/financial_s_only_v2/metrics/metrics_aggregate.csv",
+    "?? reproducibility/financial_s_only_v2/metrics/metrics_by_seed.csv",
+    "?? reproducibility/financial_s_only_v2/metrics/paired_block_bootstrap.csv",
+    "?? reproducibility/financial_s_only_v2/metrics/paired_contrasts.csv"
+  ],
+  "packages": {
+    "causal-conv1d": "1.6.2.post1",
+    "mamba-ssm": "2.3.1",
+    "numpy": "1.23.5",
+    "optuna": "4.4.0",
+    "pandas": "2.3.3",
+    "scipy": "1.13.1",
+    "statsmodels": "0.14.6",
+    "torch": "2.8.0"
+  },
+  "platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+  "python": "3.9.25 (main, Nov  3 2025, 22:33:05) \n[GCC 11.2.0]"
+}

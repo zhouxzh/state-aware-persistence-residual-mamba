@@ -34,10 +34,23 @@ conda run --no-capture-output -n mamba python scripts/data.py release-setup --re
 the release contract. It rejects mutation after a checksum manifest exists; create
 a new versioned release instead.
 
+For the bounded exploratory gate study, create the local-only release from the
+already verified V2 inputs. This copies and rechecks the V2 files and selections;
+it does not rematerialize or modify shared data:
+
+```bash
+conda run --no-capture-output -n mamba python scripts/data.py release-setup --release v3
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v3 --stage plan
+```
+
 ## Deterministic References and Learned Matrix
 
 The deterministic stage is resumable. It writes compact metrics to the tracked
 release and retains forecast arrays in ignored local `results/` directories.
+The following uses v1 as an example; replace `v1` with `v2` to run the
+independent-target expansion. The two releases are separate evidence records and
+must not be pooled.
 
 ```bash
 conda run --no-capture-output -n mamba python scripts/reproduce.py \
@@ -73,6 +86,8 @@ conda run --no-capture-output -n mamba python scripts/reproduce.py \
   --workflow financial-s-only --release v1 --stage verify
 conda run --no-capture-output -n sci-agent python scripts/analyze.py figures \
   --release financial_s_only_v1 --output-dir docs/figures
+conda run --no-capture-output -n sci-agent python scripts/analyze.py analysis \
+  --release financial_s_only_v2 --output-dir docs/analysis/financial_s_only_v2
 ```
 
 `replay` loads retained checkpoints and writes a new ignored replay tree without
@@ -82,11 +97,52 @@ exact origin and forecast dates. `replay-verify` performs the same comparison ov
 an existing replay tree without loading a model or requiring CUDA; it writes local
 `replay_validation.json`.
 
+When a replay validation is already complete but its convenience index is partial,
+rebuild that index from the equality-validation record without loading models:
+
+```bash
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v2 --stage replay-summary
+```
+
+V1 has completed this replay audit for all 1,320 learned bundles. V2 completed
+the equivalent reload-and-array-equality replay audit for all 5,940 learned
+bundles on 2026-08-21; `replay-verify --release v2` reports `verified` with no
+problems and zero maximum prediction/truth differences. The validation record
+is intentionally local because it contains bulk replay paths. Use the same
+`replay` and `replay-verify` stages with `--release v2` to regenerate it.
+
 `profile` is a fixed CUDA forward-pass microbenchmark. `report` is blocked until
 the complete learned matrix validates, then writes metrics, scale-normalized paired
 contrasts, block-bootstrap results, runtime metadata, claim map, and checksums.
 After finalization, `verify` validates rather than rewrites the checksum-covered
 status record.
+
+`analysis` reads the verified V2 release tables and writes target-level, horizon,
+family, pairwise, normalized-metric, and seed-stability summaries under
+`docs/analysis/financial_s_only_v2/`. It does not retrain models or alter the
+checksum-covered release.
+
+The V3 run is deliberately narrower: 18 targets x 2 models x 5 seeds x horizons
+60/120/252 = 540 learned cells. It reuses frozen V2 selections, omits deterministic
+and baseline reruns, and is marked exploratory retrospective. After training,
+replay, and report generation, render only the paired gate analysis:
+
+```bash
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v3 --stage train --unlock-retrospective-test
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v3 --stage replay
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v3 --stage replay-verify
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v3 --stage report
+conda run --no-capture-output -n sci-agent python scripts/analyze.py exploratory-v3
+```
+
+V3 results, checkpoints, figures, and tables are ignored local artifacts. The
+tracked V2 release remains the authority for comparisons with PatchTST, TimesNet,
+iTransformer, and deterministic references.
 
 ## Public Entry Points
 
@@ -96,7 +152,7 @@ The four public scripts are intentionally flat:
 scripts/data.py       data preparation and release setup
 scripts/evaluate.py   compatibility entry point for the S-only workflow
 scripts/reproduce.py  S-only train, replay, report, and verification stages
-scripts/analyze.py    compact report, profile, and figure rendering
+scripts/analyze.py    derived analysis, compact report, profile, and figure rendering
 ```
 
 `run.py` remains a low-level manual experiment interface. It is not the

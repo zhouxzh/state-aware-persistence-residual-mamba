@@ -44,6 +44,18 @@ def test_protocols_have_separate_s_only_rosters_and_expected_counts() -> None:
         assert status["status"] == expected_status
 
 
+def test_v3_protocol_is_the_bounded_exploratory_gate_matrix() -> None:
+    config = json.loads((ROOT / "configs" / "financial_s_only_v3.json").read_text())
+    protocol = json.loads((ROOT / "configs" / "financial_s_only_v3_protocol.json").read_text())
+    assert config["evidence_status"] == "exploratory_retrospective"
+    assert list(config["models"]) == ["RegimeGatedMamba", "UngatedRegimeLinearMamba"]
+    assert config["deterministic_models"] == []
+    assert config["base_protocol"]["horizons"] == [60, 120, 252]
+    assert protocol["target_roster"] and len(protocol["target_roster"]) == 18
+    assert protocol["contrast_references"] == ["UngatedRegimeLinearMamba"]
+    assert len(protocol["target_roster"]) * 2 * 5 * 3 == 540
+
+
 def test_deterministic_metric_tables_are_complete_and_have_local_bundle_provenance() -> None:
     expectations = {"v1": 72, "v2": 324}
     for release, expected_count in expectations.items():
@@ -122,6 +134,16 @@ def test_paired_contrasts_use_scale_normalized_path_rmsse() -> None:
 def test_v1_figure_manifest_binds_rendered_files_to_verified_inputs() -> None:
     manifest = json.loads((ROOT / "docs" / "figures" / "financial_s_only_v1_figure_manifest.json").read_text())
     assert manifest["release"] == "financial_s_only_v1"
+    assert manifest["release_status"] == "verified"
+    for entry in [*manifest["source_files"], *manifest["output_files"]]:
+        path = ROOT / entry["path"]
+        assert path.is_file()
+        assert sha256_path(path) == entry["sha256"]
+
+
+def test_v2_figure_manifest_binds_rendered_files_to_verified_inputs() -> None:
+    manifest = json.loads((ROOT / "docs" / "figures" / "financial_s_only_v2_figure_manifest.json").read_text())
+    assert manifest["release"] == "financial_s_only_v2"
     assert manifest["release_status"] == "verified"
     for entry in [*manifest["source_files"], *manifest["output_files"]]:
         path = ROOT / entry["path"]

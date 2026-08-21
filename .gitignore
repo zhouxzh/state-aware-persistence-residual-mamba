@@ -228,6 +228,9 @@ backup/
 test_results/
 checkpoints/
 backups/
+reproducibility/financial_s_only_v2_supplement/
+docs/analysis/financial_s_only_v2_supplement/
+docs/figures/financial_s_only_v2_supplement_*
 tensorboard/
 
 # Private inventory outputs used to preserve local research archives.

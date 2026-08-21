@@ -1,0 +1,195 @@
+{
+  "analysis_version": "s_only_result_analysis_v1",
+  "claim_boundary": "retrospective target-only metrics, ablation, and fixed-workload runtime only",
+  "completed_rows": {
+    "cells": 108,
+    "deterministic": 324,
+    "learned": 5940
+  },
+  "gate_bootstrap": [
+    {
+      "bootstrap_ci_high": -0.09930871,
+      "bootstrap_ci_low": -1.1122643,
+      "horizon": 1,
+      "mean_path_rmsse_difference": -0.48949175,
+      "p_value_holm": 0.0
+    },
+    {
+      "bootstrap_ci_high": -0.06516241,
+      "bootstrap_ci_low": -0.78025495,
+      "horizon": 5,
+      "mean_path_rmsse_difference": -0.34530997,
+      "p_value_holm": 0.019
+    },
+    {
+      "bootstrap_ci_high": -0.04835827,
+      "bootstrap_ci_low": -0.5172123,
+      "horizon": 20,
+      "mean_path_rmsse_difference": -0.23771323,
+      "p_value_holm": 0.0046
+    },
+    {
+      "bootstrap_ci_high": -0.02139769,
+      "bootstrap_ci_low": -0.34327541,
+      "horizon": 60,
+      "mean_path_rmsse_difference": -0.14942945,
+      "p_value_holm": 0.1032
+    },
+    {
+      "bootstrap_ci_high": 0.01876094,
+      "bootstrap_ci_low": -0.25495703,
+      "horizon": 120,
+      "mean_path_rmsse_difference": -0.09780377,
+      "p_value_holm": 1.0
+    },
+    {
+      "bootstrap_ci_high": 0.00434335,
+      "bootstrap_ci_low": -0.0940013,
+      "horizon": 252,
+      "mean_path_rmsse_difference": -0.04331884,
+      "p_value_holm": 0.72
+    }
+  ],
+  "mean_runtime_seconds": {
+    "PatchTST": 7.669988,
+    "RegimeGatedMamba": 6.736136,
+    "TimesNet": 231.162539,
+    "UngatedRegimeLinearMamba": 2.539636,
+    "iTransformer": 12.438015
+  },
+  "pairwise_path_rmsse": [
+    {
+      "cells": 108,
+      "mean_rgm_minus_reference_path_rmsse": 0.64667027,
+      "reference_model_id": "LastValue",
+      "strict_losses": 86,
+      "strict_wins": 22,
+      "ties": 0
+    },
+    {
+      "cells": 108,
+      "mean_rgm_minus_reference_path_rmsse": 0.77113203,
+      "reference_model_id": "RandomWalkDrift",
+      "strict_losses": 78,
+      "strict_wins": 30,
+      "ties": 0
+    },
+    {
+      "cells": 108,
+      "mean_rgm_minus_reference_path_rmsse": -3.29652667,
+      "reference_model_id": "ARIMA",
+      "strict_losses": 73,
+      "strict_wins": 35,
+      "ties": 0
+    },
+    {
+      "cells": 108,
+      "mean_rgm_minus_reference_path_rmsse": -0.22717785,
+      "reference_model_id": "UngatedRegimeLinearMamba",
+      "strict_losses": 37,
+      "strict_wins": 71,
+      "ties": 0
+    },
+    {
+      "cells": 108,
+      "mean_rgm_minus_reference_path_rmsse": 0.00709159,
+      "reference_model_id": "PatchTST",
+      "strict_losses": 27,
+      "strict_wins": 81,
+      "ties": 0
+    },
+    {
+      "cells": 108,
+      "mean_rgm_minus_reference_path_rmsse": -1.14922498,
+      "reference_model_id": "TimesNet",
+      "strict_losses": 8,
+      "strict_wins": 100,
+      "ties": 0
+    },
+    {
+      "cells": 108,
+      "mean_rgm_minus_reference_path_rmsse": -0.79872338,
+      "reference_model_id": "iTransformer",
+      "strict_losses": 12,
+      "strict_wins": 96,
+      "ties": 0
+    }
+  ],
+  "primary_metric": "path_rmsse",
+  "release": "financial_s_only_v2",
+  "release_status": "verified",
+  "replay_audit": "verified",
+  "retrospective_window": [
+    "2023-01-01",
+    "2026-06-30"
+  ],
+  "rgm_by_family": [
+    {
+      "family": "Cross asset",
+      "mean_rank": 7.083333,
+      "rank1_cells": 2,
+      "top3_cells": 6
+    },
+    {
+      "family": "Crypto",
+      "mean_rank": 8.791667,
+      "rank1_cells": 0,
+      "top3_cells": 2
+    },
+    {
+      "family": "Foreign exchange",
+      "mean_rank": 5.305556,
+      "rank1_cells": 1,
+      "top3_cells": 8
+    },
+    {
+      "family": "Treasury yields",
+      "mean_rank": 4.291667,
+      "rank1_cells": 1,
+      "top3_cells": 8
+    }
+  ],
+  "rgm_by_horizon": [
+    {
+      "horizon": 1,
+      "mean_rank": 5.777778,
+      "rank1_cells": 1,
+      "top3_cells": 7
+    },
+    {
+      "horizon": 5,
+      "mean_rank": 6.333333,
+      "rank1_cells": 0,
+      "top3_cells": 2
+    },
+    {
+      "horizon": 20,
+      "mean_rank": 6.277778,
+      "rank1_cells": 1,
+      "top3_cells": 3
+    },
+    {
+      "horizon": 60,
+      "mean_rank": 7.0,
+      "rank1_cells": 0,
+      "top3_cells": 2
+    },
+    {
+      "horizon": 120,
+      "mean_rank": 6.833333,
+      "rank1_cells": 0,
+      "top3_cells": 4
+    },
+    {
+      "horizon": 252,
+      "mean_rank": 5.277778,
+      "rank1_cells": 2,
+      "top3_cells": 6
+    }
+  ],
+  "rgm_overall": {
+    "mean_path_rmsse_rank": 6.25,
+    "rank1_cells": 4,
+    "top3_cells": 24
+  }
+}

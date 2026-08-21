@@ -1,0 +1,74 @@
+{
+  "analysis_version": "s_only_result_analysis_v1",
+  "output_files": [
+    {
+      "bytes": 867,
+      "path": "docs/analysis/financial_s_only_v2/model_summary.csv",
+      "sha256": "365c11f171fd1adacb9c16050af3ca2b808b8e24fe8db2e65ef5eca7d4fcd4fb"
+    },
+    {
+      "bytes": 5472,
+      "path": "docs/analysis/financial_s_only_v2/horizon_summary.csv",
+      "sha256": "b6fc4f2ecd447c41f45e2e58c0e992e7a4433260fbe5aa2b1e8fa5b7e2aca48e"
+    },
+    {
+      "bytes": 3394,
+      "path": "docs/analysis/financial_s_only_v2/family_summary.csv",
+      "sha256": "f9884a80ea3854fb9d9a9694d8ae82566f016fab3a730be73732d625ea4e76ab"
+    },
+    {
+      "bytes": 2455,
+      "path": "docs/analysis/financial_s_only_v2/target_summary.csv",
+      "sha256": "f9a632dc332be39118686cbcc67b8f841f17b35e29183ce4b965dcce8032c780"
+    },
+    {
+      "bytes": 37570,
+      "path": "docs/analysis/financial_s_only_v2/regime_gated_cell_metrics.csv",
+      "sha256": "5872c95af3831ea5e82c57b86aeba534a92cf1fb309bcff34bc598e77943fe35"
+    },
+    {
+      "bytes": 12264,
+      "path": "docs/analysis/financial_s_only_v2/seed_stability.csv",
+      "sha256": "64e2dbae26188d8c35e138aeb3e9778f749d99448f748e57e29d4690956b5c64"
+    },
+    {
+      "bytes": 4523,
+      "path": "docs/analysis/financial_s_only_v2/summary.json",
+      "sha256": "b7ffaff09377730a70454c28c4fb231d107a730ba8c3b81cf109b2420485d2dd"
+    }
+  ],
+  "release": "financial_s_only_v2",
+  "source_files": [
+    {
+      "bytes": 912,
+      "path": "reproducibility/financial_s_only_v2/release_status.json",
+      "sha256": "989d0cb32074a336739bedd45a3b5cab4f70ae8d6474d9034790ccf405428fe6"
+    },
+    {
+      "bytes": 3084129,
+      "path": "reproducibility/financial_s_only_v2/metrics/metrics_by_seed.csv",
+      "sha256": "00bafe3efdd669f4e9ec9450b8237579315a0b324c5ac3cb7c2d607117298ee3"
+    },
+    {
+      "bytes": 637344,
+      "path": "reproducibility/financial_s_only_v2/metrics/metrics_aggregate.csv",
+      "sha256": "6e9b1ac725eaa6a7a043b73b261c18a04283bd51f0765b10d1a71913d7f04dd8"
+    },
+    {
+      "bytes": 134710,
+      "path": "reproducibility/financial_s_only_v2/metrics/deterministic_metrics.csv",
+      "sha256": "259183adb649cddb5bbc21c78673564efc7c065e7b128eb5bd04939fd59188eb"
+    },
+    {
+      "bytes": 8255,
+      "path": "reproducibility/financial_s_only_v2/metrics/paired_block_bootstrap.csv",
+      "sha256": "7e2857b4b8696bfca428a0b945aa623f4250180fe6cfb7e5d2dd3d620c1e6822"
+    }
+  ],
+  "transformations": [
+    "Ranks are computed within each target-horizon cell with lower path RMSSE better.",
+    "Raw MAE and RMSE are retained per target and are not pooled across target scales.",
+    "Cross-target metric summaries use ratios to LastValue; signed RMSSE deltas use named references.",
+    "Seed stability uses the five learned seeds and deterministic references at the same target and horizon."
+  ]
+}

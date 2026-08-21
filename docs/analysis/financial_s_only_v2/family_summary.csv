@@ -1,0 +1,57 @@
+family,model_id,model,cells,mean_path_rmsse_rank,rank1_cells,top3_cells
+Cross asset,RandomWalkDrift,Random-walk-with-drift,24,5.5,3,15
+Cross asset,ARIMA,ARIMA,24,5.791667,0,5
+Cross asset,DecompositionMamba,Decomposition Mamba,24,5.875,0,4
+Cross asset,InvertedMamba,Inverted Mamba,24,5.875,3,3
+Cross asset,NLinear,NLinear,24,6.166667,2,5
+Cross asset,MultiScalePatchMamba,Multi-Scale Patch Mamba,24,6.208333,3,5
+Cross asset,PatchTST,PatchTST,24,6.958333,5,8
+Cross asset,RegimeGatedMamba,Regime-Gated Mamba,24,7.083333,2,6
+Cross asset,LastValue,Last-value,24,7.166667,1,5
+Cross asset,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,24,8.333333,2,6
+Cross asset,DLinear,DLinear,24,9.166667,2,5
+Cross asset,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,24,9.333333,0,1
+Cross asset,TimesNet,TimesNet,24,10.041667,1,4
+Cross asset,iTransformer,iTransformer,24,11.25,0,0
+Crypto,LastValue,Last-value,24,1.958333,16,21
+Crypto,ARIMA,ARIMA,24,3.25,3,17
+Crypto,RandomWalkDrift,Random-walk-with-drift,24,3.416667,2,17
+Crypto,NLinear,NLinear,24,4.25,1,8
+Crypto,DecompositionMamba,Decomposition Mamba,24,5.5,0,4
+Crypto,InvertedMamba,Inverted Mamba,24,5.541667,0,0
+Crypto,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,24,7.375,0,0
+Crypto,MultiScalePatchMamba,Multi-Scale Patch Mamba,24,7.958333,0,0
+Crypto,RegimeGatedMamba,Regime-Gated Mamba,24,8.791667,0,2
+Crypto,PatchTST,PatchTST,24,9.291667,2,2
+Crypto,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,24,10.333333,0,1
+Crypto,iTransformer,iTransformer,24,11.833333,0,0
+Crypto,DLinear,DLinear,24,12.083333,0,0
+Crypto,TimesNet,TimesNet,24,13.416667,0,0
+Foreign exchange,LastValue,Last-value,36,2.666667,11,27
+Foreign exchange,RandomWalkDrift,Random-walk-with-drift,36,3.916667,7,17
+Foreign exchange,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,36,4.694444,3,7
+Foreign exchange,DecompositionMamba,Decomposition Mamba,36,5.138889,4,8
+Foreign exchange,ARIMA,ARIMA,36,5.194444,1,23
+Foreign exchange,RegimeGatedMamba,Regime-Gated Mamba,36,5.305556,1,8
+Foreign exchange,InvertedMamba,Inverted Mamba,36,5.888889,0,4
+Foreign exchange,MultiScalePatchMamba,Multi-Scale Patch Mamba,36,8.666667,4,4
+Foreign exchange,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,36,8.694444,0,4
+Foreign exchange,NLinear,NLinear,36,8.944444,2,3
+Foreign exchange,DLinear,DLinear,36,9.805556,2,2
+Foreign exchange,PatchTST,PatchTST,36,11.722222,1,1
+Foreign exchange,iTransformer,iTransformer,36,12.055556,0,0
+Foreign exchange,TimesNet,TimesNet,36,12.305556,0,0
+Treasury yields,LastValue,Last-value,24,1.75,14,21
+Treasury yields,RandomWalkDrift,Random-walk-with-drift,24,3.416667,0,14
+Treasury yields,ARIMA,ARIMA,24,4.041667,0,13
+Treasury yields,RegimeGatedMamba,Regime-Gated Mamba,24,4.291667,1,8
+Treasury yields,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,24,4.958333,1,7
+Treasury yields,DLinear,DLinear,24,5.25,8,8
+Treasury yields,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,24,7.0,0,0
+Treasury yields,InvertedMamba,Inverted Mamba,24,7.458333,0,1
+Treasury yields,DecompositionMamba,Decomposition Mamba,24,7.833333,0,0
+Treasury yields,MultiScalePatchMamba,Multi-Scale Patch Mamba,24,9.833333,0,0
+Treasury yields,NLinear,NLinear,24,10.916667,0,0
+Treasury yields,PatchTST,PatchTST,24,11.833333,0,0
+Treasury yields,iTransformer,iTransformer,24,12.833333,0,0
+Treasury yields,TimesNet,TimesNet,24,13.583333,0,0

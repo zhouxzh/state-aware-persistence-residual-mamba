@@ -75,6 +75,38 @@ level shifts in GLD and BTCUSDT. They are illustrative, so they do not establish
 that this is the causal reason for the aggregate ranks. The model's narrow long
 yield result may instead reflect the DGS10 path in this fixed retrospective window.
 
+## Observed v2 Position
+
+The completed v2 release expands the roster to 18 separately materialized targets
+and 108 target-horizon cells. Regime-Gated Mamba has a mean path-RMSSE rank of
+6.25, with four rank-1 cells and 24 top-three cells. Its mean rank is strongest in
+Treasury yields (4.29) and foreign exchange (5.31), but weaker in crypto (8.79).
+It is therefore not an overall accuracy leader even on the larger roster.
+
+Relative to the otherwise matched ungated model, the full gate has lower path
+RMSSE in 71 of 108 cells. The pre-specified scale-normalized paired bootstrap
+finds a Holm-corrected release-wide advantage at horizons 1, 5, and 20, but not
+at 60, 120, or 252. This establishes a bounded short-to-medium-horizon ablation
+effect for the released roster; it does not establish a universal long-horizon
+advantage or superiority to the deterministic references.
+
+The observed mean end-to-end v2 task-horizon-seed runtime is 6.74 s, compared
+with 7.67 s for PatchTST and 231.16 s for TimesNet. The fixed GLD CUDA profile
+also records 0.2665 ms median forward latency for Regime-Gated Mamba versus
+0.3838 ms for PatchTST and 10.6316 ms for TimesNet. These measurements are tied
+to the recorded hardware and recipe. The detailed metrics, figures, and limits are
+in [v2_evaluation_record.md](v2_evaluation_record.md).
+
+The target-level metric ratios explain the accuracy position more clearly than a
+single pooled score. At short horizons, the proposed model is substantially above
+LastValue on S&P 500 and crypto targets, while FX and Treasury-yield ratios remain
+near one. Its median five-seed path-RMSSE coefficient of variation is 0.0038 across
+cells, with the largest dispersion concentrated in short-horizon crypto cells.
+These observations motivate adaptive shock handling and target-family-aware
+normalization as future hypotheses; they are not causal findings from this
+retrospective release. The detailed cell table is in
+[the V2 analysis bundle](analysis/financial_s_only_v2/regime_gated_cell_metrics.csv).
+
 ## Comparison Roster
 
 Both releases define 11 learned models and three deterministic references:

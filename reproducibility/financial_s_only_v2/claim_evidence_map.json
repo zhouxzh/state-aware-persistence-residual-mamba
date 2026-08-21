@@ -1,0 +1,10 @@
+{
+  "allowed_claims": [
+    "retrospective S-only path-RMSSE, MAE, and RMSE comparisons after verifier passes",
+    "fixed-workload S-only CUDA inference comparison for profiled models"
+  ],
+  "blocked_claims": [
+    "untouched prospective-test performance"
+  ],
+  "status": "profile_available"
+}

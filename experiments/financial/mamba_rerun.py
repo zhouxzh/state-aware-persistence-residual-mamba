@@ -449,6 +449,48 @@ def replay(args: argparse.Namespace) -> dict:
     return {"status": "replayed", "entries": len(rows)}
 
 
+def rebuild_replay_summary(args: argparse.Namespace) -> dict:
+    """Rebuild the local replay index from a completed equality-validation record."""
+    config = load_config(args.config)
+    tasks, models, horizons, seeds, _ = resolve_scope(config, args)
+    path = args.replay_output_root / REPLAY_VALIDATION_NAME
+    if not path.is_file():
+        raise FileNotFoundError(f"Missing replay validation record: {path}")
+    validation = json.loads(path.read_text(encoding="utf-8"))
+    expected = len(tasks) * len(models) * len(horizons) * len(seeds)
+    entries = validation.get("entries", [])
+    requested = {
+        (task, model_id, seed, horizon)
+        for task in tasks
+        for model_id in models
+        for seed in seeds
+        for horizon in horizons
+    }
+    selected = [
+        entry for entry in entries
+        if (entry.get("dataset"), entry.get("model_id"), entry.get("seed"), entry.get("horizon")) in requested
+    ]
+    observed = {
+        (entry.get("dataset"), entry.get("model_id"), entry.get("seed"), entry.get("horizon"))
+        for entry in selected
+    }
+    if (
+        validation.get("status") != "verified"
+        or validation.get("problems")
+        or len(selected) != expected
+        or observed != requested
+        or any(not entry.get("valid") for entry in selected)
+    ):
+        raise RuntimeError("Cannot rebuild replay summary from an incomplete validation record")
+    payload = {
+        "status": "verified",
+        "source": REPLAY_VALIDATION_NAME,
+        "entries": sorted(selected, key=lambda row: (row["dataset"], row["model_id"], row["seed"], row["horizon"])),
+    }
+    atomic_write_json(args.replay_output_root / "replay_summary.json", payload)
+    return {"status": "reindexed", "entries": len(selected), "source": str(path)}
+
+
 def compare_replay_artifacts(
     output_root: Path,
     replay_output_root: Path,

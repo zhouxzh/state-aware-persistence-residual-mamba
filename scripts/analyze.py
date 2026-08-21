@@ -12,6 +12,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
 COMMANDS = {
+    "analysis": "utils.financial.result_analysis",
+    "v2-supplement": "utils.financial.v2_supplement",
     "figures": "utils.financial.figures",
     "report": "utils.financial.s_only_report",
     "profile": "utils.financial.s_only_profile",

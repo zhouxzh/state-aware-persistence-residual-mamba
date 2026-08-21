@@ -26,6 +26,12 @@ RELEASES = {
         "checkpoints": REPO_ROOT / "checkpoints" / "financial_s_only_retrospective_v2",
         "release": "financial_s_only_v2",
     },
+    "v2-supplement": {
+        "config": REPO_ROOT / "configs" / "financial_s_only_v2_supplement.json",
+        "output": REPO_ROOT / "results" / "financial_s_only_v2_supplement",
+        "checkpoints": REPO_ROOT / "checkpoints" / "financial_s_only_v2_supplement",
+        "release": "financial_s_only_v2_supplement",
+    },
 }
 
 
@@ -102,12 +108,16 @@ def run(args: argparse.Namespace) -> dict:
         return mamba_rerun.replay(campaign_args(args))
     if args.stage == "replay-verify":
         return mamba_rerun.verify_replay(campaign_args(args))
+    if args.stage == "replay-summary":
+        return mamba_rerun.rebuild_replay_summary(campaign_args(args))
     if args.stage == "profile":
         return s_only_profile.run(profile_args(args))
     if args.stage == "report":
         return s_only_report.build(report_args(args))
     if args.stage == "verify":
         return s_only_report.initialize_release_status(report_args(args))
+    if args.stage == "refresh-checksums":
+        return s_only_report.refresh_checksums(report_args(args))
     raise ValueError(f"Unsupported S-only stage: {args.stage}")
 
 
@@ -116,7 +126,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--release", choices=sorted(RELEASES), default="v1")
     parser.add_argument(
         "--stage",
-        choices=("setup", "plan", "deterministic", "train", "replay", "replay-verify", "profile", "report", "verify"),
+        choices=(
+            "setup", "plan", "deterministic", "train", "replay", "replay-verify",
+            "replay-summary", "profile", "report", "verify", "refresh-checksums",
+        ),
         required=True,
     )
     parser.add_argument("--tasks", nargs="+", default=["ALL"])

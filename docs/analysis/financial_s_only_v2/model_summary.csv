@@ -1,0 +1,15 @@
+model_id,model,cells,mean_path_rmsse_rank,rank1_cells,top3_cells,mean_runtime_seconds
+LastValue,Last-value,108,3.305556,42,74,
+RandomWalkDrift,Random-walk-with-drift,108,4.046296,12,63,
+ARIMA,ARIMA,108,4.638889,4,58,
+DecompositionMamba,Decomposition Mamba,108,5.981481,4,16,48.671378
+InvertedMamba,Inverted Mamba,108,6.157407,3,8,19.426723
+RegimeGatedMamba,Regime-Gated Mamba,108,6.25,4,24,6.736136
+UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,108,6.814815,6,21,2.539636
+NLinear,NLinear,108,7.722222,5,16,1.470236
+MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,108,8.166667,0,5,57.909771
+MultiScalePatchMamba,Multi-Scale Patch Mamba,108,8.222222,7,9,64.39615
+DLinear,DLinear,108,9.157407,12,15,1.753512
+PatchTST,PatchTST,108,10.148148,8,11,7.669988
+iTransformer,iTransformer,108,12.0,0,0,12.438015
+TimesNet,TimesNet,108,12.333333,1,4,231.162539

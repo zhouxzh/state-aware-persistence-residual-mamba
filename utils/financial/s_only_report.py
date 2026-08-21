@@ -129,6 +129,8 @@ def learned_rows(config: dict, protocol: dict, manifest: dict, output_root: Path
 
 def deterministic_rows(config: dict, protocol: dict, manifest: dict, output_root: Path) -> tuple[list[dict], dict, list[str]]:
     path = output_root / "metrics" / "deterministic_metrics.csv"
+    if not config["deterministic_models"]:
+        return [], {}, []
     if not path.is_file():
         raise FileNotFoundError(f"Missing deterministic metrics: {path}")
     table = pd.read_csv(path)
@@ -205,7 +207,7 @@ def contrasts(protocol: dict, learned_losses: dict, deterministic_losses: dict) 
     tasks = sorted({key[0] for key in learned_losses})
     horizons = [int(value) for value in protocol["horizons"]]
     seeds = [int(value) for value in protocol["seeds"]]
-    comparisons = ("LastValue", "RandomWalkDrift", "ARIMA", "UngatedRegimeLinearMamba")
+    comparisons = tuple(protocol.get("contrast_references", ("LastValue", "RandomWalkDrift", "ARIMA", "UngatedRegimeLinearMamba")))
     for task in tasks:
         for model_id in ("RegimeGatedMamba",):
             for horizon in horizons:
@@ -466,14 +468,13 @@ def verify(
     if complete_deterministic != expected_deterministic or observed_deterministic_cells != expected_deterministic_cells:
         problems.append("deterministic_row_count")
     release_root = REPO_ROOT / "reproducibility" / args.release
-    required = (
+    required = [
         "README.md",
         "protocol.json",
         "training_datasets.json",
         "model_identity_map.json",
         "selection_manifest.json",
         "config.json",
-        "metrics/deterministic_metrics.csv",
         "metrics/metrics_by_seed.csv",
         "metrics/metrics_aggregate.csv",
         "metrics/paired_contrasts.csv",
@@ -481,7 +482,9 @@ def verify(
         "runtime_environment.json",
         "claim_evidence_map.json",
         "SHA256SUMS.json",
-    )
+    ]
+    if config["deterministic_models"]:
+        required.append("metrics/deterministic_metrics.csv")
     missing_release_files = [name for name in required if not (release_root / name).is_file()]
     if missing_release_files:
         problems.extend(f"missing_release:{name}" for name in missing_release_files)
@@ -511,10 +514,21 @@ def initialize_release_status(args: argparse.Namespace) -> dict:
     return verify(args, write_status=not (release_root / "SHA256SUMS.json").is_file())
 
 
+def refresh_checksums(args: argparse.Namespace) -> dict:
+    """Refresh checksums after an audited documentation-only release repair."""
+    release_root = REPO_ROOT / "reproducibility" / args.release
+    status = verify(args, write_status=False, validate_checksums=False)
+    if status["status"] != "verified":
+        raise RuntimeError(f"Cannot refresh checksums for an incomplete release: {status['problems']}")
+    files = [path for path in release_root.rglob("*") if path.is_file() and path.name != "SHA256SUMS.json"]
+    atomic_write_json(release_root / "SHA256SUMS.json", checksum_rows(release_root, files))
+    return verify(args, write_status=False, validate_checksums=True)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode", choices=("build", "verify"), required=True)
-    parser.add_argument("--release", choices=("financial_s_only_v1", "financial_s_only_v2"), default="financial_s_only_v1")
+    parser.add_argument("--mode", choices=("build", "verify", "refresh-checksums"), required=True)
+    parser.add_argument("--release", choices=("financial_s_only_v1", "financial_s_only_v2", "financial_s_only_v2_supplement"), default="financial_s_only_v1")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--checkpoint-root", type=Path, default=DEFAULT_CHECKPOINTS)
@@ -526,7 +540,7 @@ def main() -> None:
     args.config = args.config.resolve()
     args.output_root = args.output_root.resolve()
     args.checkpoint_root = args.checkpoint_root.resolve()
-    print(json.dumps({"build": build, "verify": verify}[args.mode](args), indent=2, sort_keys=True))
+    print(json.dumps({"build": build, "verify": verify, "refresh-checksums": refresh_checksums}[args.mode](args), indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":

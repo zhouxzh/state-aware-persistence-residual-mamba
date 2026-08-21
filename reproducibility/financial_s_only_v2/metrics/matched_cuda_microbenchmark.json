@@ -1,9 +1,9 @@
 {
   "config_sha256": "a6b52a50cf3fd1d0639d842e78e4b199858800cd009009fb0da22677842a8ab3",
-  "git_commit": "f5a694d3f18565af2cd46a6f7005027d92c13a1f",
+  "git_commit": "8f53a8925aff607afb4575ed93890d49d8523f8d",
   "git_status_at_profile": {
-    "changed_path_count": 108,
-    "dirty": true
+    "changed_path_count": 0,
+    "dirty": false
   },
   "models": [
     "RegimeGatedMamba",

@@ -1,0 +1,85 @@
+horizon,model_id,model,cells,mean_path_rmsse_rank,rank1_cells,top3_cells,mean_runtime_seconds
+1,LastValue,Last-value,18,1.666667,12,17,
+1,RandomWalkDrift,Random-walk-with-drift,18,2.277778,3,16,
+1,ARIMA,ARIMA,18,4.111111,1,7,
+1,RegimeGatedMamba,Regime-Gated Mamba,18,5.777778,1,7,8.259862864250316
+1,NLinear,NLinear,18,6.222222,0,4,1.629981111165964
+1,DecompositionMamba,Decomposition Mamba,18,6.555556,0,0,63.28538484218427
+1,InvertedMamba,Inverted Mamba,18,6.944444,0,0,23.647766346153286
+1,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,18,6.944444,1,3,2.9288015931482527
+1,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,18,8.944444,0,0,74.5576051061559
+1,DLinear,DLinear,18,9.222222,0,0,1.9484016094511998
+1,MultiScalePatchMamba,Multi-Scale Patch Mamba,18,9.444444,0,0,80.34187505178464
+1,PatchTST,PatchTST,18,11.5,0,0,8.528851690396873
+1,iTransformer,iTransformer,18,12.555556,0,0,17.017364906421346
+1,TimesNet,TimesNet,18,12.777778,0,0,267.38176818228226
+5,LastValue,Last-value,18,2.111111,10,15,
+5,RandomWalkDrift,Random-walk-with-drift,18,2.777778,3,16,
+5,ARIMA,ARIMA,18,3.888889,0,12,
+5,DecompositionMamba,Decomposition Mamba,18,5.777778,1,2,54.545502706974126
+5,InvertedMamba,Inverted Mamba,18,6.111111,2,2,22.201378651387575
+5,RegimeGatedMamba,Regime-Gated Mamba,18,6.333333,0,2,6.666019059609001
+5,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,18,6.666667,2,3,2.726537740877312
+5,NLinear,NLinear,18,7.722222,0,2,1.5440444130088307
+5,MultiScalePatchMamba,Multi-Scale Patch Mamba,18,8.555556,0,0,83.29209261095772
+5,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,18,9.0,0,0,70.29338699103748
+5,DLinear,DLinear,18,9.222222,0,0,1.9713180136452944
+5,PatchTST,PatchTST,18,10.444444,0,0,9.272830987364674
+5,iTransformer,iTransformer,18,12.611111,0,0,15.560057849442172
+5,TimesNet,TimesNet,18,13.722222,0,0,228.80862606376826
+20,LastValue,Last-value,18,3.222222,7,13,
+20,RandomWalkDrift,Random-walk-with-drift,18,3.777778,1,11,
+20,ARIMA,ARIMA,18,4.166667,0,12,
+20,DecompositionMamba,Decomposition Mamba,18,5.944444,1,2,46.98707317560394
+20,InvertedMamba,Inverted Mamba,18,6.277778,1,1,20.437248995294794
+20,RegimeGatedMamba,Regime-Gated Mamba,18,6.277778,1,3,6.520142636406753
+20,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,18,7.444444,0,2,2.462375740308522
+20,MultiScalePatchMamba,Multi-Scale Patch Mamba,18,7.5,3,4,68.77058425654864
+20,NLinear,NLinear,18,8.111111,1,1,1.601213024980906
+20,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,18,8.166667,0,1,60.56742570524414
+20,DLinear,DLinear,18,9.0,2,3,1.9120332216740483
+20,PatchTST,PatchTST,18,9.222222,1,1,8.483334719001626
+20,iTransformer,iTransformer,18,12.611111,0,0,11.809520118041998
+20,TimesNet,TimesNet,18,13.222222,0,0,205.28249281038944
+60,LastValue,Last-value,18,3.333333,7,12,
+60,RandomWalkDrift,Random-walk-with-drift,18,4.055556,2,9,
+60,ARIMA,ARIMA,18,4.166667,1,11,
+60,DecompositionMamba,Decomposition Mamba,18,5.5,1,5,42.399211364679246
+60,InvertedMamba,Inverted Mamba,18,6.111111,0,1,19.174591282739616
+60,RegimeGatedMamba,Regime-Gated Mamba,18,7.0,0,2,6.85906187362141
+60,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,18,7.111111,1,4,2.45118354730722
+60,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,18,7.833333,0,1,47.188040734755084
+60,NLinear,NLinear,18,7.944444,2,2,1.4501512583914318
+60,MultiScalePatchMamba,Multi-Scale Patch Mamba,18,8.333333,1,1,53.924101792995096
+60,PatchTST,PatchTST,18,9.722222,2,2,7.056505559069208
+60,DLinear,DLinear,18,9.777778,1,3,1.6021828748440992
+60,TimesNet,TimesNet,18,11.777778,0,1,183.41313517765244
+60,iTransformer,iTransformer,18,12.277778,0,0,9.696106965813991
+120,LastValue,Last-value,18,4.277778,4,9,
+120,ARIMA,ARIMA,18,5.166667,1,9,
+120,RandomWalkDrift,Random-walk-with-drift,18,5.388889,0,4,
+120,DecompositionMamba,Decomposition Mamba,18,5.777778,1,4,41.95867761154142
+120,InvertedMamba,Inverted Mamba,18,5.888889,0,3,16.581104970324994
+120,RegimeGatedMamba,Regime-Gated Mamba,18,6.833333,0,4,6.286564376676041
+120,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,18,7.0,1,3,2.347144683998906
+120,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,18,7.666667,0,1,47.37562662932194
+120,MultiScalePatchMamba,Multi-Scale Patch Mamba,18,7.888889,2,3,51.63031570330365
+120,NLinear,NLinear,18,8.166667,1,4,1.4138319956707872
+120,DLinear,DLinear,18,9.0,5,5,1.5413548445070369
+120,PatchTST,PatchTST,18,9.722222,2,4,6.299423086788091
+120,TimesNet,TimesNet,18,11.0,1,1,242.46767828189766
+120,iTransformer,iTransformer,18,11.166667,0,0,9.792299389368337
+252,LastValue,Last-value,18,5.222222,2,8,
+252,RegimeGatedMamba,Regime-Gated Mamba,18,5.277778,2,6,5.825163862740414
+252,InvertedMamba,Inverted Mamba,18,5.611111,0,1,14.518247499689458
+252,UngatedRegimeLinearMamba,Ungated Regime-Linear Mamba,18,5.722222,1,6,2.321769696163634
+252,RandomWalkDrift,Random-walk-with-drift,18,6.0,3,7,
+252,ARIMA,ARIMA,18,6.333333,1,7,
+252,DecompositionMamba,Decomposition Mamba,18,6.333333,0,3,42.852415478348526
+252,MultiScaleDecompositionMamba,Multi-Scale Decomposition Mamba,18,7.388889,0,2,47.47653884357359
+252,MultiScalePatchMamba,Multi-Scale Patch Mamba,18,7.611111,1,1,48.41793161519389
+252,NLinear,NLinear,18,8.166667,1,3,1.1821960870745696
+252,DLinear,DLinear,18,8.722222,4,4,1.5457793473886947
+252,PatchTST,PatchTST,18,10.277778,3,4,6.3789837030797365
+252,iTransformer,iTransformer,18,10.777778,0,0,10.752743173897679
+252,TimesNet,TimesNet,18,11.5,0,2,259.62153499199906

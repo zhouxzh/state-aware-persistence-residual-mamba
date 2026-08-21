@@ -1,0 +1,127 @@
+[
+  {
+    "bytes": 3739,
+    "path": "config.json",
+    "sha256": "a6b52a50cf3fd1d0639d842e78e4b199858800cd009009fb0da22677842a8ab3"
+  },
+  {
+    "bytes": 2723,
+    "path": "model_identity_map.json",
+    "sha256": "7887cc544f0544ffe658ea666d50dff2116b4c08ffc7e47cfda83f0e9b94fb08"
+  },
+  {
+    "bytes": 22697,
+    "path": "training_datasets.json",
+    "sha256": "c66c34c29b568200547f4e74dbff08705d7446ece8813f747a0793f3661a923d"
+  },
+  {
+    "bytes": 912,
+    "path": "release_status.json",
+    "sha256": "989d0cb32074a336739bedd45a3b5cab4f70ae8d6474d9034790ccf405428fe6"
+  },
+  {
+    "bytes": 297,
+    "path": "claim_evidence_map.json",
+    "sha256": "63ee444b16bfe5beec32d5a01fff0588d6a99569a74ec5542a418ad7ffe25358"
+  },
+  {
+    "bytes": 1052,
+    "path": "runtime_environment.json",
+    "sha256": "34e8311dfcbe8728437a1baa5acc41e9353da653fef3205f0f9cdce5253b3e48"
+  },
+  {
+    "bytes": 955,
+    "path": "README.md",
+    "sha256": "5e134dead41e8416146c0712900ddb617312fd77fdbe7d4f55dc6fd7270e2607"
+  },
+  {
+    "bytes": 2438,
+    "path": "selection_manifest.json",
+    "sha256": "bf887745e31c8d0c33e89e07d9890c01c8eddc94e161c61ec1523cde33a48641"
+  },
+  {
+    "bytes": 1695,
+    "path": "protocol.json",
+    "sha256": "5d93e079e98c5089618db533ff61da50233b93c54d04da4d233260ce098496fa"
+  },
+  {
+    "bytes": 637344,
+    "path": "metrics/metrics_aggregate.csv",
+    "sha256": "6e9b1ac725eaa6a7a043b73b261c18a04283bd51f0765b10d1a71913d7f04dd8"
+  },
+  {
+    "bytes": 843,
+    "path": "metrics/deterministic_manifest.json",
+    "sha256": "e27668a54d759160b829fb2172d6b90a819759aca0ed5032b2121c28413b8c70"
+  },
+  {
+    "bytes": 878,
+    "path": "metrics/matched_cuda_microbenchmark.json",
+    "sha256": "f8380a593070e0639ed42fde8e2e7103180e68b96c9d8dd367372ad233a9c4ac"
+  },
+  {
+    "bytes": 1606,
+    "path": "metrics/matched_cuda_microbenchmark.csv",
+    "sha256": "2d695fd8d41f27c5be77ebbea4a162d1a76e522de35bcca7497d61d423f2ab69"
+  },
+  {
+    "bytes": 3084129,
+    "path": "metrics/metrics_by_seed.csv",
+    "sha256": "00bafe3efdd669f4e9ec9450b8237579315a0b324c5ac3cb7c2d607117298ee3"
+  },
+  {
+    "bytes": 134710,
+    "path": "metrics/deterministic_metrics.csv",
+    "sha256": "259183adb649cddb5bbc21c78673564efc7c065e7b128eb5bd04939fd59188eb"
+  },
+  {
+    "bytes": 8255,
+    "path": "metrics/paired_block_bootstrap.csv",
+    "sha256": "7e2857b4b8696bfca428a0b945aa623f4250180fe6cfb7e5d2dd3d620c1e6822"
+  },
+  {
+    "bytes": 301069,
+    "path": "metrics/paired_contrasts.csv",
+    "sha256": "1adf015d86b8f82251276389da875934da287149ba8ffadcda090daa157b24b3"
+  },
+  {
+    "bytes": 3693,
+    "path": "selection/financial_crypto_s/baseline_best_params.json",
+    "sha256": "91d8ff59eea8a9c961c553eae2f321ac529ac92212cb5495a2b44071fec5f154"
+  },
+  {
+    "bytes": 3683,
+    "path": "selection/financial_crypto_s/mamba_best_params.json",
+    "sha256": "40fb2bf51ba23ab1d95e120e6954b0b4bd687b129c69287e33c2fdd5725a3dd6"
+  },
+  {
+    "bytes": 3719,
+    "path": "selection/financial_cross_asset_s/baseline_best_params.json",
+    "sha256": "2591a9625193b158e51d1e08b00974464f0b0cc0fd00f0a342fe9f58593a700c"
+  },
+  {
+    "bytes": 3727,
+    "path": "selection/financial_cross_asset_s/mamba_best_params.json",
+    "sha256": "73c9615137bc0b5d4e1fc0b5dcf349a66b1c35a97b150bf491228e2ec759f0b2"
+  },
+  {
+    "bytes": 3689,
+    "path": "selection/financial_yields_s/baseline_best_params.json",
+    "sha256": "682938d4e122bd49959ef21cbcfedb66e558d72a905a0212e534822c88ee2eae"
+  },
+  {
+    "bytes": 3693,
+    "path": "selection/financial_yields_s/mamba_best_params.json",
+    "sha256": "8183dae49514aeea1ace1b69a76b4bf6bd7681294989b78a72d086dab83cda00"
+  },
+  {
+    "bytes": 3664,
+    "path": "selection/financial_fx_s/baseline_best_params.json",
+    "sha256": "fb618f9118592d5c7cb94ca647eaec74c24d15975e6bcdae5795db20e3c23366"
+  },
+  {
+    "bytes": 3671,
+    "path": "selection/financial_fx_s/mamba_best_params.json",
+    "sha256": "f131da437b5f5189d8a90b358b36f947d846ce71b128bafe6f42e7843ed74696"
+  }
+]

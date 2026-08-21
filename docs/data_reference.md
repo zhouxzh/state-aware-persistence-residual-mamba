@@ -74,6 +74,12 @@ they are not pooled into one synthetic panel.
 The authoritative target-level hash manifest is
 [`financial_s_only_v2/training_datasets.json`](../reproducibility/financial_s_only_v2/training_datasets.json).
 
+The V2 release is complete: all 18 target files participate in 324 deterministic
+rows and 5,940 learned horizon rows, with five learned seeds and one retained
+checkpoint per learned task-model-seed-horizon unit. The compact release contract
+and its verification status are in
+[`financial_s_only_v2/`](../reproducibility/financial_s_only_v2/).
+
 ## Source and Redistribution Boundary
 
 `configs/financial_data_sources_v1.json` defines the raw source construction:

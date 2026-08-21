@@ -1,0 +1,31 @@
+{
+  "protocol_version": "financial_s_only_v2_supplement",
+  "purpose": "Targeted long-horizon gate-ablation supplement to V2 using frozen V2 selections.",
+  "evidence_status": "retrospective_supplement",
+  "data_cutoff": "2026-06-30",
+  "splits": {
+    "train_end": "2020-12-31",
+    "validation_start": "2021-01-01",
+    "validation_end": "2022-12-31",
+    "test_start": "2023-01-01",
+    "test_end": "2026-06-30"
+  },
+  "horizons": [60, 120, 252],
+  "term_groups": {"extended": [60, 120, 252]},
+  "seeds": [2023, 2024, 2025, 2026, 2027],
+  "target_roster": [
+    "financial_cross_asset_sp500_s", "financial_cross_asset_wti_s", "financial_cross_asset_vix_s", "financial_cross_asset_gld_s",
+    "financial_crypto_btcusdt_s", "financial_crypto_ethusdt_s", "financial_crypto_bnbusdt_s", "financial_crypto_xrpusdt_s",
+    "financial_fx_eurusd_s", "financial_fx_cadusd_s", "financial_fx_jpyusd_s", "financial_fx_chfusd_s", "financial_fx_audusd_s", "financial_fx_gbpusd_s",
+    "financial_yields_dgs2_s", "financial_yields_dgs5_s", "financial_yields_dgs10_s", "financial_yields_dgs30_s"
+  ],
+  "learned_models": ["RegimeGatedMamba", "UngatedRegimeLinearMamba"],
+  "deterministic_models": [],
+  "ablations": ["UngatedRegimeLinearMamba", "RegimeGatedMamba"],
+  "contrast_references": ["UngatedRegimeLinearMamba"],
+  "primary_metric": "path_rmsse",
+  "selection_policy": "inherit frozen pre-2023 V2 family selections without rerunning Optuna",
+  "target_file_policy": "reuse the exact V2 independent date plus target files and hashes",
+  "reference_release": "financial_s_only_v2",
+  "claim_boundary": "supplementary retrospective gate-ablation stability study; no confirmatory or prospective claims"
+}

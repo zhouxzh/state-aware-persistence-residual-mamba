@@ -10,8 +10,9 @@
 | `utils/financial/` | Data, release, evidence, report, profile, figure, and archive utilities. |
 | `configs/` | Three active configurations: provider sources, v1 release, and v2 release. |
 | `reproducibility/financial_s_only_v1/` | Tracked, checksum-covered v1 evidence contract. |
-| `reproducibility/financial_s_only_v2/` | Tracked v2 data and deterministic-evidence contract. |
+| `reproducibility/financial_s_only_v2/` | Tracked, checksum-covered v2 evidence contract. |
 | `docs/` | Technical reference, figures, and manuscript-supporting evidence map. |
+| `docs/analysis/financial_s_only_v2/` | Derived, hash-manifested V2 analysis tables; regenerated from the compact release. |
 | `backup/` | Ignored recoverable local archive; no active code reads it. |
 
 ## Supported Commands

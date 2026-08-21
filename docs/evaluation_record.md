@@ -1,6 +1,11 @@
-# Current Evaluation Record
+# V1 Historical Evaluation Record
 
 Updated: 2026-08-14
+
+This document preserves the original four-target V1 evidence record. The current
+18-target analysis is V2-primary and is maintained in
+[v2_evaluation_record.md](v2_evaluation_record.md); the releases must remain
+separate.
 
 ## Evidence Status
 
@@ -19,9 +24,10 @@ The verifier reports no missing artifacts or checksum problems in
 Each learned unit retains six checkpoints, forecasts, truth arrays, origin dates,
 forecast dates, metadata, and recorded SHA-256 values in ignored local storage.
 
-`financial_s_only_v2` is a separate 18-target data expansion. Its 324
-deterministic rows are complete, but its 5,940 learned rows have not been run. It
-is not included in any v1 rank, figure, or accuracy statement below.
+`financial_s_only_v2` is a separate verified 18-target data expansion with 324
+deterministic and 5,940 learned rows. It is not included in any v1 rank, figure,
+or accuracy statement below; see [v2_evaluation_record.md](v2_evaluation_record.md)
+for its separate metrics, figures, and claim boundaries.
 
 ## Protocol
 
