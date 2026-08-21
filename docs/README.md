@@ -17,16 +17,17 @@ historical mixed S/MS outputs as current evidence.
 | [results_inventory.md](results_inventory.md) | What is active, local-only, and recoverably archived. |
 | [repository_structure.md](repository_structure.md) | Directory ownership and supported commands. |
 | [final_evaluation_record.md](final_evaluation_record.md) | Current acceptance state and remaining evidence boundary. |
-| [audit_response_and_computation_plan.md](audit_response_and_computation_plan.md) | Corrected audit response, V2 repair record, and bounded V3 computation plan. |
+| [audit_response_and_computation_plan.md](audit_response_and_computation_plan.md) | Corrected audit response, V2 repair record, and V2 supplemental gate-ablation record. |
+| [v2_long_horizon_consistency_check_20260821.md](v2_long_horizon_consistency_check_20260821.md) | Audit record for the non-independent V2 long-horizon supplement and replay check. |
 
 Use `financial_s_only_v1` for the original four target-only panels and
 `financial_s_only_v2` for the independent-target expansion. They must be analyzed
 and reported separately. Both are retrospective because their 2023--2026 targets
 have already been viewed.
 
-The local-only `financial_s_only_exploratory_v3` run is a two-model, long-horizon
-gate ablation. Its ignored artifacts are diagnostic and do not replace either
-tracked release.
+The local-only `financial_s_only_v2_supplement` run is a two-model, long-horizon
+V2 gate-ablation supplement. Its ignored artifacts are diagnostic and do not
+replace either tracked release.
 
 The current analysis is V2-primary. Raw MAE/RMSE remain target-specific; pooled
 comparisons use path RMSSE ranks or explicitly named baseline ratios.

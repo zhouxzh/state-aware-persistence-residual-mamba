@@ -511,7 +511,7 @@ def sample_v3_mamba_params(trial, model_label):
             forecast_head="level",
         )
     else:
-        raise ValueError(f"Unsupported V3 Mamba model: {model_label}")
+        raise ValueError(f"Unsupported legacy Mamba model: {model_label}")
     return normalize_params(params)
 
 

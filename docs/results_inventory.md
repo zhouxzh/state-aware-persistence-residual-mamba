@@ -10,8 +10,8 @@
 | `checkpoints/financial_s_only_retrospective_v1/` | Ignored local | One retained checkpoint for every v1 learned task-model-seed-horizon unit. |
 | `results/financial_s_only_retrospective_v2/` | Ignored local | Complete v2 deterministic and learned forecast bundles, aggregate build inputs, and campaign summary. |
 | `checkpoints/financial_s_only_retrospective_v2/` | Ignored local | One retained checkpoint for every v2 learned task-model-seed-horizon unit. |
-| `results/financial_s_only_exploratory_v3/` | Ignored local | Exploratory two-model long-horizon gate-ablation forecasts, reports, and replay validation. |
-| `checkpoints/financial_s_only_exploratory_v3/` | Ignored local | Retained V3 checkpoints for 18 targets, 2 models, 5 seeds, and horizons 60/120/252. |
+| `results/financial_s_only_v2_supplement/` | Ignored local | V2-supplement two-model long-horizon gate-ablation forecasts, reports, and replay validation. |
+| `checkpoints/financial_s_only_v2_supplement/` | Ignored local | Retained V2-supplement checkpoints for 18 targets, 2 models, 5 seeds, and horizons 60/120/252. |
 | `docs/figures/financial_s_only_v1_*` | Tracked | Figures rendered from checksum-covered v1 tables, with source and output hashes in the figure manifest. |
 | `docs/figures/financial_s_only_v2_*` | Tracked | Figures rendered from checksum-covered v2 tables, with source and output hashes in the figure manifest. |
 | `docs/analysis/financial_s_only_v2/` | Tracked | Derived V2 model, horizon, family, target, normalized-metric, seed-stability, summary, and provenance tables. |
@@ -43,9 +43,9 @@ zero maximum prediction/truth differences, and matching date arrays. The local
 validation record remains an ignored artifact rather than a tracked evidence
 table.
 
-V3 is intentionally local-only and contains 540 learned cells. Its paired tables
-compare Regime-Gated Mamba with Ungated Regime-Linear Mamba only; no baseline or
-Optuna rerun is represented there.
+The V2 supplement is intentionally local-only and contains 540 learned cells. Its
+paired tables compare Regime-Gated Mamba with Ungated Regime-Linear Mamba only;
+no baseline or Optuna rerun is represented there.
 
 ## Archived Historical Material
 

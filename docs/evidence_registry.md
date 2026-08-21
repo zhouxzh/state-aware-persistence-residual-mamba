@@ -22,7 +22,7 @@ Archived mixed S/MS files are not evidence for a new manuscript claim.
 | E15 | Current v2 figures and their source-table provenance | `docs/figures/financial_s_only_v2_figure_manifest.json` |
 | E16 | V2 derived model, horizon, family, target, normalized-metric, and seed-stability analysis | `docs/analysis/financial_s_only_v2/analysis_manifest.json` and derived CSV/JSON tables |
 | E17 | Historical local artifact archive inventory | ignored `backup/legacy_s_ms_20260812/archive_manifest.json` |
-| E18 | Corrected audit response and bounded exploratory V3 computation plan | `docs/audit_response_and_computation_plan.md` |
+| E18 | Corrected audit response and V2 supplemental gate-ablation computation record | `docs/audit_response_and_computation_plan.md` |
 
 ## Claim Boundaries
 

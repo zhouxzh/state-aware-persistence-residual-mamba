@@ -34,14 +34,14 @@ conda run --no-capture-output -n mamba python scripts/data.py release-setup --re
 the release contract. It rejects mutation after a checksum manifest exists; create
 a new versioned release instead.
 
-For the bounded exploratory gate study, create the local-only release from the
+For the bounded V2 supplemental gate study, create the local-only release from the
 already verified V2 inputs. This copies and rechecks the V2 files and selections;
 it does not rematerialize or modify shared data:
 
 ```bash
-conda run --no-capture-output -n mamba python scripts/data.py release-setup --release v3
+conda run --no-capture-output -n mamba python scripts/data.py release-setup --release v2-supplement
 conda run --no-capture-output -n mamba python scripts/reproduce.py \
-  --workflow financial-s-only --release v3 --stage plan
+  --workflow financial-s-only --release v2-supplement --stage plan
 ```
 
 ## Deterministic References and Learned Matrix
@@ -123,26 +123,26 @@ family, pairwise, normalized-metric, and seed-stability summaries under
 `docs/analysis/financial_s_only_v2/`. It does not retrain models or alter the
 checksum-covered release.
 
-The V3 run is deliberately narrower: 18 targets x 2 models x 5 seeds x horizons
-60/120/252 = 540 learned cells. It reuses frozen V2 selections, omits deterministic
-and baseline reruns, and is marked exploratory retrospective. After training,
-replay, and report generation, render only the paired gate analysis:
+The V2 supplement is deliberately narrower: 18 targets x 2 models x 5 seeds x
+horizons 60/120/252 = 540 learned cells. It reuses frozen V2 selections, omits
+deterministic and baseline reruns, and is marked as a retrospective supplement.
+After training, replay, and report generation, render only the paired gate analysis:
 
 ```bash
 conda run --no-capture-output -n mamba python scripts/reproduce.py \
-  --workflow financial-s-only --release v3 --stage train --unlock-retrospective-test
+  --workflow financial-s-only --release v2-supplement --stage train --unlock-retrospective-test
 conda run --no-capture-output -n mamba python scripts/reproduce.py \
-  --workflow financial-s-only --release v3 --stage replay
+  --workflow financial-s-only --release v2-supplement --stage replay
 conda run --no-capture-output -n mamba python scripts/reproduce.py \
-  --workflow financial-s-only --release v3 --stage replay-verify
+  --workflow financial-s-only --release v2-supplement --stage replay-verify
 conda run --no-capture-output -n mamba python scripts/reproduce.py \
-  --workflow financial-s-only --release v3 --stage report
-conda run --no-capture-output -n sci-agent python scripts/analyze.py exploratory-v3
+  --workflow financial-s-only --release v2-supplement --stage report
+conda run --no-capture-output -n sci-agent python scripts/analyze.py v2-supplement
 ```
 
-V3 results, checkpoints, figures, and tables are ignored local artifacts. The
-tracked V2 release remains the authority for comparisons with PatchTST, TimesNet,
-iTransformer, and deterministic references.
+V2-supplement results, checkpoints, figures, and tables are ignored local
+artifacts. The tracked V2 release remains the authority for comparisons with
+PatchTST, TimesNet, iTransformer, and deterministic references.
 
 ## Public Entry Points
 

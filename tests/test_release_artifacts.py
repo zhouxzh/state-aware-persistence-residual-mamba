@@ -44,10 +44,10 @@ def test_protocols_have_separate_s_only_rosters_and_expected_counts() -> None:
         assert status["status"] == expected_status
 
 
-def test_v3_protocol_is_the_bounded_exploratory_gate_matrix() -> None:
-    config = json.loads((ROOT / "configs" / "financial_s_only_v3.json").read_text())
-    protocol = json.loads((ROOT / "configs" / "financial_s_only_v3_protocol.json").read_text())
-    assert config["evidence_status"] == "exploratory_retrospective"
+def test_v2_supplement_protocol_is_the_bounded_gate_matrix() -> None:
+    config = json.loads((ROOT / "configs" / "financial_s_only_v2_supplement.json").read_text())
+    protocol = json.loads((ROOT / "configs" / "financial_s_only_v2_supplement_protocol.json").read_text())
+    assert config["evidence_status"] == "retrospective_supplement"
     assert list(config["models"]) == ["RegimeGatedMamba", "UngatedRegimeLinearMamba"]
     assert config["deterministic_models"] == []
     assert config["base_protocol"]["horizons"] == [60, 120, 252]

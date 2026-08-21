@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | `financial_s_only_v1` | Four original target-only panels | Verified retrospective release: 1,320 learned and 72 deterministic rows |
 | `financial_s_only_v2` | Eighteen independently materialized financial targets | Verified retrospective release: 5,940 learned and 324 deterministic rows |
-| `financial_s_only_exploratory_v3` | Long-horizon two-model gate ablation | Completed local exploratory release: 540 learned rows; not a publication comparison release |
+| `financial_s_only_v2_supplement` | Long-horizon two-model gate ablation supplement | Completed local V2 supplement: 540 learned rows; not a new publication comparison release |
 
 The releases are separate evidence records. v2 expands the target roster and does
 not replace v1, pool with v1, or permit pooled significance claims across targets.
@@ -95,13 +95,13 @@ The detailed V2 interpretation and machine-readable tables are maintained in
 [v2_evaluation_record.md](v2_evaluation_record.md) and
 [analysis/financial_s_only_v2/README.md](analysis/financial_s_only_v2/README.md).
 
-## Exploratory V3 Boundary
+## V2 Supplement Boundary
 
-V3 is a targeted retrospective diagnostic for the long-horizon weakness observed
-in V2. It retains only Regime-Gated Mamba and Ungated Regime-Linear Mamba at
-horizons 60, 120, and 252 over the same 18 targets and five seeds. The design is
-therefore 540 learned cells, with frozen V2 selections and no new Optuna search.
-Its paired bootstrap and runtime figures can support a gate-mechanism discussion,
-but cannot establish superiority over PatchTST, TimesNet, or any other baseline.
-V3 artifacts are ignored; the tracked V2 compact tables remain the reproducibility
-and manuscript evidence source.
+The V2 supplement is a targeted retrospective diagnostic for the long-horizon
+weakness observed in V2. It retains only Regime-Gated Mamba and Ungated
+Regime-Linear Mamba at horizons 60, 120, and 252 over the same 18 targets and
+five seeds. The design is therefore 540 learned cells, with frozen V2 selections
+and no new Optuna search. Its paired bootstrap and runtime figures can support a
+gate-mechanism discussion, but cannot establish superiority over PatchTST,
+TimesNet, or any other baseline. Supplement artifacts are ignored; the tracked
+V2 compact tables remain the reproducibility and manuscript evidence source.
