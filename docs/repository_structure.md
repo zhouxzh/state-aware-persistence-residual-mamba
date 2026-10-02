@@ -1,4 +1,12 @@
-# Repository Structure
+# 仓库结构与目录职责
+
+更新日期：2026-10-02。此仓库的当前研究入口是 `docs/current/README.md`。历史金融输出
+目录 `results/` 与 `checkpoints/` 已删除；其余下文涉及 V1/V2 的说明均是历史代码和冻结
+证据的结构记录，不能作为新状态感知持久性残差 Mamba 的实现或实验授权。
+
+---
+
+# Historical Financial Repository Structure
 
 | Location | Ownership |
 | --- | --- |
@@ -13,7 +21,11 @@
 | `reproducibility/financial_s_only_v2/` | Tracked, checksum-covered v2 evidence contract. |
 | `docs/` | Technical reference, figures, and manuscript-supporting evidence map. |
 | `docs/analysis/financial_s_only_v2/` | Derived, hash-manifested V2 analysis tables; regenerated from the compact release. |
-| `backup/` | Ignored recoverable local archive; no active code reads it. |
+| `backup/data/` | 保留的公开候选数据；尚未纳入新研究协议。其他历史 `backup/` 内容已于 2026-10-02 删除。 |
+
+Historical `results/` and `checkpoints/` roots were deleted after frozen-release
+verification. A future authorized run may create ignored output directories, but it
+must use a new versioned release and must not overwrite `financial_s_only_*`.
 
 ## Supported Commands
 

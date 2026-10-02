@@ -1,4 +1,26 @@
-# Reproducibility Workflow
+# 历史金融发布物的可复现性边界
+
+更新日期：2026-10-02。三套 `financial_s_only_*` 紧凑发布物和 SHA-256 清单仍可直接
+核验；原始 `results/`、`checkpoints/`、回放树、TensorBoard 和日志已删除。因此下文所有
+训练、回放和再生成命令都是**历史工作流记录**，不是当前新模型的运行授权，也不能在
+不重新建立新版本化输出目录的情况下恢复旧运行。
+
+当前状态感知持久性残差 Mamba 的训练前要求见 [current/README.md](current/README.md)。
+没有明确用户授权，不应启动、停止、重跑或修改任何远端实验。
+
+可优先执行只读完整性检查：
+
+```bash
+conda run --no-capture-output -n sci-agent python -m pytest -q
+conda run --no-capture-output -n mamba python scripts/reproduce.py \
+  --workflow financial-s-only --release v2 --stage verify
+```
+
+校验结果只能解释为历史金融发布物的完整性，不能形成新模型性能证据。
+
+---
+
+# Historical Financial Reproducibility Workflow
 
 ## Environments
 
@@ -90,7 +112,7 @@ conda run --no-capture-output -n sci-agent python scripts/analyze.py analysis \
   --release financial_s_only_v2 --output-dir docs/analysis/financial_s_only_v2
 ```
 
-`replay` loads retained checkpoints and writes a new ignored replay tree without
+Historically, `replay` loaded retained checkpoints and wrote a new ignored replay tree without
 training. For future replays it checks each regenerated prediction and truth array
 against the retained bundle within an absolute tolerance of `1e-6`, and requires
 exact origin and forecast dates. `replay-verify` performs the same comparison over
@@ -105,7 +127,7 @@ conda run --no-capture-output -n mamba python scripts/reproduce.py \
   --workflow financial-s-only --release v2 --stage replay-summary
 ```
 
-V1 has completed this replay audit for all 1,320 learned bundles. V2 completed
+V1 completed this replay audit for all 1,320 learned bundles. V2 completed
 the equivalent reload-and-array-equality replay audit for all 5,940 learned
 bundles on 2026-08-21; `replay-verify --release v2` reports `verified` with no
 problems and zero maximum prediction/truth differences. The validation record
@@ -123,7 +145,7 @@ family, pairwise, normalized-metric, and seed-stability summaries under
 `docs/analysis/financial_s_only_v2/`. It does not retrain models or alter the
 checksum-covered release.
 
-The V2 supplement is deliberately narrower: 18 targets x 2 models x 5 seeds x
+The V2 supplement was deliberately narrower: 18 targets x 2 models x 5 seeds x
 horizons 60/120/252 = 540 learned cells. It reuses frozen V2 selections, omits
 deterministic and baseline reruns, and is marked as a retrospective supplement.
 After training, replay, and report generation, render only the paired gate analysis:
@@ -140,8 +162,8 @@ conda run --no-capture-output -n mamba python scripts/reproduce.py \
 conda run --no-capture-output -n sci-agent python scripts/analyze.py v2-supplement
 ```
 
-V2-supplement results, checkpoints, figures, and tables are ignored local
-artifacts. The tracked V2 release remains the authority for comparisons with
+V2-supplement results and checkpoints were ignored local artifacts and have now been
+deleted from ace2. The tracked V2 release remains the historical authority for comparisons with
 PatchTST, TimesNet, iTransformer, and deterministic references.
 
 ## Public Entry Points
@@ -160,6 +182,6 @@ reproducible release path. No user-facing subdirectory exists within `scripts/`.
 
 ## Archived Historical Material
 
-Inactive mixed S/MS campaign roots are recoverably stored in the ignored
-`backup/legacy_s_ms_20260812/` directory. The active workflow never reads it. Its
-manifest records inventory hashes and restoration targets.
+Inactive mixed S/MS campaign roots were stored in the ignored
+`backup/legacy_s_ms_20260812/` directory. They were removed on 2026-10-02 after the
+financial releases had been verified. The active workflow never read them.

@@ -1,34 +1,44 @@
-# Results Inventory
+# 历史金融结果清单与保留边界
 
-## Active Evidence
+更新日期：2026-10-02。本文件描述已完成的 Regime-Gated Mamba 金融 S-only 研究，
+不描述或支撑当前状态感知持久性残差 Mamba 的新实验。
+
+2026-10-02，在三套冻结发布物完成 SHA-256 校验、且无训练或分析进程运行后，服务器已
+删除所有历史 `results/`、`checkpoints/`、回放树、旧 S/MS 归档、旧备份结果、TensorBoard、
+日志和缓存。下方出现这些路径的文字是**历史记录**，不表示路径仍存在或可用于重跑。
+保留范围是 `reproducibility/`、源代码、配置、`data/` 和 `backup/data/`；后者尚未纳入
+新研究协议。
+
+新研究不得从这些金融材料选择数据、阈值、模型或有利结论。历史发布物的完整性校验通过：
+V1 25/25、V2 25/25、V2 supplement 21/21。
+
+---
+
+# Historical Results Inventory
+
+## Preserved Historical Evidence
 
 | Location | Git status | Role |
 | --- | --- | --- |
 | `reproducibility/financial_s_only_v1/` | Tracked | Verified v1 protocol, selections, data manifest, compact metrics, profile, claim map, runtime metadata, and checksums. |
 | `reproducibility/financial_s_only_v2/` | Tracked | Verified v2 protocol, selections, data manifest, compact metrics, paired comparisons, profile, claim map, runtime metadata, and checksums. |
-| `results/financial_s_only_retrospective_v1/` | Ignored local | Complete v1 deterministic and learned forecast bundles, aggregate build inputs, campaign summary, and a 1,320-bundle exact-match checkpoint replay audit. |
-| `checkpoints/financial_s_only_retrospective_v1/` | Ignored local | One retained checkpoint for every v1 learned task-model-seed-horizon unit. |
-| `results/financial_s_only_retrospective_v2/` | Ignored local | Complete v2 deterministic and learned forecast bundles, aggregate build inputs, and campaign summary. |
-| `checkpoints/financial_s_only_retrospective_v2/` | Ignored local | One retained checkpoint for every v2 learned task-model-seed-horizon unit. |
-| `results/financial_s_only_v2_supplement/` | Ignored local | V2-supplement two-model long-horizon gate-ablation forecasts, reports, and replay validation. |
-| `checkpoints/financial_s_only_v2_supplement/` | Ignored local | Retained V2-supplement checkpoints for 18 targets, 2 models, 5 seeds, and horizons 60/120/252. |
+| Historical `results/financial_s_only_*` trees | Deleted 2026-10-02 | Original forecast arrays, reports, and replay trees were removed after release verification. |
+| Historical `checkpoints/financial_s_only_*` trees | Deleted 2026-10-02 | Original per-run checkpoints were removed after release verification. |
 | `docs/figures/financial_s_only_v1_*` | Tracked | Figures rendered from checksum-covered v1 tables, with source and output hashes in the figure manifest. |
 | `docs/figures/financial_s_only_v2_*` | Tracked | Figures rendered from checksum-covered v2 tables, with source and output hashes in the figure manifest. |
 | `docs/analysis/financial_s_only_v2/` | Tracked | Derived V2 model, horizon, family, target, normalized-metric, seed-stability, summary, and provenance tables. |
 
-Each compact release is its own citation source. Local forecast and checkpoint
-files are the regeneration source: they are needed to rerun checkpoint evaluation
-and to rebuild compact tables, but remain untracked because of size and
-source-data rights. V1 retains 1,320 and V2 retains 5,940 learned
-task-model-seed-horizon outputs, each with prediction, truth, origin-date,
-forecast-date, metric, metadata, and checkpoint artifacts.
+Each compact release is its own historical citation source. The original forecast and
+checkpoint files were intentionally removed from this server after verification; they
+cannot now be used for replay or regeneration. Recreating them requires explicit
+authorization, source-data review, and a new versioned output directory.
 
 The derived V2 analysis directory is reproducible from the compact release tables;
 it is a reporting layer, not a replacement for the release contract.
 
-## Checkpoint Replay Boundary
+## Historical Replay Boundary
 
-`--stage replay` reloads local v1 checkpoints and writes a separate ignored
+Before deletion, `--stage replay` reloaded local v1 checkpoints and wrote a separate ignored
 `results/financial_s_only_retrospective_v1/replay/` tree. `--stage replay-verify`
 then compares each replayed prediction and truth array with its source artifact at
 absolute tolerance `1e-6`, and requires exact origin and forecast dates. The local
@@ -36,21 +46,22 @@ absolute tolerance `1e-6`, and requires exact origin and forecast dates. The loc
 2026-08-14, the completed v1 audit validated all 1,320 bundles with zero problems,
 zero maximum prediction/truth differences, and matching date arrays throughout.
 
-The completed v2 campaign retains the same classes of local artifacts and uses
+The completed v2 campaign retained the same classes of local artifacts and used
 the same replay commands. On 2026-08-21, its complete checkpoint reload and
 array-equality audit validated all 5,940 learned bundles with zero problems,
 zero maximum prediction/truth differences, and matching date arrays. The local
 validation record remains an ignored artifact rather than a tracked evidence
 table.
 
-The V2 supplement is intentionally local-only and contains 540 learned cells. Its
+The V2 supplement was intentionally local-only and contained 540 learned cells. Its
 paired tables compare Regime-Gated Mamba with Ungated Regime-Linear Mamba only;
 no baseline or Optuna rerun is represented there.
 
-## Archived Historical Material
+## Removed Historical Material
 
-Mixed S/MS campaign roots and the unused reference workspace were recoverably moved
-on 2026-08-12 into `backup/legacy_s_ms_20260812/`:
+Mixed S/MS campaign roots and the unused reference workspace were moved on 2026-08-12
+into `backup/legacy_s_ms_20260812/`, then deleted on 2026-10-02 after the financial
+releases had been verified:
 
 | Original root | Files | Bytes |
 | --- | ---: | ---: |
@@ -60,10 +71,9 @@ on 2026-08-12 into `backup/legacy_s_ms_20260812/`:
 | `checkpoints/financial_baseline_rerun_v1` | 1,201 | 17,255,178,813 |
 | `results/manuscript_evidence` | 23 | 771,323 |
 
-Two empty legacy roots were archived with the same manifest. The archive contains
-16,923 files totaling 28,391,535,967 bytes. Every root has an inventory SHA-256 and
-explicit restoration target in `archive_manifest.json`. The active workflow never
-reads this archive.
+The archive contained 16,923 files totaling 28,391,535,967 bytes. It is no longer
+available on ace2. Its historical inventory was retained only in prior audit records;
+the active workflow never read it.
 
 ## Git Policy
 
