@@ -225,8 +225,7 @@ data/sapr_mamba_v1/
 results/sapr_mamba_v1/
 results/smoke/
 
-# V2 evidence is added only after the final matrix and release audit complete.
-reproducibility/sapr_mamba_v2/
+# V2 compact evidence is tracked after the final matrix and release audit.
 
 # This reproducible full V1 matrix is retained locally; compact aggregates and
 # the checksum manifest are the version-controlled audit artifacts.

@@ -1,0 +1,283 @@
+{
+  "created_at": "2026-10-03T12:35:32+08:00",
+  "file_count": 55,
+  "files": [
+    {
+      "bytes": 1129,
+      "path": "claim_evidence_map.csv",
+      "sha256": "d50d5a217733e14b31de1ba237be88dfedd550cd81b7ddbf5ca39a85ad114c1a"
+    },
+    {
+      "bytes": 961,
+      "path": "real/analysis/real_analysis_manifest.json",
+      "sha256": "c7ab2a363f3108220585c0bcb20e530911b1ba63c4ad7359db2334f87b53422b"
+    },
+    {
+      "bytes": 23530,
+      "path": "real/analysis/real_completion_matrix.csv",
+      "sha256": "189fa9d46a530daa621beb7bab6c1a35caf53f5f78ed4bf0be542ac46d77be80"
+    },
+    {
+      "bytes": 81927,
+      "path": "real/analysis/real_gate_audit.csv",
+      "sha256": "d31111b18912db06e2bc6f89ae0ed728ee334f93173811092daf4372b8fd4401"
+    },
+    {
+      "bytes": 1011,
+      "path": "real/analysis/real_gate_summary.csv",
+      "sha256": "6cef7b38296aac8a9d0412850fd7059abcf7ff746cb0d0233a6ec9a08bf66aca"
+    },
+    {
+      "bytes": 97433,
+      "path": "real/analysis/real_panel_metrics_aggregate.csv",
+      "sha256": "084d4ee31742c8580234d2ca1864c61d14b457501cd3676c4adfda2d127c4ecb"
+    },
+    {
+      "bytes": 6608,
+      "path": "real/analysis/real_primary_comparisons.csv",
+      "sha256": "fa571a50975b6d973c617ae292fca91d9207fdd0dd8b8ced6ec5f1bd4506fb9c"
+    },
+    {
+      "bytes": 20857,
+      "path": "real/analysis/real_recompute_matrix.csv",
+      "sha256": "94b8f22529f039e37585b9e77ca9a8a4227e8068927e7800c800871a386649f1"
+    },
+    {
+      "bytes": 1653973,
+      "path": "real/analysis/real_series_seed_averages.csv",
+      "sha256": "9b62c49bb58404615e8eb3186a2b288013788a6ffc6459dfb98726e463105090"
+    },
+    {
+      "bytes": 61655,
+      "path": "real/analysis/real_source_metrics_aggregate.csv",
+      "sha256": "aec45371462b9353d2751ef2d15d335e6a4e23b6e25f782343d96f69616311c0"
+    },
+    {
+      "bytes": 816,
+      "path": "real/analysis/real_stable_state_coverage.csv",
+      "sha256": "13172e7c574c2ee6c4cf5572236863992f58c1b5acabd9c6e36d1bf33f0535fb"
+    },
+    {
+      "bytes": 2007,
+      "path": "real/analysis/real_statistical_audit.csv",
+      "sha256": "6a9dc845ec49ad69598c5be0044a8f9fbeb3692d43aeaa01ab13cc7dcca7c961"
+    },
+    {
+      "bytes": 278,
+      "path": "real/analysis/real_verification_manifest.json",
+      "sha256": "440bc34d20add04a91ee6f1b67792318498b9d4b0d981c8c747a9a942fd3b326"
+    },
+    {
+      "bytes": 545,
+      "path": "real/campaign_manifest.json",
+      "sha256": "687b97f3ffb17e5ea88d0ed4e88d0af8e4c4319471fd742222a35444facba9ed"
+    },
+    {
+      "bytes": 782,
+      "path": "real/candidate_counts.csv",
+      "sha256": "871c68d49ca3443df107dd981821bb9945bba65a86a221fa44c49892d9c41b44"
+    },
+    {
+      "bytes": 3971,
+      "path": "real/data_manifest.json",
+      "sha256": "eecc8574e24d345a78d6682a7f1c77032c109d7e8b703f25e695bc4fd8bf419f"
+    },
+    {
+      "bytes": 32,
+      "path": "real/failures.csv",
+      "sha256": "914a07c14114298534f54f1cdbf8753670b684ec324af8a3d6326f0834d9947a"
+    },
+    {
+      "bytes": 746,
+      "path": "real/figures/real_figure_manifest.json",
+      "sha256": "2edc53afa19afecd8cc1b8464a7b8646463767244f8f5cb4021ecbc69a419a7c"
+    },
+    {
+      "bytes": 19923,
+      "path": "real/figures/real_primary_deltas.pdf",
+      "sha256": "a0198695703b9a3288b407c81eed0555c0e8c6c235ae63171e5fd3216a022988"
+    },
+    {
+      "bytes": 204032,
+      "path": "real/figures/real_primary_deltas.png",
+      "sha256": "16a5bf7829b7683cdb6cd8bfee40180ba2dc3f312970d4b9d94c44f6f6bf8950"
+    },
+    {
+      "bytes": 5405913,
+      "path": "real/metrics_all.csv",
+      "sha256": "bfb3870ed44dc40987b887d5e753704a8a1c110f75d03499d41022ce04cabb45"
+    },
+    {
+      "bytes": 2593,
+      "path": "real/prepared_manifest.json",
+      "sha256": "7eb533423e054f4966cffb281e45cfa2c95e7ffeb7f074ca56fde2f98b326f38"
+    },
+    {
+      "bytes": 21837,
+      "path": "real/protocol.lock.json",
+      "sha256": "cd67fa64f211672d3916adff75b96049cb73e9aebaf657eaf829e8c1942268f2"
+    },
+    {
+      "bytes": 5264,
+      "path": "real/runtime_environment.json",
+      "sha256": "e4e21099a537ba5f6d5931a873eeb31f664ff2b1c87c23f7978867d9b2706b35"
+    },
+    {
+      "bytes": 7381,
+      "path": "real/selections/beijing_air_quality/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "c424666aaccab3ea5635342c593e000873f603cfa3b202ea37529b467c804cf4"
+    },
+    {
+      "bytes": 6481,
+      "path": "real/selections/beijing_air_quality/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "b53adf2a90449987e3f563cb9f9e04fe8943231c2628931dd327b17adb99ae35"
+    },
+    {
+      "bytes": 59841,
+      "path": "real/selections/electricity/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "8802560e45a9d4d7f58ca9328c19cd9bd8a8b768666cab7be137bc4b9222db58"
+    },
+    {
+      "bytes": 55221,
+      "path": "real/selections/electricity/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "f872d4d80ba5fcfc91a756a677a97d700f0f9ff7c6a954061902afa04157f8f0"
+    },
+    {
+      "bytes": 581,
+      "path": "real/selections/ett_ETTh1/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "a73f7139d547c5550d9c6b9e733b243d49eef29d40d8b0c0a70fd037c10a084f"
+    },
+    {
+      "bytes": 481,
+      "path": "real/selections/ett_ETTh1/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "06ae88c50c065656b90c5767df81c4bfc5f4294129a1a749e5ba9b35af61ccf6"
+    },
+    {
+      "bytes": 581,
+      "path": "real/selections/ett_ETTh2/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "03ba3eb004fd38104c1f22c7c8a5e8472152c98d88bad2b6bdf8a8180c060cf1"
+    },
+    {
+      "bytes": 481,
+      "path": "real/selections/ett_ETTh2/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "222fa40b05b232193c382d6891de74409d02e184b1a76cd41209741aaece85f4"
+    },
+    {
+      "bytes": 581,
+      "path": "real/selections/ett_ETTm1/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "66fa594b2d442ccd92ab8b74b5fc4a1d74cff583e0e4fcc2dde90e56ab92e681"
+    },
+    {
+      "bytes": 481,
+      "path": "real/selections/ett_ETTm1/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "4872c25289c9181a96a959ce801c51a02261b7123ba036ecb0cad5565e51eb5a"
+    },
+    {
+      "bytes": 581,
+      "path": "real/selections/ett_ETTm2/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "1484fb0591f0e2bd9902bc833fc4915831c81e2d5f27a6ee4085434a60e74c79"
+    },
+    {
+      "bytes": 481,
+      "path": "real/selections/ett_ETTm2/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "12476bab6d06c13d255656629555dc48d00e56c47eafc4f4ea6cb75b8b70806c"
+    },
+    {
+      "bytes": 3642,
+      "path": "release_manifest.json",
+      "sha256": "1c041c7bac29fc4ba5980337016cdf6f74e87d4ffaa0f0ad8afe0395986be975"
+    },
+    {
+      "bytes": 5264,
+      "path": "runtime_environment.json",
+      "sha256": "e4e21099a537ba5f6d5931a873eeb31f664ff2b1c87c23f7978867d9b2706b35"
+    },
+    {
+      "bytes": 2071,
+      "path": "synthetic/campaign_manifest.json",
+      "sha256": "0f0fbb099ac38d30365145445b5444d469876f1f13397b8238913b5f884c8d95"
+    },
+    {
+      "bytes": 1331,
+      "path": "synthetic/data_manifest.json",
+      "sha256": "d0801f9985f68fcccf1ddfd48f6fce5bc854c6f61a02f0e71dfce17ab344681e"
+    },
+    {
+      "bytes": 26,
+      "path": "synthetic/failures.csv",
+      "sha256": "49fb062b608da73e314ea8407392d201b1320bd00b564e275aeb3318498dc51d"
+    },
+    {
+      "bytes": 25347710,
+      "path": "synthetic/metrics_all.csv.gz",
+      "sha256": "100bad883db81b9c03f2778b04b93d30d4d5c58193f802f7a4d512becf4dd416"
+    },
+    {
+      "bytes": 21837,
+      "path": "synthetic/protocol.lock.json",
+      "sha256": "cd67fa64f211672d3916adff75b96049cb73e9aebaf657eaf829e8c1942268f2"
+    },
+    {
+      "bytes": 5264,
+      "path": "synthetic/runtime_environment.json",
+      "sha256": "e4e21099a537ba5f6d5931a873eeb31f664ff2b1c87c23f7978867d9b2706b35"
+    },
+    {
+      "bytes": 440,
+      "path": "synthetic/synthetic_analysis_manifest.json",
+      "sha256": "afcf5521db840ea5d1e03bfa60b87a2eb0c95e83b2ce55a21b2fd4445675fec5"
+    },
+    {
+      "bytes": 2339,
+      "path": "synthetic/synthetic_completion_matrix.csv",
+      "sha256": "321ac1e982cd07301af03f3b8b9d5f10f27badd6d165b9640132212fefa5f21d"
+    },
+    {
+      "bytes": 1560136,
+      "path": "synthetic/synthetic_gate_audit.csv",
+      "sha256": "9deaf4a1de97b8e7b755e7789b9a5b254bd3a9789dcee10744ad945e1fc366bf"
+    },
+    {
+      "bytes": 173068,
+      "path": "synthetic/synthetic_metrics_aggregate.csv",
+      "sha256": "bc93a0159e67834dab7e667d7e7a4e9700d70878465c20598aa30ae57bc9f87b"
+    },
+    {
+      "bytes": 1603,
+      "path": "synthetic/synthetic_primary_comparisons.csv",
+      "sha256": "90951874d7e27e976c8e402601395b965e8466df1d5e9efed13c4b308493de9c"
+    },
+    {
+      "bytes": 17428,
+      "path": "synthetic/synthetic_primary_deltas.pdf",
+      "sha256": "295a9a4bb516079c69cd38c0a3d66cbc645720b16751218f95b312f15291f4e3"
+    },
+    {
+      "bytes": 89763,
+      "path": "synthetic/synthetic_primary_deltas.png",
+      "sha256": "2c4b55e4a137f101dea1b7113fa8e2105e9c6924f129e10f6edee0f44c179a39"
+    },
+    {
+      "bytes": 484,
+      "path": "synthetic/synthetic_secondary_comparisons.csv",
+      "sha256": "ad63c1a681c40ca0b4978c8ede9b94c2667631a5e7a1efce66e3b43e3a4c7344"
+    },
+    {
+      "bytes": 456,
+      "path": "verification/confirmation_verification_manifest.json",
+      "sha256": "12a2fabf1e8584ed329175732e1bda4d33bb91dff1f9c142df425a65b386feba"
+    },
+    {
+      "bytes": 4520,
+      "path": "verification/forward_replay_matrix.csv",
+      "sha256": "07e898d336f65fb85c91b900157b66d372a876f0936394b209389bff4b958123"
+    },
+    {
+      "bytes": 2201,
+      "path": "verification/synthetic_recompute_matrix.csv",
+      "sha256": "b02949ecb13598d82f36c190f7ee9498a3182b57946845f2a9dd235f4f87c6e5"
+    }
+  ],
+  "root": "reproducibility/sapr_mamba_v2",
+  "total_bytes": 34990578
+}

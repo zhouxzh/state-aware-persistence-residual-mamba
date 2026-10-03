@@ -1,0 +1,5 @@
+# Python's csv module writes RFC 4180 CRLF records. Preserve those bytes because
+# the V2 compact release records checksums over the generated evidence files.
+docs/analysis/sapr_mamba_v2/*.csv whitespace=cr-at-eol
+reproducibility/sapr_mamba_v2/*.csv whitespace=cr-at-eol
+reproducibility/sapr_mamba_v2/**/*.csv whitespace=cr-at-eol

@@ -1,0 +1,21 @@
+{
+  "created_at": "2026-10-03T12:01:05+08:00",
+  "description": "Source-stratified real-panel primary paired RMSE deltas with 95% paired percentile bootstrap intervals.",
+  "output_files": [
+    {
+      "path": "docs/figures/sapr_mamba_v2/real_primary_deltas.png",
+      "sha256": "16a5bf7829b7683cdb6cd8bfee40180ba2dc3f312970d4b9d94c44f6f6bf8950"
+    },
+    {
+      "path": "docs/figures/sapr_mamba_v2/real_primary_deltas.pdf",
+      "sha256": "a0198695703b9a3288b407c81eed0555c0e8c6c235ae63171e5fd3216a022988"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "docs/analysis/sapr_mamba_v2/real_primary_comparisons.csv",
+      "sha256": "fa571a50975b6d973c617ae292fca91d9207fdd0dd8b8ced6ec5f1bd4506fb9c"
+    }
+  ],
+  "study": "sapr_mamba_v2"
+}

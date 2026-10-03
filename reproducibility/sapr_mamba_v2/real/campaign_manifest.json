@@ -1,0 +1,15 @@
+{
+  "completed": 180,
+  "failures": [],
+  "failures_artifact": {
+    "bytes": 32,
+    "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v2/real/failures.csv",
+    "sha256": "914a07c14114298534f54f1cdbf8753670b684ec324af8a3d6326f0834d9947a"
+  },
+  "metrics": {
+    "bytes": 5405913,
+    "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v2/real/metrics_all.csv",
+    "sha256": "bfb3870ed44dc40987b887d5e753704a8a1c110f75d03499d41022ce04cabb45"
+  },
+  "planned": 180
+}

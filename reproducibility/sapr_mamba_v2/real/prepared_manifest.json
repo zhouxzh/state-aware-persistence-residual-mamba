@@ -1,0 +1,59 @@
+{
+  "config_hashes": {
+    "model_spec.json": "31f8d71aa4b4f7dda4c277bb31d404b209d7cbed37cbcf520b28ac949103107f",
+    "protocol.json": "35cff9a346e7d9fb1946bf6dff641cc5a6015a269ac6c3096e3b36b754d7924f",
+    "real_panels.json": "e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83",
+    "synthetic.json": "91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c"
+  },
+  "panels": [
+    {
+      "data": "real/processed/electricity.npz",
+      "data_sha256": "74e1ff2c797e8bc2a57c23e6d3278692537cb417e2cc67c248a81dbfcb4cf58d",
+      "panel_id": "electricity",
+      "roster": "real/processed/electricity_roster.json",
+      "roster_sha256": "31bbf50887533103e129273bf4ff362a6f416469e661ed60324f2b8305a545ef",
+      "series_count": 100
+    },
+    {
+      "data": "real/processed/beijing_air_quality.npz",
+      "data_sha256": "4dd000b49c99292ff98ca6de4a038fdc42e13a2a2f9996e3334e38a68e10a8b9",
+      "panel_id": "beijing_air_quality",
+      "roster": "real/processed/beijing_air_quality_roster.json",
+      "roster_sha256": "ba6d6b12aeeed47c30bcc36ed4edea11af7eb0521737fd10211e6243d0458f84",
+      "series_count": 12
+    },
+    {
+      "data": "real/processed/ett_ETTh1.npz",
+      "data_sha256": "d4e5f3df09dbbd7288029c5937d562f34a9f1431a54589375f9dd4eaa02078bb",
+      "panel_id": "ett_ETTh1",
+      "roster": "real/processed/ett_ETTh1_roster.json",
+      "roster_sha256": "9e726724af360131f03c19c1321801af6ca78cc932cf97f120c76cf99d772398",
+      "series_count": 1
+    },
+    {
+      "data": "real/processed/ett_ETTh2.npz",
+      "data_sha256": "3f50f9aeb13d9fa87f2e4674f33add2256a230d7131c34fd68560e1a6f5a8953",
+      "panel_id": "ett_ETTh2",
+      "roster": "real/processed/ett_ETTh2_roster.json",
+      "roster_sha256": "ac8d5ffc2448654d1a22da80c6ab79487046be9a59afacec59f92c033eccda5e",
+      "series_count": 1
+    },
+    {
+      "data": "real/processed/ett_ETTm1.npz",
+      "data_sha256": "66b41873391e8936cbeadd647275a80c64c6016207cefd0ab96f7557ea501306",
+      "panel_id": "ett_ETTm1",
+      "roster": "real/processed/ett_ETTm1_roster.json",
+      "roster_sha256": "1200af43b1fa5648477018c519551bb05a900373446185d9b357296eafc7ed8d",
+      "series_count": 1
+    },
+    {
+      "data": "real/processed/ett_ETTm2.npz",
+      "data_sha256": "777f6bd51d6e32b372288957e50668abce0ec8de4e6e5e8019e3641a7bc92fde",
+      "panel_id": "ett_ETTm2",
+      "roster": "real/processed/ett_ETTm2_roster.json",
+      "roster_sha256": "0d3500fa0c2af8357cbe9130b7385092ec38bfd2154f788feb09ba0cd1da3c66",
+      "series_count": 1
+    }
+  ],
+  "prepared_at": "2026-10-03T07:20:08+08:00"
+}

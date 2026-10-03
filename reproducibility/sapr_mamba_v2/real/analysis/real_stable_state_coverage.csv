@@ -1,0 +1,15 @@
+source,horizon,source_sequence_units,stable_sequence_units,stable_state_coverage,evidence_status
+beijing_air_quality,3,12,0,0.0,no_eligible_state_units
+beijing_air_quality,6,12,0,0.0,no_eligible_state_units
+beijing_air_quality,12,12,0,0.0,no_eligible_state_units
+beijing_air_quality,24,12,0,0.0,no_eligible_state_units
+electricity,12,100,6,0.06,limited_stable_state_coverage
+electricity,24,100,6,0.06,limited_stable_state_coverage
+electricity,48,100,6,0.06,limited_stable_state_coverage
+electricity,96,100,6,0.06,limited_stable_state_coverage
+ett,3,2,0,0.0,no_eligible_state_units
+ett,6,2,0,0.0,no_eligible_state_units
+ett,12,4,1,0.25,limited_stable_state_coverage
+ett,24,4,1,0.25,limited_stable_state_coverage
+ett,48,2,1,0.5,limited_stable_state_coverage
+ett,96,2,1,0.5,limited_stable_state_coverage

@@ -1,0 +1,49 @@
+{
+  "completed": 25,
+  "failures": [],
+  "failures_artifact": {
+    "bytes": 26,
+    "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v2/synthetic/failures.csv",
+    "sha256": "49fb062b608da73e314ea8407392d201b1320bd00b564e275aeb3318498dc51d"
+  },
+  "generated": {
+    "config_hashes": {
+      "model_spec.json": "31f8d71aa4b4f7dda4c277bb31d404b209d7cbed37cbcf520b28ac949103107f",
+      "protocol.json": "35cff9a346e7d9fb1946bf6dff641cc5a6015a269ac6c3096e3b36b754d7924f",
+      "real_panels.json": "e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83",
+      "synthetic.json": "91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c"
+    },
+    "created_at": "2026-10-03T07:22:31+08:00",
+    "generator_version": "sapr_synthetic_v2.0",
+    "manifest": "sapr_mamba_v2/synthetic/data_manifest.json",
+    "splits": {
+      "test": {
+        "data": "sapr_mamba_v2/synthetic/test.npz",
+        "roster_sha256": "25865437a04497c7e715d330a1122af12606186fc5e369fc5d7b78d692f0eeba",
+        "series_count": 1700,
+        "sha256": "daf9ff7b80dd90e62e9e291d04d538c90592b7ca3589fd4de30f4be9f11345ec"
+      },
+      "train": {
+        "data": "sapr_mamba_v2/synthetic/train.npz",
+        "roster_sha256": "971d1353b935febcf3a4a2d1cc1c76df8677720b16b9f125b717504bf4e26195",
+        "series_count": 3300,
+        "sha256": "d94690a1f19c784e0e3b5b847cbb0669f7f8dc3ec7f6efb0f7be664279c0ad37"
+      },
+      "validation": {
+        "data": "sapr_mamba_v2/synthetic/validation.npz",
+        "roster_sha256": "d1d52bde8beb50e8c6f026e3c522ef2e5d15315e417260014ceb6cf010eaed93",
+        "series_count": 850,
+        "sha256": "c4b0b68d51901a6f1efc792bb1260e9c4c36b52c49c859358c2c44e336e73f02"
+      }
+    }
+  },
+  "metrics": {
+    "metrics": {
+      "bytes": 102221545,
+      "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v2/synthetic/metrics_all.csv",
+      "sha256": "a41151f3c9cae36dfa9a446cd0e4affeb3410e8ff9628e74e1ae6d3de23ada7e"
+    },
+    "rows": 482100
+  },
+  "planned": 25
+}

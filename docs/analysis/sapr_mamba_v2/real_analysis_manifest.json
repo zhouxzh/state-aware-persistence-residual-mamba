@@ -1,0 +1,30 @@
+{
+  "analyzed_at": "2026-10-03T12:01:05+08:00",
+  "completion": {
+    "artifact_problem_tasks": 0,
+    "complete": true,
+    "config_hash_mismatch_tasks": 0,
+    "expected_task_count": 180,
+    "incomplete_tasks": 0,
+    "metrics_matrix_matches_task_files": true,
+    "missing_task_manifests": [],
+    "observed_task_manifest_count": 180,
+    "unexpected_task_manifests": []
+  },
+  "figure_manifest": "docs/figures/sapr_mamba_v2/real_figure_manifest.json",
+  "figures": [
+    "docs/figures/sapr_mamba_v2/real_primary_deltas.png",
+    "docs/figures/sapr_mamba_v2/real_primary_deltas.pdf"
+  ],
+  "gate_audit_rows": 615,
+  "metrics_source": {
+    "path": "results/sapr_mamba_v2/real/metrics_all.csv",
+    "rows": 28680,
+    "sha256": "bfb3870ed44dc40987b887d5e753704a8a1c110f75d03499d41022ce04cabb45"
+  },
+  "primary_rows": 42,
+  "primary_rows_with_finite_p": 36,
+  "stable_safety_limited_rows": 14,
+  "statistical_failure_rows": 434,
+  "study": "sapr_mamba_v2"
+}

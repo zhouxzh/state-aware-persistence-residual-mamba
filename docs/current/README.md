@@ -39,5 +39,10 @@ PEMS、Weather、METR-LA、PEMS-BAY 或结果也完全禁止混入本项目。
 
 ## 当前状态
 
-此设计尚未实现或训练。不要因本文件存在而启动、停止或重跑实验。开始实现或下载新的
-外部数据前，必须获得用户明确授权。
+本入口中的 V1 设计稿保留为训练前设计与审计记录。当前研究的有效执行版本为
+`sapr_mamba_v2.0`，其协议修订见
+[`sapr_mamba_v2_protocol_amendment_20261003.md`](sapr_mamba_v2_protocol_amendment_20261003.md)，
+执行与校验状态见
+[`sapr_mamba_v2_execution_status_20261003.md`](sapr_mamba_v2_execution_status_20261003.md)。
+V2 的后续工作只能基于冻结 release 做复算、审计或论文交接；不得因已有结果改变阈值、
+模型、数据、种子、来源或报告子集。

@@ -1,0 +1,16 @@
+{
+  "conda_prefix": "/home/zhong/.conda/envs/sci-agent",
+  "device": "cuda:0",
+  "failures": {
+    "forward_replay": [],
+    "real_metric_recompute": [],
+    "synthetic_metric_recompute": []
+  },
+  "forward_replay_tasks": 65,
+  "python_executable": "/home/zhong/.conda/envs/sci-agent/bin/python",
+  "real_metric_tasks": 180,
+  "status": "verified",
+  "study": "sapr_mamba_v2",
+  "synthetic_metric_tasks": 25,
+  "verified_at": "2026-10-03T12:31:16+08:00"
+}
