@@ -1,0 +1,22 @@
+panel,model,candidate,rows
+beijing_air_quality,ARIMA,"(1, 0, 0)",80
+beijing_air_quality,ARIMA,"(1, 1, 0)",40
+beijing_air_quality,ARIMA,"(2, 0, 0)",40
+beijing_air_quality,ARIMA,"(2, 1, 0)",80
+beijing_air_quality,ETS,additive_trend_damped,20
+beijing_air_quality,ETS,simple,220
+electricity,ARIMA,"(1, 0, 0)",960
+electricity,ARIMA,"(1, 1, 0)",20
+electricity,ARIMA,"(2, 0, 0)",980
+electricity,ARIMA,"(2, 1, 0)",40
+electricity,ETS,additive_trend,80
+electricity,ETS,additive_trend_damped,380
+electricity,ETS,simple,1540
+ett_ETTh1,ARIMA,"(1, 0, 0)",20
+ett_ETTh1,ETS,simple,20
+ett_ETTh2,ARIMA,"(2, 0, 0)",20
+ett_ETTh2,ETS,simple,20
+ett_ETTm1,ARIMA,"(2, 0, 0)",20
+ett_ETTm1,ETS,simple,20
+ett_ETTm2,ARIMA,"(2, 0, 0)",20
+ett_ETTm2,ETS,simple,20

@@ -1,0 +1,57 @@
+{
+  "campaign_summary": {
+    "completed": 180,
+    "failures": [],
+    "failures_artifact": {
+      "bytes": 32,
+      "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v1/real/failures.csv",
+      "sha256": "914a07c14114298534f54f1cdbf8753670b684ec324af8a3d6326f0834d9947a"
+    },
+    "metrics": {
+      "bytes": 5406257,
+      "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v1/real/metrics_all.csv",
+      "sha256": "7e44f428496a85e4a7c8e1424beb7c3e9c8b71719f5e3937084adbf16319c562"
+    },
+    "planned": 180
+  },
+  "created_at": "2026-10-03T07:13:17+08:00",
+  "expected": {
+    "deterministic_models": [
+      "M0",
+      "SeasonalNaive",
+      "Drift",
+      "ETS",
+      "ARIMA"
+    ],
+    "deterministic_seed": 20261011,
+    "learned_random_models": [
+      "M1",
+      "M2",
+      "M3",
+      "M3-shuffle",
+      "DLinear"
+    ],
+    "random_seeds": [
+      20261011,
+      20261012,
+      20261013,
+      20261014,
+      20261015
+    ],
+    "sources": [
+      "electricity",
+      "beijing_air_quality",
+      "ett_ETTh1",
+      "ett_ETTh2",
+      "ett_ETTm1",
+      "ett_ETTm2"
+    ]
+  },
+  "failures_csv_sha256": "914a07c14114298534f54f1cdbf8753670b684ec324af8a3d6326f0834d9947a",
+  "metrics_sha256": "7e44f428496a85e4a7c8e1424beb7c3e9c8b71719f5e3937084adbf16319c562",
+  "observed_statuses": {
+    "complete": 180
+  },
+  "observed_task_manifests": 180,
+  "warnings_policy": "statsmodels warnings are retained in task logs; failed fits are represented in per-model failures.csv and persistence fallback rows"
+}

@@ -17,6 +17,7 @@ COMMANDS = {
     "preflight": "utils.financial.preflight",
     "materialize-targets": "utils.financial.targets",
     "release-setup": "utils.financial.release_setup",
+    "sapr-preflight": "utils.sapr_mamba.cli",
 }
 
 

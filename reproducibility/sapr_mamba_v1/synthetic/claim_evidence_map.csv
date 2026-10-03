@@ -1,0 +1,4 @@
+claim_id,artifact,filter,interpretation
+H1,docs/analysis/sapr_mamba_v1/synthetic_primary_comparisons.csv,comparison=H1_M2_minus_M1,Synthetic nonstable primary paired RMSE comparison only.
+H2,docs/analysis/sapr_mamba_v1/synthetic_primary_comparisons.csv,comparison=H2_M3_minus_M2,Synthetic nonstable complete-path comparison only.
+H3,docs/analysis/sapr_mamba_v1/synthetic_gate_audit.csv,all rows,"Descriptive gate association, not causal evidence."

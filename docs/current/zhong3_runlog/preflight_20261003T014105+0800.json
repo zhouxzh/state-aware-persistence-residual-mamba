@@ -1,0 +1,21 @@
+{
+  "active_research_processes": "391112  382537 Ss         22:28 /home/zhong/anaconda3/bin/python /home/zhong/anaconda3/bin/conda run --no-capture-output -n mamba python experiments/sapr_mamba/run.py --stage real-download\n 391142  391135 S          22:24 python experiments/sapr_mamba/run.py --stage real-download\n 392132  382537 Ss         00:02 /home/zhong/anaconda3/bin/python /home/zhong/anaconda3/bin/conda run --no-capture-output -n mamba python experiments/sapr_mamba/run.py --stage synthetic-run\n 392141  392133 S          00:01 python experiments/sapr_mamba/run.py --stage synthetic-run\n 392149  392141 S          00:00 bash -lc ps -eo pid,ppid,stat,etime,cmd | rg -i 'python.*(sapr|mamba|optuna)|torchrun' || true\n 392154  392149 S          00:00 rg -i python.*(sapr|mamba|optuna)|torchrun",
+  "conda_prefix": "/home/zhong/.conda/envs/mamba",
+  "config_hashes": {
+    "model_spec.json": "31f8d71aa4b4f7dda4c277bb31d404b209d7cbed37cbcf520b28ac949103107f",
+    "protocol.json": "8ba6c73dee1f524c6877585a833dc21e5c80366bd91ca5613150bbc514356368",
+    "real_panels.json": "e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83",
+    "synthetic.json": "092758a0f664470cd05aa3057f941622ac5af563cce81d111e64fcc7792b34ef"
+  },
+  "disk": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/nvme1n1p2  457G  146G  288G  34% /",
+  "git": {
+    "branch": "main",
+    "commit": "d15c4c92ce49b8e3c103388da28cf1a2249a811c",
+    "status": "M .gitignore\n M scripts/data.py\n M scripts/reproduce.py\n?? configs/sapr_mamba_v1/model_spec.json\n?? configs/sapr_mamba_v1/protocol.json\n?? configs/sapr_mamba_v1/protocol.lock.json\n?? configs/sapr_mamba_v1/real_panels.json\n?? configs/sapr_mamba_v1/synthetic.json\n?? docs/current/sapr_mamba_simulation_plan_20261002.md\n?? docs/current/zhong3_runlog/preflight_20261003T003127+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T003308+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T011321+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T011710+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T011839+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T014007+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T014026+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T014037+0800.json\n?? experiments/sapr_mamba/__init__.py\n?? experiments/sapr_mamba/analyze.py\n?? experiments/sapr_mamba/run.py\n?? model/StateAwarePersistenceResidualMamba.py\n?? reproducibility/sapr_mamba_v1/protocol.lock.v1.0_invalid_m1_projection.json\n?? reproducibility/sapr_mamba_v1/protocol.lock.v1.1_invalid_variance_injection.json\n?? reproducibility/sapr_mamba_v1/protocol.lock.v1.2_missing_context_baselines.json\n?? reproducibility/sapr_mamba_v1/runtime_environment.json\n?? tests/test_sapr_mamba_analysis.py\n?? tests/test_sapr_mamba_data.py\n?? tests/test_sapr_mamba_features.py\n?? tests/test_sapr_mamba_model.py\n?? tests/test_sapr_mamba_synthetic.py\n?? utils/sapr_mamba/__init__.py\n?? utils/sapr_mamba/analysis.py\n?? utils/sapr_mamba/cli.py\n?? utils/sapr_mamba/data.py\n?? utils/sapr_mamba/features.py\n?? utils/sapr_mamba/io.py\n?? utils/sapr_mamba/real.py\n?? utils/sapr_mamba/statistical.py\n?? utils/sapr_mamba/synthetic.py"
+  },
+  "nvidia_smi": "NVIDIA GeForce RTX 2080 Ti, 570.211.01, 22528 MiB, 102 MiB, 0 %",
+  "phase": "preflight",
+  "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+  "repository": "/home/zhong/Documents/state-aware-persistence-residual-mamba",
+  "timestamp": "2026-10-03T01:41:05+08:00"
+}

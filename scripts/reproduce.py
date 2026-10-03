@@ -12,6 +12,8 @@ sys.path.insert(0, str(REPO_ROOT))
 
 WORKFLOWS = {
     "financial-s-only": "experiments.financial.s_only",
+    "sapr-mamba": "experiments.sapr_mamba.run",
+    "sapr-mamba-analysis": "experiments.sapr_mamba.analyze",
 }
 
 

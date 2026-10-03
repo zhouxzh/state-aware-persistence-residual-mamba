@@ -1,0 +1,122 @@
+{
+  "file_count": 23,
+  "files": [
+    {
+      "bytes": 452,
+      "path": "claim_evidence_map.csv",
+      "sha256": "15d0390ec0c615e3d9abdbe6d884ab487c129d9a422edec5b75984694a5b6e50"
+    },
+    {
+      "bytes": 11109,
+      "path": "protocol.lock.v1.0_invalid_m1_projection.json",
+      "sha256": "16e10243073194bdb86fbd7aa0be1616f797a100ee3d4921537ad6d1a39624ce"
+    },
+    {
+      "bytes": 11780,
+      "path": "protocol.lock.v1.1_invalid_variance_injection.json",
+      "sha256": "efeca233c7a64f3a896e3842def830da7ce5fecc488259bc67cdded9dfc1f495"
+    },
+    {
+      "bytes": 12202,
+      "path": "protocol.lock.v1.2_missing_context_baselines.json",
+      "sha256": "a6f2c98f1377afa9e73e93653035322638d83c126dd92dc7a39c2a459ac7c570"
+    },
+    {
+      "bytes": 14216,
+      "path": "protocol.lock.v1.3_uncached_features.json",
+      "sha256": "dcf3e7cd2843d02c427726035da79268be9c9ad8aa8902ee8509aa2e47038349"
+    },
+    {
+      "bytes": 14726,
+      "path": "protocol.lock.v1.4_pre_real_parser_fix.json",
+      "sha256": "6a9d98e092f7f478afa6f7d6cb99c8cdd99a574891b0220056964b3986e2854c"
+    },
+    {
+      "bytes": 15128,
+      "path": "protocol.lock.v1.5_synthetic_complete_real_scaling_fix.json",
+      "sha256": "b7818b935cd086f42a8f8589eac9d35826b7212d636e8117ab4245418aac7812"
+    },
+    {
+      "bytes": 8103,
+      "path": "runtime_environment.json",
+      "sha256": "bc8b43f38b8f123c72c22f116f30cffe3e2f1cf648a51c958c18b07be25e293e"
+    },
+    {
+      "bytes": 2071,
+      "path": "synthetic/campaign_manifest.json",
+      "sha256": "342df06000131b3965f78d2b2bd2b6b2edcf94921d028c228f3eba5b964b8017"
+    },
+    {
+      "bytes": 452,
+      "path": "synthetic/claim_evidence_map.csv",
+      "sha256": "15d0390ec0c615e3d9abdbe6d884ab487c129d9a422edec5b75984694a5b6e50"
+    },
+    {
+      "bytes": 1331,
+      "path": "synthetic/data_manifest.json",
+      "sha256": "534f184e53fc06ba36493652b44ff1541bf79a4d8cd5750d1f285335b5464d6a"
+    },
+    {
+      "bytes": 26,
+      "path": "synthetic/failures.csv",
+      "sha256": "49fb062b608da73e314ea8407392d201b1320bd00b564e275aeb3318498dc51d"
+    },
+    {
+      "bytes": 102222816,
+      "path": "synthetic/metrics_all.csv",
+      "sha256": "ce761e63935d6348689748fb95ac3701270c26e4c2dfb71bbb9dd34afc3f3e7a"
+    },
+    {
+      "bytes": 15128,
+      "path": "synthetic/protocol.lock.json",
+      "sha256": "b7818b935cd086f42a8f8589eac9d35826b7212d636e8117ab4245418aac7812"
+    },
+    {
+      "bytes": 8103,
+      "path": "synthetic/runtime_environment.json",
+      "sha256": "bc8b43f38b8f123c72c22f116f30cffe3e2f1cf648a51c958c18b07be25e293e"
+    },
+    {
+      "bytes": 440,
+      "path": "synthetic/synthetic_analysis_manifest.json",
+      "sha256": "cf42fb71c6ab752d9c7b5047d37ab40502eca0c76ee8ba48625bc5f3a68dd0f5"
+    },
+    {
+      "bytes": 2365,
+      "path": "synthetic/synthetic_completion_matrix.csv",
+      "sha256": "0da7f4a8f4bd88cbbfff7bb4eaff461eb43a157d384de503f946324b6d4a89af"
+    },
+    {
+      "bytes": 1575876,
+      "path": "synthetic/synthetic_gate_audit.csv",
+      "sha256": "ab94d3ad0438e9648ee5090a449285852cfd6b69ce8ab06956a7da97364d62e2"
+    },
+    {
+      "bytes": 174097,
+      "path": "synthetic/synthetic_metrics_aggregate.csv",
+      "sha256": "e1b9f14bbd3e3a1480c36082b3c766f351cee9f8208e943f4e3a3349c445aaa3"
+    },
+    {
+      "bytes": 1620,
+      "path": "synthetic/synthetic_primary_comparisons.csv",
+      "sha256": "4150a39bb8d62ad034cfad9ebf1d3941db7c8408fd0681534ac43e4d321b69fe"
+    },
+    {
+      "bytes": 17418,
+      "path": "synthetic/synthetic_primary_deltas.pdf",
+      "sha256": "d85215b4e733cb97cc3987844ec67f1c92eca98b41488e30c71e1f73426f8bae"
+    },
+    {
+      "bytes": 89763,
+      "path": "synthetic/synthetic_primary_deltas.png",
+      "sha256": "2c4b55e4a137f101dea1b7113fa8e2105e9c6924f129e10f6edee0f44c179a39"
+    },
+    {
+      "bytes": 490,
+      "path": "synthetic/synthetic_secondary_comparisons.csv",
+      "sha256": "78b3a8e8c5eb976a7ed0fd1c3d80b58755ccdf7060a8d1cc83dc16cdfc210107"
+    }
+  ],
+  "root": "/home/zhong/Documents/state-aware-persistence-residual-mamba/reproducibility/sapr_mamba_v1",
+  "total_bytes": 104199712
+}

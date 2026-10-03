@@ -1,0 +1,89 @@
+{
+  "protocol_version": "sapr_mamba_v2.0",
+  "status": "frozen_before_training",
+  "study_scope": "S-only causal persistence-residual forecasting; no external covariates or historical financial release inputs",
+  "prohibited_inputs": [
+    "reproducibility/financial_s_only_v1",
+    "reproducibility/financial_s_only_v2",
+    "experiments/financial",
+    "~/Documents/Self-Supervised-Contrastive-Forecsating"
+  ],
+  "models": ["M0", "M1", "M2", "M3", "M3-shuffle"],
+  "model_roles": {
+    "M0": "persistence",
+    "M1": "linear_residual",
+    "M2": "ungated_mamba_residual",
+    "M3": "state_gated_mamba_residual",
+    "M3-shuffle": "state_pairing_control"
+  },
+  "context_baselines": {
+    "models": ["SeasonalNaive", "Drift", "DLinear", "ETS", "ARIMA"],
+    "seasonal_naive": "available only when the configured period P is no longer than the causal input history",
+    "dlinear": "learned contextual baseline with the same input length, maximum horizon, seed set, optimizer, early stopping, and training samples as M1-M3",
+    "statistical_selection": {
+      "selection_split": "validation",
+      "selection_metric": "mean path RMSE on at most 20 fixed non-overlapping validation origins per series",
+      "history_length": "min(origin, 8P)",
+      "ets_candidates": ["simple", "additive_trend", "additive_trend_damped"],
+      "arima_orders": [[1, 0, 0], [2, 0, 0], [1, 1, 0], [2, 1, 0]],
+      "maximum_iterations": 50,
+      "fit_failure_fallback": "persistence for that origin, with failure retained in failures.csv",
+      "warning_policy": "ConvergenceWarning and RuntimeWarning emitted during candidate fit are treated as failed fits and written to failures.csv"
+    }
+  },
+  "seeds": [20261011, 20261012, 20261013, 20261014, 20261015],
+  "real_seed_policy": {
+    "five_seeds_for": ["M1", "M2", "M3", "M3-shuffle", "DLinear"],
+    "single_deterministic_seed": 20261011,
+    "single_seed_for": ["M0", "SeasonalNaive", "Drift", "ETS", "ARIMA"]
+  },
+  "training": {
+    "device": "cuda:0",
+    "deterministic": true,
+    "amp": true,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "batch_size": 64,
+    "max_epochs": 40,
+    "patience": 7,
+    "samples_per_epoch": 24000,
+    "validation_samples": 8000,
+    "gradient_clip_norm": 1.0,
+    "technical_retries": 1,
+    "num_workers": 0
+  },
+  "state_features": {
+    "epsilon": 1e-06,
+    "short_window_fraction_of_period": 0.25,
+    "mid_window_periods": 1,
+    "long_window_periods": 4,
+    "change_score": "max(abs(latest_level_z), abs(first_difference_z), abs(second_difference_z), abs(short_trend_z), volatility_ratio, max_abs_jump_z, abs(seasonal_deviation_z))",
+    "change_threshold": 2.5,
+    "constant_series_rule": "return finite zero robust-standardized features",
+    "missing_rule": "never use a future value; windows with unresolved values are ineligible"
+  },
+  "evaluation": {
+    "metrics": ["mae", "rmse", "smae", "srmse"],
+    "primary_metrics": ["rmse", "mae"],
+    "synthetic_unit": "independent_test_series",
+    "real_unit": "series_within_source",
+    "bootstrap_replicates": 10000,
+    "confidence_level": 0.95,
+    "multiple_testing": "Holm across H1, H2, stable safety at four horizons",
+    "stable_safety_relative_rmse_tolerance": 0.02,
+    "test_origin_stride": "H_max",
+    "real_maximum_test_origins_per_series": 20,
+    "save_per_origin_gate_audit": true
+  },
+  "failure_policy": {
+    "retry_once_with_identical_configuration": true,
+    "second_failure": "retain_failed_status_and_failure_row",
+    "missing_primary_unit": "mark_primary_conclusion_incomplete"
+  },
+  "amendment": {
+    "supersedes": "sapr_mamba_v1.7",
+    "reason": "V1 completed synthetic and real matrices, but the fixed ETS/ARIMA candidates emitted numerical and convergence warnings that were not represented in failures.csv even though the plan requires statistical non-convergence to be recorded. V1 synthetic and real artifacts remain retained development evidence and are not pooled with V2.",
+    "correction": "V2 reruns the complete synthetic and real matrices from the same verified raw sources and frozen model specification. Statistical ConvergenceWarning and RuntimeWarning are now explicit failed fits, recorded in failures.csv, with the prespecified persistence fallback."
+  }
+}

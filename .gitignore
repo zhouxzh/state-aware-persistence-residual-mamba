@@ -220,6 +220,18 @@ __marimo__/
 results/
 backup/
 
+# SAPR-Mamba raw inputs, checkpoints, prediction tensors, and transient smoke output.
+data/sapr_mamba_v1/
+results/sapr_mamba_v1/
+results/smoke/
+
+# V2 evidence is added only after the final matrix and release audit complete.
+reproducibility/sapr_mamba_v2/
+
+# This reproducible full V1 matrix is retained locally; compact aggregates and
+# the checksum manifest are the version-controlled audit artifacts.
+reproducibility/sapr_mamba_v1/synthetic/metrics_all.csv
+
 # Local datasets
 /data/
 

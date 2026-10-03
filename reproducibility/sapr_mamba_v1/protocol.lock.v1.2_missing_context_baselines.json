@@ -1,0 +1,318 @@
+{
+  "configuration": {
+    "model_spec": {
+      "gate": {
+        "form": "sigmoid(a(phi_t) + c(h_t))",
+        "initial_bias": 0.0,
+        "output_dimension": 1,
+        "regularization": 0.0
+      },
+      "input": "univariate standardized causal history plus per-origin causal state features",
+      "linear_residual": {
+        "history_projection": 96,
+        "history_projection_definition": "last 96 normalized differences padded left when needed",
+        "mapping": "single affine linear map from projected history and phi_t to residual path"
+      },
+      "m2_gate_value": 1.0,
+      "m3_shuffle": {
+        "applies_at": [
+          "training",
+          "validation",
+          "test"
+        ],
+        "meaning": "breaks the pairing between each history and its state feature vector while retaining both marginal distributions",
+        "permutation": "fixed split-specific NumPy PCG64 permutation seeded by run seed plus 9001"
+      },
+      "mamba": {
+        "d_conv": 4,
+        "d_model": 64,
+        "d_state": 16,
+        "dropout": 0.1,
+        "expand": 2,
+        "layers": 2
+      },
+      "output": "max-horizon persistence residual path",
+      "shared_between_M2_and_M3": [
+        "mamba",
+        "residual_head",
+        "optimizer",
+        "training_budget",
+        "input_features"
+      ]
+    },
+    "protocol": {
+      "amendment": {
+        "correction": "Set linear_residual.history_projection to integer 96 and multiply post-change innovations before AR recursion for variance_shift. Retain v1.0/v1.1 locks, generated data, and smoke outputs as invalid protocol evidence.",
+        "reason": "v1.0 model_spec.linear_residual.history_projection contained prose rather than the frozen numeric projection length; v1.0 smoke was incomplete because M1 could not instantiate. v1.1 then revealed that variance_shift was applied as a cumulative observed-level perturbation rather than to post-change AR innovations. Neither version produced a confirmation run.",
+        "supersedes": "sapr_mamba_v1.1"
+      },
+      "evaluation": {
+        "bootstrap_replicates": 10000,
+        "confidence_level": 0.95,
+        "metrics": [
+          "mae",
+          "rmse",
+          "smae",
+          "srmse"
+        ],
+        "multiple_testing": "Holm across H1, H2, stable safety at four horizons",
+        "primary_metrics": [
+          "rmse",
+          "mae"
+        ],
+        "real_unit": "series_within_source",
+        "save_per_origin_gate_audit": true,
+        "stable_safety_relative_rmse_tolerance": 0.02,
+        "synthetic_unit": "independent_test_series",
+        "test_origin_stride": "H_max"
+      },
+      "failure_policy": {
+        "missing_primary_unit": "mark_primary_conclusion_incomplete",
+        "retry_once_with_identical_configuration": true,
+        "second_failure": "retain_failed_status_and_failure_row"
+      },
+      "model_roles": {
+        "M0": "persistence",
+        "M1": "linear_residual",
+        "M2": "ungated_mamba_residual",
+        "M3": "state_gated_mamba_residual",
+        "M3-shuffle": "state_pairing_control"
+      },
+      "models": [
+        "M0",
+        "M1",
+        "M2",
+        "M3",
+        "M3-shuffle"
+      ],
+      "prohibited_inputs": [
+        "reproducibility/financial_s_only_v1",
+        "reproducibility/financial_s_only_v2",
+        "experiments/financial",
+        "~/Documents/Self-Supervised-Contrastive-Forecsating"
+      ],
+      "protocol_version": "sapr_mamba_v1.2",
+      "seeds": [
+        20261011,
+        20261012,
+        20261013,
+        20261014,
+        20261015
+      ],
+      "state_features": {
+        "change_score": "max(abs(latest_level_z), abs(first_difference_z), abs(second_difference_z), abs(short_trend_z), volatility_ratio, max_abs_jump_z, abs(seasonal_deviation_z))",
+        "change_threshold": 2.5,
+        "constant_series_rule": "return finite zero robust-standardized features",
+        "epsilon": 1e-06,
+        "long_window_periods": 4,
+        "mid_window_periods": 1,
+        "missing_rule": "never use a future value; windows with unresolved values are ineligible",
+        "short_window_fraction_of_period": 0.25
+      },
+      "status": "frozen_before_training",
+      "study_scope": "S-only causal persistence-residual forecasting; no external covariates or historical financial release inputs",
+      "training": {
+        "amp": true,
+        "batch_size": 64,
+        "deterministic": true,
+        "device": "cuda:0",
+        "gradient_clip_norm": 1.0,
+        "learning_rate": 0.0003,
+        "max_epochs": 40,
+        "num_workers": 0,
+        "optimizer": "AdamW",
+        "patience": 7,
+        "samples_per_epoch": 24000,
+        "technical_retries": 1,
+        "validation_samples": 8000,
+        "weight_decay": 0.0001
+      }
+    },
+    "real_panels": {
+      "download_policy": "download only listed original sources; record URL, retrieval time, raw SHA-256, license evidence and source metadata before preprocessing",
+      "manifest_version": "sapr_real_panels_v1",
+      "panels": {
+        "beijing_air_quality": {
+          "frequency": "h",
+          "horizons": [
+            3,
+            6,
+            12,
+            24
+          ],
+          "input_length": 96,
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0), verified from source page 2026-10-02",
+          "minimum_eligible_test_origins": 20,
+          "minimum_nonmissing_fraction": 0.95,
+          "period": 24,
+          "short_gap_limit": 3,
+          "source_page": "https://archive.ics.uci.edu/dataset/501/beijing+multi+site+air+quality+data",
+          "source_url": "https://archive.ics.uci.edu/static/public/501/beijing+multi+site+air+quality+data.zip",
+          "target_rule": "PM2.5 for every station passing deterministic quality rules; meteorological variables excluded"
+        },
+        "electricity": {
+          "frequency": "15min",
+          "horizons": [
+            12,
+            24,
+            48,
+            96
+          ],
+          "input_length": 384,
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0), verified from source page 2026-10-02",
+          "minimum_eligible_test_origins": 20,
+          "minimum_nonmissing_fraction": 0.95,
+          "period": 96,
+          "short_gap_limit": 12,
+          "source_page": "https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014",
+          "source_url": "https://archive.ics.uci.edu/static/public/321/electricityloaddiagrams20112014.zip",
+          "target_rule": "all user load columns passing deterministic quality rules; hash-order cap at 100"
+        },
+        "ett": {
+          "frequency_by_file": {
+            "ETTh1": "h",
+            "ETTh2": "h",
+            "ETTm1": "15min",
+            "ETTm2": "15min"
+          },
+          "license": "Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0), verified from repository LICENSE 2026-10-02; raw and processed data remain local and are not redistributed",
+          "minimum_eligible_test_origins": 20,
+          "minimum_nonmissing_fraction": 0.99,
+          "period_by_file": {
+            "ETTh1": 24,
+            "ETTh2": 24,
+            "ETTm1": 96,
+            "ETTm2": 96
+          },
+          "short_gap_fraction_of_period": 0.125,
+          "source_page": "https://github.com/zhouhaoyi/ETDataset",
+          "source_urls": {
+            "ETTh1": "https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTh1.csv",
+            "ETTh2": "https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTh2.csv",
+            "ETTm1": "https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTm1.csv",
+            "ETTm2": "https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTm2.csv"
+          },
+          "target_rule": "OT only; no other sensor is input"
+        }
+      },
+      "quality_rules": {
+        "exclude_by_model_result": false,
+        "long_gap_handling": "mark all histories or targets crossing the gap ineligible",
+        "roster_order": "SHA-256 of source-specific series identifier ascending",
+        "scaling": "mean and standard deviation fit on each series training range only (ddof=0)",
+        "short_missing_imputation": "causal forward fill only",
+        "sort_and_regularize": true,
+        "split": [
+          0.6,
+          0.2,
+          0.2
+        ]
+      }
+    },
+    "synthetic": {
+      "base_process": {
+        "ar_coefficient_range": [
+          0.25,
+          0.75
+        ],
+        "change_point_range": [
+          576,
+          1536
+        ],
+        "change_signal_delay": 12,
+        "innovation_std": 1.0,
+        "seasonal_amplitude_range": [
+          0.0,
+          1.5
+        ],
+        "trend_slope_range": [
+          -0.006,
+          0.006
+        ]
+      },
+      "generator_seed": 20261002,
+      "generator_version": "sapr_synthetic_v1.1",
+      "horizons": [
+        12,
+        24,
+        48,
+        96
+      ],
+      "input_length": 384,
+      "length": 2048,
+      "max_horizon": 96,
+      "mechanisms": {
+        "gradual_drift": {
+          "strengths": [
+            0.5,
+            1.0,
+            2.0
+          ]
+        },
+        "level_shift": {
+          "strengths": [
+            0.5,
+            1.0,
+            2.0
+          ]
+        },
+        "seasonal_change": {
+          "strengths": [
+            0.5,
+            1.0,
+            2.0
+          ]
+        },
+        "stable": {
+          "strengths": [
+            0.0
+          ]
+        },
+        "trend_break": {
+          "strengths": [
+            0.5,
+            1.0,
+            2.0
+          ]
+        },
+        "variance_shift": {
+          "strengths": [
+            1.5,
+            2.0,
+            3.0
+          ]
+        }
+      },
+      "origin_stride": 96,
+      "seasonal_period": 48,
+      "splits": {
+        "test": {
+          "per_mechanism_strength": 100,
+          "stable": 200
+        },
+        "train": {
+          "per_mechanism_strength": 200,
+          "stable": 300
+        },
+        "validation": {
+          "per_mechanism_strength": 50,
+          "stable": 100
+        }
+      },
+      "stress_control": "future-only jumps are omitted from primary pooled analysis and are not generated by this version"
+    }
+  },
+  "frozen_at": "2026-10-03T01:17:12+08:00",
+  "git": {
+    "branch": "main",
+    "commit": "d15c4c92ce49b8e3c103388da28cf1a2249a811c",
+    "status": "M .gitignore\n M scripts/data.py\n M scripts/reproduce.py\n?? configs/sapr_mamba_v1/model_spec.json\n?? configs/sapr_mamba_v1/protocol.json\n?? configs/sapr_mamba_v1/real_panels.json\n?? configs/sapr_mamba_v1/synthetic.json\n?? docs/current/sapr_mamba_simulation_plan_20261002.md\n?? docs/current/zhong3_runlog/preflight_20261003T003127+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T003308+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T011321+0800.json\n?? docs/current/zhong3_runlog/preflight_20261003T011710+0800.json\n?? experiments/sapr_mamba/__init__.py\n?? experiments/sapr_mamba/run.py\n?? model/StateAwarePersistenceResidualMamba.py\n?? reproducibility/sapr_mamba_v1/protocol.lock.v1.0_invalid_m1_projection.json\n?? reproducibility/sapr_mamba_v1/protocol.lock.v1.1_invalid_variance_injection.json\n?? reproducibility/sapr_mamba_v1/runtime_environment.json\n?? tests/test_sapr_mamba_data.py\n?? tests/test_sapr_mamba_features.py\n?? tests/test_sapr_mamba_model.py\n?? tests/test_sapr_mamba_synthetic.py\n?? utils/sapr_mamba/__init__.py\n?? utils/sapr_mamba/analysis.py\n?? utils/sapr_mamba/cli.py\n?? utils/sapr_mamba/data.py\n?? utils/sapr_mamba/features.py\n?? utils/sapr_mamba/io.py\n?? utils/sapr_mamba/real.py\n?? utils/sapr_mamba/synthetic.py"
+  },
+  "protocol_lock_version": "sapr_mamba_v1.0",
+  "source_hashes": {
+    "model_spec.json": "06c9f1d951a2cbf5025e83eaf7dfff47c22b022c892d578dabdedadc490451e4",
+    "protocol.json": "086e724d1a607fc31ea01781d9fdaee10b8ec490c3b271fab76713b5d880e384",
+    "real_panels.json": "e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83",
+    "synthetic.json": "092758a0f664470cd05aa3057f941622ac5af563cce81d111e64fcc7792b34ef"
+  }
+}

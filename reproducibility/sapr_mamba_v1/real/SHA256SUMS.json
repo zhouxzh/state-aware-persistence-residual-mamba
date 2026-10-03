@@ -1,0 +1,113 @@
+{
+  "created_at": "2026-10-03T07:13:17+08:00",
+  "file_count": 21,
+  "files": [
+    {
+      "bytes": 545,
+      "path": "campaign_manifest.json",
+      "sha256": "6f451f378ba6297f44525295480c148aada4781aa15e6b7cddf44b4ca933bbc2"
+    },
+    {
+      "bytes": 755,
+      "path": "candidate_counts.csv",
+      "sha256": "1579450ef05714deb99a551a2c69f2f19fa08bd01bdfec3f1fd247361dae81e6"
+    },
+    {
+      "bytes": 3971,
+      "path": "data_manifest.json",
+      "sha256": "eecc8574e24d345a78d6682a7f1c77032c109d7e8b703f25e695bc4fd8bf419f"
+    },
+    {
+      "bytes": 32,
+      "path": "failures.csv",
+      "sha256": "914a07c14114298534f54f1cdbf8753670b684ec324af8a3d6326f0834d9947a"
+    },
+    {
+      "bytes": 5406257,
+      "path": "metrics_all.csv",
+      "sha256": "7e44f428496a85e4a7c8e1424beb7c3e9c8b71719f5e3937084adbf16319c562"
+    },
+    {
+      "bytes": 2593,
+      "path": "prepared_manifest.json",
+      "sha256": "d5064ef42b1be754ca688bbd9682b5746047648dce919f4c1c61331282fc0e34"
+    },
+    {
+      "bytes": 19184,
+      "path": "protocol.lock.json",
+      "sha256": "624c9aa906a611cfb0c3d4b691d1b4c89bf752addc7d5269ee52ad936535f368"
+    },
+    {
+      "bytes": 1602,
+      "path": "real_release_manifest.json",
+      "sha256": "e85e20d2ab474e819d0f0d0a2608c41ecdbdad2fb235c497489d35cb4a43ca56"
+    },
+    {
+      "bytes": 9421,
+      "path": "runtime_environment.json",
+      "sha256": "599b1b7cddf890e2ef30d8ba7e7fdc55719df03433b4502c4ed6eb050183f00f"
+    },
+    {
+      "bytes": 7381,
+      "path": "selections/beijing_air_quality/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "c424666aaccab3ea5635342c593e000873f603cfa3b202ea37529b467c804cf4"
+    },
+    {
+      "bytes": 6481,
+      "path": "selections/beijing_air_quality/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "b53adf2a90449987e3f563cb9f9e04fe8943231c2628931dd327b17adb99ae35"
+    },
+    {
+      "bytes": 59841,
+      "path": "selections/electricity/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "b8ee38fd05d8f1738f9d7c4867b98dbd9920a800c74e3fd65798563055629c20"
+    },
+    {
+      "bytes": 56181,
+      "path": "selections/electricity/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "ecd1edbacb703c5a3203201e21a81eca0450b4762d671e4187f49bc6bec8ac16"
+    },
+    {
+      "bytes": 581,
+      "path": "selections/ett_ETTh1/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "a73f7139d547c5550d9c6b9e733b243d49eef29d40d8b0c0a70fd037c10a084f"
+    },
+    {
+      "bytes": 481,
+      "path": "selections/ett_ETTh1/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "06ae88c50c065656b90c5767df81c4bfc5f4294129a1a749e5ba9b35af61ccf6"
+    },
+    {
+      "bytes": 581,
+      "path": "selections/ett_ETTh2/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "03ba3eb004fd38104c1f22c7c8a5e8472152c98d88bad2b6bdf8a8180c060cf1"
+    },
+    {
+      "bytes": 481,
+      "path": "selections/ett_ETTh2/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "222fa40b05b232193c382d6891de74409d02e184b1a76cd41209741aaece85f4"
+    },
+    {
+      "bytes": 581,
+      "path": "selections/ett_ETTm1/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "66fa594b2d442ccd92ab8b74b5fc4a1d74cff583e0e4fcc2dde90e56ab92e681"
+    },
+    {
+      "bytes": 481,
+      "path": "selections/ett_ETTm1/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "4872c25289c9181a96a959ce801c51a02261b7123ba036ecb0cad5565e51eb5a"
+    },
+    {
+      "bytes": 581,
+      "path": "selections/ett_ETTm2/ARIMA_seed20261011/selected_candidates.csv",
+      "sha256": "1484fb0591f0e2bd9902bc833fc4915831c81e2d5f27a6ee4085434a60e74c79"
+    },
+    {
+      "bytes": 481,
+      "path": "selections/ett_ETTm2/ETS_seed20261011/selected_candidates.csv",
+      "sha256": "12476bab6d06c13d255656629555dc48d00e56c47eafc4f4ea6cb75b8b70806c"
+    }
+  ],
+  "root": "/home/zhong/Documents/state-aware-persistence-residual-mamba/reproducibility/sapr_mamba_v1/real",
+  "total_bytes": 5578492
+}
