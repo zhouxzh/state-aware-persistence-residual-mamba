@@ -44,9 +44,10 @@
   `/home/zhong/clashctl/scripts/cmd/clashctl.sh`. In a non-interactive shell,
   set `CLASHCTL_HOME=/home/zhong/clashctl` and source that file directly;
   `~/.bashrc` may return before loading the functions.
-- Enable Clash only for a required GitHub push. Verify both functions exist,
-  install an `EXIT` cleanup handler before the push, and turn Clash off even
-  when the push fails:
+- Every Git push must use the following Clash lifecycle. Enable Clash only for
+  the push itself; verify both functions exist, install an `EXIT` cleanup
+  handler before the push, and turn Clash off immediately after the push,
+  including when authentication, TLS, or transfer fails:
 
 ```bash
 export CLASHCTL_HOME=/home/zhong/clashctl
@@ -58,7 +59,8 @@ git push origin main
 ```
 
 - Do not fetch, pull, clone, or perform unrelated network work while Clash is
-  enabled. Let the cleanup handler call `clashoff` immediately after the push.
+  enabled. Do not omit the cleanup handler or leave Clash enabled for any
+  follow-up command; let it call `clashoff` immediately after every push.
 - Before committing, inspect `git status`, stage only intended source,
   configuration, documentation, tests, and compact reproducibility evidence,
   then run the relevant test suite. Never force-push or rewrite history.
