@@ -529,10 +529,18 @@ def run_real_task(panel_id: str, model_id: str, seed: int) -> dict:
     return payload
 
 
-def run_real(models: list[str], seeds: list[int]) -> dict:
+def run_real(models: list[str], seeds: list[int], panel_filter: list[str] | None = None) -> dict:
     preflight()
     prepared = __import__("json").loads((DATA_ROOT / "real" / "processed" / "prepared_manifest.json").read_text(encoding="utf-8"))
     panels = [entry["panel_id"] for entry in prepared["panels"]]
+    if panel_filter is not None:
+        requested = list(dict.fromkeys(panel_filter))
+        invalid_panels = sorted(set(requested) - set(panels))
+        if invalid_panels:
+            raise SystemExit(f"Unknown prepared real panels: {invalid_panels}")
+        panels = [panel for panel in panels if panel in set(requested)]
+        if not panels:
+            raise SystemExit("At least one real panel is required")
     protocol = load_configs()["protocol"]
     contextual = protocol["context_baselines"]["models"]
     random_models = set(protocol["real_seed_policy"]["five_seeds_for"])
@@ -602,6 +610,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--stage", required=True, choices=("preflight", "environment", "freeze", "synthetic-generate", "smoke", "synthetic-run", "real-download", "real-prepare", "real-run", "verify"))
     parser.add_argument("--models", nargs="+", default=None)
     parser.add_argument("--seeds", nargs="+", type=int, default=None)
+    parser.add_argument("--panels", nargs="+", default=None, help="restrict real-run to prepared panel IDs")
     return parser.parse_args()
 
 
@@ -632,7 +641,7 @@ def main() -> None:
         invalid = sorted(set(models) - set(configs["protocol"]["models"]))
         if invalid:
             raise SystemExit(f"Unknown SAPR models: {invalid}")
-        outcome = run_real(models, args.seeds or configs["protocol"]["seeds"])
+        outcome = run_real(models, args.seeds or configs["protocol"]["seeds"], args.panels)
     else:
         outcome = verify_synthetic()
     print(__import__("json").dumps(outcome, indent=2, sort_keys=True, default=str))
