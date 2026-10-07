@@ -14,8 +14,8 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 STUDY_VERSION = os.environ.get("SAPR_MAMBA_VERSION", "v1").strip()
-if STUDY_VERSION not in {"v1", "v2"}:
-    raise ValueError("SAPR_MAMBA_VERSION must be v1 or v2")
+if STUDY_VERSION not in {"v1", "v2", "v3"}:
+    raise ValueError("SAPR_MAMBA_VERSION must be v1, v2, or v3")
 STUDY_SLUG = f"sapr_mamba_{STUDY_VERSION}"
 CONFIG_ROOT = REPO_ROOT / "configs" / STUDY_SLUG
 DATA_ROOT = REPO_ROOT / "data" / STUDY_SLUG

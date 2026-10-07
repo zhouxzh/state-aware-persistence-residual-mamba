@@ -2,9 +2,12 @@
 
 ## Scope
 
-- The active study is SAPR-Mamba V2 under `docs/current/`, `configs/sapr_mamba_v2/`,
-  `data/sapr_mamba_v2/`, `results/sapr_mamba_v2/`, and
-  `reproducibility/sapr_mamba_v2/`.
+- The active study is the independent SAPR-Mamba V3 confirmation protocol,
+  including the additive V3.1 public-source amendment, under
+  `docs/current/`, `configs/sapr_mamba_v3/`, `data/sapr_mamba_v3/`,
+  `results/sapr_mamba_v3/`, and `reproducibility/sapr_mamba_v3/`.
+- V2 is immutable development evidence. Never pool V2 estimates with V3
+  confirmation estimates, and never change V2 artifacts to make V3 checks pass.
 - Historical financial releases and all `sapr_mamba_v1` artifacts are audit
   records. Never select models, thresholds, sources, hyperparameters, or
   reporting subsets from them, and never overwrite them.
@@ -64,3 +67,22 @@ git push origin main
 - Before committing, inspect `git status`, stage only intended source,
   configuration, documentation, tests, and compact reproducibility evidence,
   then run the relevant test suite. Never force-push or rewrite history.
+
+## Unattended V3 Continuation
+
+- The resumable controller is `scripts/sapr_mamba_v3_pipeline.py`; it retries
+  failures and records limitations without emitting a blocked state.
+- When a long `real` run is active, keep it untouched and run
+  `scripts/sapr_mamba_v3_autocontinue.py` in `sci-agent`. The supervisor waits
+  for the exact real controller, then runs `real_extended`, `analysis`,
+  `verify`, `release`, and the test suite in order. It writes half-hour
+  progress snapshots to `docs/current/zhong3_runlog/sapr_mamba_v3/` and state
+  to `results/sapr_mamba_v3/autocontinue_state.json`.
+- A stage reported as `complete_with_limitations` is not a reason to stop the
+  supervisor. Preserve its evidence, apply the recorded remediation, and
+  continue all independent downstream checks.
+- For the V3.1 external extension, use
+  `scripts/sapr_mamba_v3_completion_guard.py` after the real-run. It waits for
+  the frozen 950-task matrix with zero failed/invalid manifests, then runs
+  external-aware analysis, manuscript generation, independent recomputation,
+  compact release creation/verification, and the full test suite.

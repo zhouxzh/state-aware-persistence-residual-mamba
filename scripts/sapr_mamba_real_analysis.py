@@ -14,6 +14,7 @@ import json
 import os
 import sys
 from collections import Counter, defaultdict
+from functools import lru_cache
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -56,12 +57,28 @@ def read_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+@lru_cache(maxsize=1)
+def prepared_panel_index() -> dict[str, dict]:
+    """Read the active panel manifest once, including additive amendments."""
+    path = DATA_ROOT / "real" / "processed" / "prepared_manifest.json"
+    if not path.is_file():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    return {str(item["panel_id"]): item for item in payload.get("panels", [])}
+
+
 def panel_source(dataset: str) -> str:
-    """Keep all ETT files together as the one predeclared source cluster."""
+    """Use the frozen source cluster, grouping the four ETT files together."""
+    item = prepared_panel_index().get(dataset)
+    if item is not None and item.get("source_cluster"):
+        return str(item["source_cluster"])
     return "ett" if dataset.startswith("ett_") else dataset
 
 
 def panel_horizons(configs: dict, panel: str) -> list[int]:
+    manifest_item = prepared_panel_index().get(panel)
+    if manifest_item is not None and manifest_item.get("horizons"):
+        return [int(value) for value in manifest_item["horizons"]]
     panels = configs["real_panels"]["panels"]
     if panel in {"electricity", "beijing_air_quality"}:
         return [int(value) for value in panels[panel]["horizons"]]
@@ -408,7 +425,7 @@ def analyze() -> dict:
     metrics_path = REAL_ROOT / "metrics_all.csv"
     prepared_path = DATA_ROOT / "real" / "processed" / "prepared_manifest.json"
     if not metrics_path.is_file() or not prepared_path.is_file():
-        raise SystemExit("V2 real metrics or prepared manifest is unavailable")
+        raise SystemExit("V3 real metrics or prepared manifest is unavailable")
     from utils.sapr_mamba.io import load_configs
 
     configs = load_configs()
@@ -455,6 +472,22 @@ def analyze() -> dict:
         "source_sequence_units", "missing_pair_units", "state_coverage", "evidence_status", "technical_matrix_complete",
         "n", "estimate", "ci_low", "ci_high", "p_two_sided", "p_holm",
     ))
+    # V3.1 declares the solar and tourism source clusters as external
+    # holdouts. Keep their paired estimates in a separate table so the
+    # manuscript cannot accidentally present them as ordinary development
+    # panels or silently pool them with the base V3 sources.
+    external_clusters = {
+        str(item.get("source_cluster"))
+        for item in prepared.get("panels", [])
+        if bool(item.get("external_holdout", False)) and item.get("source_cluster")
+    }
+    external_primary = [row for row in primary if row.get("source") in external_clusters]
+    external_primary_path = ANALYSIS_ROOT / "external_holdout_primary_comparisons.csv"
+    write_csv(external_primary_path, external_primary, (
+        "comparison", "left_model", "right_model", "source", "horizon", "state", "metric",
+        "source_sequence_units", "missing_pair_units", "state_coverage", "evidence_status", "technical_matrix_complete",
+        "n", "estimate", "ci_low", "ci_high", "p_two_sided", "p_holm",
+    ))
     write_csv(ANALYSIS_ROOT / "real_stable_state_coverage.csv", state_coverage, (
         "source", "horizon", "source_sequence_units", "stable_sequence_units", "stable_state_coverage", "evidence_status",
     ))
@@ -473,17 +506,19 @@ def analyze() -> dict:
     previous_claims = read_rows(claim_path) if claim_path.is_file() else []
     retained_claims = [row for row in previous_claims if not row["claim_id"].startswith("real_")]
     retained_claims.extend([
-        {"claim_id": "real_H1", "artifact": str(primary_path.relative_to(REPO_ROOT)), "filter": "comparison=H1_M2_minus_M1; state=all", "interpretation": "Source-stratified real-panel paired comparison; no cross-source universal inference."},
-        {"claim_id": "real_H2", "artifact": str(primary_path.relative_to(REPO_ROOT)), "filter": "comparison=H2_M3_minus_M2; state=all", "interpretation": "Source-stratified complete-path comparison; not an isolated gate causal effect."},
-        {"claim_id": "real_stable_safety", "artifact": str((ANALYSIS_ROOT / 'real_stable_state_coverage.csv').relative_to(REPO_ROOT)), "filter": "all rows", "interpretation": "Stable-state safety evidence is limited to available state-labelled sequence units."},
-        {"claim_id": "real_H3", "artifact": str((ANALYSIS_ROOT / 'real_gate_audit.csv').relative_to(REPO_ROOT)), "filter": "all rows", "interpretation": "Descriptive gate association only, not causal mechanism evidence."},
+        {"claim_id": "real_H1", "artifact": str(primary_path.relative_to(REPO_ROOT)), "filter": "comparison=H1_M2_minus_M1; state=all", "interpretation": "Source-stratified real-panel paired comparison; no cross-source universal inference.", "sha256": sha256_path(primary_path)},
+        {"claim_id": "real_H2", "artifact": str(primary_path.relative_to(REPO_ROOT)), "filter": "comparison=H2_M3_minus_M2; state=all", "interpretation": "Source-stratified complete-path comparison; not an isolated gate causal effect.", "sha256": sha256_path(primary_path)},
+        {"claim_id": "real_stable_safety", "artifact": str((ANALYSIS_ROOT / 'real_stable_state_coverage.csv').relative_to(REPO_ROOT)), "filter": "all rows", "interpretation": "Stable-state safety evidence is limited to available state-labelled sequence units.", "sha256": sha256_path(ANALYSIS_ROOT / 'real_stable_state_coverage.csv')},
+        {"claim_id": "real_H3", "artifact": str((ANALYSIS_ROOT / 'real_gate_audit.csv').relative_to(REPO_ROOT)), "filter": "all rows", "interpretation": "Descriptive gate association only, not causal mechanism evidence.", "sha256": sha256_path(ANALYSIS_ROOT / 'real_gate_audit.csv')},
     ])
-    write_csv(claim_path, retained_claims, ("claim_id", "artifact", "filter", "interpretation"))
+    write_csv(claim_path, retained_claims, ("claim_id", "artifact", "filter", "interpretation", "sha256"))
     summary = {
         "analyzed_at": utc_now(), "study": STUDY_SLUG,
         "metrics_source": {"path": str(metrics_path.relative_to(REPO_ROOT)), "sha256": sha256_path(metrics_path), "rows": len(metrics_rows)},
         "completion": completion_summary,
         "primary_rows": len(primary),
+        "external_holdout_clusters": sorted(external_clusters),
+        "external_holdout_primary_rows": len(external_primary),
         "primary_rows_with_finite_p": int(sum(np.isfinite(float(row["p_two_sided"])) for row in primary)),
         "stable_safety_limited_rows": sum(row["evidence_status"] != "complete" for row in state_coverage),
         "statistical_failure_rows": sum(row["failure_rows"] for row in audit),

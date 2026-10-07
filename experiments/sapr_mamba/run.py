@@ -59,6 +59,7 @@ def set_seed(seed: int) -> None:
 
 
 def resolve_device(requested: str) -> torch.device:
+    requested = os.environ.get("SAPR_MAMBA_DEVICE", requested)
     if requested.startswith("cuda") and not torch.cuda.is_available():
         raise RuntimeError("SAPR-Mamba training requires CUDA but torch.cuda.is_available() is false")
     return torch.device(requested)
@@ -195,8 +196,11 @@ def train_model(model: torch.nn.Module, train: WindowDataset, validation: Window
         return {"epochs": 0, "best_validation_mse": float("nan"), "status": "not_trainable"}
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(training["learning_rate"]), weight_decay=float(training["weight_decay"]))
     scaler = torch.amp.GradScaler("cuda", enabled=bool(training["amp"]) and device.type == "cuda")
-    train_loader = _loader(train, int(training["batch_size"]), True, int(training["samples_per_epoch"]), seed)
-    validation_loader = _loader(validation, int(training["batch_size"]), False, None, seed)
+    effective_batch_size = int(os.environ.get("SAPR_MAMBA_BATCH_SIZE", training["batch_size"]))
+    if effective_batch_size < 1:
+        raise ValueError("SAPR_MAMBA_BATCH_SIZE must be positive")
+    train_loader = _loader(train, effective_batch_size, True, int(training["samples_per_epoch"]), seed)
+    validation_loader = _loader(validation, effective_batch_size, False, None, seed)
     best = float("inf")
     stale = 0
     checkpoint.parent.mkdir(parents=True, exist_ok=True)
@@ -233,7 +237,7 @@ def train_model(model: torch.nn.Module, train: WindowDataset, validation: Window
                 break
     if checkpoint.exists():
         model.load_state_dict(torch.load(checkpoint, map_location=device, weights_only=True)["model"])
-    return {"epochs": epoch, "best_validation_mse": best, "status": "complete"}
+    return {"epochs": epoch, "best_validation_mse": best, "batch_size": effective_batch_size, "status": "complete"}
 
 
 def evaluate_model(model: torch.nn.Module, dataset: WindowDataset, metadata: list[dict], device: torch.device, model_id: str, seed: int, horizons: list[int], output: Path, dataset_name: str, inverse_to_raw: bool = False) -> tuple[list[dict], dict]:
@@ -434,6 +438,16 @@ def _real_panel_definition(panel_id: str) -> tuple[int, int, list[int]]:
         item = panels["ett"]
         period = int(item["period_by_file"][file_id])
         return period, 4 * period, [period // 8, period // 4, period // 2, period]
+    # V3.1 panels are additive protocol amendments and intentionally live
+    # outside the immutable V3.0 top-level config. Resolve their forecasting
+    # geometry from the frozen amendment registry after source integration.
+    amendment_path = CONFIG_ROOT / "amendments" / "v3.1_public_multiseries_sources.json"
+    if amendment_path.is_file():
+        with amendment_path.open(encoding="utf-8") as handle:
+            amendment = __import__("json").load(handle)
+        item = amendment.get("datasets", {}).get(panel_id)
+        if item is not None:
+            return int(item["period"]), int(item["input_length"]), [int(value) for value in item["horizons"]]
     raise ValueError(f"Unknown prepared real panel: {panel_id}")
 
 

@@ -1,0 +1,57 @@
+{
+  "manifest_version": "sapr_real_panels_v1",
+  "download_policy": "download only listed original sources; record URL, retrieval time, raw SHA-256, license evidence and source metadata before preprocessing",
+  "panels": {
+    "electricity": {
+      "source_url": "https://archive.ics.uci.edu/static/public/321/electricityloaddiagrams20112014.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0), verified from source page 2026-10-02",
+      "target_rule": "all user load columns passing deterministic quality rules; hash-order cap at 100",
+      "frequency": "15min",
+      "period": 96,
+      "input_length": 384,
+      "horizons": [12, 24, 48, 96],
+      "short_gap_limit": 12,
+      "minimum_nonmissing_fraction": 0.95,
+      "minimum_eligible_test_origins": 20
+    },
+    "beijing_air_quality": {
+      "source_url": "https://archive.ics.uci.edu/static/public/501/beijing+multi+site+air+quality+data.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/501/beijing+multi+site+air+quality+data",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0), verified from source page 2026-10-02",
+      "target_rule": "PM2.5 for every station passing deterministic quality rules; meteorological variables excluded",
+      "frequency": "h",
+      "period": 24,
+      "input_length": 96,
+      "horizons": [3, 6, 12, 24],
+      "short_gap_limit": 3,
+      "minimum_nonmissing_fraction": 0.95,
+      "minimum_eligible_test_origins": 20
+    },
+    "ett": {
+      "source_urls": {
+        "ETTh1": "https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTh1.csv",
+        "ETTh2": "https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTh2.csv",
+        "ETTm1": "https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTm1.csv",
+        "ETTm2": "https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTm2.csv"
+      },
+      "source_page": "https://github.com/zhouhaoyi/ETDataset",
+      "license": "Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0), verified from repository LICENSE 2026-10-02; raw and processed data remain local and are not redistributed",
+      "target_rule": "OT only; no other sensor is input",
+      "period_by_file": {"ETTh1": 24, "ETTh2": 24, "ETTm1": 96, "ETTm2": 96},
+      "frequency_by_file": {"ETTh1": "h", "ETTh2": "h", "ETTm1": "15min", "ETTm2": "15min"},
+      "short_gap_fraction_of_period": 0.125,
+      "minimum_nonmissing_fraction": 0.99,
+      "minimum_eligible_test_origins": 20
+    }
+  },
+  "quality_rules": {
+    "split": [0.6, 0.2, 0.2],
+    "sort_and_regularize": true,
+    "short_missing_imputation": "causal forward fill only",
+    "long_gap_handling": "mark all histories or targets crossing the gap ineligible",
+    "scaling": "mean and standard deviation fit on each series training range only (ddof=0)",
+    "roster_order": "SHA-256 of source-specific series identifier ascending",
+    "exclude_by_model_result": false
+  }
+}

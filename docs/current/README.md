@@ -46,3 +46,8 @@ PEMS、Weather、METR-LA、PEMS-BAY 或结果也完全禁止混入本项目。
 [`sapr_mamba_v2_execution_status_20261003.md`](sapr_mamba_v2_execution_status_20261003.md)。
 V2 的后续工作只能基于冻结 release 做复算、审计或论文交接；不得因已有结果改变阈值、
 模型、数据、种子、来源或报告子集。
+
+V3 的无人值守确认性流水线及其当前状态见
+[`sapr_mamba_v3_execution_status.md`](sapr_mamba_v3_execution_status.md)。V3 使用独立
+命名空间和自动 remediation；它可以扩展预先登记的公开来源或将不可估计终点降级为
+描述性分析，但不会生成 `blocked` 状态、删除失败结果或按测试表现改写协议。

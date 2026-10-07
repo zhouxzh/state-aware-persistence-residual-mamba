@@ -107,6 +107,7 @@ class MambaResidualModel(nn.Module):
         layers: int,
         dropout: float,
         gated: bool,
+        gate_mode: str = "full",
     ) -> None:
         super().__init__()
         try:
@@ -115,6 +116,9 @@ class MambaResidualModel(nn.Module):
             raise RuntimeError("mamba-ssm is required for M2/M3; install it in the mamba Conda environment") from exc
         self.horizon = int(horizon)
         self.gated = bool(gated)
+        self.gate_mode = str(gate_mode)
+        if self.gate_mode not in {"full", "state-only", "hidden-only", "constant", "no-state"}:
+            raise ValueError(f"Unknown gate mode: {self.gate_mode}")
         self.input_projection = nn.Linear(1 + int(phi_dim), int(d_model))
         self.blocks = nn.ModuleList(
             [Mamba(d_model=int(d_model), d_state=int(d_state), d_conv=int(d_conv), expand=int(expand)) for _ in range(int(layers))]
@@ -126,6 +130,8 @@ class MambaResidualModel(nn.Module):
         self.gate_hidden = nn.Linear(int(d_model), 1)
 
     def forward(self, x: torch.Tensor, phi: torch.Tensor) -> dict[str, torch.Tensor]:
+        if self.gate_mode == "no-state":
+            phi = torch.zeros_like(phi)
         normalized, baseline, scale = _normalize_history(x)
         feature_tokens = phi.unsqueeze(1).expand(-1, normalized.size(1), -1)
         encoded = self.input_projection(torch.cat((normalized.unsqueeze(-1), feature_tokens), dim=-1))
@@ -134,7 +140,14 @@ class MambaResidualModel(nn.Module):
         embedding = encoded[:, -1]
         residual = self.residual_head(embedding) * scale
         if self.gated:
-            gate_scalar = torch.sigmoid(self.gate_phi(phi) + self.gate_hidden(embedding))
+            if self.gate_mode == "state-only":
+                gate_scalar = torch.sigmoid(self.gate_phi(phi))
+            elif self.gate_mode == "hidden-only":
+                gate_scalar = torch.sigmoid(self.gate_hidden(embedding))
+            elif self.gate_mode == "constant":
+                gate_scalar = torch.full((x.size(0), 1), 0.5, device=x.device, dtype=x.dtype)
+            else:
+                gate_scalar = torch.sigmoid(self.gate_phi(phi) + self.gate_hidden(embedding))
             gate = gate_scalar.expand(-1, self.horizon)
         else:
             gate = torch.ones_like(residual)
@@ -159,7 +172,8 @@ def build_model(model_id: str, horizon: int, phi_dim: int, specification: dict, 
             raise ValueError("DLinear requires input_length")
         return DLinearResidualModel(input_length, horizon, specification["dlinear"]["moving_average_kernel"])
     if model_id not in {"M2", "M3", "M3-shuffle"}:
-        raise ValueError(f"Unknown SAPR model: {model_id}")
+        if model_id not in {"M3-state-only", "M3-hidden-only", "M3-constant-gate", "M3-no-state-feature"}:
+            raise ValueError(f"Unknown SAPR model: {model_id}")
     mamba = specification["mamba"]
     return MambaResidualModel(
         horizon=horizon,
@@ -170,5 +184,11 @@ def build_model(model_id: str, horizon: int, phi_dim: int, specification: dict, 
         expand=mamba["expand"],
         layers=mamba["layers"],
         dropout=mamba["dropout"],
-        gated=model_id in {"M3", "M3-shuffle"},
+        gated=model_id in {"M3", "M3-shuffle", "M3-state-only", "M3-hidden-only", "M3-constant-gate", "M3-no-state-feature"},
+        gate_mode={
+            "M3-state-only": "state-only",
+            "M3-hidden-only": "hidden-only",
+            "M3-constant-gate": "constant",
+            "M3-no-state-feature": "no-state",
+        }.get(model_id, "full"),
     )
