@@ -60,7 +60,7 @@ def main() -> int:
             break
         time.sleep(60)
     commands = (
-        ["python", "experiments/sapr_mamba/run.py", "--stage", "real-run"],
+        ["python", "scripts/sapr_mamba_v3_pipeline.py", "--stage", "real_extended", "--max-rounds", "3"],
         ["python", "scripts/sapr_mamba_real_analysis.py", "--stage", "analyze"],
         ["python", "scripts/sapr_mamba_v3_manuscript.py"],
         ["python", "scripts/sapr_mamba_real_analysis.py", "--stage", "verify"],
