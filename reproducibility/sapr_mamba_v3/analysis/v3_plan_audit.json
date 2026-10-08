@@ -1,0 +1,26 @@
+{
+  "all_models": [
+    "M0",
+    "M1",
+    "M2",
+    "M3",
+    "M3-shuffle",
+    "M3-state-only",
+    "M3-hidden-only",
+    "M3-constant-gate",
+    "M3-no-state-feature"
+  ],
+  "candidate_domains": 4,
+  "candidate_sources": 7,
+  "errors": [],
+  "primary_models": [
+    "M0",
+    "M1",
+    "M2",
+    "M3",
+    "M3-shuffle"
+  ],
+  "protocol_version": "sapr_mamba_v3.0",
+  "seed_count": 10,
+  "status": "complete"
+}

@@ -1,0 +1,22 @@
+{
+  "active_research_processes": "709429  382537 Ss         00:02 /home/zhong/anaconda3/bin/python /home/zhong/anaconda3/bin/conda run --no-capture-output -n sci-agent python experiments/sapr_mamba/run.py --stage smoke --models M3-state-only M3-hidden-only M3-constant-gate M3-no-state-feature --seeds 20261021\n 709436  709430 S          00:01 python experiments/sapr_mamba/run.py --stage smoke --models M3-state-only M3-hidden-only M3-constant-gate M3-no-state-feature --seeds 20261021\n 709445  709436 S    441077234-00:18:40 bash -lc ps -eo pid,ppid,stat,etime,cmd | rg -i 'python.*(sapr|mamba|optuna)|torchrun' || true\n 709450  709445 S    441077234-00:18:40 rg -i python.*(sapr|mamba|optuna)|torchrun",
+  "conda_prefix": "/home/zhong/.conda/envs/sci-agent",
+  "config_hashes": {
+    "candidate_sources.json": "8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4",
+    "model_spec.json": "0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7",
+    "protocol.json": "75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d",
+    "real_panels.json": "e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83",
+    "synthetic.json": "91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c"
+  },
+  "disk": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/nvme1n1p2  457G  152G  282G  35% /",
+  "git": {
+    "branch": "main",
+    "commit": "03d0c8b95a9b404435b9056d398765ce0a82f16d",
+    "status": "M model/StateAwarePersistenceResidualMamba.py\n M utils/sapr_mamba/io.py\n?? configs/sapr_mamba_v3/candidate_sources.json\n?? configs/sapr_mamba_v3/model_spec.json\n?? configs/sapr_mamba_v3/protocol.json\n?? configs/sapr_mamba_v3/protocol.lock.json\n?? configs/sapr_mamba_v3/real_panels.json\n?? configs/sapr_mamba_v3/synthetic.json\n?? docs/analysis/sapr_mamba_v3/v3_plan_audit.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072151+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072202+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072212+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072231+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T083411+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T083625+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T112726+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220042+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220111+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220127+0800.json\n?? manuscript/sapr_mamba_v3/manuscript.md\n?? manuscript/sapr_mamba_v3/submission_manifest.json\n?? reproducibility/sapr_mamba_v3/runtime_environment.json\n?? scripts/sapr_mamba_v3_pipeline.py\n?? tests/test_sapr_mamba_v3_pipeline.py"
+  },
+  "nvidia_smi": "NVIDIA GeForce RTX 2080 Ti, 570.211.01, 22528 MiB, 102 MiB, 0 %",
+  "phase": "preflight",
+  "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+  "repository": "/home/zhong/Documents/state-aware-persistence-residual-mamba",
+  "timestamp": "2026-10-06T22:01:49+08:00"
+}

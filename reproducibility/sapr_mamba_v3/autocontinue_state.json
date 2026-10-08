@@ -1,0 +1,18 @@
+{
+  "current_stage": null,
+  "external_complete": 0,
+  "external_failed": 0,
+  "finished_at": "2026-10-07T20:54:47+08:00",
+  "last_finished_at": "2026-10-07T20:54:41+08:00",
+  "last_progress_at": "2026-10-07T20:54:11+08:00",
+  "last_returncode": 0,
+  "last_stage": "release",
+  "real_complete": 570,
+  "real_failed": 0,
+  "real_finished_at": "2026-10-07T20:49:40+08:00",
+  "stage_started_at": "2026-10-07T20:54:11+08:00",
+  "started_at": "2026-10-07T19:25:38+08:00",
+  "status": "finished",
+  "supervisor_pid": 786340,
+  "updated_at": "2026-10-07T20:54:47+08:00"
+}

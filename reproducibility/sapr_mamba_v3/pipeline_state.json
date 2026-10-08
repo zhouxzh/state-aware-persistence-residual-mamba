@@ -1,0 +1,519 @@
+{
+  "config_hashes": {
+    "candidate_sources.json": "8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4",
+    "model_spec.json": "0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7",
+    "protocol.json": "75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d",
+    "real_panels.json": "e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83",
+    "synthetic.json": "91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c"
+  },
+  "created_at": "2026-10-06T21:58:07+08:00",
+  "git": {
+    "branch": "main",
+    "commit": "e74211857cc553775f5b4d24d0a1af7bc6f019f0",
+    "status": "M configs/sapr_mamba_v3/amendments/v3.1_protocol.lock.json\n M scripts/sapr_mamba_v3_sources.py\n?? docs/analysis/sapr_mamba_v3/external_holdout_primary_comparisons.csv\n?? docs/analysis/sapr_mamba_v3/real_analysis_manifest.json\n?? docs/analysis/sapr_mamba_v3/real_completion_matrix.csv\n?? docs/analysis/sapr_mamba_v3/real_gate_audit.csv\n?? docs/analysis/sapr_mamba_v3/real_gate_summary.csv\n?? docs/analysis/sapr_mamba_v3/real_panel_metrics_aggregate.csv\n?? docs/analysis/sapr_mamba_v3/real_primary_comparisons.csv\n?? docs/analysis/sapr_mamba_v3/real_recompute_matrix.csv\n?? docs/analysis/sapr_mamba_v3/real_series_seed_averages.csv\n?? docs/analysis/sapr_mamba_v3/real_source_metrics_aggregate.csv\n?? docs/analysis/sapr_mamba_v3/real_stable_state_coverage.csv\n?? docs/analysis/sapr_mamba_v3/real_statistical_audit.csv\n?? docs/analysis/sapr_mamba_v3/real_verification_manifest.json\n?? docs/analysis/sapr_mamba_v3/synthetic_analysis_manifest.json\n?? docs/analysis/sapr_mamba_v3/synthetic_completion_matrix.csv\n?? docs/analysis/sapr_mamba_v3/synthetic_gate_audit.csv\n?? docs/analysis/sapr_mamba_v3/synthetic_metrics_aggregate.csv\n?? docs/analysis/sapr_mamba_v3/synthetic_primary_comparisons.csv\n?? docs/analysis/sapr_mamba_v3/synthetic_secondary_comparisons.csv\n?? docs/analysis/sapr_mamba_v3/v3_plan_audit.json\n?? docs/current/zhong3_runlog/sapr_mamba_v1/preflight_20261007T210806+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v1/preflight_20261007T210807+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/autocontinue.jsonl\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072151+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072202+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072212+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072231+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T083411+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T083625+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T112726+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220042+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220111+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220127+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220149+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220158+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T221008+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261007T031603+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261007T090044+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261007T204936+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261007T211515+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261008T014006+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261008T030300+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261008T032008+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261008T043315+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261008T044552+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261008T083730+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261008T083733+0800.json\n?? docs/figures/sapr_mamba_v3/real_figure_manifest.json\n?? docs/figures/sapr_mamba_v3/real_primary_deltas.pdf\n?? docs/figures/sapr_mamba_v3/real_primary_deltas.png\n?? docs/figures/sapr_mamba_v3/synthetic_primary_deltas.pdf\n?? docs/figures/sapr_mamba_v3/synthetic_primary_deltas.png\n?? manuscript/sapr_mamba_v3/claim_evidence_map.csv\n?? manuscript/sapr_mamba_v3/manuscript.md\n?? manuscript/sapr_mamba_v3/manuscript_manifest.json\n?? manuscript/sapr_mamba_v3/source_manifest.json\n?? manuscript/sapr_mamba_v3/submission_manifest.json\n?? reproducibility/sapr_mamba_v3/SHA256SUMS.json\n?? reproducibility/sapr_mamba_v3/analysis/external_holdout_primary_comparisons.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_analysis_manifest.json\n?? reproducibility/sapr_mamba_v3/analysis/real_completion_matrix.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_gate_audit.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_gate_summary.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_panel_metrics_aggregate.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_primary_comparisons.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_recompute_matrix.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_series_seed_averages.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_source_metrics_aggregate.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_stable_state_coverage.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_statistical_audit.csv\n?? reproducibility/sapr_mamba_v3/analysis/real_verification_manifest.json\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_analysis_manifest.json\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_completion_matrix.csv\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_gate_audit.csv\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_metrics_aggregate.csv\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_primary_comparisons.csv\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_secondary_comparisons.csv\n?? reproducibility/sapr_mamba_v3/analysis/v3_plan_audit.json\n?? reproducibility/sapr_mamba_v3/autocontinue_state.json\n?? reproducibility/sapr_mamba_v3/candidate_sources.json\n?? reproducibility/sapr_mamba_v3/claim_evidence_map.csv\n?? reproducibility/sapr_mamba_v3/figures/real_figure_manifest.json\n?? reproducibility/sapr_mamba_v3/figures/real_primary_deltas.pdf\n?? reproducibility/sapr_mamba_v3/figures/real_primary_deltas.png\n?? reproducibility/sapr_mamba_v3/figures/synthetic_primary_deltas.pdf\n?? reproducibility/sapr_mamba_v3/figures/synthetic_primary_deltas.png\n?? reproducibility/sapr_mamba_v3/integration_manifest.json\n?? reproducibility/sapr_mamba_v3/manuscript/claim_evidence_map.csv\n?? reproducibility/sapr_mamba_v3/manuscript/manuscript.md\n?? reproducibility/sapr_mamba_v3/manuscript/manuscript_manifest.json\n?? reproducibility/sapr_mamba_v3/manuscript/source_manifest.json\n?? reproducibility/sapr_mamba_v3/manuscript/submission_manifest.json\n?? reproducibility/sapr_mamba_v3/pipeline_state.json\n?? reproducibility/sapr_mamba_v3/prepared_manifest.json\n?? reproducibility/sapr_mamba_v3/protocol.lock.json\n?? reproducibility/sapr_mamba_v3/release_manifest.json\n?? reproducibility/sapr_mamba_v3/runtime_environment.json\n?? reproducibility/sapr_mamba_v3/sapr_mamba_v3_execution_status.md\n?? reproducibility/sapr_mamba_v3/source_pool_audit.json\n?? reproducibility/sapr_mamba_v3/source_thresholds_v3.1.json\n?? reproducibility/sapr_mamba_v3/state_thresholds.json\n?? reproducibility/sapr_mamba_v3/v3.1_protocol.lock.json\n?? reproducibility/sapr_mamba_v3/v3.1_public_multiseries_sources.json"
+  },
+  "limitations": [],
+  "remediation": [
+    {
+      "action": "downgrade_affected_estimand_to_descriptive_only",
+      "returncode": 1,
+      "round": 1,
+      "stage": "analysis",
+      "stderr_tail": "V2 real metrics or prepared manifest is unavailable\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_real_analysis.py --stage analyze` failed. (See above for error)\n",
+      "timestamp": "2026-10-07T08:49:23+08:00"
+    },
+    {
+      "action": "downgrade_affected_estimand_to_descriptive_only",
+      "returncode": 1,
+      "round": 2,
+      "stage": "analysis",
+      "stderr_tail": "V2 real metrics or prepared manifest is unavailable\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_real_analysis.py --stage analyze` failed. (See above for error)\n",
+      "timestamp": "2026-10-07T08:50:16+08:00"
+    },
+    {
+      "action": "downgrade_affected_estimand_to_descriptive_only",
+      "returncode": 1,
+      "round": 3,
+      "stage": "analysis",
+      "stderr_tail": "V2 real metrics or prepared manifest is unavailable\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_real_analysis.py --stage analyze` failed. (See above for error)\n",
+      "timestamp": "2026-10-07T08:51:10+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 1,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 448, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 444, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 339, in integrate_extension\n    shutil.copy2(source, temporary)\n  File \"/home/zhong/.conda/envs/sci-agent/lib/python3.11/shutil.py\", line 448, in copy2\n    copyfile(src, dst, follow_symlinks=follow_symlinks)\n  File \"/home/zhong/.conda/envs/sci-agent/lib/python3.11/shutil.py\", line 256, in copyfile\n    with open(src, 'rb') as fsrc:\n         ^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/home/zhong/Documents/state-aware-persistence-residual-mamba/data/real/source_extensions/v3.1/processed/solar_10min.npz'\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-07T20:50:21+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 2,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 448, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 444, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 339, in integrate_extension\n    shutil.copy2(source, temporary)\n  File \"/home/zhong/.conda/envs/sci-agent/lib/python3.11/shutil.py\", line 448, in copy2\n    copyfile(src, dst, follow_symlinks=follow_symlinks)\n  File \"/home/zhong/.conda/envs/sci-agent/lib/python3.11/shutil.py\", line 256, in copyfile\n    with open(src, 'rb') as fsrc:\n         ^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/home/zhong/Documents/state-aware-persistence-residual-mamba/data/real/source_extensions/v3.1/processed/solar_10min.npz'\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-07T20:51:01+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 3,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 448, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 444, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 339, in integrate_extension\n    shutil.copy2(source, temporary)\n  File \"/home/zhong/.conda/envs/sci-agent/lib/python3.11/shutil.py\", line 448, in copy2\n    copyfile(src, dst, follow_symlinks=follow_symlinks)\n  File \"/home/zhong/.conda/envs/sci-agent/lib/python3.11/shutil.py\", line 256, in copyfile\n    with open(src, 'rb') as fsrc:\n         ^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/home/zhong/Documents/state-aware-persistence-residual-mamba/data/real/source_extensions/v3.1/processed/solar_10min.npz'\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-07T20:51:40+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 1,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 450, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 446, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 393, in integrate_extension\n    raise RuntimeError(\"refusing_to_overwrite_v3_1_protocol_lock\")\nRuntimeError: refusing_to_overwrite_v3_1_protocol_lock\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-08T08:23:50+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 2,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 450, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 446, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 393, in integrate_extension\n    raise RuntimeError(\"refusing_to_overwrite_v3_1_protocol_lock\")\nRuntimeError: refusing_to_overwrite_v3_1_protocol_lock\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-08T08:24:29+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 3,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 450, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 446, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 393, in integrate_extension\n    raise RuntimeError(\"refusing_to_overwrite_v3_1_protocol_lock\")\nRuntimeError: refusing_to_overwrite_v3_1_protocol_lock\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-08T08:25:09+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 1,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 450, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 446, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 393, in integrate_extension\n    raise RuntimeError(\"refusing_to_overwrite_v3_1_protocol_lock\")\nRuntimeError: refusing_to_overwrite_v3_1_protocol_lock\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-08T08:30:23+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 2,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 450, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 446, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 393, in integrate_extension\n    raise RuntimeError(\"refusing_to_overwrite_v3_1_protocol_lock\")\nRuntimeError: refusing_to_overwrite_v3_1_protocol_lock\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-08T08:31:02+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 3,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 450, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 446, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 393, in integrate_extension\n    raise RuntimeError(\"refusing_to_overwrite_v3_1_protocol_lock\")\nRuntimeError: refusing_to_overwrite_v3_1_protocol_lock\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-08T08:31:42+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 1,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 461, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 457, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 404, in integrate_extension\n    raise RuntimeError(\"refusing_to_overwrite_v3_1_protocol_lock\")\nRuntimeError: refusing_to_overwrite_v3_1_protocol_lock\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-08T08:34:37+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 2,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 461, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 457, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 404, in integrate_extension\n    raise RuntimeError(\"refusing_to_overwrite_v3_1_protocol_lock\")\nRuntimeError: refusing_to_overwrite_v3_1_protocol_lock\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-08T08:35:17+08:00"
+    },
+    {
+      "action": "retry_identical",
+      "returncode": 1,
+      "round": 3,
+      "stage": "real_extended",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 461, in <module>\n    main()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 457, in main\n    action()\n  File \"/home/zhong/Documents/state-aware-persistence-residual-mamba/scripts/sapr_mamba_v3_sources.py\", line 404, in integrate_extension\n    raise RuntimeError(\"refusing_to_overwrite_v3_1_protocol_lock\")\nRuntimeError: refusing_to_overwrite_v3_1_protocol_lock\nERROR conda.cli.main_run:execute(125): `conda run python scripts/sapr_mamba_v3_sources.py --stage integrate` failed. (See above for error)\n",
+      "timestamp": "2026-10-08T08:35:56+08:00"
+    }
+  ],
+  "stages": {
+    "analysis": {
+      "attempts": [
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/analyze.py",
+            "--stage",
+            "synthetic"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"analyzed_at\": \"2026-10-08T08:38:53+08:00\",\n  \"completion_incomplete\": [],\n  \"figures\": [\n    \"docs/figures/sapr_mamba_v3/synthetic_primary_deltas.png\",\n    \"docs/figures/sapr_mamba_v3/synthetic_primary_deltas.pdf\"\n  ],\n  \"gate_rows\": 31210,\n  \"metrics_source\": {\n    \"path\": \"results/sapr_mamba_v3/synthetic/metrics_all.csv\",\n    \"sha256\": \"5b6e49c781bdd8f5e2fe24c10e8915a5915d3044c7c634e5f4c63fc2287c1ece\"\n  },\n  \"primary_rows\": 12\n}\n"
+        },
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "scripts/sapr_mamba_real_analysis.py",
+            "--stage",
+            "analyze"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"analyzed_at\": \"2026-10-08T08:40:11+08:00\",\n  \"completion\": {\n    \"artifact_problem_tasks\": 0,\n    \"complete\": true,\n    \"config_hash_mismatch_tasks\": 0,\n    \"expected_task_count\": 950,\n    \"incomplete_tasks\": 0,\n    \"metrics_matrix_matches_task_files\": true,\n    \"missing_task_manifests\": [],\n    \"observed_task_manifest_count\": 950,\n    \"unexpected_task_manifests\": []\n  },\n  \"external_holdout_clusters\": [\n    \"zenodo_solar\",\n    \"zenodo_tourism\"\n  ],\n  \"external_holdout_primary_rows\": 21,\n  \"figure_manifest\": \"docs/figures/sapr_mamba_v3/real_figure_manifest.json\",\n  \"figures\": [\n    \"docs/figures/sapr_mamba_v3/real_primary_deltas.png\",\n    \"docs/figures/sapr_mamba_v3/real_primary_deltas.pdf\"\n  ],\n  \"gate_audit_rows\": 7000,\n  \"metrics_source\": {\n    \"path\": \"results/sapr_mamba_v3/real/metrics_all.csv\",\n    \"rows\": 416670,\n    \"sha256\": \"37402cee101e95a2649d894fa25d27778d5a8cbe2f3e207df5063c9026f36d6e\"\n  },\n  \"primary_rows\": 84,\n  \"primary_rows_with_finite_p\": 74,\n  \"stable_safety_limited_rows\": 25,\n  \"statistical_failure_rows\": 484,\n  \"study\": \"sapr_mamba_v3\"\n}\n"
+        },
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "scripts/sapr_mamba_v3_manuscript.py"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"claim_evidence_map\": {\n    \"path\": \"manuscript/sapr_mamba_v3/claim_evidence_map.csv\",\n    \"sha256\": \"496263cb4f613642db73ea26cc648861bd2689c201f287e1ca3835658631aadc\"\n  },\n  \"confidentiality_review\": {\n    \"completed\": false,\n    \"policy_checked\": false,\n    \"reason\": \"accountable human review is required before external disclosure\",\n    \"scope\": \"local public and synthetic evidence only\"\n  },\n  \"generated_at\": \"2026-10-08T08:40:13+08:00\",\n  \"human_declarations_required\": true,\n  \"manuscript\": {\n    \"path\": \"manuscript/sapr_mamba_v3/manuscript.md\",\n    \"sha256\": \"0e91d56853f80c2362a5b3c03659f83c79509ebbdc3e2b012f5faadc6bc0ec2b\"\n  },\n  \"numeric_claim_count\": 103,\n  \"pipeline_status\": \"complete\",\n  \"source_manifest\": {\n    \"path\": \"manuscript/sapr_mamba_v3/source_manifest.json\",\n    \"sha256\": \"b724f831e8f4dde35f77256f9a9d8623259ae2a9770b5b964513a5bc0a373fec\"\n  },\n  \"status\": \"draft\",\n  \"study\": \"sapr_mamba_v3\",\n  \"study_design\": \"forecasting benchmark with synthetic confirmation and public time-series panels\",\n  \"submission_ready\": false\n}\n"
+        }
+      ],
+      "finished_at": "2026-10-08T08:40:13+08:00",
+      "status": "complete"
+    },
+    "plan": {
+      "finished_at": "2026-10-06T22:00:09+08:00",
+      "result": {
+        "all_models": [
+          "M0",
+          "M1",
+          "M2",
+          "M3",
+          "M3-shuffle",
+          "M3-state-only",
+          "M3-hidden-only",
+          "M3-constant-gate",
+          "M3-no-state-feature"
+        ],
+        "candidate_domains": 4,
+        "candidate_sources": 7,
+        "errors": [],
+        "primary_models": [
+          "M0",
+          "M1",
+          "M2",
+          "M3",
+          "M3-shuffle"
+        ],
+        "protocol_version": "sapr_mamba_v3.0",
+        "seed_count": 10,
+        "status": "complete"
+      },
+      "status": "complete"
+    },
+    "preflight": {
+      "attempts": [
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/run.py",
+            "--stage",
+            "preflight"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"active_research_processes\": \"709253  382537 Ss         00:03 /home/zhong/anaconda3/bin/python /home/zhong/anaconda3/bin/conda run --no-capture-output -n sci-agent python scripts/sapr_mamba_v3_pipeline.py --stage preflight --max-rounds 2\\n 709254  382537 Ss         00:03 /home/zhong/anaconda3/bin/python /home/zhong/anaconda3/bin/conda run --no-capture-output -n sci-agent python scripts/sapr_mamba_v3_pipeline.py --stage freeze --max-rounds 2\\n 709269  709255 S          00:02 python scripts/sapr_mamba_v3_pipeline.py --stage preflight --max-rounds 2\\n 709270  709257 S          00:02 python scripts/sapr_mamba_v3_pipeline.py --stage freeze --max-rounds 2\\n 709271  709269 S          00:02 /home/zhong/anaconda3/bin/python /home/zhong/anaconda3/condabin/conda run --no-capture-output -n sci-agent python experiments/sapr_mamba/run.py --stage preflight\\n 709272  709270 S          00:02 /home/zhong/anaconda3/bin/python /home/zhong/anaconda3/condabin/conda run --no-capture-output -n sci-agent python experiments/sapr_mamba/run.py --stage freeze\\n 709285  709274 R          00:01 python experiments/sapr_mamba/run.py --stage freeze\\n 709286  709273 S          00:01 python experiments/sapr_mamba/run.py --stage preflight\\n 709296  709286 S          00:00 bash -lc ps -eo pid,ppid,stat,etime,cmd | rg -i 'python.*(sapr|mamba|optuna)|torchrun' || true\\n 709301  709296 S          00:00 rg -i python.*(sapr|mamba|optuna)|torchrun\",\n  \"conda_prefix\": \"/home/zhong/.conda/envs/sci-agent\",\n  \"config_hashes\": {\n    \"candidate_sources.json\": \"8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4\",\n    \"model_spec.json\": \"0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7\",\n    \"protocol.json\": \"75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d\",\n    \"real_panels.json\": \"e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83\",\n    \"synthetic.json\": \"91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c\"\n  },\n  \"disk\": \"Filesystem      Size  Used Avail Use% Mounted on\\n/dev/nvme1n1p2  457G  152G  282G  35% /\",\n  \"git\": {\n    \"branch\": \"main\",\n    \"commit\": \"03d0c8b95a9b404435b9056d398765ce0a82f16d\",\n    \"status\": \"M model/StateAwarePersistenceResidualMamba.py\\n M utils/sapr_mamba/io.py\\n?? configs/sapr_mamba_v3/candidate_sources.json\\n?? configs/sapr_mamba_v3/model_spec.json\\n?? configs/sapr_mamba_v3/protocol.json\\n?? configs/sapr_mamba_v3/protocol.lock.json\\n?? configs/sapr_mamba_v3/real_panels.json\\n?? configs/sapr_mamba_v3/synthetic.json\\n?? docs/analysis/sapr_mamba_v3/v3_plan_audit.json\\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072151+0800.json\\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072202+0800.json\\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072212+0800.json\\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072231+0800.json\\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T083411+0800.json\\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T083625+0800.json\\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T112726+0800.json\\n?? manuscript/sapr_mamba_v3/manuscript.md\\n?? manuscript/sapr_mamba_v3/submission_manifest.json\\n?? scripts/sapr_mamba_v3_pipeline.py\\n?? tests/test_sapr_mamba_v3_pipeline.py\"\n  },\n  \"nvidia_smi\": \"NVIDIA GeForce RTX 2080 Ti, 570.211.01, 22528 MiB, 102 MiB, 0 %\",\n  \"phase\": \"preflight\",\n  \"python\": \"3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]\",\n  \"repository\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba\",\n  \"timestamp\": \"2026-10-06T22:00:42+08:00\"\n}\n"
+        },
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/run.py",
+            "--stage",
+            "environment"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"mamba_probe\": {\n    \"returncode\": 0,\n    \"stderr\": \"\",\n    \"stdout\": \"2.5.1+cu121\\n12.1\\nmamba_ssm.modules.mamba_simple\"\n  },\n  \"path\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/reproducibility/sapr_mamba_v3/runtime_environment.json\",\n  \"sha256\": \"10f6117347d028123ca72e0436fb504a20a6e7c83efe69a6a9d57d415a721f5d\"\n}\n"
+        }
+      ],
+      "finished_at": "2026-10-06T22:00:48+08:00",
+      "status": "complete"
+    },
+    "real": {
+      "attempts": [
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/run.py",
+            "--stage",
+            "real-download"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"config_hashes\": {\n    \"candidate_sources.json\": \"8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4\",\n    \"model_spec.json\": \"0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7\",\n    \"protocol.json\": \"75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d\",\n    \"real_panels.json\": \"e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83\",\n    \"synthetic.json\": \"91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c\"\n  },\n  \"manifest_version\": \"sapr_real_panels_v1\",\n  \"panels\": {\n    \"beijing_air_quality\": {\n      \"license\": \"Creative Commons Attribution 4.0 International (CC BY 4.0), verified from source page 2026-10-02\",\n      \"raw_files\": [\n        {\n          \"bytes\": 8192212,\n          \"path\": \"real/raw/beijing_air_quality/source.zip\",\n          \"sha256\": \"b04da438b2f331ac0ffd45aebdfec0d20d2367feb5f6948c4b1f7ce1191e33c4\",\n          \"url\": \"https://archive.ics.uci.edu/static/public/501/beijing+multi+site+air+quality+data.zip\"\n        }\n      ],\n      \"source_page\": {\n        \"bytes\": 105560,\n        \"path\": \"real/raw/source_evidence/beijing_air_quality_source_page.html\",\n        \"sha256\": \"a859f3b32fe823fdced9a0be04dbd8367961b7168b4650d358ee31dce3295784\",\n        \"url\": \"https://archive.ics.uci.edu/dataset/501/beijing+multi+site+air+quality+data\"\n      }\n    },\n    \"electricity\": {\n      \"license\": \"Creative Commons Attribution 4.0 International (CC BY 4.0), verified from source page 2026-10-02\",\n      \"raw_files\": [\n        {\n          \"bytes\": 261335609,\n          \"path\": \"real/raw/electricity/source.zip\",\n          \"sha256\": \"f6c4d0e0df12ecdb9ea008dd6eef3518adb52c559d04a9bac2e1b81dcfc8d4e1\",\n          \"url\": \"https://archive.ics.uci.edu/static/public/321/electricityloaddiagrams20112014.zip\"\n        }\n      ],\n      \"source_page\": {\n        \"bytes\": 75022,\n        \"path\": \"real/raw/source_evidence/electricity_source_page.html\",\n        \"sha256\": \"6d1622ed74bd643120a3fa17a8317afde421a49433379cc7200d5e946582fbc2\",\n        \"url\": \"https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014\"\n      }\n    },\n    \"ett\": {\n      \"license\": \"Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0), verified from repository LICENSE 2026-10-02; raw and processed data remain local and are not redistributed\",\n      \"license_file\": {\n        \"bytes\": 17818,\n        \"path\": \"real/raw/ett/LICENSE\",\n        \"sha256\": \"83cbb5c31415b1d0ee1d20d35dae3fda3a045b85fae9364cc57facc9cd6e0946\",\n        \"url\": \"https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/LICENSE\"\n      },\n      \"raw_files\": [\n        {\n          \"bytes\": 2589657,\n          \"path\": \"real/raw/ett/ETTh1.csv\",\n          \"sha256\": \"f18de3ad269cef59bb07b5438d79bb3042d3be49bdeecf01c1cd6d29695ee066\",\n          \"url\": \"https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTh1.csv\"\n        },\n        {\n          \"bytes\": 2417960,\n          \"path\": \"real/raw/ett/ETTh2.csv\",\n          \"sha256\": \"a3dc2c597b9218c7ce1cd55eb77b283fd459a1d09d753063f944967dd6b9218b\",\n          \"url\": \"https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTh2.csv\"\n        },\n        {\n          \"bytes\": 10360719,\n          \"path\": \"real/raw/ett/ETTm1.csv\",\n          \"sha256\": \"6ce1759b1a18e3328421d5d75fadcb316c449fcd7cec32820c8dafda71986c9e\",\n          \"url\": \"https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTm1.csv\"\n        },\n        {\n          \"bytes\": 9677236,\n          \"path\": \"real/raw/ett/ETTm2.csv\",\n          \"sha256\": \"db973ca252c6410a30d0469b13d696cf919648d0f3fd588c60f03fdbdbadd1fd\",\n          \"url\": \"https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTm2.csv\"\n        }\n      ],\n      \"source_page\": {\n        \"bytes\": 268899,\n        \"path\": \"real/raw/source_evidence/ett_source_page.html\",\n        \"sha256\": \"9d4e1d65072483f48ae9934b225fa43c856489d8571a3804409603682a583417\",\n        \"url\": \"https://github.com/zhouhaoyi/ETDataset\"\n      }\n    }\n  },\n  \"retrieved_at\": \"2026-10-07T08:58:00+08:00\"\n}\n"
+        },
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/run.py",
+            "--stage",
+            "real-prepare"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"config_hashes\": {\n    \"candidate_sources.json\": \"8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4\",\n    \"model_spec.json\": \"0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7\",\n    \"protocol.json\": \"75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d\",\n    \"real_panels.json\": \"e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83\",\n    \"synthetic.json\": \"91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c\"\n  },\n  \"panels\": [\n    {\n      \"data\": \"real/processed/electricity.npz\",\n      \"data_sha256\": \"74e1ff2c797e8bc2a57c23e6d3278692537cb417e2cc67c248a81dbfcb4cf58d\",\n      \"panel_id\": \"electricity\",\n      \"roster\": \"real/processed/electricity_roster.json\",\n      \"roster_sha256\": \"31bbf50887533103e129273bf4ff362a6f416469e661ed60324f2b8305a545ef\",\n      \"series_count\": 100\n    },\n    {\n      \"data\": \"real/processed/beijing_air_quality.npz\",\n      \"data_sha256\": \"4dd000b49c99292ff98ca6de4a038fdc42e13a2a2f9996e3334e38a68e10a8b9\",\n      \"panel_id\": \"beijing_air_quality\",\n      \"roster\": \"real/processed/beijing_air_quality_roster.json\",\n      \"roster_sha256\": \"ba6d6b12aeeed47c30bcc36ed4edea11af7eb0521737fd10211e6243d0458f84\",\n      \"series_count\": 12\n    },\n    {\n      \"data\": \"real/processed/ett_ETTh1.npz\",\n      \"data_sha256\": \"d4e5f3df09dbbd7288029c5937d562f34a9f1431a54589375f9dd4eaa02078bb\",\n      \"panel_id\": \"ett_ETTh1\",\n      \"roster\": \"real/processed/ett_ETTh1_roster.json\",\n      \"roster_sha256\": \"9e726724af360131f03c19c1321801af6ca78cc932cf97f120c76cf99d772398\",\n      \"series_count\": 1\n    },\n    {\n      \"data\": \"real/processed/ett_ETTh2.npz\",\n      \"data_sha256\": \"3f50f9aeb13d9fa87f2e4674f33add2256a230d7131c34fd68560e1a6f5a8953\",\n      \"panel_id\": \"ett_ETTh2\",\n      \"roster\": \"real/processed/ett_ETTh2_roster.json\",\n      \"roster_sha256\": \"ac8d5ffc2448654d1a22da80c6ab79487046be9a59afacec59f92c033eccda5e\",\n      \"series_count\": 1\n    },\n    {\n      \"data\": \"real/processed/ett_ETTm1.npz\",\n      \"data_sha256\": \"66b41873391e8936cbeadd647275a80c64c6016207cefd0ab96f7557ea501306\",\n      \"panel_id\": \"ett_ETTm1\",\n      \"roster\": \"real/processed/ett_ETTm1_roster.json\",\n      \"roster_sha256\": \"1200af43b1fa5648477018c519551bb05a900373446185d9b357296eafc7ed8d\",\n      \"series_count\": 1\n    },\n    {\n      \"data\": \"real/processed/ett_ETTm2.npz\",\n      \"data_sha256\": \"777f6bd51d6e32b372288957e50668abce0ec8de4e6e5e8019e3641a7bc92fde\",\n      \"panel_id\": \"ett_ETTm2\",\n      \"roster\": \"real/processed/ett_ETTm2_roster.json\",\n      \"roster_sha256\": \"0d3500fa0c2af8357cbe9130b7385092ec38bfd2154f788feb09ba0cd1da3c66\",\n      \"series_count\": 1\n    }\n  ],\n  \"prepared_at\": \"2026-10-07T08:59:45+08:00\"\n}\n"
+        },
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/run.py",
+            "--stage",
+            "real-run"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"completed\": 570,\n  \"failures\": [],\n  \"failures_artifact\": {\n    \"bytes\": 32,\n    \"path\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/real/failures.csv\",\n    \"sha256\": \"914a07c14114298534f54f1cdbf8753670b684ec324af8a3d6326f0834d9947a\"\n  },\n  \"metrics\": {\n    \"bytes\": 18081836,\n    \"path\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/real/metrics_all.csv\",\n    \"sha256\": \"ab75a823e25b16a3f05874945cf3dfaf3734bbd689835e5e133f3dad8ffdd630\"\n  },\n  \"planned\": 570\n}\n"
+        }
+      ],
+      "finished_at": "2026-10-07T20:49:37+08:00",
+      "status": "complete"
+    },
+    "real_extended": {
+      "attempts": [
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "scripts/sapr_mamba_v3_sources.py",
+            "--stage",
+            "prepare"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"amendment_id\": \"sapr_mamba_v3.1_public_multiseries_sources\",\n  \"prepared_at\": \"2026-10-08T08:31:03+08:00\",\n  \"sources\": [\n    {\n      \"change_coverage_eligible\": true,\n      \"change_test_series\": 100,\n      \"change_threshold\": 4.0,\n      \"data\": \"real/source_extensions/v3.1/processed/solar_10min.npz\",\n      \"data_sha256\": \"e388b26e0ebdf4f6ad315559d097bcb5b5cd750d62a5e0cfc34b6888e021457d\",\n      \"domain\": \"energy\",\n      \"external_holdout\": true,\n      \"horizons\": [\n        18,\n        36,\n        72,\n        144\n      ],\n      \"original_series_count\": 137,\n      \"panel_id\": \"solar_10min\",\n      \"raw_archive\": \"real/source_extensions/v3.1/raw/solar_10min/solar_10_minutes_dataset.zip\",\n      \"raw_archive_sha256\": \"63ec43cefc45d87af17f06255daad8343cc2593d3572e4d7178d791ab9387390\",\n      \"roster\": \"real/source_extensions/v3.1/processed/solar_10min_roster.json\",\n      \"roster_sha256\": \"825f3ba1a4821ae95103b3e24473554540e229d96ee8244a36521f410a56be56\",\n      \"series_count\": 100,\n      \"source_cluster\": \"zenodo_solar\",\n      \"stable_coverage_eligible\": false,\n      \"stable_test_series\": 6,\n      \"threshold_source\": \"selected_series_train_windows_only\",\n      \"threshold_training_windows\": 21500\n    },\n    {\n      \"change_coverage_eligible\": true,\n      \"change_test_series\": 31,\n      \"change_threshold\": 3.8812577724456787,\n      \"data\": \"real/source_extensions/v3.1/processed/tourism_monthly.npz\",\n      \"data_sha256\": \"e267fcc9f27272afc551762fb9dc3c1b476e54f0efb3c7829a579c0cc4dab31d\",\n      \"domain\": \"tourism\",\n      \"external_holdout\": true,\n      \"horizons\": [\n        3,\n        6,\n        12\n      ],\n      \"original_series_count\": 366,\n      \"panel_id\": \"tourism_monthly\",\n      \"raw_archive\": \"real/source_extensions/v3.1/raw/tourism_monthly/tourism_monthly_dataset.zip\",\n      \"raw_archive_sha256\": \"6e434ad8a0ef6acb55ebee0e1d1ffe22707ea4e62c05e091326267f3a5b4a93c\",\n      \"roster\": \"real/source_extensions/v3.1/processed/tourism_monthly_roster.json\",\n      \"roster_sha256\": \"c0867d1031ed518836dadac0bf3ae01407016a143c96237ce0fda22e58e89f40\",\n      \"series_count\": 100,\n      \"source_cluster\": \"zenodo_tourism\",\n      \"stable_coverage_eligible\": true,\n      \"stable_test_series\": 99,\n      \"threshold_source\": \"selected_series_train_windows_only\",\n      \"threshold_training_windows\": 977\n    },\n    {\n      \"change_coverage_eligible\": true,\n      \"change_test_series\": 38,\n      \"change_threshold\": 3.511313557624817,\n      \"data\": \"real/source_extensions/v3.1/processed/nn5_daily.npz\",\n      \"data_sha256\": \"26a0dc3b7683ced5965019820bf04322b3d4945d1dc2b594028fb51001399dcf\",\n      \"domain\": \"banking_cash_demand\",\n      \"external_holdout\": false,\n      \"horizons\": [\n        1,\n        2,\n        4,\n        7\n      ],\n      \"original_series_count\": 111,\n      \"panel_id\": \"nn5_daily\",\n      \"raw_archive\": \"real/source_extensions/v3.1/raw/nn5_daily/nn5_daily_dataset_with_missing_values.zip\",\n      \"raw_archive_sha256\": \"7022d158f6e49e323f3bd76f48fb18ba78b6d013972a97980af01c56f6f4c74b\",\n      \"roster\": \"real/source_extensions/v3.1/processed/nn5_daily_roster.json\",\n      \"roster_sha256\": \"6ff69d03e46e595749ea54bfc8005bc062cd44599241af2def33302d8c9f24f2\",\n      \"series_count\": 100,\n      \"source_cluster\": \"zenodo_nn5\",\n      \"stable_coverage_eligible\": true,\n      \"stable_test_series\": 100,\n      \"threshold_source\": \"selected_series_train_windows_only\",\n      \"threshold_training_windows\": 4891\n    },\n    {\n      \"change_coverage_eligible\": true,\n      \"change_test_series\": 46,\n      \"change_threshold\": 3.340278744697571,\n      \"data\": \"real/source_extensions/v3.1/processed/m4_monthly.npz\",\n      \"data_sha256\": \"9c3cc2609407dea42d62e1244e308f181990bd9a13715cdb512e1598c027cc28\",\n      \"domain\": \"mixed_m4_benchmark\",\n      \"external_holdout\": false,\n      \"horizons\": [\n        3,\n        6,\n        12\n      ],\n      \"original_series_count\": 48000,\n      \"panel_id\": \"m4_monthly\",\n      \"raw_archive\": \"real/source_extensions/v3.1/raw/m4_monthly/m4_monthly_dataset.zip\",\n      \"raw_archive_sha256\": \"473aa4fc814b625174be2b5615959f35f85f566fbed09c30acf44c350b2a1efe\",\n      \"roster\": \"real/source_extensions/v3.1/processed/m4_monthly_roster.json\",\n      \"roster_sha256\": \"5df25e009b9fa39528bb8f18d8c2528707ccb857ed69989680a544f4fbd667be\",\n      \"series_count\": 100,\n      \"source_cluster\": \"zenodo_m4\",\n      \"stable_coverage_eligible\": true,\n      \"stable_test_series\": 84,\n      \"threshold_source\": \"selected_series_train_windows_only\",\n      \"threshold_training_windows\": 699\n    }\n  ]\n}\n"
+        },
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "scripts/sapr_mamba_v3_sources.py",
+            "--stage",
+            "integrate"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"amendment_id\": \"sapr_mamba_v3.1_public_multiseries_sources\",\n  \"amendment_lock\": \"configs/sapr_mamba_v3/amendments/v3.1_protocol.lock.json\",\n  \"amendment_lock_sha256\": \"ccc43469a820f52291443f085de52fecaeac241d949063a48d00de7a8a2fd512\",\n  \"copied_artifacts\": [\n    {\n      \"path\": \"real/processed/solar_10min.npz\",\n      \"sha256\": \"e388b26e0ebdf4f6ad315559d097bcb5b5cd750d62a5e0cfc34b6888e021457d\"\n    },\n    {\n      \"path\": \"real/processed/solar_10min_roster.json\",\n      \"sha256\": \"825f3ba1a4821ae95103b3e24473554540e229d96ee8244a36521f410a56be56\"\n    },\n    {\n      \"path\": \"real/processed/tourism_monthly.npz\",\n      \"sha256\": \"e267fcc9f27272afc551762fb9dc3c1b476e54f0efb3c7829a579c0cc4dab31d\"\n    },\n    {\n      \"path\": \"real/processed/tourism_monthly_roster.json\",\n      \"sha256\": \"c0867d1031ed518836dadac0bf3ae01407016a143c96237ce0fda22e58e89f40\"\n    },\n    {\n      \"path\": \"real/processed/nn5_daily.npz\",\n      \"sha256\": \"26a0dc3b7683ced5965019820bf04322b3d4945d1dc2b594028fb51001399dcf\"\n    },\n    {\n      \"path\": \"real/processed/nn5_daily_roster.json\",\n      \"sha256\": \"6ff69d03e46e595749ea54bfc8005bc062cd44599241af2def33302d8c9f24f2\"\n    },\n    {\n      \"path\": \"real/processed/m4_monthly.npz\",\n      \"sha256\": \"9c3cc2609407dea42d62e1244e308f181990bd9a13715cdb512e1598c027cc28\"\n    },\n    {\n      \"path\": \"real/processed/m4_monthly_roster.json\",\n      \"sha256\": \"5df25e009b9fa39528bb8f18d8c2528707ccb857ed69989680a544f4fbd667be\"\n    }\n  ],\n  \"integrated_panels\": [],\n  \"prepared_manifest_sha256\": \"b08329974a7c00a634aa98e91e2181474a549f436d8216350f39ab988816694e\",\n  \"prepared_panel_count\": 10,\n  \"thresholds_path\": \"real/source_thresholds_v3.1.json\",\n  \"thresholds_sha256\": \"ace0a7ac5ff9b4aafdae1b9b8b775305cb6ba78280b3411be1221004eaff47c0\"\n}\n"
+        },
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/run.py",
+            "--stage",
+            "real-run"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"completed\": 950,\n  \"failures\": [],\n  \"failures_artifact\": {\n    \"bytes\": 32,\n    \"path\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/real/failures.csv\",\n    \"sha256\": \"914a07c14114298534f54f1cdbf8753670b684ec324af8a3d6326f0834d9947a\"\n  },\n  \"metrics\": {\n    \"bytes\": 81244757,\n    \"path\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/real/metrics_all.csv\",\n    \"sha256\": \"37402cee101e95a2649d894fa25d27778d5a8cbe2f3e207df5063c9026f36d6e\"\n  },\n  \"planned\": 950\n}\n"
+        }
+      ],
+      "finished_at": "2026-10-08T08:37:34+08:00",
+      "status": "complete"
+    },
+    "release": {
+      "attempts": [
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "scripts/sapr_mamba_v3_release.py",
+            "--stage",
+            "build"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"contract\": \"automated evidence bundle; human authors remain responsible for declarations and submission approval\",\n  \"copied_files\": 1108,\n  \"created_at\": \"2026-10-08T08:43:23+08:00\",\n  \"excluded_runtime_outputs\": {\n    \"policy\": \"large checkpoints, prediction archives, per-task metrics, and merged raw metric tables remain in ignored results/ and are not copied into the Git release\",\n    \"source_root\": \"results/sapr_mamba_v3\"\n  },\n  \"limitations_source\": \"results/sapr_mamba_v3/pipeline_state.json\",\n  \"status\": \"complete_with_limitations\",\n  \"study\": \"sapr_mamba_v3\"\n}\n"
+        },
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "scripts/sapr_mamba_v3_release.py",
+            "--stage",
+            "verify"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"problems\": [],\n  \"status\": \"verified\"\n}\n"
+        }
+      ],
+      "finished_at": "2026-10-08T08:43:24+08:00",
+      "status": "complete"
+    },
+    "smoke": {
+      "attempts": [
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/run.py",
+            "--stage",
+            "smoke",
+            "--models",
+            "M0",
+            "M1",
+            "M2",
+            "M3",
+            "M3-shuffle",
+            "--seeds",
+            "20261021"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"completed\": 5,\n  \"failures\": [],\n  \"failures_artifact\": {\n    \"bytes\": 26,\n    \"path\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/results/smoke/sapr_mamba_v3/failures.csv\",\n    \"sha256\": \"49fb062b608da73e314ea8407392d201b1320bd00b564e275aeb3318498dc51d\"\n  },\n  \"generated\": {\n    \"config_hashes\": {\n      \"candidate_sources.json\": \"8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4\",\n      \"model_spec.json\": \"0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7\",\n      \"protocol.json\": \"75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d\",\n      \"real_panels.json\": \"e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83\",\n      \"synthetic.json\": \"91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c\"\n    },\n    \"created_at\": \"2026-10-06T22:01:11+08:00\",\n    \"generator_version\": \"sapr_synthetic_v2.0\",\n    \"manifest\": \"sapr_mamba_v3/synthetic/data_manifest.json\",\n    \"splits\": {\n      \"test\": {\n        \"data\": \"sapr_mamba_v3/synthetic/test.npz\",\n        \"roster_sha256\": \"25865437a04497c7e715d330a1122af12606186fc5e369fc5d7b78d692f0eeba\",\n        \"series_count\": 1700,\n        \"sha256\": \"daf9ff7b80dd90e62e9e291d04d538c90592b7ca3589fd4de30f4be9f11345ec\"\n      },\n      \"train\": {\n        \"data\": \"sapr_mamba_v3/synthetic/train.npz\",\n        \"roster_sha256\": \"971d1353b935febcf3a4a2d1cc1c76df8677720b16b9f125b717504bf4e26195\",\n        \"series_count\": 3300,\n        \"sha256\": \"d94690a1f19c784e0e3b5b847cbb0669f7f8dc3ec7f6efb0f7be664279c0ad37\"\n      },\n      \"validation\": {\n        \"data\": \"sapr_mamba_v3/synthetic/validation.npz\",\n        \"roster_sha256\": \"d1d52bde8beb50e8c6f026e3c522ef2e5d15315e417260014ceb6cf010eaed93\",\n        \"series_count\": 850,\n        \"sha256\": \"c4b0b68d51901a6f1efc792bb1260e9c4c36b52c49c859358c2c44e336e73f02\"\n      }\n    }\n  },\n  \"metrics\": {\n    \"metrics\": {\n      \"bytes\": 147022,\n      \"path\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/results/smoke/sapr_mamba_v3/metrics_all.csv\",\n      \"sha256\": \"2c24495b770b73ab94907992ade70fd3ce2eef1bbfa308f287d2b248e14eed3e\"\n    },\n    \"rows\": 690\n  },\n  \"planned\": 5\n}\n"
+        }
+      ],
+      "finished_at": "2026-10-06T22:01:27+08:00",
+      "status": "complete"
+    },
+    "sources": {
+      "attempts": [
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "scripts/sapr_mamba_v3_sources.py"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"audited_at\": \"2026-10-06T22:04:03+08:00\",\n  \"candidate_expansion_order\": [\n    \"room_occupancy\",\n    \"appliances_energy\",\n    \"uci_air_quality\",\n    \"metro_traffic\"\n  ],\n  \"config_hashes\": {\n    \"candidate_sources.json\": \"8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4\",\n    \"model_spec.json\": \"0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7\",\n    \"protocol.json\": \"75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d\",\n    \"real_panels.json\": \"e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83\",\n    \"synthetic.json\": \"91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c\"\n  },\n  \"eligible_existing\": [\n    \"electricity\",\n    \"beijing_air_quality\",\n    \"ett_cluster\"\n  ],\n  \"registry_sha256\": \"8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4\",\n  \"selection_rule\": {\n    \"minimum_domains\": 3,\n    \"minimum_series_per_primary_source\": 20,\n    \"minimum_source_clusters\": 6,\n    \"order\": \"fixed registry order\",\n    \"uses_test_results\": false\n  },\n  \"sources\": [\n    {\n      \"cluster\": \"uci_electricity\",\n      \"domain\": \"energy\",\n      \"eligibility\": \"eligible_existing_parser\",\n      \"external_holdout\": false,\n      \"license\": \"CC BY 4.0\",\n      \"order\": 1,\n      \"source_id\": \"electricity\",\n      \"source_url\": \"https://archive.ics.uci.edu/static/public/321/electricityloaddiagrams20112014.zip\",\n      \"status\": \"verified_v2_reuse\"\n    },\n    {\n      \"cluster\": \"uci_beijing_air\",\n      \"domain\": \"environment\",\n      \"eligibility\": \"eligible_existing_parser\",\n      \"external_holdout\": false,\n      \"license\": \"CC BY 4.0\",\n      \"order\": 2,\n      \"source_id\": \"beijing_air_quality\",\n      \"source_url\": \"https://archive.ics.uci.edu/static/public/501/beijing+multi+site+air+quality+data.zip\",\n      \"status\": \"verified_v2_reuse\"\n    },\n    {\n      \"cluster\": \"ett\",\n      \"domain\": \"industrial\",\n      \"eligibility\": \"eligible_existing_parser\",\n      \"external_holdout\": true,\n      \"license\": \"CC BY-ND 4.0\",\n      \"order\": 3,\n      \"source_id\": \"ett_cluster\",\n      \"source_url\": \"https://github.com/zhouhaoyi/ETDataset\",\n      \"status\": \"verified_v2_reuse\"\n    },\n    {\n      \"cluster\": \"uci_room_occupancy\",\n      \"domain\": \"environment\",\n      \"eligibility\": \"candidate_requires_parser_and_license_check\",\n      \"external_holdout\": true,\n      \"license\": \"verify_from_source_page_before_use\",\n      \"order\": 4,\n      \"source_id\": \"room_occupancy\",\n      \"source_url\": \"https://archive.ics.uci.edu/static/public/864/room+occupancy+estimation.zip\",\n      \"status\": \"candidate\"\n    },\n    {\n      \"cluster\": \"uci_appliances_energy\",\n      \"domain\": \"energy\",\n      \"eligibility\": \"candidate_requires_parser_and_license_check\",\n      \"external_holdout\": true,\n      \"license\": \"verify_from_source_page_before_use\",\n      \"order\": 5,\n      \"source_id\": \"appliances_energy\",\n      \"source_url\": \"https://archive.ics.uci.edu/static/public/374/appliances+energy+prediction.zip\",\n      \"status\": \"candidate\"\n    },\n    {\n      \"cluster\": \"uci_air_quality\",\n      \"domain\": \"environment\",\n      \"eligibility\": \"candidate_requires_parser_and_license_check\",\n      \"external_holdout\": true,\n      \"license\": \"verify_from_source_page_before_use\",\n      \"order\": 6,\n      \"source_id\": \"uci_air_quality\",\n      \"source_url\": \"https://archive.ics.uci.edu/static/public/360/air+quality.zip\",\n      \"status\": \"candidate\"\n    },\n    {\n      \"cluster\": \"uci_metro_traffic\",\n      \"domain\": \"transport\",\n      \"eligibility\": \"candidate_requires_parser_and_license_check\",\n      \"external_holdout\": true,\n      \"license\": \"verify_from_source_page_before_use\",\n      \"order\": 7,\n      \"source_id\": \"metro_traffic\",\n      \"source_url\": \"https://archive.ics.uci.edu/static/public/492/metro+interstate+traffic+volume.zip\",\n      \"status\": \"candidate\"\n    }\n  ],\n  \"status\": \"complete_with_limitations\",\n  \"study\": \"sapr_mamba_v3\"\n}\n"
+        }
+      ],
+      "finished_at": "2026-10-06T22:04:03+08:00",
+      "status": "complete"
+    },
+    "synthetic": {
+      "attempts": [
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/run.py",
+            "--stage",
+            "synthetic-run"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"completed\": 90,\n  \"failures\": [],\n  \"failures_artifact\": {\n    \"bytes\": 26,\n    \"path\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/synthetic/failures.csv\",\n    \"sha256\": \"49fb062b608da73e314ea8407392d201b1320bd00b564e275aeb3318498dc51d\"\n  },\n  \"generated\": {\n    \"config_hashes\": {\n      \"candidate_sources.json\": \"8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4\",\n      \"model_spec.json\": \"0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7\",\n      \"protocol.json\": \"75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d\",\n      \"real_panels.json\": \"e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83\",\n      \"synthetic.json\": \"91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c\"\n    },\n    \"created_at\": \"2026-10-06T22:10:08+08:00\",\n    \"generator_version\": \"sapr_synthetic_v2.0\",\n    \"manifest\": \"sapr_mamba_v3/synthetic/data_manifest.json\",\n    \"splits\": {\n      \"test\": {\n        \"data\": \"sapr_mamba_v3/synthetic/test.npz\",\n        \"roster_sha256\": \"25865437a04497c7e715d330a1122af12606186fc5e369fc5d7b78d692f0eeba\",\n        \"series_count\": 1700,\n        \"sha256\": \"daf9ff7b80dd90e62e9e291d04d538c90592b7ca3589fd4de30f4be9f11345ec\"\n      },\n      \"train\": {\n        \"data\": \"sapr_mamba_v3/synthetic/train.npz\",\n        \"roster_sha256\": \"971d1353b935febcf3a4a2d1cc1c76df8677720b16b9f125b717504bf4e26195\",\n        \"series_count\": 3300,\n        \"sha256\": \"d94690a1f19c784e0e3b5b847cbb0669f7f8dc3ec7f6efb0f7be664279c0ad37\"\n      },\n      \"validation\": {\n        \"data\": \"sapr_mamba_v3/synthetic/validation.npz\",\n        \"roster_sha256\": \"d1d52bde8beb50e8c6f026e3c522ef2e5d15315e417260014ceb6cf010eaed93\",\n        \"series_count\": 850,\n        \"sha256\": \"c4b0b68d51901a6f1efc792bb1260e9c4c36b52c49c859358c2c44e336e73f02\"\n      }\n    }\n  },\n  \"metrics\": {\n    \"metrics\": {\n      \"bytes\": 387831801,\n      \"path\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/synthetic/metrics_all.csv\",\n      \"sha256\": \"5b6e49c781bdd8f5e2fe24c10e8915a5915d3044c7c634e5f4c63fc2287c1ece\"\n    },\n    \"rows\": 1735560\n  },\n  \"planned\": 90\n}\n"
+        }
+      ],
+      "finished_at": "2026-10-07T03:16:04+08:00",
+      "status": "complete"
+    },
+    "verify": {
+      "attempts": [
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "experiments/sapr_mamba/run.py",
+            "--stage",
+            "verify"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "\": \"9d1afbf053593f16440fea5b42fce78ea7b02d4ddcaa27fb446522702482b698\"\n      },\n      {\n        \"bytes\": 31748104,\n        \"path\": \"M3-state-only_seed20261025/predictions.npz\",\n        \"sha256\": \"b8d2572d63dc87aaf6b89770f8ff8deffb5f2d4895a36f884dd5f783315bca3b\"\n      },\n      {\n        \"bytes\": 5909,\n        \"path\": \"M3-state-only_seed20261025/task_manifest.json\",\n        \"sha256\": \"6311e5e625adc0442157a8387d1a7e088299b01aeb74d3557a30f45f7f1cf6b4\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3-state-only_seed20261026/checkpoint.pt\",\n        \"sha256\": \"cfcb98ce610b22acbc50664731a3ebb3e7c3e75da4969307140f3c5d97ba3bd7\"\n      },\n      {\n        \"bytes\": 4667292,\n        \"path\": \"M3-state-only_seed20261026/metrics.csv\",\n        \"sha256\": \"50c9146c879285a932e98568e343522d067bf4414c055c4adcd74528b9b26fa0\"\n      },\n      {\n        \"bytes\": 31759517,\n        \"path\": \"M3-state-only_seed20261026/predictions.npz\",\n        \"sha256\": \"cfb61e1dea4cb6cbd625fddd5267d38540262276f324f4332db5ce14363de177\"\n      },\n      {\n        \"bytes\": 5909,\n        \"path\": \"M3-state-only_seed20261026/task_manifest.json\",\n        \"sha256\": \"d1515ecc1fd3bf004bb019173655251e243f4d4102d98e29435b09a0844f43c2\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3-state-only_seed20261027/checkpoint.pt\",\n        \"sha256\": \"ba140443b7f8dbb65feab86b81fea8bdb64c1a80afb7307998b4be599fcb0559\"\n      },\n      {\n        \"bytes\": 4668013,\n        \"path\": \"M3-state-only_seed20261027/metrics.csv\",\n        \"sha256\": \"968b0312bed6a8c2523fe907ba5fc44b3380f635f0daa17d9d0e0dcc679c920b\"\n      },\n      {\n        \"bytes\": 31750291,\n        \"path\": \"M3-state-only_seed20261027/predictions.npz\",\n        \"sha256\": \"47135d423fa4723bdba5ea29a0748398a21726daac5c6dd5afb0c5e89cbebe63\"\n      },\n      {\n        \"bytes\": 5909,\n        \"path\": \"M3-state-only_seed20261027/task_manifest.json\",\n        \"sha256\": \"b1fb68facec386f8ec1ccba45906bf4d77edf240b84228877b4052bc0e5d1831\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3-state-only_seed20261028/checkpoint.pt\",\n        \"sha256\": \"bbf7e047df8c77c1c57efdc959cc74e17b717767a489547f56b1e6ff3b0ddad1\"\n      },\n      {\n        \"bytes\": 4667033,\n        \"path\": \"M3-state-only_seed20261028/metrics.csv\",\n        \"sha256\": \"c710770b59cef831afacee7debc7c77387b50e99175c746f7c7d1f693f8626d3\"\n      },\n      {\n        \"bytes\": 31762399,\n        \"path\": \"M3-state-only_seed20261028/predictions.npz\",\n        \"sha256\": \"b89cd63bf3dcd32bef79340500d7611d28ed3b30f610e6de9d4bb7a4c3c0fbb5\"\n      },\n      {\n        \"bytes\": 5909,\n        \"path\": \"M3-state-only_seed20261028/task_manifest.json\",\n        \"sha256\": \"b1a17ee41dc27b180590bc1c4159a66aa5a2101500e99afcba2fe0c3c7a22c9a\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3-state-only_seed20261029/checkpoint.pt\",\n        \"sha256\": \"0d80598ba9c737205082e4eba90477dd8fb170dde53a452e6b5adc66f3f4daf9\"\n      },\n      {\n        \"bytes\": 4667584,\n        \"path\": \"M3-state-only_seed20261029/metrics.csv\",\n        \"sha256\": \"48bf5bce33b7f68b4f2ecc5155e77972ffc805e75e45f170e67d54263495d6cf\"\n      },\n      {\n        \"bytes\": 31752440,\n        \"path\": \"M3-state-only_seed20261029/predictions.npz\",\n        \"sha256\": \"e889776a117af0763bf12e08a33041adaed93690249e1408e07fe4d1321115d3\"\n      },\n      {\n        \"bytes\": 5909,\n        \"path\": \"M3-state-only_seed20261029/task_manifest.json\",\n        \"sha256\": \"19a7544418ff5ba5ed4e438d717ff87d58ec01fd4308e43b45cf8fed0a52b87e\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3-state-only_seed20261030/checkpoint.pt\",\n        \"sha256\": \"845192ebd50a2bdcd5c99310cf08deac51b24aeb01f91739d990c191e2d34dfa\"\n      },\n      {\n        \"bytes\": 4668202,\n        \"path\": \"M3-state-only_seed20261030/metrics.csv\",\n        \"sha256\": \"b3ffef9f6352460741ea6a78ccd607dec1e4fc2dcd5e0a641951eb325781724e\"\n      },\n      {\n        \"bytes\": 31745332,\n        \"path\": \"M3-state-only_seed20261030/predictions.npz\",\n        \"sha256\": \"2373173b52ac948f06d6d728cfdca01a27e4c135c30a0e34b8057fa2a66ea5c2\"\n      },\n      {\n        \"bytes\": 5909,\n        \"path\": \"M3-state-only_seed20261030/task_manifest.json\",\n        \"sha256\": \"bc8cb0228d1a8b0bd5e0b412406d26559bb02c83d3664d34b047a81e17a20f80\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261021/checkpoint.pt\",\n        \"sha256\": \"e780a3b95847fd02fb1aa12ad19988fe7ae6b85cfee8693496cd2a35cf592ee6\"\n      },\n      {\n        \"bytes\": 4471003,\n        \"path\": \"M3_seed20261021/metrics.csv\",\n        \"sha256\": \"0cc2197af2145406d55b61c002e7bf520a4fe8c2c9adc4ca623af2dfa8cfe63c\"\n      },\n      {\n        \"bytes\": 31722374,\n        \"path\": \"M3_seed20261021/predictions.npz\",\n        \"sha256\": \"30df4a00cf17e8ddd6d802a1fda7aefc7e5c6463b3a78682b2cf3e4edc91cc15\"\n      },\n      {\n        \"bytes\": 5863,\n        \"path\": \"M3_seed20261021/task_manifest.json\",\n        \"sha256\": \"87afc2b0467745557ead1e87db5a4aec0e0120010e229e4fc9224b01490e7b2a\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261022/checkpoint.pt\",\n        \"sha256\": \"4bbf1a9a059e17b39f0f9925dcf45c3ac3b99ac0e5868ea96ef4c0a7d469bab8\"\n      },\n      {\n        \"bytes\": 4458318,\n        \"path\": \"M3_seed20261022/metrics.csv\",\n        \"sha256\": \"fe60921070633129a5e37739b31a5f60c8b43ebb8285cadea43ae0c2f23b23d6\"\n      },\n      {\n        \"bytes\": 31734022,\n        \"path\": \"M3_seed20261022/predictions.npz\",\n        \"sha256\": \"0ad0dce9c035991416510b83fe92ca97f34564c408202ba7d83176bf88930f37\"\n      },\n      {\n        \"bytes\": 5863,\n        \"path\": \"M3_seed20261022/task_manifest.json\",\n        \"sha256\": \"a9dc9d9a2f3e476eb52b8e31d98c6ac57bb3e83be5003f4eedd81d03691d0abd\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261023/checkpoint.pt\",\n        \"sha256\": \"d0723acf100a1a7fdd72202902c458018c66bb9a8c7cf360b5ed4f0cd4ee4ab0\"\n      },\n      {\n        \"bytes\": 4470923,\n        \"path\": \"M3_seed20261023/metrics.csv\",\n        \"sha256\": \"8dbc84b712495464ca4323682544656a171955c7da3ad05b6e56409914b7288c\"\n      },\n      {\n        \"bytes\": 31708566,\n        \"path\": \"M3_seed20261023/predictions.npz\",\n        \"sha256\": \"93d58a9b9cff6ce2fd77f986386118b6de4e15462113ff2b125c7b569fa201b6\"\n      },\n      {\n        \"bytes\": 5864,\n        \"path\": \"M3_seed20261023/task_manifest.json\",\n        \"sha256\": \"62469884b15549e14dc76b49ccebbc96f481222969b114ff694d619629c842c9\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261024/checkpoint.pt\",\n        \"sha256\": \"2aaba6082aada99808f3059376a85010512cf89a6ee55c68fe294e36b3822719\"\n      },\n      {\n        \"bytes\": 4473601,\n        \"path\": \"M3_seed20261024/metrics.csv\",\n        \"sha256\": \"130497250fbc2c7482ab27354d504e47147cf0dcc6fc636ce68ce866baec2c0b\"\n      },\n      {\n        \"bytes\": 31711634,\n        \"path\": \"M3_seed20261024/predictions.npz\",\n        \"sha256\": \"867b846fccdf10d563c49cabd4451283ddb63088c858565ecb4afeefab798b1f\"\n      },\n      {\n        \"bytes\": 5864,\n        \"path\": \"M3_seed20261024/task_manifest.json\",\n        \"sha256\": \"cd87b87d8562b45290382c841930f3595ee1da86209b28d2379e560d26517869\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261025/checkpoint.pt\",\n        \"sha256\": \"d7ba1eee2e959b0e9ce7e2eaa28a6e83bdb1f06584f4da233bd18320e4703244\"\n      },\n      {\n        \"bytes\": 4474235,\n        \"path\": \"M3_seed20261025/metrics.csv\",\n        \"sha256\": \"8d311c9196e31cda8e9ad82f046176f16a9d7aecdbbb17c5a1779054c14ea138\"\n      },\n      {\n        \"bytes\": 31701669,\n        \"path\": \"M3_seed20261025/predictions.npz\",\n        \"sha256\": \"951ab16540afd6285c32782ef9af8aee6e426d2b119bde433f623f731ac0c1c0\"\n      },\n      {\n        \"bytes\": 5864,\n        \"path\": \"M3_seed20261025/task_manifest.json\",\n        \"sha256\": \"625d19679d0596140836ee0fb802401ff2d4b2776f05012b2b45fd2c8c22363d\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261026/checkpoint.pt\",\n        \"sha256\": \"2be0759bc7151fb4d762e75133fe2d5b0d0fff7d73f47d3444774f203ea1d662\"\n      },\n      {\n        \"bytes\": 4467139,\n        \"path\": \"M3_seed20261026/metrics.csv\",\n        \"sha256\": \"523c4f4396c2a749dcdf93ad270cf46d9d8d54a04387f2b522fb8acab94d6369\"\n      },\n      {\n        \"bytes\": 31719196,\n        \"path\": \"M3_seed20261026/predictions.npz\",\n        \"sha256\": \"151ede8eb3a81f084fa261e7b0882119b1faf274997806effc994d2d82add284\"\n      },\n      {\n        \"bytes\": 5865,\n        \"path\": \"M3_seed20261026/task_manifest.json\",\n        \"sha256\": \"72cfe9c60124fdf926189abe4068a4d082aa4762faf1fc20f6a72da86157045e\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261027/checkpoint.pt\",\n        \"sha256\": \"d3c57d98c44a26718d7f355bfa7c30dbbdb1fcd373d80c1423782e80c2fac345\"\n      },\n      {\n        \"bytes\": 4469329,\n        \"path\": \"M3_seed20261027/metrics.csv\",\n        \"sha256\": \"05b18f616e1e57097a09f59507e257618aa01d0340f492a22154cc0bd20114aa\"\n      },\n      {\n        \"bytes\": 31717416,\n        \"path\": \"M3_seed20261027/predictions.npz\",\n        \"sha256\": \"02d5fee4436fb9e3e5d58a1aea710bf7f50e867adf47feb3f42bddbb8369e1c2\"\n      },\n      {\n        \"bytes\": 5865,\n        \"path\": \"M3_seed20261027/task_manifest.json\",\n        \"sha256\": \"1a59e530d8ebe90af21095e3994b42963c085031fd2ba45f91380262f15a5450\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261028/checkpoint.pt\",\n        \"sha256\": \"94ca2633c87a1576eb766c2e6c076127ec46b2e0a7f6f29d3a06c1d33f58eac3\"\n      },\n      {\n        \"bytes\": 4467770,\n        \"path\": \"M3_seed20261028/metrics.csv\",\n        \"sha256\": \"2a96488974f7113f6cf0c535ab64cd9e635aa36d973cec8c4eeb80922ccaff94\"\n      },\n      {\n        \"bytes\": 31730749,\n        \"path\": \"M3_seed20261028/predictions.npz\",\n        \"sha256\": \"2af6d2beae321daae6dd17d0036d82002aabaa65edbc423d0cfc33a1c106b2f2\"\n      },\n      {\n        \"bytes\": 5865,\n        \"path\": \"M3_seed20261028/task_manifest.json\",\n        \"sha256\": \"b67add1572ad9d8276cb4ddd41d4554c0bc398b0fb94b0cdb74f3d84c043861c\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261029/checkpoint.pt\",\n        \"sha256\": \"0c5c6d9759023a706b6bc6f81ab16fd08a2ecc15641ac11c5e9f22fd902b5324\"\n      },\n      {\n        \"bytes\": 4463506,\n        \"path\": \"M3_seed20261029/metrics.csv\",\n        \"sha256\": \"c62a9389e11826ff41cd52a2834384767b24b040168b5e4429148ed9cd2ffd43\"\n      },\n      {\n        \"bytes\": 31727245,\n        \"path\": \"M3_seed20261029/predictions.npz\",\n        \"sha256\": \"7f3c3fe43af9f44d470c2e0d88236a8497ce6ff0cd98099c2b98d1d559829a6e\"\n      },\n      {\n        \"bytes\": 5864,\n        \"path\": \"M3_seed20261029/task_manifest.json\",\n        \"sha256\": \"91b2cd51265828cc6cc2fd2b58e30333f312fd3e9fdd47796ab20f052976b074\"\n      },\n      {\n        \"bytes\": 300578,\n        \"path\": \"M3_seed20261030/checkpoint.pt\",\n        \"sha256\": \"60a84c4fc7f93da7eeee5238ec306b9bd3b55921a1496ccc0b7ec6362bbfcf7e\"\n      },\n      {\n        \"bytes\": 4463835,\n        \"path\": \"M3_seed20261030/metrics.csv\",\n        \"sha256\": \"8b63093e4a71a67599e025dde4330f560890ae9bfb369c01e8d7027844f9c270\"\n      },\n      {\n        \"bytes\": 31722461,\n        \"path\": \"M3_seed20261030/predictions.npz\",\n        \"sha256\": \"3753103c5f2d633ed81bd05aa34c2f768d9008391e5e487fd67d9201324eccff\"\n      },\n      {\n        \"bytes\": 5865,\n        \"path\": \"M3_seed20261030/task_manifest.json\",\n        \"sha256\": \"8f4263e9ecf7b895e9b26d1d2888c479e427257e352d5f9fa8be8e23165d78a7\"\n      },\n      {\n        \"bytes\": 2172,\n        \"path\": \"campaign_manifest.json\",\n        \"sha256\": \"39cff0647e346bb723e01ec9be215ab73e358b945cc5143b9344f11d17b3176f\"\n      },\n      {\n        \"bytes\": 26,\n        \"path\": \"failures.csv\",\n        \"sha256\": \"49fb062b608da73e314ea8407392d201b1320bd00b564e275aeb3318498dc51d\"\n      },\n      {\n        \"bytes\": 387831801,\n        \"path\": \"metrics_all.csv\",\n        \"sha256\": \"5b6e49c781bdd8f5e2fe24c10e8915a5915d3044c7c634e5f4c63fc2287c1ece\"\n      }\n    ],\n    \"root\": \"/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/synthetic\",\n    \"total_bytes\": 3445907059\n  },\n  \"failures\": [],\n  \"tasks\": 90\n}\n"
+        },
+        {
+          "command": [
+            "conda",
+            "run",
+            "--no-capture-output",
+            "-n",
+            "sci-agent",
+            "python",
+            "scripts/sapr_mamba_real_analysis.py",
+            "--stage",
+            "verify"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "{\n  \"conda_prefix\": \"/home/zhong/.conda/envs/sci-agent\",\n  \"metric_recompute_failures\": [],\n  \"python_executable\": \"/home/zhong/.conda/envs/sci-agent/bin/python\",\n  \"status\": \"verified\",\n  \"study\": \"sapr_mamba_v3\",\n  \"tasks\": 950,\n  \"verified_at\": \"2026-10-08T08:42:29+08:00\"\n}\n"
+        }
+      ],
+      "finished_at": "2026-10-08T08:42:29+08:00",
+      "status": "complete"
+    }
+  },
+  "status": "complete",
+  "study": "sapr_mamba_v3",
+  "updated_at": "2026-10-08T08:43:24+08:00"
+}

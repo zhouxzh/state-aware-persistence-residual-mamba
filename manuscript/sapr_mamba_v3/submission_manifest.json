@@ -1,0 +1,8 @@
+{
+  "automated_generation": true,
+  "claim_evidence_source": "reproducibility/sapr_mamba_v3/claim_evidence_map.csv",
+  "human_signature_required": true,
+  "protocol": "configs/sapr_mamba_v3/protocol.lock.json",
+  "status": "draft",
+  "study": "sapr_mamba_v3"
+}

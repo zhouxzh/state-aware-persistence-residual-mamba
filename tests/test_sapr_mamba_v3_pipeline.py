@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
+
+os.environ.setdefault("SAPR_MAMBA_VERSION", "v3")
 
 import pytest
 import torch

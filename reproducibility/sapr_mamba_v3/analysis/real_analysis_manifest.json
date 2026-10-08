@@ -1,0 +1,35 @@
+{
+  "analyzed_at": "2026-10-08T08:40:11+08:00",
+  "completion": {
+    "artifact_problem_tasks": 0,
+    "complete": true,
+    "config_hash_mismatch_tasks": 0,
+    "expected_task_count": 950,
+    "incomplete_tasks": 0,
+    "metrics_matrix_matches_task_files": true,
+    "missing_task_manifests": [],
+    "observed_task_manifest_count": 950,
+    "unexpected_task_manifests": []
+  },
+  "external_holdout_clusters": [
+    "zenodo_solar",
+    "zenodo_tourism"
+  ],
+  "external_holdout_primary_rows": 21,
+  "figure_manifest": "docs/figures/sapr_mamba_v3/real_figure_manifest.json",
+  "figures": [
+    "docs/figures/sapr_mamba_v3/real_primary_deltas.png",
+    "docs/figures/sapr_mamba_v3/real_primary_deltas.pdf"
+  ],
+  "gate_audit_rows": 7000,
+  "metrics_source": {
+    "path": "results/sapr_mamba_v3/real/metrics_all.csv",
+    "rows": 416670,
+    "sha256": "37402cee101e95a2649d894fa25d27778d5a8cbe2f3e207df5063c9026f36d6e"
+  },
+  "primary_rows": 84,
+  "primary_rows_with_finite_p": 74,
+  "stable_safety_limited_rows": 25,
+  "statistical_failure_rows": 484,
+  "study": "sapr_mamba_v3"
+}

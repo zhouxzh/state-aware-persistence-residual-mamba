@@ -1,0 +1,11 @@
+{
+  "amendment_id": "sapr_mamba_v3.1_public_multiseries_sources",
+  "prepared_manifest_sha256": "efbe478eaa090c9c2e2a92f283f4760583b2f4b01bd906992601b8cb3b39b7ed",
+  "source": "selected_series_train_windows_only",
+  "thresholds": {
+    "m4_monthly": 3.340278744697571,
+    "nn5_daily": 3.511313557624817,
+    "solar_10min": 4.0,
+    "tourism_monthly": 3.8812577724456787
+  }
+}

@@ -1,0 +1,24 @@
+{"event": "supervisor_started", "external_complete": 0, "external_failed": 0, "pid": 786303, "real_complete": 411, "real_failed": 0, "timestamp": "2026-10-07T19:25:13+08:00"}
+{"event": "waiting", "external_complete": 0, "external_failed": 0, "live_pids": [763083, 763090], "real_complete": 411, "real_failed": 0, "timestamp": "2026-10-07T19:25:13+08:00"}
+{"event": "supervisor_started", "external_complete": 0, "external_failed": 0, "pid": 786340, "real_complete": 412, "real_failed": 0, "timestamp": "2026-10-07T19:25:38+08:00"}
+{"event": "waiting", "external_complete": 0, "external_failed": 0, "live_pids": [763083, 763090], "real_complete": 412, "real_failed": 0, "timestamp": "2026-10-07T19:25:38+08:00"}
+{"event": "waiting", "external_complete": 0, "external_failed": 0, "live_pids": [763083, 763090], "real_complete": 481, "real_failed": 0, "timestamp": "2026-10-07T19:55:38+08:00"}
+{"event": "waiting", "external_complete": 0, "external_failed": 0, "live_pids": [763083, 763090], "real_complete": 527, "real_failed": 0, "timestamp": "2026-10-07T20:25:39+08:00"}
+{"event": "real_controller_finished", "external_complete": 0, "external_failed": 0, "real_complete": 570, "real_failed": 0, "timestamp": "2026-10-07T20:49:40+08:00"}
+{"command": ["conda", "run", "--no-capture-output", "-n", "sci-agent", "python", "scripts/sapr_mamba_v3_pipeline.py", "--stage", "real_extended", "--max-rounds", "3"], "event": "stage_started", "stage": "real_extended", "timestamp": "2026-10-07T20:49:40+08:00"}
+{"event": "progress", "external_complete": 0, "external_failed": 0, "pid": 789869, "real_complete": 570, "real_failed": 0, "stage": "real_extended", "timestamp": "2026-10-07T20:49:40+08:00"}
+{"event": "stage_finished", "external_complete": 0, "external_failed": 0, "real_complete": 570, "real_failed": 0, "returncode": 0, "stage": "real_extended", "timestamp": "2026-10-07T20:52:10+08:00"}
+{"command": ["conda", "run", "--no-capture-output", "-n", "sci-agent", "python", "scripts/sapr_mamba_v3_pipeline.py", "--stage", "analysis", "--max-rounds", "3"], "event": "stage_started", "stage": "analysis", "timestamp": "2026-10-07T20:52:10+08:00"}
+{"event": "progress", "external_complete": 0, "external_failed": 0, "pid": 790019, "real_complete": 570, "real_failed": 0, "stage": "analysis", "timestamp": "2026-10-07T20:52:10+08:00"}
+{"event": "stage_finished", "external_complete": 0, "external_failed": 0, "real_complete": 570, "real_failed": 0, "returncode": 0, "stage": "analysis", "timestamp": "2026-10-07T20:53:40+08:00"}
+{"command": ["python", "scripts/sapr_mamba_v3_manuscript.py"], "event": "direct_command_started", "timestamp": "2026-10-07T20:53:40+08:00"}
+{"command": ["python", "scripts/sapr_mamba_v3_manuscript.py"], "event": "direct_command_finished", "returncode": 0, "timestamp": "2026-10-07T20:53:41+08:00"}
+{"command": ["conda", "run", "--no-capture-output", "-n", "sci-agent", "python", "scripts/sapr_mamba_v3_pipeline.py", "--stage", "verify", "--max-rounds", "3"], "event": "stage_started", "stage": "verify", "timestamp": "2026-10-07T20:53:41+08:00"}
+{"event": "progress", "external_complete": 0, "external_failed": 0, "pid": 790118, "real_complete": 570, "real_failed": 0, "stage": "verify", "timestamp": "2026-10-07T20:53:41+08:00"}
+{"event": "stage_finished", "external_complete": 0, "external_failed": 0, "real_complete": 570, "real_failed": 0, "returncode": 0, "stage": "verify", "timestamp": "2026-10-07T20:54:11+08:00"}
+{"command": ["conda", "run", "--no-capture-output", "-n", "sci-agent", "python", "scripts/sapr_mamba_v3_pipeline.py", "--stage", "release", "--max-rounds", "3"], "event": "stage_started", "stage": "release", "timestamp": "2026-10-07T20:54:11+08:00"}
+{"event": "progress", "external_complete": 0, "external_failed": 0, "pid": 790159, "real_complete": 570, "real_failed": 0, "stage": "release", "timestamp": "2026-10-07T20:54:11+08:00"}
+{"event": "stage_finished", "external_complete": 0, "external_failed": 0, "real_complete": 570, "real_failed": 0, "returncode": 0, "stage": "release", "timestamp": "2026-10-07T20:54:41+08:00"}
+{"command": ["python", "-m", "pytest", "-q"], "event": "direct_command_started", "timestamp": "2026-10-07T20:54:41+08:00"}
+{"command": ["python", "-m", "pytest", "-q"], "event": "direct_command_finished", "returncode": 0, "timestamp": "2026-10-07T20:54:47+08:00"}
+{"event": "supervisor_finished", "external_complete": 0, "external_failed": 0, "real_complete": 570, "real_failed": 0, "timestamp": "2026-10-07T20:54:47+08:00"}

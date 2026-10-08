@@ -441,7 +441,7 @@ def _real_panel_definition(panel_id: str) -> tuple[int, int, list[int]]:
     # V3.1 panels are additive protocol amendments and intentionally live
     # outside the immutable V3.0 top-level config. Resolve their forecasting
     # geometry from the frozen amendment registry after source integration.
-    amendment_path = CONFIG_ROOT / "amendments" / "v3.1_public_multiseries_sources.json"
+    amendment_path = REPO_ROOT / "configs" / "sapr_mamba_v3" / "amendments" / "v3.1_public_multiseries_sources.json"
     if amendment_path.is_file():
         with amendment_path.open(encoding="utf-8") as handle:
             amendment = __import__("json").load(handle)

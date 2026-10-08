@@ -1,0 +1,94 @@
+{
+  "registry_version": "sapr_mamba_v3_sources_1",
+  "selection_rule": {
+    "uses_test_results": false,
+    "order": "fixed registry order",
+    "minimum_domains": 3,
+    "minimum_source_clusters": 6,
+    "minimum_series_per_primary_source": 20
+  },
+  "sources": [
+    {
+      "source_id": "electricity",
+      "domain": "energy",
+      "cluster": "uci_electricity",
+      "status": "verified_v2_reuse",
+      "source_url": "https://archive.ics.uci.edu/static/public/321/electricityloaddiagrams20112014.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014",
+      "license": "CC BY 4.0",
+      "parser": "existing_electricity",
+      "target_rule": "single_user_load_history"
+    },
+    {
+      "source_id": "beijing_air_quality",
+      "domain": "environment",
+      "cluster": "uci_beijing_air",
+      "status": "verified_v2_reuse",
+      "source_url": "https://archive.ics.uci.edu/static/public/501/beijing+multi+site+air+quality+data.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/501/beijing+multi+site+air+quality+data",
+      "license": "CC BY 4.0",
+      "parser": "existing_beijing",
+      "target_rule": "station_PM2.5_only"
+    },
+    {
+      "source_id": "ett_cluster",
+      "domain": "industrial",
+      "cluster": "ett",
+      "status": "verified_v2_reuse",
+      "source_url": "https://github.com/zhouhaoyi/ETDataset",
+      "source_page": "https://github.com/zhouhaoyi/ETDataset",
+      "license": "CC BY-ND 4.0",
+      "parser": "existing_ett",
+      "target_rule": "OT_only",
+      "external_holdout": true
+    },
+    {
+      "source_id": "room_occupancy",
+      "domain": "environment",
+      "cluster": "uci_room_occupancy",
+      "status": "candidate",
+      "source_url": "https://archive.ics.uci.edu/static/public/864/room+occupancy+estimation.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/864/room+occupancy+estimation",
+      "license": "verify_from_source_page_before_use",
+      "parser": "generic_datetime_numeric",
+      "target_rule": "one_sensor_history_per_room",
+      "external_holdout": true
+    },
+    {
+      "source_id": "appliances_energy",
+      "domain": "energy",
+      "cluster": "uci_appliances_energy",
+      "status": "candidate",
+      "source_url": "https://archive.ics.uci.edu/static/public/374/appliances+energy+prediction.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/374/appliances+energy+prediction",
+      "license": "verify_from_source_page_before_use",
+      "parser": "generic_datetime_numeric",
+      "target_rule": "appliances_energy_history_only",
+      "external_holdout": true
+    },
+    {
+      "source_id": "uci_air_quality",
+      "domain": "environment",
+      "cluster": "uci_air_quality",
+      "status": "candidate",
+      "source_url": "https://archive.ics.uci.edu/static/public/360/air+quality.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/360/air+quality",
+      "license": "verify_from_source_page_before_use",
+      "parser": "generic_datetime_numeric",
+      "target_rule": "single_sensor_history_only",
+      "external_holdout": true
+    },
+    {
+      "source_id": "metro_traffic",
+      "domain": "transport",
+      "cluster": "uci_metro_traffic",
+      "status": "candidate",
+      "source_url": "https://archive.ics.uci.edu/static/public/492/metro+interstate+traffic+volume.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/492/metro+interstate+traffic+volume",
+      "license": "verify_from_source_page_before_use",
+      "parser": "generic_datetime_numeric",
+      "target_rule": "traffic_volume_history_only",
+      "external_holdout": true
+    }
+  ]
+}

@@ -305,6 +305,17 @@ def prepare_extension() -> dict:
         output["sources"].append(_prepare_panel(source_id, source, archive_path, processed_root))
         output["sources"][-1]["raw_archive"] = str(archive_path.relative_to(DATA_ROOT))
         output["sources"][-1]["raw_archive_sha256"] = sha256_path(archive_path)
+    # Preparation is resumable. If the downloaded and processed source
+    # records are byte-for-byte unchanged, preserve the original timestamp so
+    # the frozen V3.1 amendment lock remains stable across retries.
+    existing_path = extension_root / "prepared_manifest.json"
+    if existing_path.is_file():
+        try:
+            existing = json.loads(existing_path.read_text(encoding="utf-8"))
+            if existing.get("amendment_id") == output["amendment_id"] and existing.get("sources") == output["sources"]:
+                output["prepared_at"] = existing.get("prepared_at", output["prepared_at"])
+        except (OSError, json.JSONDecodeError):
+            pass
     atomic_write_json(extension_root / "prepared_manifest.json", output)
     atomic_write_json(extension_root / "state_thresholds.json", {
         "amendment_id": amendment["amendment_id"],

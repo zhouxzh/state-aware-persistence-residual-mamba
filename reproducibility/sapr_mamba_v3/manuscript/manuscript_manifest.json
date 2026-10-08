@@ -1,0 +1,28 @@
+{
+  "claim_evidence_map": {
+    "path": "manuscript/sapr_mamba_v3/claim_evidence_map.csv",
+    "sha256": "496263cb4f613642db73ea26cc648861bd2689c201f287e1ca3835658631aadc"
+  },
+  "confidentiality_review": {
+    "completed": false,
+    "policy_checked": false,
+    "reason": "accountable human review is required before external disclosure",
+    "scope": "local public and synthetic evidence only"
+  },
+  "generated_at": "2026-10-08T08:40:13+08:00",
+  "human_declarations_required": true,
+  "manuscript": {
+    "path": "manuscript/sapr_mamba_v3/manuscript.md",
+    "sha256": "0e91d56853f80c2362a5b3c03659f83c79509ebbdc3e2b012f5faadc6bc0ec2b"
+  },
+  "numeric_claim_count": 103,
+  "pipeline_status": "complete",
+  "source_manifest": {
+    "path": "manuscript/sapr_mamba_v3/source_manifest.json",
+    "sha256": "b724f831e8f4dde35f77256f9a9d8623259ae2a9770b5b964513a5bc0a373fec"
+  },
+  "status": "draft",
+  "study": "sapr_mamba_v3",
+  "study_design": "forecasting benchmark with synthetic confirmation and public time-series panels",
+  "submission_ready": false
+}

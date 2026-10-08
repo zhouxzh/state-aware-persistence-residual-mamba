@@ -1,0 +1,112 @@
+{
+  "amendment_id": "sapr_mamba_v3.1_public_multiseries_sources",
+  "prepared_at": "2026-10-08T08:31:03+08:00",
+  "sources": [
+    {
+      "change_coverage_eligible": true,
+      "change_test_series": 100,
+      "change_threshold": 4.0,
+      "data": "real/source_extensions/v3.1/processed/solar_10min.npz",
+      "data_sha256": "e388b26e0ebdf4f6ad315559d097bcb5b5cd750d62a5e0cfc34b6888e021457d",
+      "domain": "energy",
+      "external_holdout": true,
+      "horizons": [
+        18,
+        36,
+        72,
+        144
+      ],
+      "original_series_count": 137,
+      "panel_id": "solar_10min",
+      "raw_archive": "real/source_extensions/v3.1/raw/solar_10min/solar_10_minutes_dataset.zip",
+      "raw_archive_sha256": "63ec43cefc45d87af17f06255daad8343cc2593d3572e4d7178d791ab9387390",
+      "roster": "real/source_extensions/v3.1/processed/solar_10min_roster.json",
+      "roster_sha256": "825f3ba1a4821ae95103b3e24473554540e229d96ee8244a36521f410a56be56",
+      "series_count": 100,
+      "source_cluster": "zenodo_solar",
+      "stable_coverage_eligible": false,
+      "stable_test_series": 6,
+      "threshold_source": "selected_series_train_windows_only",
+      "threshold_training_windows": 21500
+    },
+    {
+      "change_coverage_eligible": true,
+      "change_test_series": 31,
+      "change_threshold": 3.8812577724456787,
+      "data": "real/source_extensions/v3.1/processed/tourism_monthly.npz",
+      "data_sha256": "e267fcc9f27272afc551762fb9dc3c1b476e54f0efb3c7829a579c0cc4dab31d",
+      "domain": "tourism",
+      "external_holdout": true,
+      "horizons": [
+        3,
+        6,
+        12
+      ],
+      "original_series_count": 366,
+      "panel_id": "tourism_monthly",
+      "raw_archive": "real/source_extensions/v3.1/raw/tourism_monthly/tourism_monthly_dataset.zip",
+      "raw_archive_sha256": "6e434ad8a0ef6acb55ebee0e1d1ffe22707ea4e62c05e091326267f3a5b4a93c",
+      "roster": "real/source_extensions/v3.1/processed/tourism_monthly_roster.json",
+      "roster_sha256": "c0867d1031ed518836dadac0bf3ae01407016a143c96237ce0fda22e58e89f40",
+      "series_count": 100,
+      "source_cluster": "zenodo_tourism",
+      "stable_coverage_eligible": true,
+      "stable_test_series": 99,
+      "threshold_source": "selected_series_train_windows_only",
+      "threshold_training_windows": 977
+    },
+    {
+      "change_coverage_eligible": true,
+      "change_test_series": 38,
+      "change_threshold": 3.511313557624817,
+      "data": "real/source_extensions/v3.1/processed/nn5_daily.npz",
+      "data_sha256": "26a0dc3b7683ced5965019820bf04322b3d4945d1dc2b594028fb51001399dcf",
+      "domain": "banking_cash_demand",
+      "external_holdout": false,
+      "horizons": [
+        1,
+        2,
+        4,
+        7
+      ],
+      "original_series_count": 111,
+      "panel_id": "nn5_daily",
+      "raw_archive": "real/source_extensions/v3.1/raw/nn5_daily/nn5_daily_dataset_with_missing_values.zip",
+      "raw_archive_sha256": "7022d158f6e49e323f3bd76f48fb18ba78b6d013972a97980af01c56f6f4c74b",
+      "roster": "real/source_extensions/v3.1/processed/nn5_daily_roster.json",
+      "roster_sha256": "6ff69d03e46e595749ea54bfc8005bc062cd44599241af2def33302d8c9f24f2",
+      "series_count": 100,
+      "source_cluster": "zenodo_nn5",
+      "stable_coverage_eligible": true,
+      "stable_test_series": 100,
+      "threshold_source": "selected_series_train_windows_only",
+      "threshold_training_windows": 4891
+    },
+    {
+      "change_coverage_eligible": true,
+      "change_test_series": 46,
+      "change_threshold": 3.340278744697571,
+      "data": "real/source_extensions/v3.1/processed/m4_monthly.npz",
+      "data_sha256": "9c3cc2609407dea42d62e1244e308f181990bd9a13715cdb512e1598c027cc28",
+      "domain": "mixed_m4_benchmark",
+      "external_holdout": false,
+      "horizons": [
+        3,
+        6,
+        12
+      ],
+      "original_series_count": 48000,
+      "panel_id": "m4_monthly",
+      "raw_archive": "real/source_extensions/v3.1/raw/m4_monthly/m4_monthly_dataset.zip",
+      "raw_archive_sha256": "473aa4fc814b625174be2b5615959f35f85f566fbed09c30acf44c350b2a1efe",
+      "roster": "real/source_extensions/v3.1/processed/m4_monthly_roster.json",
+      "roster_sha256": "5df25e009b9fa39528bb8f18d8c2528707ccb857ed69989680a544f4fbd667be",
+      "series_count": 100,
+      "source_cluster": "zenodo_m4",
+      "stable_coverage_eligible": true,
+      "stable_test_series": 84,
+      "threshold_source": "selected_series_train_windows_only",
+      "threshold_training_windows": 699
+    }
+  ]
+}

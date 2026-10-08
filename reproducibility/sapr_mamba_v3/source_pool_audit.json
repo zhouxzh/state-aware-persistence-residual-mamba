@@ -1,0 +1,110 @@
+{
+  "audited_at": "2026-10-06T22:04:03+08:00",
+  "candidate_expansion_order": [
+    "room_occupancy",
+    "appliances_energy",
+    "uci_air_quality",
+    "metro_traffic"
+  ],
+  "config_hashes": {
+    "candidate_sources.json": "8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4",
+    "model_spec.json": "0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7",
+    "protocol.json": "75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d",
+    "real_panels.json": "e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83",
+    "synthetic.json": "91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c"
+  },
+  "eligible_existing": [
+    "electricity",
+    "beijing_air_quality",
+    "ett_cluster"
+  ],
+  "registry_sha256": "8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4",
+  "selection_rule": {
+    "minimum_domains": 3,
+    "minimum_series_per_primary_source": 20,
+    "minimum_source_clusters": 6,
+    "order": "fixed registry order",
+    "uses_test_results": false
+  },
+  "sources": [
+    {
+      "cluster": "uci_electricity",
+      "domain": "energy",
+      "eligibility": "eligible_existing_parser",
+      "external_holdout": false,
+      "license": "CC BY 4.0",
+      "order": 1,
+      "source_id": "electricity",
+      "source_url": "https://archive.ics.uci.edu/static/public/321/electricityloaddiagrams20112014.zip",
+      "status": "verified_v2_reuse"
+    },
+    {
+      "cluster": "uci_beijing_air",
+      "domain": "environment",
+      "eligibility": "eligible_existing_parser",
+      "external_holdout": false,
+      "license": "CC BY 4.0",
+      "order": 2,
+      "source_id": "beijing_air_quality",
+      "source_url": "https://archive.ics.uci.edu/static/public/501/beijing+multi+site+air+quality+data.zip",
+      "status": "verified_v2_reuse"
+    },
+    {
+      "cluster": "ett",
+      "domain": "industrial",
+      "eligibility": "eligible_existing_parser",
+      "external_holdout": true,
+      "license": "CC BY-ND 4.0",
+      "order": 3,
+      "source_id": "ett_cluster",
+      "source_url": "https://github.com/zhouhaoyi/ETDataset",
+      "status": "verified_v2_reuse"
+    },
+    {
+      "cluster": "uci_room_occupancy",
+      "domain": "environment",
+      "eligibility": "candidate_requires_parser_and_license_check",
+      "external_holdout": true,
+      "license": "verify_from_source_page_before_use",
+      "order": 4,
+      "source_id": "room_occupancy",
+      "source_url": "https://archive.ics.uci.edu/static/public/864/room+occupancy+estimation.zip",
+      "status": "candidate"
+    },
+    {
+      "cluster": "uci_appliances_energy",
+      "domain": "energy",
+      "eligibility": "candidate_requires_parser_and_license_check",
+      "external_holdout": true,
+      "license": "verify_from_source_page_before_use",
+      "order": 5,
+      "source_id": "appliances_energy",
+      "source_url": "https://archive.ics.uci.edu/static/public/374/appliances+energy+prediction.zip",
+      "status": "candidate"
+    },
+    {
+      "cluster": "uci_air_quality",
+      "domain": "environment",
+      "eligibility": "candidate_requires_parser_and_license_check",
+      "external_holdout": true,
+      "license": "verify_from_source_page_before_use",
+      "order": 6,
+      "source_id": "uci_air_quality",
+      "source_url": "https://archive.ics.uci.edu/static/public/360/air+quality.zip",
+      "status": "candidate"
+    },
+    {
+      "cluster": "uci_metro_traffic",
+      "domain": "transport",
+      "eligibility": "candidate_requires_parser_and_license_check",
+      "external_holdout": true,
+      "license": "verify_from_source_page_before_use",
+      "order": 7,
+      "source_id": "metro_traffic",
+      "source_url": "https://archive.ics.uci.edu/static/public/492/metro+interstate+traffic+volume.zip",
+      "status": "candidate"
+    }
+  ],
+  "status": "complete_with_limitations",
+  "study": "sapr_mamba_v3"
+}

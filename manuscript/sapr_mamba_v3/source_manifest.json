@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-10-08T08:40:13+08:00",
+  "human_verification_required": true,
+  "sources": [
+    {
+      "human_verified": false,
+      "path": "configs/sapr_mamba_v3/protocol.lock.json",
+      "sha256": "791c93e19f8cd4f4e031ca3e4bcb5575553662ad3f48f08ccb827930567e70b6",
+      "source_id": "E001",
+      "verification": "automated_hash_only",
+      "verification_note": "Human verifier must open source and record locator before submission."
+    },
+    {
+      "human_verified": false,
+      "path": "data/sapr_mamba_v3/real/source_extensions/v3.1/prepared_manifest.json",
+      "sha256": "efbe478eaa090c9c2e2a92f283f4760583b2f4b01bd906992601b8cb3b39b7ed",
+      "source_id": "E002",
+      "verification": "automated_hash_only",
+      "verification_note": "Human verifier must open source and record locator before submission."
+    },
+    {
+      "human_verified": false,
+      "path": "docs/analysis/sapr_mamba_v3/real_verification_manifest.json",
+      "sha256": "3cd118dd42e13188903adc960abd271f07fd1f6dfa1fdf1e786ab0a66bbca3df",
+      "source_id": "E003",
+      "verification": "automated_hash_only",
+      "verification_note": "Human verifier must open source and record locator before submission."
+    },
+    {
+      "human_verified": false,
+      "path": "https://arxiv.org/abs/2609.00065v2",
+      "source_id": "E004",
+      "verification": "metadata_fetched",
+      "verification_note": "Human verifier must open source and record locator before submission."
+    }
+  ],
+  "status": "unverified",
+  "study": "sapr_mamba_v3"
+}

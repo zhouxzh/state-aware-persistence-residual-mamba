@@ -1,0 +1,14 @@
+{
+  "analyzed_at": "2026-10-08T08:38:53+08:00",
+  "completion_incomplete": [],
+  "figures": [
+    "docs/figures/sapr_mamba_v3/synthetic_primary_deltas.png",
+    "docs/figures/sapr_mamba_v3/synthetic_primary_deltas.pdf"
+  ],
+  "gate_rows": 31210,
+  "metrics_source": {
+    "path": "results/sapr_mamba_v3/synthetic/metrics_all.csv",
+    "sha256": "5b6e49c781bdd8f5e2fe24c10e8915a5915d3044c7c634e5f4c63fc2287c1ece"
+  },
+  "primary_rows": 12
+}

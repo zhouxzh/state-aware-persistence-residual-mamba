@@ -1,0 +1,9 @@
+{
+  "conda_prefix": "/home/zhong/.conda/envs/sci-agent",
+  "metric_recompute_failures": [],
+  "python_executable": "/home/zhong/.conda/envs/sci-agent/bin/python",
+  "status": "verified",
+  "study": "sapr_mamba_v3",
+  "tasks": 950,
+  "verified_at": "2026-10-08T08:42:29+08:00"
+}

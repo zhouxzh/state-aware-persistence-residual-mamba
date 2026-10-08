@@ -1,0 +1,44 @@
+{
+  "amendment_id": "sapr_mamba_v3.1_public_multiseries_sources",
+  "amendment_lock": "configs/sapr_mamba_v3/amendments/v3.1_protocol.lock.json",
+  "amendment_lock_sha256": "ccc43469a820f52291443f085de52fecaeac241d949063a48d00de7a8a2fd512",
+  "copied_artifacts": [
+    {
+      "path": "real/processed/solar_10min.npz",
+      "sha256": "e388b26e0ebdf4f6ad315559d097bcb5b5cd750d62a5e0cfc34b6888e021457d"
+    },
+    {
+      "path": "real/processed/solar_10min_roster.json",
+      "sha256": "825f3ba1a4821ae95103b3e24473554540e229d96ee8244a36521f410a56be56"
+    },
+    {
+      "path": "real/processed/tourism_monthly.npz",
+      "sha256": "e267fcc9f27272afc551762fb9dc3c1b476e54f0efb3c7829a579c0cc4dab31d"
+    },
+    {
+      "path": "real/processed/tourism_monthly_roster.json",
+      "sha256": "c0867d1031ed518836dadac0bf3ae01407016a143c96237ce0fda22e58e89f40"
+    },
+    {
+      "path": "real/processed/nn5_daily.npz",
+      "sha256": "26a0dc3b7683ced5965019820bf04322b3d4945d1dc2b594028fb51001399dcf"
+    },
+    {
+      "path": "real/processed/nn5_daily_roster.json",
+      "sha256": "6ff69d03e46e595749ea54bfc8005bc062cd44599241af2def33302d8c9f24f2"
+    },
+    {
+      "path": "real/processed/m4_monthly.npz",
+      "sha256": "9c3cc2609407dea42d62e1244e308f181990bd9a13715cdb512e1598c027cc28"
+    },
+    {
+      "path": "real/processed/m4_monthly_roster.json",
+      "sha256": "5df25e009b9fa39528bb8f18d8c2528707ccb857ed69989680a544f4fbd667be"
+    }
+  ],
+  "integrated_panels": [],
+  "prepared_manifest_sha256": "b08329974a7c00a634aa98e91e2181474a549f436d8216350f39ab988816694e",
+  "prepared_panel_count": 10,
+  "thresholds_path": "real/source_thresholds_v3.1.json",
+  "thresholds_sha256": "ace0a7ac5ff9b4aafdae1b9b8b775305cb6ba78280b3411be1221004eaff47c0"
+}

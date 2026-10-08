@@ -1,0 +1,12 @@
+{
+  "contract": "automated evidence bundle; human authors remain responsible for declarations and submission approval",
+  "copied_files": 1108,
+  "created_at": "2026-10-08T08:51:15+08:00",
+  "excluded_runtime_outputs": {
+    "policy": "large checkpoints, prediction archives, per-task metrics, and merged raw metric tables remain in ignored results/ and are not copied into the Git release",
+    "source_root": "results/sapr_mamba_v3"
+  },
+  "limitations_source": "results/sapr_mamba_v3/pipeline_state.json",
+  "status": "complete_with_limitations",
+  "study": "sapr_mamba_v3"
+}
