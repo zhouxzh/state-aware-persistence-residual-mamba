@@ -1,0 +1,50 @@
+{
+  "completed": 90,
+  "failures": [],
+  "failures_artifact": {
+    "bytes": 26,
+    "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/synthetic/failures.csv",
+    "sha256": "49fb062b608da73e314ea8407392d201b1320bd00b564e275aeb3318498dc51d"
+  },
+  "generated": {
+    "config_hashes": {
+      "candidate_sources.json": "8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4",
+      "model_spec.json": "0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7",
+      "protocol.json": "75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d",
+      "real_panels.json": "e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83",
+      "synthetic.json": "91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c"
+    },
+    "created_at": "2026-10-06T22:10:08+08:00",
+    "generator_version": "sapr_synthetic_v2.0",
+    "manifest": "sapr_mamba_v3/synthetic/data_manifest.json",
+    "splits": {
+      "test": {
+        "data": "sapr_mamba_v3/synthetic/test.npz",
+        "roster_sha256": "25865437a04497c7e715d330a1122af12606186fc5e369fc5d7b78d692f0eeba",
+        "series_count": 1700,
+        "sha256": "daf9ff7b80dd90e62e9e291d04d538c90592b7ca3589fd4de30f4be9f11345ec"
+      },
+      "train": {
+        "data": "sapr_mamba_v3/synthetic/train.npz",
+        "roster_sha256": "971d1353b935febcf3a4a2d1cc1c76df8677720b16b9f125b717504bf4e26195",
+        "series_count": 3300,
+        "sha256": "d94690a1f19c784e0e3b5b847cbb0669f7f8dc3ec7f6efb0f7be664279c0ad37"
+      },
+      "validation": {
+        "data": "sapr_mamba_v3/synthetic/validation.npz",
+        "roster_sha256": "d1d52bde8beb50e8c6f026e3c522ef2e5d15315e417260014ceb6cf010eaed93",
+        "series_count": 850,
+        "sha256": "c4b0b68d51901a6f1efc792bb1260e9c4c36b52c49c859358c2c44e336e73f02"
+      }
+    }
+  },
+  "metrics": {
+    "metrics": {
+      "bytes": 387831801,
+      "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/synthetic/metrics_all.csv",
+      "sha256": "5b6e49c781bdd8f5e2fe24c10e8915a5915d3044c7c634e5f4c63fc2287c1ece"
+    },
+    "rows": 1735560
+  },
+  "planned": 90
+}

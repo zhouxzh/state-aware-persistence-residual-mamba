@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T08:40:13+08:00",
+  "generated_at": "2026-10-08T21:45:02+08:00",
   "human_verification_required": true,
   "sources": [
     {
@@ -21,7 +21,7 @@
     {
       "human_verified": false,
       "path": "docs/analysis/sapr_mamba_v3/real_verification_manifest.json",
-      "sha256": "3cd118dd42e13188903adc960abd271f07fd1f6dfa1fdf1e786ab0a66bbca3df",
+      "sha256": "de2eb269d3f77d4e8b21376595550cdfed2afcd81f56bd3d13f1c94933b7f1a4",
       "source_id": "E003",
       "verification": "automated_hash_only",
       "verification_note": "Human verifier must open source and record locator before submission."
@@ -31,6 +31,22 @@
       "path": "https://arxiv.org/abs/2609.00065v2",
       "source_id": "E004",
       "verification": "metadata_fetched",
+      "verification_note": "Human verifier must open source and record locator before submission."
+    },
+    {
+      "human_verified": false,
+      "path": "docs/analysis/sapr_mamba_v3/real_stable_state_coverage.csv",
+      "sha256": "8227f36681c6272befc9ca2a50654688fae3ae0ebc32881ba3705ae1a479571a",
+      "source_id": "E005",
+      "verification": "automated_hash_only",
+      "verification_note": "Human verifier must open source and record locator before submission."
+    },
+    {
+      "human_verified": false,
+      "path": "docs/analysis/sapr_mamba_v3/real_statistical_audit.csv",
+      "sha256": "874f0f5ac341ed550dfa881f9baaae4abc6532234fdce8d5a7d0e7a0036b7cb9",
+      "source_id": "E006",
+      "verification": "automated_hash_only",
       "verification_note": "Human verifier must open source and record locator before submission."
     }
   ],

@@ -1,0 +1,7 @@
+stage,model,series_index,candidate,origin,error
+validation_selection,ETS,27,additive_trend,229,RuntimeError('statistical fit emitted convergence/numerical warning: Optimization failed to converge. Check mle_retvals.')
+validation_selection,ETS,59,simple,207,RuntimeError('statistical fit emitted convergence/numerical warning: Optimization failed to converge. Check mle_retvals.')
+validation_selection,ETS,66,simple,134,RuntimeError('statistical fit emitted convergence/numerical warning: Optimization failed to converge. Check mle_retvals.')
+validation_selection,ETS,72,simple,226,RuntimeError('statistical fit emitted convergence/numerical warning: Optimization failed to converge. Check mle_retvals.')
+test_forecast,ETS,96,simple,264,RuntimeError('statistical fit emitted convergence/numerical warning: Optimization failed to converge. Check mle_retvals.')
+test_forecast,ETS,96,simple,288,RuntimeError('statistical fit emitted convergence/numerical warning: Optimization failed to converge. Check mle_retvals.')

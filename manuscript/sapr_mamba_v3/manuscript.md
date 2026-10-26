@@ -170,7 +170,8 @@ Evidence: `docs/analysis/sapr_mamba_v3/real_verification_manifest.json`.
 
 ## Limitations
 
-No automated limitations have been recorded; complete analysis before interpreting this draft.
+- Stable-state safety was not fully estimable for 25 of 28 source-horizon rows (10 with no eligible stable-state units and 15 with incomplete stable-state coverage). [claim:C_LIMIT_STABLE] [evidence:E005]
+- Statistical baseline candidate fitting recorded 484 retained failure rows; their fallback behavior must be considered when comparing contextual baselines. [claim:C_LIMIT_STAT] [evidence:E006]
 - V2 is a development baseline and is not pooled into V3 confirmation estimates.
 - State coverage, independent source-cluster count, and external-holdout status must be reported from V3 manifests.
 

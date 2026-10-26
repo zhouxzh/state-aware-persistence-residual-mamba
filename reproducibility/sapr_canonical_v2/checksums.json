@@ -1,0 +1,42 @@
+{
+  "file_count": 7,
+  "files": [
+    {
+      "bytes": 835,
+      "path": "configuration_lock.json",
+      "sha256": "a9217b7eabe7cfa491e26a8b14d1346ed8dc278beab3d92b6f9c9ef472bf877d"
+    },
+    {
+      "bytes": 5957,
+      "path": "coverage.json",
+      "sha256": "53678f0714e6c8f1c86a37b4885fc3996426c5bcb97ea4ab9d640bfcb9aff039"
+    },
+    {
+      "bytes": 265,
+      "path": "decision.json",
+      "sha256": "645f37d65a7eac0dbcd47f23b0ce6dbe91b17248fbd50af58a993db4c2497604"
+    },
+    {
+      "bytes": 1094,
+      "path": "detector_truth_audit.csv",
+      "sha256": "b36fb957d1331d0c628038dd13d6fc0c348d95f7622d45d134af28208ceffab4"
+    },
+    {
+      "bytes": 25566,
+      "path": "frozen_comparisons.csv",
+      "sha256": "b863d38bf5f4dcfb10a4c7ffb10f00e4a2fadaafcbcf7dab24dd5910ecf6fc03"
+    },
+    {
+      "bytes": 20091,
+      "path": "results.md",
+      "sha256": "59977c899bc9444de8e1f1bf9163a97fb95aeaec529f5413562da1b9a1015ce4"
+    },
+    {
+      "bytes": 19466547,
+      "path": "sequence_metrics.csv",
+      "sha256": "f01ae1f7696dfb8f31635984f0d2782781537320ff04b60dd7309b9a77dad46b"
+    }
+  ],
+  "root": "/home/zhong/Documents/state-aware-persistence-residual-mamba/reproducibility/sapr_canonical_v2",
+  "total_bytes": 19520355
+}

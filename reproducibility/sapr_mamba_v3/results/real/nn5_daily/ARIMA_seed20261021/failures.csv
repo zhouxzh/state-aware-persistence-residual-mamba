@@ -1,0 +1,13 @@
+stage,model,series_index,candidate,origin,error
+validation_selection,ARIMA,88,"(2, 1, 0)",596,RuntimeError('statistical fit emitted convergence/numerical warning: Maximum Likelihood optimization failed to converge. Check mle_retvals')
+test_forecast,ARIMA,47,None,646,KeyError(47)
+test_forecast,ARIMA,47,None,716,KeyError(47)
+test_forecast,ARIMA,47,None,723,KeyError(47)
+test_forecast,ARIMA,47,None,730,KeyError(47)
+test_forecast,ARIMA,47,None,737,KeyError(47)
+test_forecast,ARIMA,47,None,744,KeyError(47)
+test_forecast,ARIMA,47,None,751,KeyError(47)
+test_forecast,ARIMA,47,None,758,KeyError(47)
+test_forecast,ARIMA,47,None,765,KeyError(47)
+test_forecast,ARIMA,47,None,772,KeyError(47)
+test_forecast,ARIMA,47,None,779,KeyError(47)

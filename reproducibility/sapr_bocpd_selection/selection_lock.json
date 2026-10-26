@@ -1,0 +1,7 @@
+{
+  "confirmation_started": false,
+  "reason": "All exploration versions stopped before training at their frozen coverage or detector-discrimination gate.",
+  "selection_split": "not_run",
+  "status": "no_eligible_candidate",
+  "uses_test_results": false
+}

@@ -1,0 +1,61 @@
+{
+  "artifacts": {
+    "checkpoint": {
+      "bytes": 300578,
+      "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/real/electricity/M3-constant-gate_seed20261024/checkpoint.pt",
+      "sha256": "d5f8fa6276de087301381248bedca295c1a7a5fb76a99f3803cc912de62005e7"
+    },
+    "metrics": {
+      "bytes": 155941,
+      "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/real/electricity/M3-constant-gate_seed20261024/metrics.csv",
+      "sha256": "3dcc8fc12091dbbc93bd3bef24678bb28ee8fe426abab198fa0f40fe6bc52f8c"
+    },
+    "origins": 2000,
+    "prediction_archive": {
+      "bytes": 1767050,
+      "path": "/home/zhong/Documents/state-aware-persistence-residual-mamba/results/sapr_mamba_v3/real/electricity/M3-constant-gate_seed20261024/predictions.npz",
+      "sha256": "e2c64822949af4cf0c0b47694ae4f3d38e347e9f3824350a18af7eafe2d4db5e"
+    }
+  },
+  "code_hashes": {
+    "experiments/sapr_mamba/__init__.py": "9426acd3450f5e6cf27f18b18ca90fa1d1f014bd1e47d76b3660828be6614f32",
+    "experiments/sapr_mamba/analyze.py": "106ca1f24c50444914958547fcac91cc38dca77477234705cdfcefa8e27d6fba",
+    "experiments/sapr_mamba/run.py": "58f1b0ad7646b9a426317e0f225a43d29d47a9d8861be50c9f136e7d2bba9ee6",
+    "model/StateAwarePersistenceResidualMamba.py": "71362e6361173408e246ddf8c3adc7b91f670f8772ccf975910b33216de745af",
+    "utils/sapr_mamba/__init__.py": "963f0b2d4c58df4c182a1c62967be614ccf1046b93b6aa9d28af727d6625aef4",
+    "utils/sapr_mamba/analysis.py": "3952627ed31ad6029950b5ea89351675c75ffed27bf60e27f869a2e42e547f5c",
+    "utils/sapr_mamba/cli.py": "a2245011c245a468ce8e8a673b61da40505357d3be5a8a6fa9b1532bc8e2a9ae",
+    "utils/sapr_mamba/data.py": "3ae5392fed2dbe3de7c510400ee2b825d5c89c6b32c6c375b2d2dc5c5d10293d",
+    "utils/sapr_mamba/features.py": "e67db2c5c4b7cd3dd019e4b8d495e37cc460716b07defec1231738724316b0a3",
+    "utils/sapr_mamba/io.py": "27233036dbb08cc6a2973e42a81b9fc8c0b2415fbf6f88bc6bf5a21e53412609",
+    "utils/sapr_mamba/real.py": "6ee7f362552e37107d2c5adf1c0c82218bce1fb51b515d59731a5c81b4f24c03",
+    "utils/sapr_mamba/statistical.py": "e0ffe2643fb2ecd9d3cc6aa28f0070219e8e48f26407866688386dcda985f407",
+    "utils/sapr_mamba/synthetic.py": "98326616472e1af7436e3d43c22eb9c9757a2653f60fbd3d92d10be6fc550bf7"
+  },
+  "config_hashes": {
+    "candidate_sources.json": "8413a3b08a106673c13f7cfc58aea1ad4c164ab11c17ab75b324bd39832c36c4",
+    "model_spec.json": "0fdd64e7b49917c14d96b7fde4a72f70c6167654d054186d8d41b18804d244f7",
+    "protocol.json": "75d1dd71fe17f7c173131cc77a35afc378ad17a6c2238fccd8dbf658f1c7077d",
+    "real_panels.json": "e47e392a4e5e21fba716749b631bd553270cd3a68dd5ad0946198fdc0883fe83",
+    "synthetic.json": "91d8db522dd56103c389c65729b67840f86b96260df556aafd6e8b674a69fa3c"
+  },
+  "device": "cuda:0",
+  "finished_at": "2026-10-07T14:56:57+08:00",
+  "git": {
+    "branch": "main",
+    "commit": "03d0c8b95a9b404435b9056d398765ce0a82f16d",
+    "status": "M docs/current/README.md\n M experiments/sapr_mamba/run.py\n M model/StateAwarePersistenceResidualMamba.py\n M tests/test_repository_layout.py\n M utils/sapr_mamba/io.py\n?? configs/sapr_mamba_v3/amendments/v3.1_public_multiseries_sources.json\n?? configs/sapr_mamba_v3/candidate_sources.json\n?? configs/sapr_mamba_v3/model_spec.json\n?? configs/sapr_mamba_v3/protocol.json\n?? configs/sapr_mamba_v3/protocol.lock.json\n?? configs/sapr_mamba_v3/real_panels.json\n?? configs/sapr_mamba_v3/synthetic.json\n?? docs/analysis/sapr_mamba_v3/synthetic_analysis_manifest.json\n?? docs/analysis/sapr_mamba_v3/synthetic_completion_matrix.csv\n?? docs/analysis/sapr_mamba_v3/synthetic_gate_audit.csv\n?? docs/analysis/sapr_mamba_v3/synthetic_metrics_aggregate.csv\n?? docs/analysis/sapr_mamba_v3/synthetic_primary_comparisons.csv\n?? docs/analysis/sapr_mamba_v3/synthetic_secondary_comparisons.csv\n?? docs/analysis/sapr_mamba_v3/v3_plan_audit.json\n?? docs/current/sapr_mamba_v3_execution_status.md\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072151+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072202+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072212+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T072231+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T083411+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T083625+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261003T112726+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220042+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220111+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220127+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220149+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T220158+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261006T221008+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261007T031603+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v3/preflight_20261007T090044+0800.json\n?? docs/figures/sapr_mamba_v3/synthetic_primary_deltas.pdf\n?? docs/figures/sapr_mamba_v3/synthetic_primary_deltas.png\n?? manuscript/sapr_mamba_v3/manuscript.md\n?? manuscript/sapr_mamba_v3/submission_manifest.json\n?? reproducibility/sapr_mamba_v3/SHA256SUMS.json\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_analysis_manifest.json\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_completion_matrix.csv\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_gate_audit.csv\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_metrics_aggregate.csv\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_primary_comparisons.csv\n?? reproducibility/sapr_mamba_v3/analysis/synthetic_secondary_comparisons.csv\n?? reproducibility/sapr_mamba_v3/analysis/v3_plan_audit.json\n?? reproducibility/sapr_mamba_v3/candidate_sources.json\n?? reproducibility/sapr_mamba_v3/claim_evidence_map.csv\n?? reproducibility/sapr_mamba_v3/manuscript/manuscript.md\n?? reproducibility/sapr_mamba_v3/manuscript/submission_manifest.json\n?? reproducibility/sapr_mamba_v3/pipeline_state.json\n?? reproducibility/sapr_mamba_v3/prepared_manifest.json\n?? reproducibility/sapr_mamba_v3/protocol.lock.json\n?? reproducibility/sapr_mamba_v3/release_manifest.json\n?? reproducibility/sapr_mamba_v3/runtime_environment.json\n?? reproducibility/sapr_mamba_v3/sapr_mamba_v3_execution_status.md\n?? reproducibility/sapr_mamba_v3/source_pool_audit.json\n?? reproducibility/sapr_mamba_v3/state_thresholds.json\n?? reproducibility/sapr_mamba_v3/v3.1_public_multiseries_sources.json\n?? scripts/sapr_mamba_v3_manuscript.py\n?? scripts/sapr_mamba_v3_pipeline.py\n?? scripts/sapr_mamba_v3_release.py\n?? scripts/sapr_mamba_v3_sources.py\n?? tests/test_sapr_mamba_v3_pipeline.py"
+  },
+  "model": "M3-constant-gate",
+  "panel": "electricity",
+  "seed": 20261024,
+  "started_at": "2026-10-07T14:52:37+08:00",
+  "status": "complete",
+  "training": {
+    "batch_size": 64,
+    "best_validation_mse": 2545862661612.12,
+    "epochs": 25,
+    "status": "complete"
+  },
+  "written_at": "2026-10-07T14:56:57+08:00"
+}

@@ -1,0 +1,15 @@
+{
+  "config_hashes": {
+    "model_spec.json": "d33b66cda34887e7fee2ca921fcb29913a6683914b2361a8ca585e8d55c6b206",
+    "protocol.json": "2979cc5ee55fd6a08a3fcd503cafee5ab72b49ba7befba5a9b7cbaad77e12c41",
+    "synthetic.json": "cd0dae79aff6a78b86820ff934fddfe54a257e3c6737d1ddbfcee3d3b31f9a36"
+  },
+  "coverage_sha256": "217715d82864dea637102d7b4e59a9371caaa2db9aebdca78488a21e2b120e4a",
+  "created_at": "2026-10-09T12:02:02+08:00",
+  "data_manifest_sha256": "314fbf0a0544b8733ec732aecbec580ac6cb400d1a93f10ff09ca85da84913e7",
+  "generator_version": "sapr_sim_bocpd_e4.0",
+  "protocol_version": "sapr_sim_bocpd_e4.0",
+  "runner_sha256": "fded2912998702eca46aaa5991bd949985cd768511ef0f13628862a13dd4dbd7",
+  "state_threshold_sha256": "414ee3992619fd2b06bb9ac384bb43f51a345cbfe3a48d338c86f4f87fa8a0b8",
+  "study": "bocpd_e4"
+}

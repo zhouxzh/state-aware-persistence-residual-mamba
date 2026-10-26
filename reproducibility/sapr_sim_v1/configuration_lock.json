@@ -1,0 +1,15 @@
+{
+  "config_hashes": {
+    "model_spec.json": "a973ad6b9867cf66473187ff69e7a164ab67aab4e9c4c5a50f8cc6ff26558067",
+    "protocol.json": "e9ed747c001e43e2dd3f5e9b093f916563801d5e24e9ac39773ba09cca823688",
+    "synthetic.json": "9592c6a890591c517bdb583dea08b0d0671846a516bfc4698b307d38d4460709"
+  },
+  "coverage_sha256": "e9ed32fb2281ba599a2926e15b215945eb1c1601bfece256829a69fe79882bc8",
+  "created_at": "2026-10-09T02:44:23+08:00",
+  "data_manifest_sha256": "9772cfd700143eea925ca31906bb511ff3be72433a772d4a20bc5799f729bb24",
+  "generator_version": "sapr_sim_v1.1",
+  "protocol_version": "sapr_sim_v1.1",
+  "runner_sha256": "54a03eff6087a9f1025e40ff1e836af5c6cfddc8bf6b5221441fb64d18538f52",
+  "state_threshold_sha256": "741cb35b12bd0cd4003abcc6fb8d3ec974df36bd81ded2977a56f1694821d581",
+  "study": "sapr_sim_v1"
+}
