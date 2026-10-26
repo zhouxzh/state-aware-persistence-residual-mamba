@@ -1,0 +1,57 @@
+{
+  "code_hashes": {
+    "experiments/sapr_mamba/__init__.py": "9426acd3450f5e6cf27f18b18ca90fa1d1f014bd1e47d76b3660828be6614f32",
+    "experiments/sapr_mamba/analyze.py": "106ca1f24c50444914958547fcac91cc38dca77477234705cdfcefa8e27d6fba",
+    "experiments/sapr_mamba/run.py": "817cd0d3402274725fc6612726767beebd96c5e732f7db7b88061fb0fad352d3",
+    "model/StateAwarePersistenceResidualMamba.py": "71362e6361173408e246ddf8c3adc7b91f670f8772ccf975910b33216de745af",
+    "utils/sapr_mamba/__init__.py": "963f0b2d4c58df4c182a1c62967be614ccf1046b93b6aa9d28af727d6625aef4",
+    "utils/sapr_mamba/analysis.py": "3952627ed31ad6029950b5ea89351675c75ffed27bf60e27f869a2e42e547f5c",
+    "utils/sapr_mamba/calibration.py": "359c077f3f504260eafbc2e3b075462bf4f301c64e83350e73f130568d35d50a",
+    "utils/sapr_mamba/cli.py": "a2245011c245a468ce8e8a673b61da40505357d3be5a8a6fa9b1532bc8e2a9ae",
+    "utils/sapr_mamba/data.py": "3ae5392fed2dbe3de7c510400ee2b825d5c89c6b32c6c375b2d2dc5c5d10293d",
+    "utils/sapr_mamba/features.py": "e67db2c5c4b7cd3dd019e4b8d495e37cc460716b07defec1231738724316b0a3",
+    "utils/sapr_mamba/io.py": "2b1195d71802ea2ff6668035d237d3286a668aff1e3a5af16058f88660922876",
+    "utils/sapr_mamba/real.py": "6ee7f362552e37107d2c5adf1c0c82218bce1fb51b515d59731a5c81b4f24c03",
+    "utils/sapr_mamba/statistical.py": "e0ffe2643fb2ecd9d3cc6aa28f0070219e8e48f26407866688386dcda985f407",
+    "utils/sapr_mamba/synthetic.py": "98326616472e1af7436e3d43c22eb9c9757a2653f60fbd3d92d10be6fc550bf7"
+  },
+  "frozen_at": "2026-10-09T01:38:33+08:00",
+  "git": {
+    "branch": "main",
+    "commit": "82a74c2ad96afa2f5c8ee4f270f1d1250dac8d60",
+    "status": "M docs/README.md\n M docs/current/README.md\n M experiments/sapr_mamba/run.py\n M manuscript/sapr_mamba_v3/claim_evidence_map.csv\n M manuscript/sapr_mamba_v3/manuscript.md\n M manuscript/sapr_mamba_v3/manuscript_manifest.json\n M manuscript/sapr_mamba_v3/source_manifest.json\n M scripts/sapr_mamba_v3_manuscript.py\n M utils/sapr_mamba/io.py\n?? configs/sapr_mamba_v4/protocol.json\n?? configs/sapr_mamba_v5/protocol.json\n?? configs/sapr_mamba_v6/protocol.json\n?? configs/sapr_mamba_v7/confirmation_protocol.json\n?? configs/sapr_mamba_v7/confirmation_protocol.lock.json\n?? configs/sapr_mamba_v7/model_spec.json\n?? configs/sapr_mamba_v7/protocol.json\n?? configs/sapr_mamba_v7/real_panels.json\n?? configs/sapr_mamba_v7/synthetic.json\n?? configs/sapr_mamba_v8/confirmation_protocol.json\n?? configs/sapr_mamba_v8/model_spec.json\n?? configs/sapr_mamba_v8/protocol.json\n?? configs/sapr_mamba_v8/real_panels.json\n?? configs/sapr_mamba_v8/synthetic.json\n?? docs/analysis/sapr_mamba_v4/analysis_manifest.json\n?? docs/analysis/sapr_mamba_v4/m4_validation_alpha_summary.csv\n?? docs/analysis/sapr_mamba_v4/m4_vs_m3_post_v3_diagnostic.csv\n?? docs/analysis/sapr_mamba_v5/analysis_manifest.json\n?? docs/analysis/sapr_mamba_v5/m5_validation_selection_summary.csv\n?? docs/analysis/sapr_mamba_v5/m5_vs_m3_post_v3_diagnostic.csv\n?? docs/analysis/sapr_mamba_v6/analysis_manifest.json\n?? docs/analysis/sapr_mamba_v6/post_v3_vs_m3_diagnostic.csv\n?? docs/analysis/sapr_mamba_v6/validation_selection_summary.csv\n?? docs/analysis/sapr_mamba_v7/confirmation_manifest.json\n?? docs/analysis/sapr_mamba_v7/traffic_m7_vs_m3_confirmation.csv\n?? docs/analysis/sapr_mamba_v7/traffic_validation_selection_counts.csv\n?? docs/current/scientific_meaning_and_simulation_plan_20261008.md\n?? docs/current/scientific_question.md\n?? docs/current/zhong3_runlog/sapr_mamba_v1/preflight_20261007T210806+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v1/preflight_20261007T210807+0800.json\n?? scripts/sapr_mamba_v4.py\n?? scripts/sapr_mamba_v4_analyze.py\n?? scripts/sapr_mamba_v5.py\n?? scripts/sapr_mamba_v5_analyze.py\n?? scripts/sapr_mamba_v7.py\n?? scripts/sapr_mamba_v7_analyze.py\n?? scripts/sapr_mamba_v7_guard.py\n?? scripts/sapr_mamba_v7_sources.py\n?? scripts/sapr_mamba_v8_sources.py\n?? tests/test_sapr_mamba_v4_calibration.py\n?? utils/sapr_mamba/calibration.py"
+  },
+  "protocol": {
+    "candidate_source": "KDD Cup 2018 Dataset without Missing Values, DOI 10.5281/zenodo.4656756, record 4656756, CC BY 4.0",
+    "candidates": [
+      "M1",
+      "M2",
+      "M3"
+    ],
+    "interpretation": "KDD test results confirm or challenge the frozen original residual-path comparisons on a new source. No post-V3 model-selection rule is evaluated.",
+    "panel": "kdd_cup_2018",
+    "primary_comparisons": [
+      "M2_minus_M1",
+      "M3_minus_M2"
+    ],
+    "protocol_version": "sapr_mamba_v8_confirmation.0",
+    "seeds": [
+      20261021,
+      20261022,
+      20261023,
+      20261024,
+      20261025,
+      20261026,
+      20261027,
+      20261028,
+      20261029,
+      20261030
+    ],
+    "selection_split": "none",
+    "source_used_in_v3_to_v7_selection_or_testing": false,
+    "status": "frozen_before_kdd_download",
+    "test_targets_used_for_selection": false
+  },
+  "source_manifest": "data/sapr_mamba_v8/real/external_confirmation_manifest.json",
+  "source_manifest_sha256": "6f1b759d5346a792d0c5dbcc5f96b49b3504918efa9d5cc6275e82b017567c8c"
+}

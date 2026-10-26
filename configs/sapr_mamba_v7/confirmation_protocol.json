@@ -1,0 +1,15 @@
+{
+  "protocol_version": "sapr_mamba_v7_confirmation.0",
+  "status": "frozen_before_traffic_download",
+  "candidate_source": "Zenodo Traffic Hourly Dataset, DOI 10.5281/zenodo.4656132, record 4656132, CC BY 4.0",
+  "source_used_in_v3_to_v6_selection": false,
+  "panel": "traffic_hourly",
+  "candidates": ["M0", "M1", "M2", "M3", "DLinear", "SeasonalNaive", "Drift"],
+  "seeds": [20261021, 20261022, 20261023, 20261024, 20261025, 20261026, 20261027, 20261028, 20261029, 20261030],
+  "selection_split": "validation only",
+  "selection_metric": "full maximum-horizon MSE per series",
+  "tie_break": "candidate order, favouring M0 persistence",
+  "test_targets_used_for_selection": false,
+  "primary_comparison": "M7-validation-selection versus M3",
+  "interpretation": "Traffic test result is confirmatory for the pre-frozen post-V6 candidate selection rule, conditional on source provenance and manual data-use review."
+}

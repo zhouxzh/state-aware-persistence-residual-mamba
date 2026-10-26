@@ -1,0 +1,13 @@
+{
+  "protocol_version": "sapr_mamba_v8_confirmation.0",
+  "status": "frozen_before_kdd_download",
+  "candidate_source": "KDD Cup 2018 Dataset without Missing Values, DOI 10.5281/zenodo.4656756, record 4656756, CC BY 4.0",
+  "source_used_in_v3_to_v7_selection_or_testing": false,
+  "panel": "kdd_cup_2018",
+  "candidates": ["M1", "M2", "M3"],
+  "seeds": [20261021, 20261022, 20261023, 20261024, 20261025, 20261026, 20261027, 20261028, 20261029, 20261030],
+  "selection_split": "none",
+  "test_targets_used_for_selection": false,
+  "primary_comparisons": ["M2_minus_M1", "M3_minus_M2"],
+  "interpretation": "KDD test results confirm or challenge the frozen original residual-path comparisons on a new source. No post-V3 model-selection rule is evaluated."
+}

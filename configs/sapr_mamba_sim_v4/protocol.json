@@ -1,0 +1,15 @@
+{
+  "protocol_version": "sapr_mamba_sim_v4.0",
+  "status": "frozen_before_v4_training",
+  "relationship_to_sim_v3": "Independent post-V3 causal-gate isolation study. V3 data, configurations, archives, and decisions remain immutable.",
+  "correction": "The primary gate is a learned function only of a frozen causal binary trigger. It is evaluated against matched constant, hidden-history, and no-state-feature gates.",
+  "models": ["M0", "M1", "DLinear", "SeasonalNaive", "M2", "M3-trigger-gate", "M3-constant-gate", "M3-hidden-only", "M3-no-state-feature"],
+  "seeds": [20261401, 20261402, 20261403, 20261404, 20261405],
+  "training": {"device": "cuda:0", "amp": true, "learning_rate": 0.0003, "weight_decay": 0.0001, "batch_size": 64, "max_epochs": 40, "patience": 7, "samples_per_epoch": 24000, "validation_samples": 8000, "gradient_clip_norm": 1.0},
+  "evaluation": {"bootstrap_replicates": 10000, "horizons": [12, 24, 48, 96], "test_origin_stride": 96, "primary_metric": "raw_path_rmse", "multiple_testing": "Holm within frozen families A-I"},
+  "state_threshold": {"source": "training origins only", "quantile": 0.8, "minimum": 1.5, "maximum": 8.0},
+  "coverage_gate": {"minimum_true_stable_origins": 200, "minimum_true_visible_origins": 100, "minimum_true_unseen_origins": 100, "minimum_detector_stable_origins": 100, "minimum_detector_change_origins": 100},
+  "detector_discrimination": {"required_mechanisms": ["trend_break", "seasonal_change"], "minimum_visible_minus_stable_rate": 0.1},
+  "selection_uses_test_results": false,
+  "forbidden": ["modify_sim_v1_or_sim_v2_or_sim_v3", "change_threshold_after_generation", "drop_unfavorable_type", "use_real_data_for_simulation_design", "select_gate_architecture_from_v4_test_results"]
+}

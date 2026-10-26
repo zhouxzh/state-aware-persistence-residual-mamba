@@ -1,0 +1,35 @@
+{
+  "manifest_version": "sapr_v7_traffic_hourly_v1",
+  "download_policy": "download only this original Zenodo source and record source metadata, checksum, license, and deterministic series roster before model execution",
+  "panels": {
+    "traffic_hourly": {
+      "doi": "10.5281/zenodo.4656132",
+      "record_api": "https://zenodo.org/api/records/4656132",
+      "source_url": "https://zenodo.org/api/records/4656132/files/traffic_hourly_dataset.zip/content",
+      "archive_key": "traffic_hourly_dataset.zip",
+      "archive_bytes": 22868806,
+      "zenodo_md5": "1cf694f99f95700217845078b467fb24",
+      "license": "CC BY 4.0",
+      "target_rule": "all TSF series meeting frozen quality rules, selected by SHA-256 series ID order capped at 100",
+      "frequency": "hour",
+      "period": 24,
+      "input_length": 96,
+      "horizons": [3, 6, 12, 24],
+      "maximum_gap": 3,
+      "minimum_nonmissing_fraction": 0.9,
+      "minimum_eligible_test_origins": 1,
+      "series_cap": 100,
+      "minimum_source_series": 20,
+      "source_cluster": "zenodo_traffic_hourly",
+      "external_holdout": true
+    }
+  },
+  "quality_rules": {
+    "split": [0.6, 0.2, 0.2],
+    "short_missing_imputation": "causal forward fill only",
+    "long_gap_handling": "mark all histories or targets crossing the gap ineligible",
+    "scaling": "mean and standard deviation fit on each series training range only (ddof=0)",
+    "roster_order": "SHA-256 of source-specific series identifier ascending",
+    "exclude_by_model_result": false
+  }
+}

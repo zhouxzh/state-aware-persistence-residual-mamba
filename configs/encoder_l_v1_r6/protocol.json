@@ -1,0 +1,24 @@
+{
+  "protocol_version": "encoder_l_v1.r6",
+  "run_root": "results/encoder_l_v1_r6",
+  "generator_seed": 20261520,
+  "series_id_prefix": "enc_l_v1_r6_",
+  "training_seeds": [20261521, 20261522, 20261523, 20261524, 20261525],
+  "canonical_training_seed_blacklist": [20262201, 20262202, 20262203, 20262204, 20262205],
+  "horizons": [24],
+  "lookbacks": [96, 384, 768],
+  "origin_stride": 96,
+  "common_origin_L": 768,
+  "registered_models": [
+    {"L":384,"model":"LinPhi"}, {"L":384,"model":"MLPPhi"},
+    {"L":384,"model":"TransformerPhi"}, {"L":384,"model":"Transformer0"},
+    {"L":384,"model":"MambaPhi"}, {"L":384,"model":"Mamba0"},
+    {"L":96,"model":"TransformerPhi"}, {"L":96,"model":"Transformer0"},
+    {"L":96,"model":"MambaPhi"}, {"L":96,"model":"Mamba0"},
+    {"L":768,"model":"TransformerPhi"}, {"L":768,"model":"Transformer0"},
+    {"L":768,"model":"MambaPhi"}, {"L":768,"model":"Mamba0"}
+  ],
+  "training": {"device":"cuda:0", "amp":true, "learning_rate":0.0003, "weight_decay":0.0001, "batch_size":64, "max_epochs":40, "patience":7, "gradient_clip_norm":1.0, "samples_per_epoch":24000, "sampling":"replacement_random_sampler_seed_plus_epoch"},
+  "evaluation": {"bootstrap_replicates":10000,"primary_metric":"raw_path_rmse","test_once":true,"test_access":"locked"},
+  "budget":{"max_training_runs":70,"max_gpu_hours":30}
+}

@@ -1,0 +1,16 @@
+{
+  "protocol_version": "sapr_mamba_v5.0",
+  "status": "frozen_before_v5_evaluation",
+  "relationship_to_v3": "post-V3 validation-selected candidate diagnostic; V3 remains immutable",
+  "hypothesis": "series-level validation selection among predeclared V3 residual families can reduce domain-specific negative transfer",
+  "candidates": ["M0", "M1", "M2", "M3"],
+  "selection_split": "validation only",
+  "selection_metric": "full maximum-horizon validation MSE",
+  "tie_break": "candidate order, favouring M0 persistence",
+  "test_use": "evaluation only; no test target may influence candidate selection",
+  "evaluation": {
+    "seeds": [20261021, 20261022, 20261023, 20261024, 20261025, 20261026, 20261027, 20261028, 20261029, 20261030],
+    "output_namespace": "results/sapr_mamba_v5"
+  },
+  "interpretation": "Results on V3-observed panels are post hoc diagnostics. A fresh external holdout is required for any confirmatory generalization claim."
+}

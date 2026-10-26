@@ -1,0 +1,21 @@
+{
+  "protocol_version": "sapr_mamba_v4.0",
+  "status": "frozen_before_v4_evaluation",
+  "relationship_to_v3": "post-V3 validation-calibrated safety experiment; V3 remains immutable and its results are not overwritten",
+  "hypothesis": "validation-selected residual shrinkage can reduce out-of-domain degradation without using test targets",
+  "base_checkpoint_model": "M3",
+  "new_model": "M4-validation-shrinkage",
+  "selection_split": "validation only",
+  "selection_unit": "series within panel and seed",
+  "selection_metric": "full maximum-horizon validation MSE",
+  "shrinkage_candidates": [0.0, 0.25, 0.5, 0.75, 1.0],
+  "tie_break": "smallest alpha",
+  "test_use": "evaluation only; no test target may influence alpha selection",
+  "evaluation": {
+    "models_for_comparison": ["M0", "M3", "M4-validation-shrinkage"],
+    "seeds": [20261021, 20261022, 20261023, 20261024, 20261025, 20261026, 20261027, 20261028, 20261029, 20261030],
+    "real_maximum_test_origins_per_series": 20,
+    "output_namespace": "results/sapr_mamba_v4"
+  },
+  "interpretation": "Results on panels observed during V3 are post hoc diagnostics. Any generalization claim requires a subsequently acquired, untouched external holdout."
+}

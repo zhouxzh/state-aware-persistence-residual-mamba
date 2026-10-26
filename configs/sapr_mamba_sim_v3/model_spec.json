@@ -1,0 +1,5 @@
+{
+  "mamba": {"d_model": 64, "d_state": 16, "d_conv": 4, "expand": 2, "layers": 2, "dropout": 0.1, "learnable_constant_gate": true},
+  "linear_residual": {"history_projection": 96},
+  "dlinear": {"moving_average_kernel": 25}
+}

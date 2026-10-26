@@ -1,0 +1,38 @@
+{
+  "protocol_version": "ocra_v1.r2",
+  "generator_version": "sapr_sim_canonical_v2.0",
+  "run_root": "results/ocra_v1_r2",
+  "series_id_prefix": "ocra_v1_",
+  "generator_seed": 20261020,
+  "training_seeds": [20261021, 20261022, 20261023, 20261024, 20261025],
+  "canonical_training_seed_blacklist": [20262201, 20262202, 20262203, 20262204, 20262205],
+  "canonical_test_series_hash": "69589e33e194f058d26f3eda5d04611d3f26ffb33d417d58bca659c07572eda0",
+  "horizons": [12, 24, 48, 96],
+  "test_origin_stride": 96,
+  "models": ["M0", "M1", "DLinear", "SeasonalNaive", "M2"],
+  "training": {
+    "device": "cuda:0",
+    "amp": true,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "batch_size": 64,
+    "max_epochs": 40,
+    "patience": 7,
+    "samples_per_epoch": 24000,
+    "gradient_clip_norm": 1.0
+  },
+  "certificate": {
+    "c_grid": [0.01, 0.1, 1.0, 10.0],
+    "folds": 5,
+    "positive_open_minimum": 0.8,
+    "negative_open_maximum": 0.1,
+    "negative_defer_maximum": 0.2,
+    "variance_closed_minimum": 0.8,
+    "gain_gate_match_tolerance": 0.01
+  },
+  "evaluation": {
+    "bootstrap_replicates": 10000,
+    "maximum_training_bundles": 40,
+    "maximum_gpu_hours": 20.0
+  }
+}

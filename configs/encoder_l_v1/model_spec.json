@@ -1,0 +1,1 @@
+﻿{"mamba":{"d_model":64,"d_state":16,"d_conv":4,"expand":2,"layers":2,"dropout":0.1},"linear":{"input":"all_normalized_differences_plus_phi"},"mlp":{"hidden":[64,64],"activation":"GELU"},"transformer":{"d_model":64,"heads":4,"ff":128,"layers":2,"positional_encoding":"fixed_sinusoidal"}}

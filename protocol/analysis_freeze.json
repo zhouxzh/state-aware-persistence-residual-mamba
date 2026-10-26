@@ -1,0 +1,19 @@
+{
+  "protocol_version": "encoder_l_v1.r4",
+  "analysis_script": "scripts/analyze_encoder_l_v1.py",
+  "analysis_script_sha256": "cc255866e7154f7ea59fefb1520b0d50acd969a617a82b7cb7fe400bd167c9eb",
+  "source_metrics": "metrics/sequence_rmse.csv",
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 20261220,
+  "p_value": "paired random sign-flip Monte Carlo with +1 correction",
+  "ci": "paired percentile bootstrap 95%",
+  "holm_families": [
+    "C1",
+    "C2",
+    "C2-interaction",
+    "C3",
+    "C3-interaction",
+    "C4"
+  ],
+  "test_loaded": false
+}\n

@@ -1,0 +1,17 @@
+{
+  "protocol_version": "sapr_mamba_v6.0",
+  "status": "frozen_before_v6_evaluation",
+  "relationship_to_v3": "post-V3 expanded validation-selected candidate diagnostic; V3 remains immutable",
+  "hypothesis": "validation selection over residual, decomposition, and simple causal baselines can reduce negative transfer more reliably than residual-only selection",
+  "new_model": "M6-expanded-validation-selection",
+  "candidates": ["M0", "M1", "M2", "M3", "DLinear", "SeasonalNaive", "Drift"],
+  "selection_split": "validation only",
+  "selection_metric": "full maximum-horizon validation MSE",
+  "tie_break": "candidate order, favouring M0 persistence",
+  "test_use": "evaluation only; no test target may influence candidate selection",
+  "evaluation": {
+    "seeds": [20261021, 20261022, 20261023, 20261024, 20261025, 20261026, 20261027, 20261028, 20261029, 20261030],
+    "output_namespace": "results/sapr_mamba_v6"
+  },
+  "interpretation": "Results on V3-observed panels are post hoc diagnostics. Fresh external holdouts are required for any confirmatory generalization claim."
+}
