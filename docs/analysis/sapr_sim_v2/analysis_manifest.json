@@ -1,0 +1,88 @@
+{
+  "artifacts": {
+    "checksums": {
+      "path": "reproducibility/sapr_sim_v2/checksums.json",
+      "sha256": "d91e246ca37b0b032d8ba45b2b4c880e0118a403181e13c7b7d5666f1e961f8a"
+    },
+    "decision": {
+      "path": "docs/analysis/sapr_sim_v2/decision.json",
+      "sha256": "0b35eb990158ce4e9fc88279abf07f9658ef8415bec7c05a0db9fa5d2c2a2388"
+    },
+    "detector_audit": {
+      "path": "docs/analysis/sapr_sim_v2/detector_truth_audit.csv",
+      "sha256": "19894a5d501297bb18a134c6e21ccbab12a675fbe04a155ed864c9059dafbc93"
+    },
+    "frozen_comparisons": {
+      "path": "docs/analysis/sapr_sim_v2/frozen_comparisons.csv",
+      "sha256": "9c8a2a2a15b6eea96c3e5a48fe82c4d978a99ea8fff75229dfb72f28eecb3f93"
+    },
+    "results": {
+      "path": "docs/current/sapr_sim_v2_results.md",
+      "sha256": "71cfdab922ac7e87e9ad853186a3f14c1d11d59aad4a9e68a2ddb327d531a660"
+    },
+    "sequence_metrics": {
+      "path": "docs/analysis/sapr_sim_v2/sequence_metrics.csv",
+      "sha256": "6b3e7614d8de7ba487d2e2b043a82151b9a449e8d462912bdafd77d588ad7804"
+    }
+  },
+  "coverage_passed": true,
+  "created_at": "2026-10-09T05:25:46+08:00",
+  "decision": {
+    "T0_safety_pass": true,
+    "T2_leakage_pass": false,
+    "T8_random_walk_pass": true,
+    "gate_close_evidence": false,
+    "gate_open_evidence": true,
+    "patch_candidate_groups": [
+      "T4",
+      "T6"
+    ],
+    "patch_claim_pass": false,
+    "state_gate_claim_pass": false
+  },
+  "reproducibility": {
+    "file_count": 7,
+    "files": [
+      {
+        "bytes": 809,
+        "path": "configuration_lock.json",
+        "sha256": "5051f7a9362f7ea7e87af427b46b22da509fe03d93b34dd4b3b578735e7f7add"
+      },
+      {
+        "bytes": 2751,
+        "path": "coverage.json",
+        "sha256": "e9ed32fb2281ba599a2926e15b215945eb1c1601bfece256829a69fe79882bc8"
+      },
+      {
+        "bytes": 267,
+        "path": "decision.json",
+        "sha256": "0b35eb990158ce4e9fc88279abf07f9658ef8415bec7c05a0db9fa5d2c2a2388"
+      },
+      {
+        "bytes": 866,
+        "path": "detector_truth_audit.csv",
+        "sha256": "19894a5d501297bb18a134c6e21ccbab12a675fbe04a155ed864c9059dafbc93"
+      },
+      {
+        "bytes": 25499,
+        "path": "frozen_comparisons.csv",
+        "sha256": "9c8a2a2a15b6eea96c3e5a48fe82c4d978a99ea8fff75229dfb72f28eecb3f93"
+      },
+      {
+        "bytes": 19717,
+        "path": "results.md",
+        "sha256": "71cfdab922ac7e87e9ad853186a3f14c1d11d59aad4a9e68a2ddb327d531a660"
+      },
+      {
+        "bytes": 19469612,
+        "path": "sequence_metrics.csv",
+        "sha256": "6b3e7614d8de7ba487d2e2b043a82151b9a449e8d462912bdafd77d588ad7804"
+      }
+    ],
+    "root": "/home/zhong/Documents/state-aware-persistence-residual-mamba/reproducibility/sapr_sim_v2",
+    "total_bytes": 19519521
+  },
+  "status": "complete",
+  "study": "sim_v2",
+  "task_count": 40
+}

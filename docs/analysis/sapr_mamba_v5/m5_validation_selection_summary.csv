@@ -1,0 +1,11 @@
+panel,series_seed_units,M0,M1,M2,M3
+beijing_air_quality,120,0,86,11,23
+electricity,1000,2,861,66,71
+ett_ETTh1,10,0,10,0,0
+ett_ETTh2,10,0,10,0,0
+ett_ETTm1,10,0,10,0,0
+ett_ETTm2,10,0,10,0,0
+m4_monthly,1000,258,485,131,126
+nn5_daily,1000,10,853,70,67
+solar_10min,1000,0,0,409,591
+tourism_monthly,1000,20,931,28,21

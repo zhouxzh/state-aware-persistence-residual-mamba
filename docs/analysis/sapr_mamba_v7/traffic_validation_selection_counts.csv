@@ -1,0 +1,6 @@
+model,series_seed_units
+DLinear,521
+M1,406
+M2,27
+M3,13
+SeasonalNaive,33

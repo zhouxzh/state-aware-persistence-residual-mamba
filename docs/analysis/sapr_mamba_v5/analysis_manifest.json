@@ -1,0 +1,9 @@
+{
+  "comparison_rows": 74,
+  "created_at": "2026-10-08T22:16:18+08:00",
+  "interpretation": "post-V3 diagnostic; V3 claims remain unchanged",
+  "status": "complete",
+  "study": "sapr_mamba_v5",
+  "v3_metrics_sha256": "37402cee101e95a2649d894fa25d27778d5a8cbe2f3e207df5063c9026f36d6e",
+  "v5_metrics_sha256": "b3966a057d6c5249f628ef41fff06f4d08e50dfd217801e0527c91a2d737de0e"
+}

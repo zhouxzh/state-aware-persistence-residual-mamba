@@ -1,0 +1,11 @@
+{
+  "current_tasks": [],
+  "gpu": "0 %, 101 MiB, 22528 MiB",
+  "stage": "training_exited",
+  "task_statuses": {
+    "complete": 45
+  },
+  "timestamp": "2026-10-09T07:48:42+08:00",
+  "trainer_alive": false,
+  "trainer_pid": 892765
+}

@@ -1,0 +1,17 @@
+{
+  "current_tasks": [
+    {
+      "started_at": "2026-10-09T06:58:57+08:00",
+      "task": "M3-trigger-gate_seed20261502"
+    }
+  ],
+  "gpu": "78 %, 645 MiB, 22528 MiB",
+  "stage": "waiting_for_training",
+  "task_statuses": {
+    "complete": 26,
+    "running": 1
+  },
+  "timestamp": "2026-10-09T07:00:24+08:00",
+  "trainer_alive": true,
+  "trainer_pid": 892765
+}

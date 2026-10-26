@@ -1,0 +1,13 @@
+{
+  "T0_safety_pass": true,
+  "T2_leakage_pass": true,
+  "T8_random_walk_pass": true,
+  "gate_close_evidence": false,
+  "gate_open_evidence": true,
+  "patch_candidate_groups": [
+    "T4",
+    "T6"
+  ],
+  "patch_claim_pass": true,
+  "state_gate_claim_pass": false
+}

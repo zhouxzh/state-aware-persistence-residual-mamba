@@ -1,53 +1,37 @@
-# 当前研究入口：状态感知持久性残差 Mamba
+# 当前研究入口：OCRA-v1
 
-更新日期：2026-10-02。此文件是 ace2 上当前研究方向的唯一入口；它不是实验结果报告。
+更新日期：2026-10-23。
 
-## 研究问题
-
-面对非平稳时间序列，预测不应默认偏离最新观测值。研究应检验：当仅从预测原点及其
-历史可获得的信息判定为变化状态时，学习型残差修正是否优于持久性预测，并且不会损害
-稳定状态的预测。
-
-候选预测形式为 `预测 = 持久性基线 + 状态门 × Mamba 残差`。状态特征必须因果计算，
-只使用预测原点之前的水平、差分、局部趋势、波动、突变和可选季节性信息；不得使用
-未来观测、测试误差或看过结果后挑选的阈值。
-
-## 必要比较
-
-| 模型 | 目的 |
-| --- | --- |
-| M0：持久性 | 明确的强参考基线。 |
-| M1：持久性 + 线性残差 | 检验简单变化校正。 |
-| M2：持久性 + 无门控 Mamba 残差 | 隔离时间残差编码器的增益。 |
-| M3：持久性 + 状态门控 Mamba 残差 | 检验状态条件残差修正的增量价值。 |
-
-M3 相对 M2 是门控比较；M2 相对 M1 是非线性时间残差比较。容量、输入、预测跨度、
-随机种子、选择预算和训练资源必须匹配。任何未匹配的完整配方比较都不能被表述为门控
-的因果效应。
-
-## 训练前冻结要求
-
-1. 受控合成序列：已知均值跳变、趋势折点、方差变化、渐进漂移和季节变化机制。
-2. 独立真实数据面板：在查看新模型结果前确定来源、许可、实体、频率、切分和预处理。
-3. 因果状态规则：定义状态标签、窗口、阈值、稳定窗口和变点处理，并锁定版本。
-4. 协议：冻结 M0--M3 实现、超参数/选择预算、指标、分层、比较族、种子与失败报告。
-5. 发布物：保存完整结果矩阵、状态分层结果、门值轨迹、失败案例、环境和校验清单。
-
-当前金融 V1/V2 仅可作为已完成开发工作的历史记录，不能用于选择新数据、状态阈值、
-结构或有利报告。`~/Documents/Self-Supervised-Contrastive-Forecsating` 的任何代码、数据、
-PEMS、Weather、METR-LA、PEMS-BAY 或结果也完全禁止混入本项目。
+当前待执行的工作是 **OCRA-v1.2.r1（Observability-Certified Residual Admission）**：对
+`canonical_v2` 九机制生成器进行全新、种子不相交的合成复核。它将最近 96 点内仍可见的
+水平跳变先转交 DLinear，再判断是否开启 Mamba；完整说明见
+[../OCRA_V1_2_PROTOCOL.md](../OCRA_V1_2_PROTOCOL.md)。旧 `ocra_v1.r2` 与 `ocra_v1.1.r4`
+均保留为 validation 阶段停止的探索记录，不得改写或合并。
 
 ## 当前状态
 
-本入口中的 V1 设计稿保留为训练前设计与审计记录。当前研究的有效执行版本为
-`sapr_mamba_v2.0`，其协议修订见
-[`sapr_mamba_v2_protocol_amendment_20261003.md`](sapr_mamba_v2_protocol_amendment_20261003.md)，
-执行与校验状态见
-[`sapr_mamba_v2_execution_status_20261003.md`](sapr_mamba_v2_execution_status_20261003.md)。
-V2 的后续工作只能基于冻结 release 做复算、审计或论文交接；不得因已有结果改变阈值、
-模型、数据、种子、来源或报告子集。
+- OCRA-v1.2.r1 已通过 E1，正在 `results/ocra_v1_2_r1/` 运行 20 个 train/validation
+  bundle；原始产物不进入 Git。
+- 每个活动版本都有独立温度/资源监控：每分钟识别本版本进程，30 分钟保存完整快照；80 C
+  告警，连续三次 85 C 才终止该版本进程。
+- E2 只使用 validation。E2 成功后监督器才允许一次性生成 test 数组并执行 E3--E7；若 E2
+  失败，保留失败记录并停止，不调阈值或读取 test。
 
-V3 的无人值守确认性流水线及其当前状态见
-[`sapr_mamba_v3_execution_status.md`](sapr_mamba_v3_execution_status.md)。V3 使用独立
-命名空间和自动 remediation；它可以扩展预先登记的公开来源或将不可估计终点降级为
-描述性分析，但不会生成 `blocked` 状态、删除失败结果或按测试表现改写协议。
+## 历史证据边界
+
+`canonical_v2` 是 SAPR 稿件的冻结九机制模拟估计对象。其判定是：补丁候选机制成立，
+但学习 sigmoid state gate 的开启/关闭主张不成立。完整的可审计结果在
+[../../reproducibility/sapr_canonical_v2/results.md](../../reproducibility/sapr_canonical_v2/results.md)，
+对应判定在
+[../../reproducibility/sapr_canonical_v2/decision.json](../../reproducibility/sapr_canonical_v2/decision.json)。
+
+V2 开发、V3/V3.1 真实/公共来源确认、`sim_v1`--`sim_v5`、BOCPD、V4 覆盖失败及金融
+发布物都保持原协议标签，不能与 `canonical_v2` 或 OCRA-v1 汇总。逐项位置和状态见
+[../results_registry.md](../results_registry.md)。
+
+早期 SAPR 问题陈述和模拟细节保留在
+[scientific_question.md](scientific_question.md) 与
+[scientific_meaning_and_simulation_plan_20261008.md](scientific_meaning_and_simulation_plan_20261008.md)，
+仅供历史审计；它们不覆盖 OCRA-v1 计划。
+
+本页只提供导航，不改变任何冻结报告、协议锁、覆盖文件或结果数组。

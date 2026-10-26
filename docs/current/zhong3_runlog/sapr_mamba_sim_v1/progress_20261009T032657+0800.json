@@ -1,0 +1,17 @@
+{
+  "current_tasks": [
+    {
+      "started_at": "2026-10-09T03:26:11+08:00",
+      "task": "M3-constant-gate_seed20261102"
+    }
+  ],
+  "gpu": "83 %, 645 MiB, 22528 MiB",
+  "stage": "waiting_for_training",
+  "task_statuses": {
+    "complete": 31,
+    "running": 1
+  },
+  "timestamp": "2026-10-09T03:26:57+08:00",
+  "trainer_alive": true,
+  "trainer_pid": 870212
+}

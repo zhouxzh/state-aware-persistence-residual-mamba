@@ -1,67 +1,54 @@
-# 文档索引
+# 文档入口
 
-更新日期：2026-10-02。当前研究设计、历史冻结证据和投稿审查材料必须分开使用。既有
-历史文件保留原始路径，以避免破坏冻结发布物、图表清单和审计链接。
+本目录按**估计对象和协议命名空间**组织，而不是按文件写入日期组织。不同命名空间的
+结果、阈值、种子、图表和结论均不得合并、平均或相互调参。
 
-## 当前入口
+## 从这里开始
 
-| 文档 | 用途 |
+| 目的 | 入口 |
 | --- | --- |
-| [current/README.md](current/README.md) | 状态感知持久性残差 Mamba 的当前研究边界、四模型比较和训练前冻结要求。 |
-| [current/ace2_cleanup_20261002.md](current/ace2_cleanup_20261002.md) | 2026-10-02 历史原始结果与检查点清理记录。 |
-| [reproducibility.md](reproducibility.md) | 历史金融发布物的复核边界；不是新模型的训练授权。 |
+| 当前待执行的确认性工作 | [OCRA-v1 研究计划](OCRA_V1_SERVER_RESEARCH_PLAN.md) |
+| 当前研究的简明边界与历史 SAPR 结论 | [current/README.md](current/README.md) |
+| 所有结果树与紧凑证据的对应关系 | [结果命名空间登记表](results_registry.md) |
+| 历史金融发布物的保留边界 | [results_inventory.md](results_inventory.md) |
+| 原始金融研究的可复算说明 | [reproducibility.md](reproducibility.md) |
 
-## 历史金融证据
+`OCRA-v1` 是唯一活动协议，但尚未开始训练。它使用新的 `ocra_v1_` 系列 ID 与
+独立种子，在 `results/ocra_v1_r2/` 下写入产物；在 `protocol.json`、黑名单和 seed
+不相交检查通过前，不得读取 OCRA test split 或训练骨干。
 
-金融 V1/V2/Supplement 是已完成的 Regime-Gated Mamba S-only 研究。它们只能用于审计该
-历史研究，不能填充新状态感知持久性残差 Mamba 的结果。
+## 结果的三个层级
 
-| 索引 | 用途 |
+| 层级 | 位置 | 用途 |
+| --- | --- | --- |
+| 原始运行产物 | `results/` | 完整指标矩阵、任务清单、检查点和预测；不纳入 Git，也不手工改写。 |
+| 紧凑可复算证据 | `reproducibility/<namespace>/` | 协议锁、校验和、覆盖表、判定和论文级结果表。 |
+| 派生报告 | `docs/analysis/<namespace>/`、`docs/current/` | 从冻结产物重算的分析、解释与运行记录；不能替代原始证据。 |
+
+引用某个数值时，先从该命名空间的紧凑证据重算并校验，再引用其结果表。日志、控制器
+状态和汇总文字不是数值结论的来源。
+
+## 冻结 SAPR 证据
+
+- `canonical_v2` 是当前 SAPR 稿件的九机制合成估计对象。它支持残差补丁候选机制的
+  判定，但已明确否定学习 sigmoid 状态门的主张；详见
+  [结果命名空间登记表](results_registry.md)。
+- `sim_v1`--`sim_v5`、BOCPD 系列、V2 开发、V3/V3.1 真实来源确认及金融发布物均是
+  独立的冻结记录。它们可审计、可保留，但不能为 `canonical_v2` 或 OCRA-v1 提供
+  pooled evidence。
+- V4 是训练前覆盖门失败，不能写作模型结果。历史 sigmoid state gate 是冻结负对照，
+  不得作为待优化方法恢复。
+
+历史金融文档在 [archive/financial_s_only/README.md](archive/financial_s_only/README.md)。
+它们不构成当前 SAPR 或 OCRA 的正面证据。
+
+## 冻结补充材料
+
+下列材料仍保留原址，以便审计早期设计和已完成的独立分析；它们不是当前执行授权：
+
+| 材料 | 作用 |
 | --- | --- |
-| [archive/financial_s_only/README.md](archive/financial_s_only/README.md) | 历史记录、分析表、图表和冻结发布物的统一入口。 |
-| [results_inventory.md](results_inventory.md) | 保留内容、已删除原始输出和恢复边界。 |
-| [evidence_registry.md](evidence_registry.md) | 历史金融陈述到冻结工件的映射。 |
-| [v2_evaluation_record.md](v2_evaluation_record.md) | V2 历史结果解释，非当前研究结果。 |
-
-## 投稿审查归档
-
-此前围绕金融回顾性论文的审查仍有审计价值，但不适用于新的方法设计：
-
-- [Journal of Forecasting 投稿审查](archive/financial_s_only/reviews/journal_of_forecasting_submission_audit_20260914.md)
-- [金融论文缺口计划](archive/financial_s_only/reviews/manuscript_publication_gap_plan_20260914.md)
-
----
-
-# Historical Financial Documentation
-
-This directory is the technical record for the historical target-only financial
-forecasting releases. It contains no manuscript source and does not treat
-historical mixed S/MS outputs as current evidence.
-
-| Document | Purpose |
-| --- | --- |
-| [data_reference.md](data_reference.md) | Historical v1 and v2 targets, dates, data hashes, and redistribution boundary. |
-| [model_reference.md](model_reference.md) | Implemented Regime-Gated Mamba architecture, ablation, limitations, and observed v1/v2 positions. |
-| [evaluation_record.md](evaluation_record.md) | Verified v1 metrics, ranks, uncertainty analysis, and claim boundaries. |
-| [v2_evaluation_record.md](v2_evaluation_record.md) | Verified v2 metrics, ranks, gate ablation, runtime, and claim boundaries. |
-| [analysis/financial_s_only_v2/README.md](analysis/financial_s_only_v2/README.md) | Reproducible V2-derived tables, normalized comparisons, seed stability, and provenance. |
-| [computational_profile.md](computational_profile.md) | Fixed-workload CUDA profiles and observed campaign runtime. |
-| [reproducibility.md](reproducibility.md) | Historical rebuild, train, replay, report, and verification commands. |
-| [evidence_registry.md](evidence_registry.md) | Claim-to-artifact map for technical writing. |
-| [results_inventory.md](results_inventory.md) | What was preserved and what historical output was deleted. |
-| [repository_structure.md](repository_structure.md) | Directory ownership and supported commands. |
-| [final_evaluation_record.md](final_evaluation_record.md) | Historical acceptance state and evidence boundary. |
-| [audit_response_and_computation_plan.md](audit_response_and_computation_plan.md) | Corrected audit response, V2 repair record, and V2 supplemental gate-ablation record. |
-| [v2_long_horizon_consistency_check_20260821.md](v2_long_horizon_consistency_check_20260821.md) | Audit record for the non-independent V2 long-horizon supplement and replay check. |
-
-The material below is historical. Use `financial_s_only_v1` for the original four target-only panels and
-`financial_s_only_v2` for the independent-target expansion. They must be analyzed
-and reported separately. Both are retrospective because their 2023--2026 targets
-have already been viewed.
-
-The local-only `financial_s_only_v2_supplement` run was a two-model, long-horizon
-V2 gate-ablation supplement. Its original ignored artifacts were deleted on
-2026-10-02 after release verification; they did not replace either tracked release.
-
-The historical analysis was V2-primary. Raw MAE/RMSE remain target-specific; pooled
-comparisons use path RMSSE ranks or explicitly named baseline ratios.
+| [scientific_question.md](current/scientific_question.md) | 早期 SAPR 的冻结问题与 T0--T8 设计记录。 |
+| [scientific_meaning_and_simulation_plan_20261008.md](current/scientific_meaning_and_simulation_plan_20261008.md) | 早期模拟生成器与统计细节。 |
+| `analysis/sapr_mamba_v2/`、`analysis/sapr_mamba_v3/` | 各自独立的历史开发与真实来源分析。 |
+| `figures/sapr_canonical_v2/` | `canonical_v2` 的派生审阅图；源矩阵仍在 `results/`。 |

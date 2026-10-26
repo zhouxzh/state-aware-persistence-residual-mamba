@@ -1,0 +1,16 @@
+{
+  "artifact_failures": [],
+  "comparison": {
+    "path": "docs/analysis/sapr_mamba_v7/traffic_m7_vs_m3_confirmation.csv",
+    "sha256": "b0f80a8c917638c878ed228bbcbb4909246d1b637b292723a90d51022fd0b658"
+  },
+  "created_at": "2026-10-09T01:20:14+08:00",
+  "metrics": {
+    "path": "results/sapr_mamba_v7/confirmation/traffic_hourly/metrics_all.csv",
+    "sha256": "f28d12c8c8b5a61b20afd78cf2b85142a144b13440d24722f688d5c6bf499b56"
+  },
+  "status": "verified",
+  "study": "sapr_mamba_v7",
+  "task_manifests": 80,
+  "test_targets_used_for_selection": false
+}

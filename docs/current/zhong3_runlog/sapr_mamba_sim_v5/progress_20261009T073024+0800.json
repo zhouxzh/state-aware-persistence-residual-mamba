@@ -1,0 +1,17 @@
+{
+  "current_tasks": [
+    {
+      "started_at": "2026-10-09T07:28:16+08:00",
+      "task": "M3-hidden-only_seed20261505"
+    }
+  ],
+  "gpu": "84 %, 647 MiB, 22528 MiB",
+  "stage": "waiting_for_training",
+  "task_statuses": {
+    "complete": 39,
+    "running": 1
+  },
+  "timestamp": "2026-10-09T07:30:24+08:00",
+  "trainer_alive": true,
+  "trainer_pid": 892765
+}

@@ -1,0 +1,103 @@
+{
+  "created_at": "2026-10-09T05:06:54+08:00",
+  "passed": true,
+  "rows": [
+    {
+      "detector_change_origins": 603,
+      "detector_stable_origins": 2797,
+      "mechanism": "stable",
+      "passed": true,
+      "true_requirement": 200,
+      "true_stable_origins": 3400,
+      "true_unseen_origins": 0,
+      "true_visible_origins": 0
+    },
+    {
+      "detector_change_origins": 383,
+      "detector_stable_origins": 1317,
+      "mechanism": "visible_level_shift",
+      "passed": true,
+      "true_requirement": 100,
+      "true_stable_origins": 795,
+      "true_unseen_origins": 0,
+      "true_visible_origins": 905
+    },
+    {
+      "detector_change_origins": 534,
+      "detector_stable_origins": 1166,
+      "mechanism": "future_jump",
+      "passed": true,
+      "true_requirement": 100,
+      "true_stable_origins": 1600,
+      "true_unseen_origins": 100,
+      "true_visible_origins": 0
+    },
+    {
+      "detector_change_origins": 246,
+      "detector_stable_origins": 1454,
+      "mechanism": "continuing_trend",
+      "passed": true,
+      "true_requirement": 100,
+      "true_stable_origins": 0,
+      "true_unseen_origins": 0,
+      "true_visible_origins": 1700
+    },
+    {
+      "detector_change_origins": 296,
+      "detector_stable_origins": 1404,
+      "mechanism": "trend_break",
+      "passed": true,
+      "true_requirement": 100,
+      "true_stable_origins": 795,
+      "true_unseen_origins": 0,
+      "true_visible_origins": 905
+    },
+    {
+      "detector_change_origins": 551,
+      "detector_stable_origins": 2849,
+      "mechanism": "stable_season",
+      "passed": true,
+      "true_requirement": 200,
+      "true_stable_origins": 3400,
+      "true_unseen_origins": 0,
+      "true_visible_origins": 0
+    },
+    {
+      "detector_change_origins": 256,
+      "detector_stable_origins": 1444,
+      "mechanism": "seasonal_change",
+      "passed": true,
+      "true_requirement": 100,
+      "true_stable_origins": 795,
+      "true_unseen_origins": 0,
+      "true_visible_origins": 905
+    },
+    {
+      "detector_change_origins": 408,
+      "detector_stable_origins": 1292,
+      "mechanism": "variance_shift",
+      "passed": true,
+      "true_requirement": 100,
+      "true_stable_origins": 795,
+      "true_unseen_origins": 0,
+      "true_visible_origins": 905
+    },
+    {
+      "detector_change_origins": 309,
+      "detector_stable_origins": 1391,
+      "mechanism": "random_walk",
+      "passed": true,
+      "true_requirement": 200,
+      "true_stable_origins": 1700,
+      "true_unseen_origins": 0,
+      "true_visible_origins": 0
+    }
+  ],
+  "study": "sim_v3",
+  "threshold": {
+    "quantile": 0.8,
+    "scores": 34000,
+    "source": "train origins only",
+    "threshold": 3.251034736633301
+  }
+}

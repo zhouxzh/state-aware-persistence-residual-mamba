@@ -1,0 +1,17 @@
+{
+  "current_tasks": [
+    {
+      "started_at": "2026-10-09T05:38:18+08:00",
+      "task": "M3_seed20261303"
+    }
+  ],
+  "gpu": "0 %, 645 MiB, 22528 MiB",
+  "stage": "waiting_for_training",
+  "task_statuses": {
+    "complete": 27,
+    "running": 1
+  },
+  "timestamp": "2026-10-09T05:38:39+08:00",
+  "trainer_alive": true,
+  "trainer_pid": 889838
+}

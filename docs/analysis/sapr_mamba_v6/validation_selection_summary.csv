@@ -1,0 +1,5 @@
+panel,series_seed_units,DLinear,Drift,M0,M1,M2,M3,SeasonalNaive
+electricity,1000,901,0,2,0,28,41,28
+nn5_daily,1000,689,0,10,197,45,49,10
+solar_10min,1000,149,0,0,0,347,504,0
+tourism_monthly,1000,380,10,10,424,12,11,153

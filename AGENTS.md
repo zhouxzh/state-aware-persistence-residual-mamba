@@ -1,22 +1,65 @@
 # Repository Agent Rules
 
-## Scope
+## Repository role
 
-- The active study is the independent SAPR-Mamba V3 confirmation protocol,
-  including the additive V3.1 public-source amendment, under
-  `docs/current/`, `configs/sapr_mamba_v3/`, `data/sapr_mamba_v3/`,
-  `results/sapr_mamba_v3/`, and `reproducibility/sapr_mamba_v3/`.
-- V2 is immutable development evidence. Never pool V2 estimates with V3
-  confirmation estimates, and never change V2 artifacts to make V3 checks pass.
-- Historical financial releases and all `sapr_mamba_v1` artifacts are audit
-  records. Never select models, thresholds, sources, hyperparameters, or
-  reporting subsets from them, and never overwrite them.
-- Do not read or copy files from
-  `~/Documents/Self-Supervised-Contrastive-Forecsating`.
-- Preserve failed, negative, interrupted, and superseded-study artifacts. Label
-  their protocol/version boundary rather than deleting or mixing them into V2.
+- This clone is the executable SAPR-Mamba code repository on zhong3:
+  `~/Documents/state-aware-persistence-residual-mamba`.
+- It corresponds to the SAPR paper workspace
+  `state-aware-persistence-residual-mamba/` in the paper/evidence repository
+  `nonstationary-mamba`. It is not the PMS or Regime-Gated paper.
+- The paper/evidence workspace is a separate repository. Do not copy this
+  runnable tree into the paper repository, and do not treat this clone as the
+  manuscript workspace.
+- Closed-protocol raw arrays (`predictions.npz`, checkpoints) for superseded
+  versions must not be kept here after compact evidence is in the paper repo.
+- Current HEAD at last paper-repo mapping: `82a74c2`. The working tree already
+  contains pre-existing uncommitted research/evidence files. Do not commit,
+  push, reset, or clean that state without explicit user instruction.
 
-## Python Environments
+## Active protocol
+
+- The active exploratory protocol is **OCRA-v1.2.r1** (Observability-Certified
+  Residual Admission): a fresh, disjoint-seed recap of the `canonical_v2`
+  nine-mechanism generator. It is not a V3/V3.1 real-source confirmation and
+  not `sim_v5`.
+- Its plan is `docs/OCRA_V1_2_PROTOCOL.md`; prior OCRA protocol directories are
+  immutable evidence and must not be reused or pooled.
+- Run products (checkpoints, forecasts, metrics, protocol hashes) live under
+  ignored `results/ocra_v1_2_r1/` in this repository. Do not commit those files.
+- Do not start OCRA backbone training until `protocol.json` exists and the
+  canonical_v2 seed / `series_id` blacklist check passes. Test data must not be
+  loaded before E1 and E2 pass.
+- Do not revive the learned sigmoid state gate as the method. It remains a
+  frozen negative control. Do not pursue generic residual admission; that
+  direction is covered by RAEGL.
+
+## Frozen evidence. Do not pool
+
+These namespaces are closed estimands. Never average them, never retune one
+with another, and never alter locks or artifacts after their decision is known:
+
+- V2 development evidence
+- V3 / V3.1 real/public-source confirmation
+- `canonical_v2` mechanism simulation (the current SAPR manuscript estimand)
+- `sim_v1`--`sim_v5`
+- BOCPD experiment series
+- historical financial releases and all `sapr_mamba_v1` artifacts
+
+`canonical_v2` test `series_id` values and training seeds
+`{20262201, 20262202, 20262203, 20262204, 20262205}` have been inspected. OCRA-v1
+must use disjoint generator seeds, `series_id` prefix `ocra_v1_`, and training
+seeds `{20261021, 20261022, 20261023, 20261024, 20261025}`.
+
+V4 remains an immutable pre-training coverage-gate failure with no trained-model
+evidence.
+
+Do not read or copy files from
+`~/Documents/Self-Supervised-Contrastive-Forecsating`.
+
+Preserve failed, negative, interrupted, coverage-gate-failed, and superseded
+artifacts with their protocol/version labels.
+
+## Python environments
 
 - `sci-agent` is the only Conda environment for new repository Python packages,
   experiments, validation, and scientific-agent-skill dependencies.
@@ -24,21 +67,22 @@
 - Do not install, upgrade, remove, or otherwise mutate packages in `mamba`.
   It is a legacy runtime that may host an already-running job. Never stop or
   restart an existing job without explicit user direction.
-- Install only a skill's workflow-specific optional packages when the workflow
-  is invoked. Install them in `sci-agent` unless their documented requirements
-  are incompatible, in which case create a separately named environment and
-  document it before use.
+- Create a separate named environment for OCRA only if `sci-agent` cannot
+  satisfy the frozen protocol; document it before use.
 
-## Data And Results
+## Data and results
 
 - Raw/processed data, checkpoints, prediction arrays, TensorBoard files, and
   transient run output belong in ignored `data/` and `results/` paths.
+  OCRA artifacts use `results/ocra_v1_2_r1/`.
 - Before starting a batch, record preflight state. Every task must retain its
   atomic manifest, code/config/data hashes, output hashes, and failures.
 - Do not report a numeric conclusion from logs. Recompute it from retained
   artifacts, verify checksums, and preserve the complete result matrix.
+- Compact OCRA tables, checksums, paper-used figures, and claim verdicts may
+  later be copied to the paper repository. Full arrays stay on this server.
 
-## Git, Skills, And Network
+## Git, skills, and network
 
 - Use a GitHub web proxy such as `gh-proxy.com` for public GitHub downloads,
   including third-party skill installation. Do not enable Clash for those
@@ -67,22 +111,15 @@ git push origin main
 - Before committing, inspect `git status`, stage only intended source,
   configuration, documentation, tests, and compact reproducibility evidence,
   then run the relevant test suite. Never force-push or rewrite history.
+- Do not push this repository without explicit user instruction.
 
-## Unattended V3 Continuation
+## Historical supervisors. Not the default
 
-- The resumable controller is `scripts/sapr_mamba_v3_pipeline.py`; it retries
-  failures and records limitations without emitting a blocked state.
-- When a long `real` run is active, keep it untouched and run
-  `scripts/sapr_mamba_v3_autocontinue.py` in `sci-agent`. The supervisor waits
-  for the exact real controller, then runs `real_extended`, `analysis`,
-  `verify`, `release`, and the test suite in order. It writes half-hour
-  progress snapshots to `docs/current/zhong3_runlog/sapr_mamba_v3/` and state
-  to `results/sapr_mamba_v3/autocontinue_state.json`.
-- A stage reported as `complete_with_limitations` is not a reason to stop the
-  supervisor. Preserve its evidence, apply the recorded remediation, and
-  continue all independent downstream checks.
-- For the V3.1 external extension, use
-  `scripts/sapr_mamba_v3_completion_guard.py` after the real-run. It waits for
-  the frozen 950-task matrix with zero failed/invalid manifests, then runs
-  external-aware analysis, manuscript generation, independent recomputation,
-  compact release creation/verification, and the full test suite.
+- `scripts/sapr_mamba_v3_pipeline.py`, `scripts/sapr_mamba_v3_autocontinue.py`,
+  `scripts/sapr_mamba_v3_completion_guard.py`, and the `sim_v5` guard are frozen
+  continuation tools for those namespaces. Do not launch them unless the user
+  explicitly asks to resume V3/V3.1 or `sim_v5`.
+- Default unattended work follows `docs/OCRA_V1_2_PROTOCOL.md`, with artifacts
+  under `results/ocra_v1_2_r1/`: protocol seal, blacklist check, single-backbone
+  preflight, then 20 backbone runs. Do not load the OCRA test split before E1
+  and E2 pass.

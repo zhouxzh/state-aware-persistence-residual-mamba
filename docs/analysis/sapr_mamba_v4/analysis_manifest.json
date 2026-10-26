@@ -1,0 +1,16 @@
+{
+  "alpha_summary": "docs/analysis/sapr_mamba_v4/m4_validation_alpha_summary.csv",
+  "comparison_rows": 74,
+  "created_at": "2026-10-08T22:00:36+08:00",
+  "interpretation": "post-V3 diagnostic; V3 claims remain unchanged",
+  "status": "complete",
+  "study": "sapr_mamba_v4",
+  "v3_metrics": {
+    "path": "results/sapr_mamba_v3/real/metrics_all.csv",
+    "sha256": "37402cee101e95a2649d894fa25d27778d5a8cbe2f3e207df5063c9026f36d6e"
+  },
+  "v4_metrics": {
+    "path": "results/sapr_mamba_v4/real/metrics_all.csv",
+    "sha256": "aef7c96624a56a1882ca87dd2df197628175ea862cfc9e443aa94f487db6ec41"
+  }
+}

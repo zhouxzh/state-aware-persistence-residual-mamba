@@ -1,0 +1,11 @@
+panel,series_seed_units,alpha_mean,alpha_zero_fraction,alpha_one_fraction
+beijing_air_quality,120,0.9125,0.0,0.65
+electricity,1000,0.98325,0.0,0.944
+ett_ETTh1,10,0.8,0.0,0.2
+ett_ETTh2,10,1.0,0.0,1.0
+ett_ETTm1,10,0.75,0.0,0.0
+ett_ETTm2,10,1.0,0.0,1.0
+m4_monthly,1000,0.57175,0.264,0.381
+nn5_daily,1000,0.97625,0.01,0.935
+solar_10min,1000,1.0,0.0,1.0
+tourism_monthly,1000,0.846,0.011,0.525

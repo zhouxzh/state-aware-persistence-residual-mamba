@@ -1,0 +1,13 @@
+comparison,source,horizon,state,metric,n,estimate,ci_low,ci_high,p_two_sided,p_holm
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,3,all,raw_rmse,100,0.002850047714076936,0.0017206023633596487,0.004040475936842266,0.0,0.0
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,3,change,raw_rmse,100,0.0028743465435691175,0.0017624607061676213,0.004052542402021936,0.0,0.0
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,3,stable,raw_rmse,23,-0.00023942566350223897,-0.0008730961345566397,0.0004505950041556901,0.4778,0.9556
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,6,all,raw_rmse,100,0.001689724582596682,0.0009270104900759175,0.0025095198122347937,0.0,0.0
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,6,change,raw_rmse,100,0.0016928507511038333,0.0009202892455912661,0.00250192162314779,0.0,0.0
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,6,stable,raw_rmse,23,-0.0008426093152197804,-0.0014497001146399114,-0.0002559376008930092,0.005,0.03
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,12,all,raw_rmse,100,0.0006429618063848466,5.237792304833437e-05,0.0012380862629972392,0.0354,0.164
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,12,change,raw_rmse,100,0.0006284190388396383,3.35700091673063e-05,0.0012158010959741662,0.0398,0.164
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,12,stable,raw_rmse,23,-0.000652816479155065,-0.001245522528340149,-6.228197023080212e-05,0.0328,0.164
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,24,all,raw_rmse,100,0.0016711869484279307,0.0011827601773838974,0.0021835110850050117,0.0,0.0
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,24,change,raw_rmse,100,0.0016566133431624623,0.001143688054499217,0.0021726157401339144,0.0,0.0
+M7_validation_selection_minus_M3,zenodo_traffic_hourly,24,stable,raw_rmse,23,0.00019633678982601237,-0.000478581781777472,0.0009681180843567149,0.6284,0.9556

@@ -1,0 +1,17 @@
+{
+  "current_tasks": [
+    {
+      "started_at": "2026-10-09T06:28:23+08:00",
+      "task": "M0_seed20261502"
+    }
+  ],
+  "gpu": "0 %, 281 MiB, 22528 MiB",
+  "stage": "waiting_for_training",
+  "task_statuses": {
+    "complete": 1,
+    "running": 1
+  },
+  "timestamp": "2026-10-09T06:28:43+08:00",
+  "trainer_alive": true,
+  "trainer_pid": 892765
+}

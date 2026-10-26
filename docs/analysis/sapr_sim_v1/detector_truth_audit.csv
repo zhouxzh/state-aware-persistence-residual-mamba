@@ -1,0 +1,15 @@
+mechanism,true_label,origins,detector_stable,detector_change,detector_change_rate
+continuing_trend,visible_change,1700,1436,264,0.15529411764705883
+future_jump,stable,1600,1157,443,0.276875
+future_jump,unseen_change,100,86,14,0.14
+random_walk,stable,1700,1347,353,0.2076470588235294
+seasonal_change,stable,795,638,157,0.19748427672955976
+seasonal_change,visible_change,905,732,173,0.19116022099447513
+stable,stable,3400,2765,635,0.18676470588235294
+stable_season,stable,3400,2874,526,0.15470588235294117
+trend_break,stable,795,643,152,0.19119496855345913
+trend_break,visible_change,905,724,181,0.2
+variance_shift,stable,795,616,179,0.22515723270440252
+variance_shift,visible_change,905,666,239,0.2640883977900553
+visible_level_shift,stable,795,634,161,0.20251572327044026
+visible_level_shift,visible_change,905,652,253,0.2795580110497238

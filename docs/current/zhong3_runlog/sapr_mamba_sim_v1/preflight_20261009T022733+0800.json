@@ -1,0 +1,28 @@
+{
+  "code_hashes": {
+    "experiments/sapr_mamba/__init__.py": "9426acd3450f5e6cf27f18b18ca90fa1d1f014bd1e47d76b3660828be6614f32",
+    "experiments/sapr_mamba/analyze.py": "106ca1f24c50444914958547fcac91cc38dca77477234705cdfcefa8e27d6fba",
+    "experiments/sapr_mamba/run.py": "817cd0d3402274725fc6612726767beebd96c5e732f7db7b88061fb0fad352d3",
+    "model/StateAwarePersistenceResidualMamba.py": "71362e6361173408e246ddf8c3adc7b91f670f8772ccf975910b33216de745af",
+    "utils/sapr_mamba/__init__.py": "963f0b2d4c58df4c182a1c62967be614ccf1046b93b6aa9d28af727d6625aef4",
+    "utils/sapr_mamba/analysis.py": "3952627ed31ad6029950b5ea89351675c75ffed27bf60e27f869a2e42e547f5c",
+    "utils/sapr_mamba/calibration.py": "359c077f3f504260eafbc2e3b075462bf4f301c64e83350e73f130568d35d50a",
+    "utils/sapr_mamba/cli.py": "a2245011c245a468ce8e8a673b61da40505357d3be5a8a6fa9b1532bc8e2a9ae",
+    "utils/sapr_mamba/data.py": "3ae5392fed2dbe3de7c510400ee2b825d5c89c6b32c6c375b2d2dc5c5d10293d",
+    "utils/sapr_mamba/features.py": "e67db2c5c4b7cd3dd019e4b8d495e37cc460716b07defec1231738724316b0a3",
+    "utils/sapr_mamba/io.py": "ddd8beb733591e093579bc40e1405cea4464e55dffe66da216605514da7dd271",
+    "utils/sapr_mamba/real.py": "6ee7f362552e37107d2c5adf1c0c82218bce1fb51b515d59731a5c81b4f24c03",
+    "utils/sapr_mamba/statistical.py": "e0ffe2643fb2ecd9d3cc6aa28f0070219e8e48f26407866688386dcda985f407",
+    "utils/sapr_mamba/synthetic.py": "98326616472e1af7436e3d43c22eb9c9757a2653f60fbd3d92d10be6fc550bf7"
+  },
+  "disk": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/nvme1n1p2  457G  158G  276G  37% /",
+  "git": {
+    "branch": "main",
+    "commit": "82a74c2ad96afa2f5c8ee4f270f1d1250dac8d60",
+    "status": "M docs/README.md\n M docs/current/README.md\n M experiments/sapr_mamba/run.py\n M manuscript/sapr_mamba_v3/claim_evidence_map.csv\n M manuscript/sapr_mamba_v3/manuscript.md\n M manuscript/sapr_mamba_v3/manuscript_manifest.json\n M manuscript/sapr_mamba_v3/source_manifest.json\n M scripts/sapr_mamba_v3_manuscript.py\n M tests/test_repository_layout.py\n M utils/sapr_mamba/io.py\n?? configs/sapr_mamba_sim_v1/model_spec.json\n?? configs/sapr_mamba_sim_v1/protocol.json\n?? configs/sapr_mamba_sim_v1/synthetic.json\n?? configs/sapr_mamba_v4/protocol.json\n?? configs/sapr_mamba_v5/protocol.json\n?? configs/sapr_mamba_v6/protocol.json\n?? configs/sapr_mamba_v7/confirmation_protocol.json\n?? configs/sapr_mamba_v7/confirmation_protocol.lock.json\n?? configs/sapr_mamba_v7/model_spec.json\n?? configs/sapr_mamba_v7/protocol.json\n?? configs/sapr_mamba_v7/real_panels.json\n?? configs/sapr_mamba_v7/synthetic.json\n?? configs/sapr_mamba_v8/confirmation_protocol.json\n?? configs/sapr_mamba_v8/confirmation_protocol.lock.json\n?? configs/sapr_mamba_v8/model_spec.json\n?? configs/sapr_mamba_v8/protocol.json\n?? configs/sapr_mamba_v8/real_panels.json\n?? configs/sapr_mamba_v8/synthetic.json\n?? docs/analysis/sapr_mamba_v4/analysis_manifest.json\n?? docs/analysis/sapr_mamba_v4/m4_validation_alpha_summary.csv\n?? docs/analysis/sapr_mamba_v4/m4_vs_m3_post_v3_diagnostic.csv\n?? docs/analysis/sapr_mamba_v5/analysis_manifest.json\n?? docs/analysis/sapr_mamba_v5/m5_validation_selection_summary.csv\n?? docs/analysis/sapr_mamba_v5/m5_vs_m3_post_v3_diagnostic.csv\n?? docs/analysis/sapr_mamba_v6/analysis_manifest.json\n?? docs/analysis/sapr_mamba_v6/post_v3_vs_m3_diagnostic.csv\n?? docs/analysis/sapr_mamba_v6/validation_selection_summary.csv\n?? docs/analysis/sapr_mamba_v7/confirmation_manifest.json\n?? docs/analysis/sapr_mamba_v7/traffic_m7_vs_m3_confirmation.csv\n?? docs/analysis/sapr_mamba_v7/traffic_validation_selection_counts.csv\n?? docs/analysis/sapr_mamba_v8/confirmation_manifest.json\n?? docs/analysis/sapr_mamba_v8/external_confirmation_interpretation.md\n?? docs/analysis/sapr_mamba_v8/kdd_original_path_confirmation.csv\n?? docs/current/scientific_meaning_and_simulation_plan_20261008.md\n?? docs/current/scientific_question.md\n?? docs/current/zhong3_runlog/sapr_mamba_v1/preflight_20261007T210806+0800.json\n?? docs/current/zhong3_runlog/sapr_mamba_v1/preflight_20261007T210807+0800.json\n?? scripts/sapr_mamba_v4.py\n?? scripts/sapr_mamba_v4_analyze.py\n?? scripts/sapr_mamba_v5.py\n?? scripts/sapr_mamba_v5_analyze.py\n?? scripts/sapr_mamba_v7.py\n?? scripts/sapr_mamba_v7_analyze.py\n?? scripts/sapr_mamba_v7_guard.py\n?? scripts/sapr_mamba_v7_sources.py\n?? scripts/sapr_mamba_v8_analyze.py\n?? scripts/sapr_mamba_v8_sources.py\n?? scripts/sapr_sim_v1.py\n?? tests/test_sapr_mamba_v4_calibration.py\n?? utils/sapr_mamba/calibration.py"
+  },
+  "gpu": "NVIDIA GeForce RTX 2080 Ti, 101 MiB, 22528 MiB, 0 %",
+  "processes": "869589  382537 Ss         00:03 /bin/bash -c export SAPR_MAMBA_VERSION=sim_v1 conda run --no-capture-output -n sci-agent python -m py_compile scripts/sapr_sim_v1.py utils/sapr_mamba/io.py conda run --no-capture-output -n sci-agent python scripts/sapr_sim_v1.py --stage preflight conda run --no-capture-output -n sci-agent python scripts/sapr_sim_v1.py --stage generate\n 869599  869589 S          00:02 /home/zhong/anaconda3/bin/python /home/zhong/anaconda3/bin/conda run --no-capture-output -n sci-agent python scripts/sapr_sim_v1.py --stage preflight\n 869606  869600 S          00:01 python scripts/sapr_sim_v1.py --stage preflight\n 869610  869606 S          00:00 bash -lc ps -eo pid,ppid,stat,etime,cmd | rg -i 'python.*(sapr|mamba)|torchrun' || true\n 869616  869610 S          00:00 rg -i python.*(sapr|mamba)|torchrun",
+  "repository": "/home/zhong/Documents/state-aware-persistence-residual-mamba",
+  "timestamp": "2026-10-09T02:27:33+08:00"
+}

@@ -1,0 +1,15 @@
+{
+  "comparison": {
+    "path": "docs/analysis/sapr_mamba_v8/kdd_original_path_confirmation.csv",
+    "sha256": "43f406b304ea7938f8fe696ecf8fe81debea331224209215022862ca8ea2d421"
+  },
+  "created_at": "2026-10-09T02:18:24+08:00",
+  "metrics": {
+    "path": "results/sapr_mamba_v8/confirmation/kdd_cup_2018/metrics_all.csv",
+    "sha256": "686d485848ecf0a6ab90b0cf6549d534e439840669fafaebcd5f7745e374dcab"
+  },
+  "status": "verified",
+  "study": "sapr_mamba_v8",
+  "task_manifests": 30,
+  "test_targets_used_for_selection": false
+}
