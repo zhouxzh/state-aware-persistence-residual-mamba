@@ -14,8 +14,9 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 STUDY_VERSION = os.environ.get("SAPR_MAMBA_VERSION", "v1").strip()
-if STUDY_VERSION not in {"v1", "v2", "v3"}:
-    raise ValueError("SAPR_MAMBA_VERSION must be v1, v2, or v3")
+_BASE_STUDIES = {"v1", "v2", "v3", "v7", "v8", "sim_v1", "sim_v2", "sim_v3", "sim_v4", "sim_v5", "canonical_v1", "canonical_v2", "bocpd_confirm_v1"}
+if STUDY_VERSION not in _BASE_STUDIES and not (STUDY_VERSION.startswith("bocpd_e") and STUDY_VERSION[7:].isdigit()):
+    raise ValueError("SAPR_MAMBA_VERSION is not a supported SAPR study namespace")
 STUDY_SLUG = f"sapr_mamba_{STUDY_VERSION}"
 CONFIG_ROOT = REPO_ROOT / "configs" / STUDY_SLUG
 DATA_ROOT = REPO_ROOT / "data" / STUDY_SLUG

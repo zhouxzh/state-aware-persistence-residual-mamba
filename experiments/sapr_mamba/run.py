@@ -427,6 +427,9 @@ def _run_statistical_real_task(panel_id: str, family: str, seed: int) -> dict:
 
 def _real_panel_definition(panel_id: str) -> tuple[int, int, list[int]]:
     panels = load_configs()["real_panels"]["panels"]
+    if panel_id in panels and {"period", "input_length", "horizons"} <= set(panels[panel_id]):
+        item = panels[panel_id]
+        return int(item["period"]), int(item["input_length"]), [int(value) for value in item["horizons"]]
     if panel_id == "electricity":
         item = panels["electricity"]
         return int(item["period"]), int(item["input_length"]), [int(value) for value in item["horizons"]]

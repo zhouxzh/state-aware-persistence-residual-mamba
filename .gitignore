@@ -217,7 +217,9 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-results/
+# Preserve the local result payloads while tracking the directory-level usage note.
+results/*
+!results/README.md
 backup/
 
 # SAPR-Mamba raw inputs, checkpoints, prediction tensors, and transient smoke output.

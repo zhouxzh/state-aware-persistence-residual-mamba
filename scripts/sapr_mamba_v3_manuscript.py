@@ -59,6 +59,8 @@ def build() -> dict:
         {"source_id": "E002", "path": "data/sapr_mamba_v3/real/source_extensions/v3.1/prepared_manifest.json", "verification": "automated_hash_only", "human_verified": False},
         {"source_id": "E003", "path": "docs/analysis/sapr_mamba_v3/real_verification_manifest.json", "verification": "automated_hash_only", "human_verified": False},
         {"source_id": "E004", "path": "https://arxiv.org/abs/2609.00065v2", "verification": "metadata_fetched", "human_verified": False},
+        {"source_id": "E005", "path": "docs/analysis/sapr_mamba_v3/real_stable_state_coverage.csv", "verification": "automated_hash_only", "human_verified": False},
+        {"source_id": "E006", "path": "docs/analysis/sapr_mamba_v3/real_statistical_audit.csv", "verification": "automated_hash_only", "human_verified": False},
     ]
     protocol_path = REPO_ROOT / "configs" / STUDY / "protocol.lock.json"
     claims.extend([
@@ -155,11 +157,29 @@ def build() -> dict:
             f"Evidence: `docs/analysis/{STUDY}/real_verification_manifest.json`.", "",
         ])
     lines.extend(["## Limitations", ""])
-    limitations = state.get("limitations", [])
-    if limitations:
-        lines.extend(f"- {item}" for item in limitations)
-    else:
-        lines.append("No automated limitations have been recorded; complete analysis before interpreting this draft.")
+    limitations = list(state.get("limitations", []))
+    coverage_path = ANALYSIS / "real_stable_state_coverage.csv"
+    if coverage_path.is_file():
+        coverage_rows = read_csv(coverage_path)
+        no_eligible = sum(row["evidence_status"] == "no_eligible_state_units" for row in coverage_rows)
+        limited = sum(row["evidence_status"] == "limited_stable_state_coverage" for row in coverage_rows)
+        if no_eligible or limited:
+            limitations.append(
+                f"Stable-state safety was not fully estimable for {no_eligible + limited} of {len(coverage_rows)} source-horizon rows "
+                f"({no_eligible} with no eligible stable-state units and {limited} with incomplete stable-state coverage). "
+                "[claim:C_LIMIT_STABLE] [evidence:E005]"
+            )
+            claims.append({"claim_id": "C_LIMIT_STABLE", "artifact": str(coverage_path.relative_to(REPO_ROOT)), "filter": "all rows", "sha256": sha256_path(coverage_path)})
+    audit_path = ANALYSIS / "real_statistical_audit.csv"
+    if audit_path.is_file():
+        failures = sum(int(row["failure_rows"]) for row in read_csv(audit_path))
+        if failures:
+            limitations.append(
+                f"Statistical baseline candidate fitting recorded {failures} retained failure rows; their fallback behavior must be considered when comparing contextual baselines. "
+                "[claim:C_LIMIT_STAT] [evidence:E006]"
+            )
+            claims.append({"claim_id": "C_LIMIT_STAT", "artifact": str(audit_path.relative_to(REPO_ROOT)), "filter": "all rows", "sha256": sha256_path(audit_path)})
+    lines.extend(f"- {item}" for item in limitations)
     lines.extend([
         "- V2 is a development baseline and is not pooled into V3 confirmation estimates.",
         "- State coverage, independent source-cluster count, and external-holdout status must be reported from V3 manifests.",

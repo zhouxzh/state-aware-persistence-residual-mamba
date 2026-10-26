@@ -34,4 +34,4 @@ def test_active_financial_workflow_has_no_parallel_legacy_entrypoint() -> None:
 def test_active_data_scope_is_financial_only() -> None:
     active_directories = {path.name for path in (ROOT / "data").iterdir() if path.is_dir()}
     assert "sapr_mamba_v3" in active_directories
-    assert active_directories <= {"financial", "sapr_mamba_v1", "sapr_mamba_v2", "sapr_mamba_v3"}
+    assert active_directories <= {"financial", "sapr_mamba_v1", "sapr_mamba_v2", "sapr_mamba_v3", "sapr_mamba_v7", "sapr_mamba_v8", "sapr_mamba_sim_v1", "sapr_mamba_sim_v2", "sapr_mamba_sim_v3", "sapr_mamba_sim_v4", "sapr_mamba_sim_v5", "sapr_mamba_canonical_v1", "sapr_mamba_canonical_v2", "sapr_mamba_bocpd_e1", "sapr_mamba_bocpd_e2", "sapr_mamba_bocpd_e3", "sapr_mamba_bocpd_e4", "sapr_mamba_bocpd_e5", "sapr_mamba_bocpd_confirm_v1"}

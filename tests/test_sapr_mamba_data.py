@@ -34,6 +34,16 @@ def test_shuffle_changes_only_model_feature_pairing_not_state_audit() -> None:
     assert not np.array_equal(original[0]["phi"], shuffled[0]["phi"])
 
 
+def test_state_shuffle_preserves_audit_state_and_changes_only_gate_input() -> None:
+    values = np.stack((np.arange(24), np.arange(24) ** 2)).astype(np.float32)
+    infos = [SeriesInfo("a", 4, 12, 18, "test"), SeriesInfo("b", 4, 12, 18, "test")]
+    origins = make_origins(values, infos, input_length=4, horizon=2, split="all", stride=2)
+    dataset = WindowDataset(values, infos, origins, 4, 2, 1e-6, 2.5, state_permutation_seed=5)
+    dataset.audit_state = (np.arange(len(dataset)) % 2).astype(np.int8)
+    assert dataset[0]["state"] == dataset.audit_state[0]
+    assert any(dataset[index]["gate_state"] != dataset[index]["state"] for index in range(len(dataset)))
+
+
 def test_cached_features_are_reused_without_changing_audit_values() -> None:
     values = np.arange(24, dtype=np.float32).reshape(1, -1)
     info = [SeriesInfo("a", 4, 12, 18, "test")]

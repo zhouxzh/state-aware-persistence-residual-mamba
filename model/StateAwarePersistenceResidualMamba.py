@@ -17,7 +17,7 @@ class PersistenceModel(nn.Module):
         super().__init__()
         self.horizon = int(horizon)
 
-    def forward(self, x: torch.Tensor, phi: torch.Tensor) -> dict[str, torch.Tensor]:
+    def forward(self, x: torch.Tensor, phi: torch.Tensor, state: torch.Tensor | None = None) -> dict[str, torch.Tensor]:
         baseline = x[:, -1:].expand(-1, self.horizon)
         zeros = torch.zeros_like(baseline)
         return {"forecast": baseline, "residual": zeros, "gate": zeros + 1.0, "embedding": zeros[:, :1]}
@@ -30,7 +30,7 @@ class LinearResidualModel(nn.Module):
         self.history_projection = int(history_projection)
         self.network = nn.Linear(self.history_projection + int(phi_dim), self.horizon)
 
-    def forward(self, x: torch.Tensor, phi: torch.Tensor) -> dict[str, torch.Tensor]:
+    def forward(self, x: torch.Tensor, phi: torch.Tensor, state: torch.Tensor | None = None) -> dict[str, torch.Tensor]:
         normalized, baseline, scale = _normalize_history(x)
         differences = normalized[:, 1:] - normalized[:, :-1]
         if differences.size(1) < self.history_projection:
@@ -50,7 +50,7 @@ class SeasonalNaiveModel(nn.Module):
         self.horizon = int(horizon)
         self.period = int(period)
 
-    def forward(self, x: torch.Tensor, phi: torch.Tensor) -> dict[str, torch.Tensor]:
+    def forward(self, x: torch.Tensor, phi: torch.Tensor, state: torch.Tensor | None = None) -> dict[str, torch.Tensor]:
         if x.size(1) < self.period:
             raise ValueError("seasonal-naive requires an input at least one period long")
         indices = torch.arange(self.horizon, device=x.device) % self.period
@@ -66,7 +66,7 @@ class DriftModel(nn.Module):
         super().__init__()
         self.horizon = int(horizon)
 
-    def forward(self, x: torch.Tensor, phi: torch.Tensor) -> dict[str, torch.Tensor]:
+    def forward(self, x: torch.Tensor, phi: torch.Tensor, state: torch.Tensor | None = None) -> dict[str, torch.Tensor]:
         steps = torch.arange(1, self.horizon + 1, device=x.device, dtype=x.dtype).unsqueeze(0)
         slope = (x[:, -1:] - x[:, :1]) / max(x.size(1) - 1, 1)
         forecast = x[:, -1:] + slope * steps
@@ -108,6 +108,7 @@ class MambaResidualModel(nn.Module):
         dropout: float,
         gated: bool,
         gate_mode: str = "full",
+        learnable_constant_gate: bool = False,
     ) -> None:
         super().__init__()
         try:
@@ -117,7 +118,8 @@ class MambaResidualModel(nn.Module):
         self.horizon = int(horizon)
         self.gated = bool(gated)
         self.gate_mode = str(gate_mode)
-        if self.gate_mode not in {"full", "state-only", "hidden-only", "constant", "no-state"}:
+        self.learnable_constant_gate = bool(learnable_constant_gate)
+        if self.gate_mode not in {"full", "state-only", "hidden-only", "constant", "no-state", "trigger"}:
             raise ValueError(f"Unknown gate mode: {self.gate_mode}")
         self.input_projection = nn.Linear(1 + int(phi_dim), int(d_model))
         self.blocks = nn.ModuleList(
@@ -128,8 +130,12 @@ class MambaResidualModel(nn.Module):
         self.residual_head = nn.Linear(int(d_model), self.horizon)
         self.gate_phi = nn.Linear(int(phi_dim), 1)
         self.gate_hidden = nn.Linear(int(d_model), 1)
+        self.gate_constant_logit = (
+            nn.Parameter(torch.zeros(1)) if self.gate_mode == "constant" and self.learnable_constant_gate else None
+        )
+        self.gate_trigger = nn.Linear(1, 1) if self.gate_mode == "trigger" else None
 
-    def forward(self, x: torch.Tensor, phi: torch.Tensor) -> dict[str, torch.Tensor]:
+    def forward(self, x: torch.Tensor, phi: torch.Tensor, state: torch.Tensor | None = None) -> dict[str, torch.Tensor]:
         if self.gate_mode == "no-state":
             phi = torch.zeros_like(phi)
         normalized, baseline, scale = _normalize_history(x)
@@ -140,12 +146,20 @@ class MambaResidualModel(nn.Module):
         embedding = encoded[:, -1]
         residual = self.residual_head(embedding) * scale
         if self.gated:
-            if self.gate_mode == "state-only":
+            if self.gate_mode == "trigger":
+                if state is None:
+                    raise ValueError("trigger gate requires a causal binary state")
+                assert self.gate_trigger is not None
+                gate_scalar = torch.sigmoid(self.gate_trigger(state.to(dtype=x.dtype).reshape(-1, 1)))
+            elif self.gate_mode == "state-only":
                 gate_scalar = torch.sigmoid(self.gate_phi(phi))
             elif self.gate_mode == "hidden-only":
                 gate_scalar = torch.sigmoid(self.gate_hidden(embedding))
             elif self.gate_mode == "constant":
-                gate_scalar = torch.full((x.size(0), 1), 0.5, device=x.device, dtype=x.dtype)
+                if self.gate_constant_logit is None:
+                    gate_scalar = torch.full((x.size(0), 1), 0.5, device=x.device, dtype=x.dtype)
+                else:
+                    gate_scalar = torch.sigmoid(self.gate_constant_logit).to(dtype=x.dtype).expand(x.size(0), 1)
             else:
                 gate_scalar = torch.sigmoid(self.gate_phi(phi) + self.gate_hidden(embedding))
             gate = gate_scalar.expand(-1, self.horizon)
@@ -172,7 +186,7 @@ def build_model(model_id: str, horizon: int, phi_dim: int, specification: dict, 
             raise ValueError("DLinear requires input_length")
         return DLinearResidualModel(input_length, horizon, specification["dlinear"]["moving_average_kernel"])
     if model_id not in {"M2", "M3", "M3-shuffle"}:
-        if model_id not in {"M3-state-only", "M3-hidden-only", "M3-constant-gate", "M3-no-state-feature"}:
+        if model_id not in {"M3-state-only", "M3-hidden-only", "M3-constant-gate", "M3-no-state-feature", "M3-trigger-gate", "M3-bocpd", "M3-bocpd-shuffle", "M3-oracle"}:
             raise ValueError(f"Unknown SAPR model: {model_id}")
     mamba = specification["mamba"]
     return MambaResidualModel(
@@ -184,11 +198,16 @@ def build_model(model_id: str, horizon: int, phi_dim: int, specification: dict, 
         expand=mamba["expand"],
         layers=mamba["layers"],
         dropout=mamba["dropout"],
-        gated=model_id in {"M3", "M3-shuffle", "M3-state-only", "M3-hidden-only", "M3-constant-gate", "M3-no-state-feature"},
+        gated=model_id in {"M3", "M3-shuffle", "M3-state-only", "M3-hidden-only", "M3-constant-gate", "M3-no-state-feature", "M3-trigger-gate", "M3-bocpd", "M3-bocpd-shuffle", "M3-oracle"},
         gate_mode={
+            "M3-trigger-gate": "trigger",
+            "M3-bocpd": "trigger",
+            "M3-bocpd-shuffle": "trigger",
+            "M3-oracle": "trigger",
             "M3-state-only": "state-only",
             "M3-hidden-only": "hidden-only",
             "M3-constant-gate": "constant",
             "M3-no-state-feature": "no-state",
         }.get(model_id, "full"),
+        learnable_constant_gate=bool(mamba.get("learnable_constant_gate", False)),
     )

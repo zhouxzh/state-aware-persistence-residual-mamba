@@ -9,7 +9,7 @@ from typing import Iterable
 
 import numpy as np
 
-from .features import FEATURE_NAMES, causal_features, state_label
+from .features import FEATURE_NAMES, ar_residual_change_score, bocpd_change_posterior, causal_features, state_label, two_window_change_score
 
 
 @dataclass(frozen=True)
@@ -69,10 +69,13 @@ class WindowDataset:
         input_length: int,
         horizon: int,
         epsilon: float,
-        change_threshold: float,
+        change_threshold: float | np.ndarray,
         eligibility: np.ndarray | None = None,
         feature_permutation_seed: int | None = None,
         cached_features: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None,
+        state_score_mode: str = "max_abs_feature",
+        state_score_parameters: dict | None = None,
+        state_permutation_seed: int | None = None,
     ) -> None:
         if sequences.ndim != 2 or len(sequences) != len(infos):
             raise ValueError("sequences must be [series, time] aligned with series info")
@@ -82,8 +85,16 @@ class WindowDataset:
         self.input_length = int(input_length)
         self.horizon = int(horizon)
         self.epsilon = float(epsilon)
-        self.change_threshold = float(change_threshold)
+        self.change_threshold = np.asarray(change_threshold, dtype=np.float64)
+        if self.change_threshold.ndim > 1:
+            raise ValueError("change threshold must be scalar or indexed by series")
+        if self.change_threshold.ndim == 1 and self.change_threshold.shape != (len(self.infos),):
+            raise ValueError("per-series change thresholds must align with series info")
         self.eligibility = np.ones_like(self.sequences, dtype=bool) if eligibility is None else eligibility.astype(bool)
+        self.state_score_mode = str(state_score_mode)
+        self.state_score_parameters = dict(state_score_parameters or {})
+        if self.state_score_mode not in {"max_abs_feature", "two_window", "ar_residual", "bocpd"}:
+            raise ValueError(f"Unknown state score mode: {self.state_score_mode}")
         if self.origins.ndim != 2 or self.origins.shape[1] != 2:
             raise ValueError("origins must have [series_index, origin] rows")
         # Features, labels, and audit scores are deterministic functions of each
@@ -110,6 +121,11 @@ class WindowDataset:
         if feature_permutation_seed is not None:
             rng = np.random.default_rng(int(feature_permutation_seed))
             self.feature_permutation = rng.permutation(len(self.origins))
+        self.state_permutation = None
+        self.state_override = None
+        if state_permutation_seed is not None:
+            rng = np.random.default_rng(int(state_permutation_seed))
+            self.state_permutation = rng.permutation(len(self.origins))
 
     def __len__(self) -> int:
         return len(self.origins)
@@ -122,7 +138,25 @@ class WindowDataset:
         info = self.infos[int(series_index)]
         history = self.sequences[series_index, origin - self.input_length:origin]
         phi = causal_features(history, info.period, self.epsilon)
-        label, score = state_label(phi, self.change_threshold)
+        threshold = float(self.change_threshold[int(series_index)]) if self.change_threshold.ndim else float(self.change_threshold)
+        if self.state_score_mode == "two_window":
+            score = two_window_change_score(history, info.period, self.epsilon)
+            label = "change" if score >= threshold else "stable"
+        elif self.state_score_mode == "ar_residual":
+            score = ar_residual_change_score(history, info.period, self.epsilon)
+            label = "change" if score >= threshold else "stable"
+        elif self.state_score_mode == "bocpd":
+            parameters = dict(self.state_score_parameters)
+            input_mode = str(parameters.pop("input_mode", "raw"))
+            if input_mode == "dual_max":
+                raw = bocpd_change_posterior(history, period=info.period, input_mode="raw", **parameters)
+                seasonal = bocpd_change_posterior(history, period=info.period, input_mode="seasonal_residual", **parameters)
+                score = max(raw, seasonal)
+            else:
+                score = bocpd_change_posterior(history, period=info.period, input_mode=input_mode, **parameters)
+            label = "change" if score >= threshold else "stable"
+        else:
+            label, score = state_label(phi, threshold)
         return phi, label, score
 
     def __getitem__(self, row_index: int) -> dict:
@@ -135,14 +169,20 @@ class WindowDataset:
         y = self.sequences[series_index, origin:end]
         phi = self.audit_phi[row_index]
         state = self.audit_state[row_index]
+        gate_state = state
         score = self.audit_change_score[row_index]
         if self.feature_permutation is not None:
             phi = self.audit_phi[int(self.feature_permutation[row_index])]
+        if self.state_permutation is not None:
+            gate_state = self.audit_state[int(self.state_permutation[row_index])]
+        if self.state_override is not None:
+            gate_state = self.state_override[row_index]
         return {
             "x": x.astype(np.float32),
             "y": y.astype(np.float32),
             "phi": phi.astype(np.float32),
             "state": np.int8(state),
+            "gate_state": np.int8(gate_state),
             "change_score": np.float32(score),
             "series_index": np.int64(series_index),
             "origin": np.int64(origin),
