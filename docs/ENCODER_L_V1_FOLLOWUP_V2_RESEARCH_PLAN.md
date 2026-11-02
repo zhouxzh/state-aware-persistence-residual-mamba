@@ -1,6 +1,6 @@
 # Study 3 后续仿真计划：未来跳变覆盖与状态摘要负控
 
-**协议状态**：计划草案，尚未批准、未锁定、未运行。  
+**协议状态**：统计设计已批准；独立 `study3_v2` 已完成。  
 **代码仓库**：`zhong3:~/Documents/state-aware-persistence-residual-mamba`  
 **与现有研究的关系**：独立 Study 3；不修改、不重跑、不覆盖 Study 1（九机制仿真）或 Study 2（matched-encoder follow-up）的锁、test、结果和结论。
 
@@ -73,7 +73,9 @@ N2 的每个 residual-minus-persistence contrast 若 estimate < 0、ordinary CI 
 
 ### 5.3 P2 summary safety rule
 
-在 N2/N8 上，预先声明 summary-on minus summary-off 的 non-inferiority margin `delta`，并在 test 前锁定其单位和理由。只有当 95% paired interval 的 lower bound 高于 `-delta` 时，才可写“未观察到超过预设 margin 的恶化”；这不是等价性证明，也不是无害性证明。
+在 N2/N8 上定义 `d = RMSE(summary-on) - RMSE(summary-off)`，正值表示摘要造成恶化。非劣性检验为 `H0: E[d] >= delta` 对 `H1: E[d] < delta`，其中 `delta > 0` 是作者预先批准的最大可接受恶化幅度。只有相应单侧上置信限严格小于 `delta`，才支持在该幅度内的非劣性；检查 lower bound > -delta 是错误方向，不能使用。
+
+已批准的新执行版本固定 `delta = 0.20` raw path RMSE，即生成器固定创新标准差 1.0 的 20%。每个比较使用 paired percentile bootstrap 的 97.5% 单侧上置信限。N2/N8 在 L96、L384、L768 的六项安全性假设组成一个 Holm 校正的一侧 p-value family；只有上置信限严格小于 `delta` 且 Holm 校正后一侧 p<0.05 时，才支持相应的非劣性声明。margin 不得从 Study 2 已查看的效果反推。非劣性也不是等价性证明或对所有机制的无害性保证。
 
 S4/S6 的 summary increment 仍按 superiority 方向报告。不得因 N2/N8 结果不利而删除 S4/S6 结果，也不得因 S4/S6 有利而隐藏 N8 trade-off。
 
@@ -118,4 +120,4 @@ Study 3 结果不得回写为 Study 1 或 Study 2 的结果，也不得把当前
 - Study 2：带测试前偏差披露的 matched-encoder follow-up；
 - Study 3：未来工作/独立后续协议，尚未运行。
 
-**状态**：本计划只完成协议草案和服务器归档，不授权训练、不授权 test、不授权推送。
+**状态**：作者已批准上述统计设计，独立 `study3_v2` 已按该版本完成。执行保留在 `results/study3_v2/`；不得修改或重用任何既有 Study 3 的训练、测试或结果产物。

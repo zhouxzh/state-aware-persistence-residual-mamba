@@ -1,0 +1,5 @@
+{
+  "mamba": {"d_model": 64, "d_state": 16, "d_conv": 4, "expand": 2, "layers": 2, "dropout": 0.1},
+  "transformer": {"d_model": 64, "heads": 4, "ff": 128, "layers": 2, "dropout": 0.1, "positional_encoding": "fixed_sinusoidal"},
+  "state_summary": {"feature_window": 96, "feature_count": 9, "summary_on": "causal_features", "summary_off": "zeros"}
+}

@@ -1,0 +1,61 @@
+{
+  "protocol_version": "study3_v1.r1",
+  "protocol_class": "independent_follow_up_after_study3_v1_training_preflight_wiring_failure",
+  "parent_protocol": "study3_v1.0",
+  "revision_reason": "The parent stopped before any training cell completed because train-matrix passed the registry model field as an unsupported keyword argument. No test data was materialized.",
+  "run_root": "results/study3_v1_r1",
+  "series_id_prefix": "study3_v1_r1_",
+  "generator_seed": 20261640,
+  "training_seeds": [20261641, 20261642, 20261643, 20261644, 20261645],
+  "horizon": 24,
+  "lookbacks": [96, 384, 768],
+  "common_origin_lookback": 768,
+  "registered_conditions": [
+    {"lookback": 384, "model": "MambaPhi"},
+    {"lookback": 384, "model": "Mamba0"},
+    {"lookback": 384, "model": "TransformerPhi"},
+    {"lookback": 384, "model": "Transformer0"},
+    {"lookback": 96, "model": "MambaPhi"},
+    {"lookback": 96, "model": "Mamba0"},
+    {"lookback": 768, "model": "MambaPhi"},
+    {"lookback": 768, "model": "Mamba0"}
+  ],
+  "training": {
+    "device": "cuda:0",
+    "amp": true,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "batch_size": 64,
+    "max_epochs": 40,
+    "patience": 7,
+    "gradient_clip_norm": 1.0,
+    "samples_per_epoch": 24000,
+    "sampler": "replacement_random_sampler_with_seeded_generator"
+  },
+  "evaluation": {
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20261690,
+    "sign_flip_seed": 20261691,
+    "primary_metric": "raw_path_rmse",
+    "test_access": "locked_once",
+    "future_jump_offset": 12,
+    "future_jump_group": "N2",
+    "summary_negative_control_groups": ["N2", "N8"],
+    "summary_visible_groups": ["S4", "S6"],
+    "summary_noninferiority_contrast": "Mamba0 minus MambaPhi",
+    "summary_noninferiority_margin_raw_path_rmse": 0.2,
+    "summary_noninferiority_margin_rationale": "Twenty percent of the fixed unit innovation standard deviation; selected before any Study 3 r1 training or test access.",
+    "families": {
+      "P1_future_jump": "all residual-minus-persistence N2 contrasts",
+      "P2_summary_safety": "Mamba0-minus-MambaPhi at N2 and N8 across registered lookbacks",
+      "P2_summary_visible": "Mamba0-minus-MambaPhi at S4 and S6 across registered lookbacks"
+    }
+  },
+  "release_gate": {
+    "expected_training_cells": 40,
+    "minimum_test_series_per_primary_group": 100,
+    "strict_checkpoint_load": true,
+    "test_numeric_must_be_absent": true
+  },
+  "budget": {"max_gpu_hours": 24, "max_training_runs": 40}
+}

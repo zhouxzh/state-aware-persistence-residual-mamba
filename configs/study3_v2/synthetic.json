@@ -1,0 +1,29 @@
+{
+  "generator_version": "study3_v2_future_jump_offset12_near_random_walk",
+  "length": 2048,
+  "seasonal_period": 48,
+  "origin_stride": 96,
+  "change_signal_delay": 12,
+  "split_series_counts": {
+    "train": {"stable": 300, "visible_level_shift": 200, "future_jump": 200, "continuing_trend": 200, "trend_break": 200, "stable_season": 250, "seasonal_change": 200, "variance_shift": 200, "random_walk": 250},
+    "validation": {"stable": 100, "visible_level_shift": 50, "future_jump": 50, "continuing_trend": 50, "trend_break": 50, "stable_season": 75, "seasonal_change": 50, "variance_shift": 50, "random_walk": 75},
+    "test": {"stable": 200, "visible_level_shift": 150, "future_jump": 100, "continuing_trend": 100, "trend_break": 100, "stable_season": 150, "seasonal_change": 100, "variance_shift": 100, "random_walk": 100}
+  },
+  "mechanisms": ["stable", "visible_level_shift", "future_jump", "continuing_trend", "trend_break", "stable_season", "seasonal_change", "variance_shift", "random_walk"],
+  "base": {
+    "ar": 0.55,
+    "innovation_std": 1.0,
+    "near_random_walk_increment_ar": 0.05,
+    "seasonal_amplitude": 2.0,
+    "visible_change_points": [768, 864, 960, 1056, 1152, 1248, 1344],
+    "future_jump_origins": [1344, 1440, 1536, 1632],
+    "future_jump_offset": 12,
+    "future_jump_direction_policy": "balanced_by_index",
+    "future_jump_baseline": "random_walk",
+    "trend_slope": 0.025,
+    "jump_strength": 5.0,
+    "trend_break_slope": 0.05,
+    "variance_multiplier": 3.0,
+    "seasonal_change_amplitude": 2.0
+  }
+}

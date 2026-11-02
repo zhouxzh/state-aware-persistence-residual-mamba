@@ -1,0 +1,64 @@
+{
+  "protocol_version": "study3_v2.0",
+  "protocol_class": "independent_study3_after_approved_noninferiority_specification",
+  "parent_plan": "docs/ENCODER_L_V1_FOLLOWUP_V2_RESEARCH_PLAN.md",
+  "revision_reason": "Corrects the non-inferiority direction before execution: d = RMSE(summary-on) - RMSE(summary-off), positive d is harm, and safety requires the one-sided upper confidence limit below delta.",
+  "run_root": "results/study3_v2",
+  "series_id_prefix": "study3_v2_",
+  "generator_seed": 20261660,
+  "training_seeds": [20261661, 20261662, 20261663, 20261664, 20261665],
+  "horizon": 24,
+  "lookbacks": [96, 384, 768],
+  "common_origin_lookback": 768,
+  "registered_conditions": [
+    {"lookback": 384, "model": "MambaPhi"},
+    {"lookback": 384, "model": "Mamba0"},
+    {"lookback": 384, "model": "TransformerPhi"},
+    {"lookback": 384, "model": "Transformer0"},
+    {"lookback": 96, "model": "MambaPhi"},
+    {"lookback": 96, "model": "Mamba0"},
+    {"lookback": 768, "model": "MambaPhi"},
+    {"lookback": 768, "model": "Mamba0"}
+  ],
+  "training": {
+    "device": "cuda:0",
+    "amp": true,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "batch_size": 64,
+    "max_epochs": 40,
+    "patience": 7,
+    "gradient_clip_norm": 1.0,
+    "samples_per_epoch": 24000,
+    "sampler": "replacement_random_sampler_with_seeded_generator"
+  },
+  "evaluation": {
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20261700,
+    "sign_flip_seed": 20261701,
+    "primary_metric": "raw_path_rmse",
+    "test_access": "locked_once",
+    "future_jump_offset": 12,
+    "future_jump_group": "N2",
+    "summary_negative_control_groups": ["N2", "N8"],
+    "summary_visible_groups": ["S4", "S6"],
+    "summary_noninferiority_contrast": "MambaPhi minus Mamba0",
+    "summary_noninferiority_difference": "RMSE(summary-on) - RMSE(summary-off)",
+    "summary_noninferiority_margin_raw_path_rmse": 0.2,
+    "summary_noninferiority_margin_rationale": "Approved before Study 3 v2 data generation: 20% of the fixed unit innovation standard deviation (1.0) is the maximum acceptable raw path-RMSE worsening.",
+    "summary_noninferiority_confidence": {"type": "one_sided_upper", "level": 0.975, "method": "paired_percentile_bootstrap"},
+    "summary_noninferiority_test": {"type": "one_sided_paired_sign_flip", "null": "E[d] >= delta", "alternative": "E[d] < delta", "alpha_familywise": 0.05},
+    "families": {
+      "P1_future_jump": "all residual-minus-persistence N2 contrasts",
+      "P2_summary_safety": "six MambaPhi-minus-Mamba0 comparisons: N2 and N8 at L96, L384, and L768; Holm correction over all six one-sided p-values",
+      "P2_summary_visible": "MambaPhi-minus-Mamba0 at S4 and S6 across registered lookbacks"
+    }
+  },
+  "release_gate": {
+    "expected_training_cells": 40,
+    "minimum_test_series_per_primary_group": 100,
+    "strict_checkpoint_load": true,
+    "test_numeric_must_be_absent": true
+  },
+  "budget": {"max_gpu_hours": 24, "max_training_runs": 40}
+}
