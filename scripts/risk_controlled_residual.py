@@ -34,6 +34,7 @@ from utils.sapr_mamba.io import atomic_write_json, sha256_path, utc_now
 CONFIG = ROOT / os.environ.get("RCR_CONFIG_DIR", "configs/risk_controlled_residual_v1")
 RUN = ROOT / os.environ.get("RCR_RUN_ROOT", "results/risk_controlled_residual_v1")
 RUN_ID = os.environ.get("RCR_RUN_ID", "risk_controlled_residual_v1")
+TRUTH_CACHE: dict[tuple[object, ...], np.ndarray] = {}
 
 
 def read_json(path: Path) -> dict:
@@ -191,16 +192,31 @@ def literature_gate() -> None:
     print(json.dumps({"status": report["status"], "queries": len(records)}, indent=2))
 
 
-def losses(theta: np.ndarray, cap: float, coefficients: np.ndarray, protocol: dict, repeats: int, n_max: int, rng: np.random.Generator) -> np.ndarray:
+def losses(theta: np.ndarray, cap: float, coefficients: np.ndarray, protocol: dict, repeats: int, n_max: int, rng: np.random.Generator | None = None, *, normal: np.ndarray | None = None, radial: np.ndarray | None = None) -> np.ndarray:
     """Returns D[repeat, group, sequence, candidate] on source distribution P."""
     horizon, sigma = int(protocol["horizon"]), float(protocol["sigma"])
-    normal = rng.normal(size=(repeats, len(theta), n_max))
-    radial = rng.chisquare(horizon - 1, size=(repeats, len(theta), n_max))
+    if normal is None or radial is None:
+        if rng is None:
+            raise ValueError("losses requires either an RNG or fixed source draws")
+        normal = rng.normal(size=(repeats, len(theta), n_max))
+        radial = rng.chisquare(horizon - 1, size=(repeats, len(theta), n_max))
+    if normal.shape != (repeats, len(theta), n_max) or radial.shape != normal.shape:
+        raise ValueError("fixed source draws do not match the requested loss shape")
     parallel = theta[None, :, None] * math.sqrt(horizon) / sigma + normal
     baseline = np.sqrt(parallel ** 2 + radial) * sigma / math.sqrt(horizon)
     shifts = coefficients * float(cap) * math.sqrt(horizon) / sigma
     candidate = np.sqrt((parallel[..., None] - shifts[None, None, None, :]) ** 2 + radial[..., None]) * sigma / math.sqrt(horizon)
     return candidate - baseline[..., None]
+
+
+def truth_matrix(protocol: dict, theta: np.ndarray, cap: float, candidates: int, rho: float, nodes: tuple[int, int]) -> np.ndarray:
+    """Return immutable target risks once per panel/cap/K/rho, not per chunk."""
+    key = (protocol["protocol_version"], tuple(map(float, theta)), float(cap), int(candidates), float(rho), nodes)
+    cached = TRUTH_CACHE.get(key)
+    if cached is None:
+        cached = np.asarray([[true_target_risk(float(theta[g]), float(candidate_coefficients(protocol, candidates)[j] * cap), float(rho), protocol, nodes) for g in range(int(protocol["groups"]))] for j in range(candidates)])
+        TRUTH_CACHE[key] = cached
+    return cached
 
 
 def cell_key(panel: str, cap: float, k: int, n: int, rho: float) -> str:
@@ -279,9 +295,13 @@ def simulate_chunk(protocol: dict, panel_name: str, theta: np.ndarray, start: in
     groups, alpha = int(protocol["groups"]), float(protocol["alpha"])
     high_nodes = (int(protocol["truth"]["validation_normal_nodes"]), int(protocol["truth"]["validation_radial_nodes"]))
     records = {}
+    # One complete source draw is shared by all cap/K/n/rho decisions in this
+    # panel/repeat chunk, as declared by the common-random-numbers design.
+    normal = rng.normal(size=(count, groups, n_max))
+    radial = rng.chisquare(int(protocol["horizon"]) - 1, size=(count, groups, n_max))
     for cap in caps:
         coefficients = candidate_coefficients(protocol, max(candidate_counts))
-        values = losses(theta, cap, coefficients, protocol, count, n_max, rng)
+        values = losses(theta, cap, coefficients, protocol, count, n_max, normal=normal, radial=radial)
         cumulative = np.cumsum(values, axis=2)
         for n in sample_sizes:
             means = cumulative[:, :, int(n) - 1, :] / float(n)
@@ -290,7 +310,7 @@ def simulate_chunk(protocol: dict, panel_name: str, theta: np.ndarray, start: in
                 for rho in rhos:
                     # Truth is evaluated per target mixture.  It must not use
                     # a loop-local rho from an earlier cell.
-                    truth = np.asarray([[true_target_risk(float(theta[g]), float(coefficients[j] * cap), float(rho), protocol, high_nodes) for g in range(groups)] for j in range(k)])
+                    truth = truth_matrix(protocol, theta, cap, k, float(rho), high_nodes)
                     harmful_candidates = np.any(truth > 0.0, axis=1)
                     upper = means[:, :, :k] + radius + 2.0 * cap * float(rho)
                     selected, chosen_worst = select_candidate(upper)

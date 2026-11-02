@@ -48,6 +48,16 @@ def test_quadrature_production_and_validation_rules_agree() -> None:
     assert audit["maximum_absolute_difference"] <= protocol["truth"]["absolute_tolerance"]
 
 
+def test_analytic_target_risk_is_cached_by_frozen_cell() -> None:
+    protocol = rcr.config()
+    theta = np.asarray(protocol["panels"]["BENEFICIAL"], dtype=float)
+    rcr.TRUTH_CACHE.clear()
+    first = rcr.truth_matrix(protocol, theta, 0.1, 4, 0.05, (32, 32))
+    second = rcr.truth_matrix(protocol, theta, 0.1, 4, 0.05, (32, 32))
+    assert first is second
+    assert first.shape == (4, 4)
+
+
 def test_target_test_cannot_materialize_before_main(tmp_path, monkeypatch) -> None:
     protocol = rcr.config()
     paths = {name: tmp_path / name for name in ("protocol", "target", "metrics", "reports", "pilot", "chunks", "failures", "monitor", "logs")}
